@@ -1,0 +1,691 @@
+﻿[
+
+	{
+		"DisplayName": "Apex Twin",
+		"Description": "Map Description",
+		"SceneName": "ApexTwin",
+		"MapId": 3,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Aqualab Research Hub",
+		"Description": "Map Description",
+		"SceneName": "AqualabResearchHub",
+		"MapId": 4,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Catalyst",
+		"Description": "Map Description",
+		"SceneName": "Catalyst",
+		"MapId": 5,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "CuberSpace",
+		"Description": "Map Description",
+		"SceneName": "CuberSpace",
+		"MapId": 6,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "CuberStrike",
+		"Description": "Map Description",
+		"SceneName": "CuberStrike",
+		"MapId": 7,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Fort Winter",
+		"Description": "Map Description",
+		"SceneName": "FortWinter",
+		"MapId": 8,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Ghost Island",
+		"Description": "Map Description",
+		"SceneName": "GhostIsland",
+		"MapId": 9,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Gideon's Tower",
+		"Description": "Brave the heights of Gideons Tower, situated in the heart of Ubercity One. Beware, for a fall from its narrow ledges means certain death for any privateer.",
+		"SceneName": "GideonsTower",
+		"MapId": 10,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Monkey Island 2",
+		"Description": "The last resting place of the feared pirate Captain Bradford Pegleg. The forgotten island is rumoured to be home to Bradford's treasrue and was once a place of worship for the tribe of the Monkey King. Nowadays, it is home to adventures, splatting others for dear life.",
+		"SceneName": "MonkeyIsland",
+		"MapId": 11,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Lost Paradise 2",
+		"Description": "Map Description",
+		"SceneName": "LostParadise2",
+		"MapId": 12,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Sky Garden",
+		"Description": "Map Description",
+		"SceneName": "SkyGarden",
+		"MapId": 13,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "SuperPRISM Reactor",
+		"Description": "Map Description",
+		"SceneName": "SuperPRISMReactor",
+		"MapId": 14,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Temple of the Raven",
+		"Description": "Map Description",
+		"SceneName": "TempleOfTheRaven",
+		"MapId": 15,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "The Hangar",
+		"Description": "Map Description",
+		"SceneName": "TheHangar",
+		"MapId": 16,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "The Warehouse",
+		"Description": " Used by RAID Corporation for the storage of weapons and other experimental technology, the Warehouse is a fast paced arena for short range fire fights. Only for privateers who can handle the adrenaline hit",
+		"SceneName": "TheWarehouse",
+		"MapId": 17,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Danger Zone",
+		"Description": "Map Description",
+		"SceneName": "Volley",
+		"MapId": 18,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 10,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	}
+]

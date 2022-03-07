@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ParadiseSettings>
+	<WebServiceBaseUrl>http://festivaldev.dnshome.de:5053/2.0/</WebServiceBaseUrl>
+	<ImagePath>http://festivaldev.dnshome.de:5054/</ImagePath>
+
+	<WebServicePrefix>UberStrike.DataCenter.WebService.CWS.</WebServicePrefix>
+	<WebServiceSuffix>Contract.svc</WebServiceSuffix>
+</ParadiseSettings>

@@ -1,0 +1,6 @@
+.vs/
+bin/
+obj/
+packages/
+photon/*
+release-test/

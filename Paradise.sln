@@ -1,0 +1,97 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B10291D7-04A8-4C93-8BC2-D23A9E7B1262}"
+	ProjectSection(SolutionItems) = preProject
+		Paradise.Patch.xml = Paradise.Patch.xml
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.WebServices", "Paradise.WebServices\Paradise.WebServices.csproj", "{57F2B315-C424-4D54-85EA-FB222C7E70E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.WebServices.CLI", "Paradise.WebServices.CLI\Paradise.WebServices.CLI.csproj", "{D7A8A65F-02A2-417C-B615-64602CAE4ED7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise", "Paradise\Paradise.csproj", "{2C90E774-49B8-4D1E-BA6D-FA9F47B647FB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.Realtime", "Paradise.Realtime\Paradise.Realtime.csproj", "{C2226865-B3FE-4B96-B3C4-E80C1F34C8C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.Realtime.Server", "Paradise.Realtime.Server\Paradise.Realtime.Server.csproj", "{D904A427-B043-4707-A74E-A50E602CF4F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.WebServices.Client", "Paradise.WebServices.Client\Paradise.WebServices.Client.csproj", "{F4E4534A-1A69-4A38-BD57-B05CE9BD79FE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebServices", "WebServices", "{AABE0FAD-73F4-488F-9DF6-410F1E33D7B1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Realtime", "Realtime", "{1DE98231-C9C1-40E5-BA2C-36EF3EE279F1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{FFA98810-48BF-485A-96E7-E13AAFBDDC38}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Client", "Client", "{6B761835-50C2-4BC5-8257-97DDDA8B4F3A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.Client", "Paradise.Client\Paradise.Client.csproj", "{DDDCCD2D-8C51-4A66-A843-DE2FB78CB62F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.Realtime.Server.Comm", "Paradise.Realtime.Server.Comm\Paradise.Realtime.Server.Comm.csproj", "{80E56934-D785-4DA5-960B-86FDA7583A78}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.Realtime.Server.Game", "Paradise.Realtime.Server.Game\Paradise.Realtime.Server.Game.csproj", "{16D9F7D9-2453-43D7-9E30-AD533115CA60}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{57F2B315-C424-4D54-85EA-FB222C7E70E8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57F2B315-C424-4D54-85EA-FB222C7E70E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57F2B315-C424-4D54-85EA-FB222C7E70E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57F2B315-C424-4D54-85EA-FB222C7E70E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7A8A65F-02A2-417C-B615-64602CAE4ED7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7A8A65F-02A2-417C-B615-64602CAE4ED7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7A8A65F-02A2-417C-B615-64602CAE4ED7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7A8A65F-02A2-417C-B615-64602CAE4ED7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2C90E774-49B8-4D1E-BA6D-FA9F47B647FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2C90E774-49B8-4D1E-BA6D-FA9F47B647FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2C90E774-49B8-4D1E-BA6D-FA9F47B647FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2C90E774-49B8-4D1E-BA6D-FA9F47B647FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2226865-B3FE-4B96-B3C4-E80C1F34C8C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2226865-B3FE-4B96-B3C4-E80C1F34C8C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2226865-B3FE-4B96-B3C4-E80C1F34C8C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2226865-B3FE-4B96-B3C4-E80C1F34C8C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D904A427-B043-4707-A74E-A50E602CF4F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D904A427-B043-4707-A74E-A50E602CF4F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D904A427-B043-4707-A74E-A50E602CF4F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D904A427-B043-4707-A74E-A50E602CF4F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4E4534A-1A69-4A38-BD57-B05CE9BD79FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4E4534A-1A69-4A38-BD57-B05CE9BD79FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4E4534A-1A69-4A38-BD57-B05CE9BD79FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4E4534A-1A69-4A38-BD57-B05CE9BD79FE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDDCCD2D-8C51-4A66-A843-DE2FB78CB62F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDDCCD2D-8C51-4A66-A843-DE2FB78CB62F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDDCCD2D-8C51-4A66-A843-DE2FB78CB62F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDDCCD2D-8C51-4A66-A843-DE2FB78CB62F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80E56934-D785-4DA5-960B-86FDA7583A78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80E56934-D785-4DA5-960B-86FDA7583A78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80E56934-D785-4DA5-960B-86FDA7583A78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80E56934-D785-4DA5-960B-86FDA7583A78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{16D9F7D9-2453-43D7-9E30-AD533115CA60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{16D9F7D9-2453-43D7-9E30-AD533115CA60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{16D9F7D9-2453-43D7-9E30-AD533115CA60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{16D9F7D9-2453-43D7-9E30-AD533115CA60}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{57F2B315-C424-4D54-85EA-FB222C7E70E8} = {AABE0FAD-73F4-488F-9DF6-410F1E33D7B1}
+		{D7A8A65F-02A2-417C-B615-64602CAE4ED7} = {AABE0FAD-73F4-488F-9DF6-410F1E33D7B1}
+		{2C90E774-49B8-4D1E-BA6D-FA9F47B647FB} = {FFA98810-48BF-485A-96E7-E13AAFBDDC38}
+		{C2226865-B3FE-4B96-B3C4-E80C1F34C8C0} = {1DE98231-C9C1-40E5-BA2C-36EF3EE279F1}
+		{D904A427-B043-4707-A74E-A50E602CF4F0} = {1DE98231-C9C1-40E5-BA2C-36EF3EE279F1}
+		{F4E4534A-1A69-4A38-BD57-B05CE9BD79FE} = {AABE0FAD-73F4-488F-9DF6-410F1E33D7B1}
+		{DDDCCD2D-8C51-4A66-A843-DE2FB78CB62F} = {6B761835-50C2-4BC5-8257-97DDDA8B4F3A}
+		{80E56934-D785-4DA5-960B-86FDA7583A78} = {1DE98231-C9C1-40E5-BA2C-36EF3EE279F1}
+		{16D9F7D9-2453-43D7-9E30-AD533115CA60} = {1DE98231-C9C1-40E5-BA2C-36EF3EE279F1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {01D488D9-E484-4D63-9C63-4AA83D296AA8}
+	EndGlobalSection
+EndGlobal

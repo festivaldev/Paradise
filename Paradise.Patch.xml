@@ -1,0 +1,112 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+
+<!--
+	Patches based on FICTURE7/UberStrok
+	Adapted for Universal Unity Patcher by Team FESTIVAL
+-->
+
+<PatchDefinition Name="Project Paradise">
+	<Patch Name="HostConfig" ShortDescription="Change web service host URLs to a custom server">
+		<Description>
+			This patch changes the web service host URLs
+			to be loaded from a customizable file outside
+			the current assembly.
+		</Description>
+
+		<Assemblies AppliesTo="Assembly-CSharp.dll">
+			<Reference Name="Assembly-CSharp-firstpass" />
+			<Reference Name="UnityEngine" />
+			<Reference Name="Paradise.Client" />
+		</Assemblies>
+
+		<Type Name="ApplicationDataManager">
+			<Method Name=".cctor" BeginAt="0">
+				<Instruction OpCode="Call" Assembly="Paradise.Client" Type="Paradise.Client.ApplicationDataManager_hook" Method="get_WebServiceBaseUrl" />
+				<Instruction OpCode="Stsfld" Type="ApplicationDataManager" Field="WebServiceBaseUrl" />
+				<Instruction OpCode="Call" Assembly="Paradise.Client" Type="Paradise.Client.ApplicationDataManager_hook" Method="get_ImagePath" />
+				<Instruction OpCode="Stsfld" Type="ApplicationDataManager" Field="ImagePath" />
+
+				<Remove Count="4" />
+			</Method>
+		</Type>
+	</Patch>
+
+	<Patch Name="WebServices" ShortDescription="Rename web services" Enabled="false">
+		<Description>
+			Changes the used web service names to
+			stripped variants to allow communication
+			with locally hosted web services.
+		</Description>
+
+		<Assemblies AppliesTo="Assembly-CSharp-firstpass.dll" />
+
+		<Type Match="^.+WebServiceClient$">
+			<ReplaceText TextToReplace="UberStrike\.DataCenter\.WebService\.CWS\.(.+WebService)Contract\.svc" ReplacementText="$1" />
+		</Type>
+	</Patch>
+
+	<Patch Name="QuickSwitch" ShortDescription="Enable Quick Switching">
+		<Description>Brings Quick Switching back into the game.</Description>
+
+		<Assemblies AppliesTo="Assembly-CSharp.dll">
+			<Reference Name="Assembly-CSharp-firstpass" />
+		</Assemblies>
+
+		<Type Name="WeaponController">
+			<Method Name="Shoot" BeginAt="13">
+				<Instruction OpCode="Ldc_I4" Value="4" />
+				<Instruction OpCode="Ldsfld" Type="GameState" Field="Current" />
+				<Instruction OpCode="Callvirt" Type="GameState" Method="get_RoomData" />
+				<Instruction OpCode="Callvirt" Assembly="Assembly-CSharp-firstpass" Type="UberStrike.Core.Models.GameRoomData" Method="get_GameFlags" />
+				<Instruction OpCode="Call" Assembly="Assembly-CSharp-firstpass" Type="UberStrike.Realtime.UnitySdk.GameFlags" Method="IsFlagSet" />
+				<Instruction OpCode="Brtrue" TargetIndex="24" />
+			</Method>
+		</Type>
+	</Patch>
+
+	<Patch Name="ResolutionPatch" ShortDescription="Add missing screen resolutions">
+		<Description>
+			Allows UberStrike to use the current display's
+			resolution in case it's not available in the video
+			settings (eg. 3440x1400)
+		</Description>
+
+		<Assemblies AppliesTo="Assembly-CSharp.dll">
+
+		</Assemblies>
+
+		<Type Name="ScreenResolutionManager">
+			<Method Name=".cctor" BeginAt="29">
+				<Instruction OpCode="Callvirt" Assembly="Paradise.Client" Type="Paradise.Client.ScreenResolutionManager_hook" Method="AddResolutions" />
+				<Remove Count="5" />
+			</Method>
+		</Type>
+	</Patch>
+
+	<Patch Name="BundleManager" ShortDescription="Allow purchasing credit bundles">
+		<Description>
+			This patch allows players to purchase bundles in the shop, which then add credits to their wallet.
+		</Description>
+
+		<Assemblies AppliesTo="Assembly-CSharp">
+			<Reference Name="Assembly-CSharp-firstpass" />
+			<Reference Name="Paradise.Client" />
+		</Assemblies>
+
+		<Type Name="BundleManager">
+			<Method Name="Initialize" BeginAt="0">
+				<Instruction OpCode="Ldarg" Value="0" />
+				<Instruction OpCode="Ldftn" Type="BundleManager" Method="OnMicroTxnCallback" />
+				<Instruction OpCode="Newobj" Assembly="mscorlib" Type="System.Action`1" Method=".ctor">
+					<Argument Assembly="Assembly-CSharp-firstpass" Type="Steamworks.MicroTxnAuthorizationResponse_t" />
+				</Instruction>
+				<Instruction OpCode="Stsfld" Assembly="Paradise.Client" Type="Paradise.Client.BundleManager_hook" Field="OnMicroTxnCallback" />
+			</Method>
+
+			<Method Name="&lt;BuyBundle&gt;m__A7" BeginAt="0">
+				<Instruction OpCode="Call" Assembly="Paradise.Client" Type="Paradise.Client.BundleManager_hook" Method="CallOnMicroTxnCallback"/>
+				<Instruction OpCode="Ret"/>
+			</Method>
+		</Type>
+	</Patch>
+</PatchDefinition>

@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{57F2B315-C424-4D54-85EA-FB222C7E70E8}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Paradise.WebServices</RootNamespace>
+    <AssemblyName>Paradise.WebServices</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="LiteDB, Version=5.0.11.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.5.0.11\lib\net45\LiteDB.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Contracts\IApplicationWebServiceContract.cs" />
+    <Compile Include="Contracts\IAuthenticationWebServiceContract.cs" />
+    <Compile Include="Contracts\IClanWebServiceContract.cs" />
+    <Compile Include="Contracts\IModerationWebServiceContract.cs" />
+    <Compile Include="Contracts\IPrivateMessageWebServiceContract.cs" />
+    <Compile Include="Contracts\IRelationshipWebServiceContract.cs" />
+    <Compile Include="Contracts\IShopWebServiceContract.cs" />
+    <Compile Include="Contracts\IUserWebServiceContract.cs" />
+    <Compile Include="Contracts\IWebServiceContractBase.cs" />
+    <Compile Include="Contracts\Legacy\IClanWebServiceContract_Legacy.cs" />
+    <Compile Include="Contracts\Legacy\IAuthenticationWebServiceContract_Legacy.cs" />
+    <Compile Include="Contracts\Legacy\IApplicationWebServiceContract_Legacy.cs" />
+    <Compile Include="Contracts\Legacy\IUserWebServiceContract_Legacy.cs" />
+    <Compile Include="Contracts\Legacy\IShopWebServiceContract_Legacy.cs" />
+    <Compile Include="Contracts\Legacy\IRelationshipWebServiceContract_Legacy.cs" />
+    <Compile Include="Contracts\Legacy\IModerationWebServiceContract_Legacy.cs" />
+    <Compile Include="Contracts\Legacy\IPrivateMessageWebServiceContract_Legacy.cs" />
+    <Compile Include="DatabaseManager.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ApplicationWebService.cs" />
+    <Compile Include="Services\AuthenticationWebServices.cs" />
+    <Compile Include="Services\ClanWebService.cs" />
+    <Compile Include="Services\Legacy\RelationshipWebService_Legacy.cs" />
+    <Compile Include="Services\Legacy\UserWebService_Legacy.cs" />
+    <Compile Include="Services\Legacy\ShopWebService_Legacy.cs" />
+    <Compile Include="Services\Legacy\PrivateMessageWebService_Legacy.cs" />
+    <Compile Include="Services\Legacy\ModerationWebService_Legacy.cs" />
+    <Compile Include="Services\Legacy\ClanWebService_Legacy.cs" />
+    <Compile Include="Services\Legacy\AuthenticationWebService_Legacy.cs" />
+    <Compile Include="Services\Legacy\ApplicationWebService_Legacy.cs" />
+    <Compile Include="Services\ModerationWebService.cs" />
+    <Compile Include="Services\PrivateMessageWebService.cs" />
+    <Compile Include="Services\RelationshipWebService.cs" />
+    <Compile Include="Services\ShopWebService.cs" />
+    <Compile Include="Services\UserWebService.cs" />
+    <Compile Include="ParadiseSettings.cs" />
+    <Compile Include="UberstrikeInventoryItem.cs" />
+    <Compile Include="WebServiceBase.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Data\ApplicationConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\ApplicationData.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Maps.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Shop.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Data\Shop_Economy.json" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Paradise\Paradise.csproj">
+      <Project>{2c90e774-49b8-4d1e-ba6d-fa9f47b647fb}</Project>
+      <Name>Paradise</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Data\economy.txt" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

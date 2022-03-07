@@ -1,0 +1,26 @@
+﻿{
+	"CommServer": {
+		"IP": "127.0.0.1",
+		"MinLatency": 100,
+		"Name": "Dropshot Comm Server",
+		"PhotonId": 34579385,
+		"Port": 5055,
+		"Region": 1,
+		"UsageType": 6
+	},
+	"GameServers": [
+		{
+			"PhotonId": 5982379,
+			"Name": "Test",
+			"IP": "festivaldev.dnshome.de",
+			"Region": 1,
+			"Port": 5056,
+			"UsageType": 1,
+			"MinLatency": 100
+		}
+	],
+	"EncryptionInitVector": "aaaabbbbccccdddd",
+	"EncryptionPassPhrase": "voJRIh4LEA/lnk19/HucN9qywkxsYNHHE5H410vTRrw=",
+	"IsEnabled": true,
+	"WarnPlayer": false
+}
