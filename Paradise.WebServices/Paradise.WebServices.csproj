@@ -89,19 +89,6 @@
     <Compile Include="WebServiceBase.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Data\ApplicationConfiguration.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\ApplicationData.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Maps.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Shop.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Include="Data\Shop_Economy.json" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
@@ -109,9 +96,6 @@
       <Project>{2c90e774-49b8-4d1e-ba6d-fa9f47b647fb}</Project>
       <Name>Paradise</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Data\economy.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

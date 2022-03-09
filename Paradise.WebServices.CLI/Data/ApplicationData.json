@@ -12,7 +12,7 @@
 		{
 			"PhotonId": 5982379,
 			"Name": "Test",
-			"IP": "festivaldev.dnshome.de",
+			"IP": "127.0.0.1",
 			"Region": 1,
 			"Port": 5056,
 			"UsageType": 1,
