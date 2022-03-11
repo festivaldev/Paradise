@@ -121,7 +121,29 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, targetCmid);
 
 					using (var outputStream = new MemoryStream()) {
-						throw new NotImplementedException();
+						var steamMember = SteamMemberFromAuthToken(authToken);
+
+						if (steamMember != null) {
+							var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+							if (publicProfile != null && publicProfile.AccessLevel >= DataCenter.Common.Entities.MemberAccessLevel.Moderator) {
+								var bannedProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == targetCmid);
+
+								if (bannedProfile != null && bannedProfile.Cmid != publicProfile.Cmid && bannedProfile.AccessLevel < publicProfile.AccessLevel) {
+									DatabaseManager.BannedMembers.DeleteMany(_ => _.TargetCmid == bannedProfile.Cmid);
+									DatabaseManager.BannedMembers.Insert(new BannedMember {
+										IsBanned = true,
+										BanningDate = DateTime.UtcNow,
+										SourceCmid = publicProfile.Cmid,
+										SourceName = publicProfile.Name,
+										TargetCmid = bannedProfile.Cmid,
+										TargetName = bannedProfile.Name
+									});
+
+									BooleanProxy.Serialize(outputStream, true);
+								}
+							}
+						}
 
 						return outputStream.ToArray();
 					}

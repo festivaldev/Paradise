@@ -305,56 +305,60 @@ namespace Paradise.WebServices.Services {
 							};
 
 							MemberAuthenticationResultViewProxy.Serialize(outputStream, memberAuth);
-
-							return outputStream.ToArray();
 						} else {
-							var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
+							var bannedMember = DatabaseManager.BannedMembers.FindOne(_ => _.TargetCmid == steamMember.Cmid);
 
-							if (publicProfile == null) {
+							if (bannedMember != null && (bannedMember.IsBanned || (bannedMember.IsHwidBanned && bannedMember.Hwid == machineId)) && (bannedMember.BannedUntil == null || bannedMember.BannedUntil >= DateTime.UtcNow)) {
 								MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
-									MemberAuthenticationResult = MemberAuthenticationResult.UnknownError
+									MemberAuthenticationResult = MemberAuthenticationResult.IsBanned
 								});
-
-								return outputStream.ToArray();
 							} else {
-								var memberWallet = DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
-								var playerStatistics = DatabaseManager.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
+								var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
 
-								MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
-									MemberAuthenticationResult = MemberAuthenticationResult.Ok,
-									MemberView = new MemberView {
-										PublicProfile = publicProfile,
-										MemberWallet = memberWallet
-									},
-									PlayerStatisticsView = playerStatistics,
-									ServerTime = DateTime.Now,
-									IsAccountComplete = publicProfile.Name != null,
-									AuthToken = authTicket
-								});
+								if (publicProfile == null) {
+									MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
+										MemberAuthenticationResult = MemberAuthenticationResult.UnknownError
+									});
+								} else {
+									var memberWallet = DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
+									var playerStatistics = DatabaseManager.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
 
-								//if (DatabaseManager.Clans.FindAll().ToList().FirstOrDefault(_ => _.Members.Find(__ => __.Cmid == steamMember.Cmid) != null) is ClanView _clan) {
-								//	var clan = DatabaseManager.Clans.FindOne(_ => _.GroupId == _clan.GroupId);
-								//	var clanMember = clan.Members.Find(_ => _.Cmid == steamMember.Cmid);
+									MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
+										MemberAuthenticationResult = MemberAuthenticationResult.Ok,
+										MemberView = new MemberView {
+											PublicProfile = publicProfile,
+											MemberWallet = memberWallet
+										},
+										PlayerStatisticsView = playerStatistics,
+										ServerTime = DateTime.Now,
+										IsAccountComplete = publicProfile.Name != null,
+										AuthToken = authTicket
+									});
 
-								//	clanMember.Lastlogin = DateTime.Now;
+									//if (DatabaseManager.Clans.FindAll().ToList().FirstOrDefault(_ => _.Members.Find(__ => __.Cmid == steamMember.Cmid) != null) is ClanView _clan) {
+									//	var clan = DatabaseManager.Clans.FindOne(_ => _.GroupId == _clan.GroupId);
+									//	var clanMember = clan.Members.Find(_ => _.Cmid == steamMember.Cmid);
 
-								//	DatabaseManager.Clans.Update(clan);
-								//}
+									//	clanMember.Lastlogin = DateTime.Now;
 
-								//foreach (var clan in DatabaseManager.Clans.FindAll()) {
-								//	foreach (var clanMember in clan.Members) {
-								//		if (clanMember.Cmid == steamMember.Cmid) {
-								//			clanMember.Lastlogin = DateTime.Now;
+									//	DatabaseManager.Clans.Update(clan);
+									//}
 
-								//			DatabaseManager.Clans.Update(clan);
-								//			break;
-								//		}
-								//	}
-								//}
+									//foreach (var clan in DatabaseManager.Clans.FindAll()) {
+									//	foreach (var clanMember in clan.Members) {
+									//		if (clanMember.Cmid == steamMember.Cmid) {
+									//			clanMember.Lastlogin = DateTime.Now;
 
-								return outputStream.ToArray();
+									//			DatabaseManager.Clans.Update(clan);
+									//			break;
+									//		}
+									//	}
+									//}
+								}
 							}
 						}
+
+						return outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {

@@ -13,8 +13,19 @@ namespace Paradise.WebServices {
 		public string MachineId { get; set; }
 	}
 
-	public class PlayerContact {
-		public List<int> Members { get; set; }
+	public class BannedMember {
+		public int SourceCmid { get; set; }
+		public string SourceName { get; set; }
+		public int TargetCmid { get; set; }
+		public string TargetName { get; set; }
+		public bool IsBanned { get; set; }
+		public bool IsIpBanned { get; set; }
+		public bool IsHwidBanned { get; set; }
+		public string Reason { get; set; }
+		public DateTime? BannedUntil { get; set; }
+		public DateTime BanningDate { get; set; }
+		public long IpAddress { get; set; }
+		public string Hwid { get; set; }
 	}
 
 	public static class DatabaseManager {
@@ -29,13 +40,13 @@ namespace Paradise.WebServices {
 		public static ILiteCollection<GroupInvitationView> GroupInvitations { get; private set; }
 
 		// Moderation
+		public static ILiteCollection<BannedMember> BannedMembers { get; private set; }
 
 		// Private Messages
 		public static ILiteCollection<PrivateMessageView> PrivateMessages { get; private set; }
 
 		// Relationships
 		public static ILiteCollection<ContactRequestView> ContactRequests { get; private set; }
-		public static ILiteCollection<PlayerContact> PlayerRelationships { get; private set; }
 
 		// User
 		public static ILiteCollection<MemberWalletView> MemberWallets { get; private set; }
@@ -69,9 +80,9 @@ namespace Paradise.WebServices {
 				ClanMembers = null;
 				Clans = null;
 				GroupInvitations = null;
+				BannedMembers = null;
 				PrivateMessages = null;
 				ContactRequests = null;
-				PlayerRelationships = null;
 				MemberWallets = null;
 				PlayerInventoryItems = null;
 				PlayerLoadouts = null;
@@ -106,13 +117,14 @@ namespace Paradise.WebServices {
 
 				GroupInvitations = databaseInstance.GetCollection<GroupInvitationView>("GroupInvitations");
 
+				BannedMembers = databaseInstance.GetCollection<BannedMember>("BannedMembers");
+				BannedMembers.EnsureIndex("Cmid");
+
 				PrivateMessages = databaseInstance.GetCollection<PrivateMessageView>("PrivateMessages");
 				PrivateMessages.EnsureIndex("PrivateMessageId");
 
 				ContactRequests = databaseInstance.GetCollection<ContactRequestView>("ContactRequests");
 				ContactRequests.EnsureIndex("RequestId");
-
-				PlayerRelationships = databaseInstance.GetCollection<PlayerContact>("PlayerRelationships");
 
 				MemberWallets = databaseInstance.GetCollection<MemberWalletView>("MemberWallets");
 				MemberWallets.EnsureIndex("Cmid");
