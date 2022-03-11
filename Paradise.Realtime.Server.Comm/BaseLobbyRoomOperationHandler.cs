@@ -1,12 +1,18 @@
-﻿using Paradise.Core.Models;
+﻿using log4net;
+using Paradise.Core.Models;
 using Paradise.Core.Serialization;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 
 namespace Paradise.Realtime.Server.Comm {
-	public abstract class BaseLobbyRoomOperationHandler : OperationHandler<CommPeer> {
-		public override byte Id => 0;
+	public abstract class BaseLobbyRoomOperationHandler : BaseOperationHandler<CommPeer> {
+		private static readonly ILog Log = LogManager.GetLogger(typeof(LobbyRoomOperationHandler).Name);
+
+		protected object _lock { get; } = new object();
+
+		public override int Id => 0;
 
 		protected abstract void OnFullPlayerListUpdate(CommPeer peer);
 		protected abstract void OnUpdatePlayerRoom(CommPeer peer, GameRoom room);
@@ -122,11 +128,16 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		private void FullPlayerListUpdate(CommPeer peer, MemoryStream bytes) {
+			DebugOperation(peer);
+
 			OnFullPlayerListUpdate(peer);
 		}
 
 		private void UpdatePlayerRoom(CommPeer peer, MemoryStream bytes) {
 			var room = GameRoomProxy.Deserialize(bytes);
+
+			DebugOperation(peer, room);
+
 			OnUpdatePlayerRoom(peer, room);
 		}
 
@@ -136,49 +147,76 @@ namespace Paradise.Realtime.Server.Comm {
 
 		private void UpdateFriendsList(CommPeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmid);
+
 			OnUpdateFriendsList(peer, cmid);
 		}
 
 		private void UpdateClanData(CommPeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmid);
+
 			OnUpdateClanData(peer, cmid);
 		}
 
 		private void UpdateInboxMessages(CommPeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
 			var messageId = Int32Proxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmid, messageId);
+
 			OnUpdateInboxMessages(peer, cmid, messageId);
 		}
 
 		private void UpdateInboxRequests(CommPeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmid);
+
 			OnUpdateInboxRequests(peer, cmid);
 		}
 
 		private void UpdateClanMembers(CommPeer peer, MemoryStream bytes) {
-			var clanMembers = ListProxy<int>.Deserialize(bytes, Int32Proxy.Deserialize);
-			OnUpdateClanMembers(peer, clanMembers);
+			var cmids = ListProxy<int>.Deserialize(bytes, Int32Proxy.Deserialize);
+
+			DebugOperation(peer, cmids);
+
+			OnUpdateClanMembers(peer, cmids);
 		}
 
 		private void GetPlayersWithMatchingName(CommPeer peer, MemoryStream bytes) {
 			var search = StringProxy.Deserialize(bytes);
+
+			DebugOperation(peer, search);
+
 			OnGetPlayersWithMatchingName(peer, search);
 		}
 
 		private void ChatMessageToAll(CommPeer peer, MemoryStream bytes) {
 			var message = StringProxy.Deserialize(bytes);
+
+			DebugOperation(peer, message);
+
 			OnChatMessageToAll(peer, message);
 		}
 
 		private void ChatMessageToPlayer(CommPeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
 			var message = StringProxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmid, message);
+
 			OnChatMessageToPlayer(peer, cmid, message);
 		}
 
 		private void ChatMessageToClan(CommPeer peer, MemoryStream bytes) {
 			var clanMembers = ListProxy<int>.Deserialize(bytes, Int32Proxy.Deserialize);
 			var message = StringProxy.Deserialize(bytes);
+
+			DebugOperation(peer, clanMembers, message);
+
 			OnChatMessageToClan(peer, clanMembers, message);
 		}
 
@@ -186,41 +224,64 @@ namespace Paradise.Realtime.Server.Comm {
 			var durationInMinutes = Int32Proxy.Deserialize(bytes);
 			var mutedCmid = Int32Proxy.Deserialize(bytes);
 			var disableChat = BooleanProxy.Deserialize(bytes);
+
+			DebugOperation(peer, durationInMinutes, mutedCmid, disableChat);
+
 			OnModerationMutePlayer(peer, durationInMinutes, mutedCmid, disableChat);
 		}
 
 		private void ModerationPermanentBan(CommPeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmid);
+
 			OnModerationPermanentBan(peer, cmid);
 		}
 
 		private void ModerationBanPlayer(CommPeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmid);
+
 			OnModerationBanPlayer(peer, cmid);
 		}
 
 		private void ModerationKickGame(CommPeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmid);
+
 			OnModerationKickGame(peer, cmid);
 		}
 
 		private void ModerationUnbanPlayer(CommPeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmid);
+
 			OnModerationUnbanPlayer(peer, cmid);
 		}
 
 		private void ModerationCustomMessage(CommPeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
 			var message = StringProxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmid, message);
+
 			OnModerationCustomMessage(peer, cmid, message);
 		}
 
 		private void SpeedhackDetection(CommPeer peer, MemoryStream bytes) {
+			DebugOperation(peer);
+
 			OnSpeedhackDetection(peer);
 		}
 
 		private void SpeedhackDetectionNew(CommPeer peer, MemoryStream bytes) {
 			var timeDifferences = ListProxy<float>.Deserialize(bytes, SingleProxy.Deserialize);
+
+			DebugOperation(peer, timeDifferences);
+
 			OnSpeedhackDetectionNew(peer, timeDifferences);
 		}
 
@@ -229,29 +290,81 @@ namespace Paradise.Realtime.Server.Comm {
 			var type = Int32Proxy.Deserialize(bytes);
 			var details = StringProxy.Deserialize(bytes);
 			var logs = StringProxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmids, type, details, logs);
+
 			OnPlayersReported(peer, cmids, type, details, logs);
 		}
 
 		private void UpdateNaughtyList(CommPeer peer, MemoryStream bytes) {
+			DebugOperation(peer);
+
 			OnUpdateNaughtyList(peer);
 		}
 
 		private void ClearModeratorFlags(CommPeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
+
+			DebugOperation(peer, cmid);
+
 			OnClearModeratorFlags(peer, cmid);
 		}
 
 		private void SetContactList(CommPeer peer, MemoryStream bytes) {
 			var cmids = ListProxy<int>.Deserialize(bytes, Int32Proxy.Deserialize);
+
+			DebugOperation(peer, cmids);
+
 			OnSetContactList(peer, cmids);
 		}
 
 		private void UpdateAllActors(CommPeer peer, MemoryStream bytes) {
+			DebugOperation(peer);
+
 			OnUpdateAllActors(peer);
 		}
 
 		private void UpdateContacts(CommPeer peer, MemoryStream bytes) {
+			DebugOperation(peer);
+
 			OnUpdateContacts(peer);
+		}
+
+
+		protected CommPeer FindPeerWithCmid(int cmid) {
+			lock (_lock) {
+				foreach (var peer in LobbyManager.Instance.Peers) {
+					if (peer.Actor.Cmid == cmid) {
+						return peer;
+					}
+				}
+			}
+
+			return null;
+		}
+
+		protected bool IsSpeedHacking(List<float> timeDifferences) {
+			float mean = 0;
+			for (int i = 0; i < timeDifferences.Count; i++)
+				mean += timeDifferences[i];
+
+			mean /= timeDifferences.Count;
+			if (mean > 2f)
+				return true;
+
+			float variance = 0;
+			for (int i = 0; i < timeDifferences.Count; i++)
+				variance += (float)Math.Pow(timeDifferences[i] - mean, 2);
+
+			variance /= timeDifferences.Count - 1;
+			return mean > 1.1f && variance <= 0.05f;
+		}
+
+
+		private void DebugOperation(params object[] data) {
+#if DEBUG
+			Log.Info($"[{DateTime.UtcNow.ToString("o")}] {GetType().Name}:{new StackTrace().GetFrame(1).GetMethod().Name} -> {string.Join(", ", data)}");
+#endif
 		}
 	}
 }

@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C2226865-B3FE-4B96-B3C4-E80C1F34C8C0}</ProjectGuid>
+    <ProjectGuid>{FA183070-D408-4F5E-9867-78D394BCE878}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Paradise.Realtime</RootNamespace>

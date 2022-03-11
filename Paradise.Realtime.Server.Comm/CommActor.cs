@@ -4,19 +4,23 @@ using System;
 
 namespace Paradise.Realtime.Server.Comm {
 	public class CommActor {
-		public CommPeer Peer { get; }
-		public CommActorInfo View { get; }
+		public CommPeer Peer { get; private set; }
+		public CommActorInfo ActorInfo { get; private set; }
 
-		public bool IsMuted { get; set; }
+		public int Cmid => ActorInfo.Cmid;
+		public string Name => ActorInfo.PlayerName;
+		public MemberAccessLevel AccessLevel => ActorInfo.AccessLevel;
+
 		public DateTime MuteEndTime { get; set; }
+		public bool IsMuted {
+			get {
+				return MuteEndTime >= DateTime.UtcNow;
+			}
+		}
 
-		public int Cmid => View.Cmid;
-		public string Name => View.PlayerName;
-		public MemberAccessLevel AccessLevel => View.AccessLevel;
-
-		public CommActor(CommPeer peer, CommActorInfo view) {
+		public CommActor(CommPeer peer, CommActorInfo actorInfo) {
 			Peer = peer ?? throw new ArgumentNullException(nameof(peer));
-			View = view ?? throw new ArgumentNullException(nameof(view));
+			ActorInfo = actorInfo ?? throw new ArgumentNullException(nameof(actorInfo));
 		}
 	}
 }

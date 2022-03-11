@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{80E56934-D785-4DA5-960B-86FDA7583A78}</ProjectGuid>
+    <ProjectGuid>{990DDD0B-F3ED-4F1F-AFA4-9C468C97AE21}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Paradise.Realtime.Server.Comm</RootNamespace>
@@ -31,13 +31,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExitGames.Logging.Log4Net">
+    <Reference Include="ExitGames.Logging.Log4Net, Version=1.0.4.0, Culture=neutral, PublicKeyToken=eac0edd9746a4aa0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\photon\lib\ExitGames.Logging.Log4Net.dll</HintPath>
     </Reference>
-    <Reference Include="log4net">
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\photon\lib\log4net.dll</HintPath>
     </Reference>
-    <Reference Include="Photon.SocketServer">
+    <Reference Include="Photon.SocketServer, Version=4.0.28.11245, Culture=neutral, PublicKeyToken=48c2fa3b6988090e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\photon\lib\Photon.SocketServer.dll</HintPath>
     </Reference>
     <Reference Include="PhotonHostRuntimeInterfaces">
@@ -54,27 +57,31 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseCommPeerOperationHandler.cs" />
+    <Compile Include="BaseLobbyRoomOperationHandler.cs" />
     <Compile Include="CommActor.cs" />
     <Compile Include="CommApplication.cs" />
     <Compile Include="CommPeer.cs" />
     <Compile Include="CommPeerEvents.cs" />
     <Compile Include="CommPeerOperationHandler.cs" />
-    <Compile Include="Core\BaseCommPeerOperationHandler.cs" />
-    <Compile Include="Core\BaseLobbyRoomOperationHandler.cs" />
+    <Compile Include="LobbyManager.cs" />
     <Compile Include="LobbyRoom.cs" />
     <Compile Include="LobbyRoomEvents.cs" />
-    <Compile Include="LobbyRoomHandler.cs" />
-    <Compile Include="LobbyRoomManager.cs" />
+    <Compile Include="LobbyRoomOperationHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Paradise.Realtime.Server\Paradise.Realtime.Server.csproj">
-      <Project>{d904a427-b043-4707-a74e-a50e602cf4f0}</Project>
+      <Project>{636c9ced-df34-4d5d-8220-0fbc70da61da}</Project>
       <Name>Paradise.Realtime.Server</Name>
     </ProjectReference>
     <ProjectReference Include="..\Paradise.Realtime\Paradise.Realtime.csproj">
-      <Project>{c2226865-b3fe-4b96-b3c4-e80c1f34c8c0}</Project>
+      <Project>{fa183070-d408-4f5e-9867-78d394bce878}</Project>
       <Name>Paradise.Realtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Paradise.WebServices.Client\Paradise.WebServices.Client.csproj">
+      <Project>{F4E4534A-1A69-4A38-BD57-B05CE9BD79FE}</Project>
+      <Name>Paradise.WebServices.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\Paradise\Paradise.csproj">
       <Project>{2c90e774-49b8-4d1e-ba6d-fa9f47b647fb}</Project>

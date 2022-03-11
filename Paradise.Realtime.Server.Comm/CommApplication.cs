@@ -1,19 +1,19 @@
 ﻿using Photon.SocketServer;
 
 namespace Paradise.Realtime.Server.Comm {
-	public class CommApplication : Application {
-		public static new CommApplication Instance => (CommApplication)Application.Instance;
+	public class CommApplication : BaseApplication {
+		protected override PeerBase OnCreatePeer(InitRequest initRequest) {
+			Log.Info($"Accepted new connection at {initRequest.RemoteIP}:{initRequest.RemotePort}");
 
-		public LobbyRoomManager Rooms { get; private set; }
-
-		protected override Peer OnCreatePeer(InitRequest initRequest) {
 			return new CommPeer(initRequest);
 		}
 
 		protected override void OnSetup() {
-			Rooms = new LobbyRoomManager();
+			Log.Info("Started CommServer.");
 		}
 
-		protected override void OnTearDown() { }
+		protected override void OnTearDown() {
+			Log.Info("Stopped CommServer.");
+		}
 	}
 }

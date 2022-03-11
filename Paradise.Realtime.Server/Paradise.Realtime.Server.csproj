@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D904A427-B043-4707-A74E-A50E602CF4F0}</ProjectGuid>
+    <ProjectGuid>{636C9CED-DF34-4D5D-8220-0FBC70DA61DA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Paradise.Realtime.Server</RootNamespace>
@@ -34,9 +34,6 @@
     <Reference Include="ExitGames.Logging.Log4Net">
       <HintPath>..\photon\lib\ExitGames.Logging.Log4Net.dll</HintPath>
     </Reference>
-    <Reference Include="ExitGamesLibs">
-      <HintPath>..\photon\lib\ExitGamesLibs.dll</HintPath>
-    </Reference>
     <Reference Include="log4net">
       <HintPath>..\photon\lib\log4net.dll</HintPath>
     </Reference>
@@ -60,32 +57,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Application.cs" />
     <Compile Include="ApplicationConfiguration.cs" />
-    <Compile Include="EventSender.cs" />
+    <Compile Include="BaseApplication.cs" />
+    <Compile Include="BaseEventSender.cs" />
+    <Compile Include="BaseOperationHandler.cs" />
+    <Compile Include="BasePeer.cs" />
     <Compile Include="IRoom.cs" />
-    <Compile Include="OperationHandler.cs" />
-    <Compile Include="OperationHandlerCollection.cs" />
-    <Compile Include="Peer.cs" />
     <Compile Include="PeerConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Paradise.Realtime\Paradise.Realtime.csproj">
-      <Project>{c2226865-b3fe-4b96-b3c4-e80c1f34c8c0}</Project>
+      <Project>{fa183070-d408-4f5e-9867-78d394bce878}</Project>
       <Name>Paradise.Realtime</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Paradise.WebServices.Client\Paradise.WebServices.Client.csproj">
-      <Project>{f4e4534a-1a69-4a38-bd57-b05ce9bd79fe}</Project>
-      <Name>Paradise.WebServices.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\Paradise\Paradise.csproj">
       <Project>{2c90e774-49b8-4d1e-ba6d-fa9f47b647fb}</Project>
       <Name>Paradise</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
