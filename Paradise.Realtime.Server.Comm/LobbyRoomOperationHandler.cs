@@ -27,7 +27,7 @@ namespace Paradise.Realtime.Server.Comm {
 			lock (_lock) {
 				foreach (var otherPeer in LobbyManager.Instance.Peers) {
 					if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
-						otherPeer.Lobby.Events.SendLobbyChatMessage(peer.Actor.Cmid, peer.Actor.Name, message);
+						otherPeer.Events.Lobby.SendLobbyChatMessage(peer.Actor.Cmid, peer.Actor.Name, message);
 					}
 				}
 			}
@@ -39,7 +39,7 @@ namespace Paradise.Realtime.Server.Comm {
 			}
 
 			foreach (var cmid in clanMembers) {
-				FindPeerWithCmid(cmid)?.Lobby.Events.SendClanChatMessage(peer.Actor.Cmid, peer.Actor.Name, message);
+				FindPeerWithCmid(cmid)?.Events.Lobby.SendClanChatMessage(peer.Actor.Cmid, peer.Actor.Name, message);
 			}
 		}
 
@@ -48,7 +48,7 @@ namespace Paradise.Realtime.Server.Comm {
 				return;
 			}
 
-			FindPeerWithCmid(cmid)?.Lobby.Events.SendPrivateChatMessage(peer.Actor.Cmid, peer.Actor.Name, message);
+			FindPeerWithCmid(cmid)?.Events.Lobby.SendPrivateChatMessage(peer.Actor.Cmid, peer.Actor.Name, message);
 		}
 
 		protected override void OnClearModeratorFlags(CommPeer peer, int cmid) {
@@ -59,7 +59,7 @@ namespace Paradise.Realtime.Server.Comm {
 			lock (_lock) {
 				foreach (var otherPeer in LobbyManager.Instance.Peers) {
 					if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
-						peer.Lobby.Events.SendFullPlayerListUpdate(LobbyManager.Instance.Peers.Select(_ => _.Actor.ActorInfo).ToList());
+						peer.Events.Lobby.SendFullPlayerListUpdate(LobbyManager.Instance.Peers.Select(_ => _.Actor.ActorInfo).ToList());
 					}
 				}
 			}
@@ -78,7 +78,7 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		protected override void OnModerationCustomMessage(CommPeer peer, int cmid, string message) {
-			FindPeerWithCmid(cmid)?.Lobby.Events.SendModerationCustomMessage(message);
+			FindPeerWithCmid(cmid)?.Events.Lobby.SendModerationCustomMessage(message);
 		}
 
 		protected override void OnModerationKickGame(CommPeer peer, int cmid) {
@@ -98,7 +98,7 @@ namespace Paradise.Realtime.Server.Comm {
 			var mutedPeer = FindPeerWithCmid(mutedCmid);
 			if (mutedPeer != null && mutedPeer.Actor.AccessLevel < MemberAccessLevel.Moderator) {
 				mutedPeer.Actor.MuteEndTime = DateTime.UtcNow.AddSeconds(durationInMinutes);
-				mutedPeer.Lobby.Events.SendModerationMutePlayer(disableChat);
+				mutedPeer.Events.Lobby.SendModerationMutePlayer(disableChat);
 			}
 		}
 
@@ -137,7 +137,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 		protected override void OnUpdateAllActors(CommPeer peer) {
 			if (peer.Actor.AccessLevel >= MemberAccessLevel.Moderator) {
-				peer.Lobby.Events.SendFullPlayerListUpdate(LobbyManager.Instance.Peers.Select(_ => _.Actor.ActorInfo).ToList());
+				peer.Events.Lobby.SendFullPlayerListUpdate(LobbyManager.Instance.Peers.Select(_ => _.Actor.ActorInfo).ToList());
 			}
 		}
 
@@ -150,7 +150,7 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		protected override void OnUpdateContacts(CommPeer peer) {
-			peer.Lobby.Events.SendUpdateContacts(new List<CommActorInfo>(), new List<int>());
+			peer.Events.Lobby.SendUpdateContacts(new List<CommActorInfo>(), new List<int>());
 		}
 
 		protected override void OnUpdateFriendsList(CommPeer peer, int cmid) {
@@ -158,11 +158,11 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		protected override void OnUpdateInboxMessages(CommPeer peer, int cmid, int messageId) {
-			FindPeerWithCmid(cmid).Lobby.Events.SendUpdateInboxMessages(messageId);
+			FindPeerWithCmid(cmid).Events.Lobby.SendUpdateInboxMessages(messageId);
 		}
 
 		protected override void OnUpdateInboxRequests(CommPeer peer, int cmid) {
-			FindPeerWithCmid(cmid).Lobby.Events.SendUpdateInboxRequests();
+			FindPeerWithCmid(cmid).Events.Lobby.SendUpdateInboxRequests();
 		}
 
 		protected override void OnUpdateNaughtyList(CommPeer peer) {
