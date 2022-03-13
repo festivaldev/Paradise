@@ -1,0 +1,119 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{22FDAD5E-EE61-4817-BF68-E06EA27F609E}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Paradise.Realtime.Server.Game</RootNamespace>
+    <AssemblyName>Paradise.Realtime.Server.Game</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\photon\deploy\Paradise.Realtime.Server.Game\bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ExitGames.Logging.Log4Net, Version=1.0.4.0, Culture=neutral, PublicKeyToken=eac0edd9746a4aa0, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\photon\lib\ExitGames.Logging.Log4Net.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=1.2.13.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\photon\lib\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Photon.SocketServer, Version=4.0.28.11245, Culture=neutral, PublicKeyToken=48c2fa3b6988090e, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\photon\lib\Photon.SocketServer.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonHostRuntimeInterfaces">
+      <HintPath>..\photon\lib\PhotonHostRuntimeInterfaces.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>K:\Steam\steamapps\common\UberStrike\UberStrike_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseGamePeerOperationsHandler.cs" />
+    <Compile Include="BaseGameRoomOperationsHandler.cs" />
+    <Compile Include="EventArgs.cs" />
+    <Compile Include="GameActor.cs" />
+    <Compile Include="GameApplication.cs" />
+    <Compile Include="GamePeer.cs" />
+    <Compile Include="GamePeerEvents.cs" />
+    <Compile Include="GamePeerOperationsHandler.cs" />
+    <Compile Include="Managers\PowerUpManager.cs" />
+    <Compile Include="Rooms\BaseGameRoom.cs" />
+    <Compile Include="Rooms\DeathmatchGameRoom.cs" />
+    <Compile Include="Rooms\GameRoomEvents.cs" />
+    <Compile Include="Rooms\GameRoomManager.cs" />
+    <Compile Include="Rooms\TeamDeathmatchGameRoom.cs" />
+    <Compile Include="Rooms\TeamEliminationGameRoom.cs" />
+    <Compile Include="Managers\ShopManager.cs" />
+    <Compile Include="Managers\SpawnPointManager.cs" />
+    <Compile Include="States\GamePeerState.cs" />
+    <Compile Include="States\GameRoomState.cs" />
+    <Compile Include="States\Peer\CountdownGamePeerState.cs" />
+    <Compile Include="States\Peer\KilledGamePeerState.cs" />
+    <Compile Include="States\Peer\OverviewGamePeerState.cs" />
+    <Compile Include="States\Peer\PlayingGamePeerState.cs" />
+    <Compile Include="States\Peer\WaitingForPlayersGamePeerState.cs" />
+    <Compile Include="States\Room\CountdownGameRoomState.cs" />
+    <Compile Include="States\Room\EndGameRoomState.cs" />
+    <Compile Include="States\Room\RunningGameRoomState.cs" />
+    <Compile Include="States\Room\WaitingForPlayersGameRoomState.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Paradise.Realtime.Server\Paradise.Realtime.Server.csproj">
+      <Project>{636c9ced-df34-4d5d-8220-0fbc70da61da}</Project>
+      <Name>Paradise.Realtime.Server</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Paradise.Realtime\Paradise.Realtime.csproj">
+      <Project>{fa183070-d408-4f5e-9867-78d394bce878}</Project>
+      <Name>Paradise.Realtime</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Paradise.WebServices.Client\Paradise.WebServices.Client.csproj">
+      <Project>{F4E4534A-1A69-4A38-BD57-B05CE9BD79FE}</Project>
+      <Name>Paradise.WebServices.Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Paradise\Paradise.csproj">
+      <Project>{2c90e774-49b8-4d1e-ba6d-fa9f47b647fb}</Project>
+      <Name>Paradise</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

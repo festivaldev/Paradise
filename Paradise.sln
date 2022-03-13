@@ -1,4 +1,4 @@
-
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32210.238
@@ -31,6 +31,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.Realtime.Server", "Paradise.Realtime.Server\Paradise.Realtime.Server.csproj", "{636C9CED-DF34-4D5D-8220-0FBC70DA61DA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.Realtime.Server.Comm", "Paradise.Realtime.Server.Comm\Paradise.Realtime.Server.Comm.csproj", "{990DDD0B-F3ED-4F1F-AFA4-9C468C97AE21}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.Realtime.Server.Game", "Paradise.Realtime.Server.Game\Paradise.Realtime.Server.Game.csproj", "{22FDAD5E-EE61-4817-BF68-E06EA27F609E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +72,10 @@ Global
 		{990DDD0B-F3ED-4F1F-AFA4-9C468C97AE21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{990DDD0B-F3ED-4F1F-AFA4-9C468C97AE21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{990DDD0B-F3ED-4F1F-AFA4-9C468C97AE21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22FDAD5E-EE61-4817-BF68-E06EA27F609E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22FDAD5E-EE61-4817-BF68-E06EA27F609E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22FDAD5E-EE61-4817-BF68-E06EA27F609E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22FDAD5E-EE61-4817-BF68-E06EA27F609E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -83,6 +89,7 @@ Global
 		{FA183070-D408-4F5E-9867-78D394BCE878} = {1DE98231-C9C1-40E5-BA2C-36EF3EE279F1}
 		{636C9CED-DF34-4D5D-8220-0FBC70DA61DA} = {1DE98231-C9C1-40E5-BA2C-36EF3EE279F1}
 		{990DDD0B-F3ED-4F1F-AFA4-9C468C97AE21} = {1DE98231-C9C1-40E5-BA2C-36EF3EE279F1}
+		{22FDAD5E-EE61-4817-BF68-E06EA27F609E} = {1DE98231-C9C1-40E5-BA2C-36EF3EE279F1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {01D488D9-E484-4D63-9C63-4AA83D296AA8}

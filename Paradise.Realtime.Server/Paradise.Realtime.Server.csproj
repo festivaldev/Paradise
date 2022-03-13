@@ -63,8 +63,11 @@
     <Compile Include="BaseOperationHandler.cs" />
     <Compile Include="BasePeer.cs" />
     <Compile Include="IRoom.cs" />
+    <Compile Include="IState.cs" />
+    <Compile Include="Loop.cs" />
     <Compile Include="PeerConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StateMachine.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Paradise.Realtime\Paradise.Realtime.csproj">

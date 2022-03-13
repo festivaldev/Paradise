@@ -44,6 +44,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BalancingLoopScheduler.cs" />
+    <Compile Include="BaseTimer.cs" />
+    <Compile Include="Countdown.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="Core\Models\AchievementType.cs" />
     <Compile Include="Core\Models\BodyPart.cs" />
@@ -461,11 +464,14 @@
     <Compile Include="DataCenter\Common\Entities\UberstrikeWeaponModConfigView.cs" />
     <Compile Include="DataCenter\Common\Entities\WeeklySpecialView.cs" />
     <Compile Include="DataCenter\Common\PrizeElementView.cs" />
+    <Compile Include="FixedTimer.cs" />
     <Compile Include="ILoop.cs" />
     <Compile Include="ILoopScheduler.cs" />
+    <Compile Include="ITimer.cs" />
     <Compile Include="Loop.cs" />
     <Compile Include="LoopScheduler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Timer.cs" />
     <Compile Include="Util\Ciphers\CryptographyPolicy.cs" />
     <Compile Include="Util\Ciphers\RijndaelCipher.cs" />
   </ItemGroup>
