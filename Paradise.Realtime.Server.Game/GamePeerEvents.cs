@@ -8,10 +8,10 @@ namespace Paradise.Realtime.Server.Game {
 	public class GamePeerEvents : BaseEventSender {
 		private static readonly ILog Log = LogManager.GetLogger(typeof(GamePeerEvents));
 
-		public GameRoomEvents Room { get; private set; }
+		public GameRoomEvents Game { get; private set; }
 
 		public GamePeerEvents(GamePeer peer) : base(peer) {
-			Room = new GameRoomEvents(peer);
+			Game = new GameRoomEvents(peer);
 		}
 
 		public void SendHeartbeatChallenge(string challengeHash) {
@@ -103,6 +103,5 @@ namespace Paradise.Realtime.Server.Game {
 				SendEvent((byte)IGamePeerEventsType.DisconnectAndDisablePhoton, bytes);
 			}
 		}
-
 	}
 }

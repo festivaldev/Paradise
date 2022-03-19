@@ -1,11 +1,13 @@
-using log4net;
+﻿using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Serialization;
 using Paradise.Core.Types;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
@@ -144,21 +146,15 @@ namespace Paradise.Realtime.Server.Game {
 		private void JoinGame(GamePeer peer, MemoryStream bytes) {
 			var team = EnumProxy<TeamID>.Deserialize(bytes);
 
-			DebugOperation(peer, team);
-
 			OnJoinGame(peer, team);
 		}
 
 		private void JoinAsSpectator(GamePeer peer, MemoryStream bytes) {
-			DebugOperation(peer);
-
 			OnJoinAsSpectator(peer);
 		}
 
 		private void PowerUpRespawnTimes(GamePeer peer, MemoryStream bytes) {
 			var respawnTimes = ListProxy<ushort>.Deserialize(bytes, UInt16Proxy.Deserialize);
-
-			DebugOperation(peer, respawnTimes);
 
 			OnPowerUpRespawnTimes(peer, respawnTimes);
 		}
@@ -168,8 +164,6 @@ namespace Paradise.Realtime.Server.Game {
 			var type = ByteProxy.Deserialize(bytes);
 			var value = ByteProxy.Deserialize(bytes);
 
-			DebugOperation(peer, powerupId, type, value);
-
 			OnPowerUpPicked(peer, powerupId, type, value);
 		}
 
@@ -177,15 +171,11 @@ namespace Paradise.Realtime.Server.Game {
 			var health = ByteProxy.Deserialize(bytes);
 			var armor = ByteProxy.Deserialize(bytes);
 
-			DebugOperation(peer, health, armor);
-
 			OnIncreaseHealthAndArmor(peer, health, armor);
 		}
 
 		private void OpenDoor(GamePeer peer, MemoryStream bytes) {
 			var doorId = Int32Proxy.Deserialize(bytes);
-
-			DebugOperation(peer, doorId);
 
 			OnOpenDoor(peer, doorId);
 		}
@@ -195,14 +185,10 @@ namespace Paradise.Realtime.Server.Game {
 			var positions = ListProxy<Vector3>.Deserialize(bytes, Vector3Proxy.Deserialize);
 			var rotations = ListProxy<byte>.Deserialize(bytes, ByteProxy.Deserialize);
 
-			DebugOperation(peer, team, positions, rotations);
-
 			OnSpawnPositions(peer, team, positions, rotations);
 		}
 
 		private void RespawnRequest(GamePeer peer, MemoryStream bytes) {
-			DebugOperation(peer);
-
 			OnRespawnRequest(peer);
 		}
 
@@ -210,8 +196,6 @@ namespace Paradise.Realtime.Server.Game {
 			var target = Int32Proxy.Deserialize(bytes);
 			var bodyPart = ByteProxy.Deserialize(bytes);
 			var bullets = ByteProxy.Deserialize(bytes);
-
-			DebugOperation(peer, target, bodyPart, bullets);
 
 			OnDirectHitDamage(peer, target, bodyPart, bullets);
 		}
@@ -222,29 +206,21 @@ namespace Paradise.Realtime.Server.Game {
 			var distance = ByteProxy.Deserialize(bytes);
 			var force = Vector3Proxy.Deserialize(bytes);
 
-			DebugOperation(peer, target, slot, distance, force);
-
 			OnExplosionDamage(peer, target, slot, distance, force);
 		}
 
 		private void DirectDamage(GamePeer peer, MemoryStream bytes) {
 			var damage = UInt16Proxy.Deserialize(bytes);
 
-			DebugOperation(peer, damage);
-
 			OnDirectDamage(peer, damage);
 		}
 
 		private void DirectDeath(GamePeer peer, MemoryStream bytes) {
-			DebugOperation(peer);
-
 			OnDirectDeath(peer);
 		}
 
 		private void Jump(GamePeer peer, MemoryStream bytes) {
 			var position = Vector3Proxy.Deserialize(bytes);
-
-			DebugOperation(peer, position);
 
 			OnJump(peer, position);
 		}
@@ -256,15 +232,11 @@ namespace Paradise.Realtime.Server.Game {
 			var vrot = ByteProxy.Deserialize(bytes);
 			var moveState = ByteProxy.Deserialize(bytes);
 
-			//DebugOperation(peer, position, velocity, hrot, vrot, moveState);
-
 			OnUpdatePositionAndRotation(peer, position, velocity, hrot, vrot, moveState);
 		}
 
 		private void KickPlayer(GamePeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
-
-			DebugOperation(peer, cmid);
 
 			OnKickPlayer(peer, cmid);
 		}
@@ -272,15 +244,11 @@ namespace Paradise.Realtime.Server.Game {
 		private void IsFiring(GamePeer peer, MemoryStream bytes) {
 			var on = BooleanProxy.Deserialize(bytes);
 
-			DebugOperation(peer, on);
-
 			OnIsFiring(peer, on);
 		}
 
 		private void IsReadyForNextMatch(GamePeer peer, MemoryStream bytes) {
 			var on = BooleanProxy.Deserialize(bytes);
-
-			DebugOperation(peer, on);
 
 			OnIsReadyForNextMatch(peer, on);
 		}
@@ -288,36 +256,26 @@ namespace Paradise.Realtime.Server.Game {
 		private void IsPaused(GamePeer peer, MemoryStream bytes) {
 			var on = BooleanProxy.Deserialize(bytes);
 
-			DebugOperation(peer, on);
-
 			OnIsPaused(peer, on);
 		}
 
 		private void IsInSniperMode(GamePeer peer, MemoryStream bytes) {
 			var on = BooleanProxy.Deserialize(bytes);
 
-			DebugOperation(peer, on);
-
 			OnIsInSniperMode(peer, on);
 		}
 
 		private void SingleBulletFire(GamePeer peer, MemoryStream bytes) {
-			DebugOperation(peer);
-
 			OnSingleBulletFire(peer);
 		}
 
 		private void SwitchWeapon(GamePeer peer, MemoryStream bytes) {
 			var weaponSlot = ByteProxy.Deserialize(bytes);
 
-			DebugOperation(peer, weaponSlot);
-
 			OnSwitchWeapon(peer, weaponSlot);
 		}
 
 		private void SwitchTeam(GamePeer peer, MemoryStream bytes) {
-			DebugOperation(peer);
-
 			OnSwitchTeam(peer);
 		}
 
@@ -330,8 +288,6 @@ namespace Paradise.Realtime.Server.Game {
 			var boots = Int32Proxy.Deserialize(bytes);
 			var holo = Int32Proxy.Deserialize(bytes);
 
-			DebugOperation(peer, head, face, upperBody, lowerBody, gloves, boots, holo);
-
 			OnChangeGear(peer, head, face, upperBody, lowerBody, gloves, boots, holo);
 		}
 
@@ -341,8 +297,6 @@ namespace Paradise.Realtime.Server.Game {
 			var slot = ByteProxy.Deserialize(bytes);
 			var projectileID = Int32Proxy.Deserialize(bytes);
 			var explode = BooleanProxy.Deserialize(bytes);
-
-			DebugOperation(peer, origin, direction, slot, projectileID, explode);
 
 			OnEmitProjectile(peer, origin, direction, slot, projectileID, explode);
 		}
@@ -354,8 +308,6 @@ namespace Paradise.Realtime.Server.Game {
 			var playerNumber = ByteProxy.Deserialize(bytes);
 			var projectileID = Int32Proxy.Deserialize(bytes);
 
-			DebugOperation(peer, origin, direction, itemId, playerNumber, projectileID);
-
 			OnEmitQuickItem(peer, origin, direction, itemId, playerNumber, projectileID);
 		}
 
@@ -363,16 +315,12 @@ namespace Paradise.Realtime.Server.Game {
 			var projectileId = Int32Proxy.Deserialize(bytes);
 			var explode = BooleanProxy.Deserialize(bytes);
 
-			DebugOperation(peer, projectileId, explode);
-
 			OnRemoveProjectile(peer, projectileId, explode);
 		}
 
 		private void HitFeedback(GamePeer peer, MemoryStream bytes) {
 			var targetCmid = Int32Proxy.Deserialize(bytes);
 			var force = Vector3Proxy.Deserialize(bytes);
-
-			DebugOperation(peer, targetCmid, force);
 
 			OnHitFeedback(peer, targetCmid, force);
 		}
@@ -383,8 +331,6 @@ namespace Paradise.Realtime.Server.Game {
 			var scrapsLifeTime = Int32Proxy.Deserialize(bytes);
 			var isInstant = BooleanProxy.Deserialize(bytes);
 
-			DebugOperation(peer, logic, robotLifeTime, scrapsLifeTime, isInstant);
-
 			OnActivateQuickItem(peer, logic, robotLifeTime, scrapsLifeTime, isInstant);
 		}
 
@@ -392,15 +338,7 @@ namespace Paradise.Realtime.Server.Game {
 			var message = StringProxy.Deserialize(bytes);
 			var context = ByteProxy.Deserialize(bytes);
 
-			DebugOperation(peer, message, context);
-
 			OnChatMessage(peer, message, context);
-		}
-
-		private void DebugOperation(params object[] data) {
-#if DEBUG
-			Log.Info($"[{DateTime.UtcNow.ToString("o")}] {GetType().Name}:{new StackTrace().GetFrame(1).GetMethod().Name} -> {string.Join(", ", data)}");
-#endif
 		}
 	}
 }

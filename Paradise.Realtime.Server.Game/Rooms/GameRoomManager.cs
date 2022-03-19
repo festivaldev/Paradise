@@ -1,8 +1,9 @@
-using log4net;
+﻿using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Types;
 using System;
 using System.Collections.Generic;
+using System.Collections.Concurrent;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameRoomManager : IDisposable {
@@ -33,30 +34,32 @@ namespace Paradise.Realtime.Server.Game {
 			}
 
 			BaseGameRoom room = null;
-			 try {
-				switch (data.GameMode) {
-					case GameModeType.DeathMatch:
-						room = new DeathmatchGameRoom(data, LoopScheduler);
-						break;
-					case GameModeType.TeamDeathMatch:
-						room = new TeamDeathmatchGameRoom(data, LoopScheduler);
-						break;
-					case GameModeType.EliminationMode:
-						room = new TeamEliminationGameRoom(data, LoopScheduler);
-						break;
-					default:
-						throw new NotSupportedException();
-				}
-			 } catch {
-			 	room?.Dispose();
-			 	throw;
-			 }
+			try {
+				//switch (data.GameMode) {
+				//	case GameModeType.DeathMatch:
+				//		//room = new DeathmatchGameRoom(data, LoopScheduler);
+				//		//break;
+				//	case GameModeType.TeamDeathMatch:
+				//		//room = new TeamDeathmatchGameRoom(data, LoopScheduler);
+				//		//break;
+				//	case GameModeType.EliminationMode:
+				//		//room = new TeamEliminationGameRoom(data, LoopScheduler);
+				//		//break;
+				//	default:
+				//		throw new NotSupportedException();
+				//}
+
+				room = new TestGameRoom(data, LoopScheduler);
+			} catch {
+				room?.Dispose();
+				throw;
+			}
 
 			lock (Lock) {
-				room.Number = LastRoomId++;
+				room.RoomId = LastRoomId++;
 				room.Password = password;
 
-				Rooms.Add(room.Number, room);
+				Rooms.Add(room.RoomId, room);
 				UpdatedRooms.Add(room.MetaData);
 
 				Log.Info($"Created {room}");
@@ -69,6 +72,13 @@ namespace Paradise.Realtime.Server.Game {
 			var room = default(BaseGameRoom);
 			Rooms.TryGetValue(roomId, out room);
 			return room;
+		}
+
+		public void RemoveRoom(int roomId) {
+			if (Rooms.ContainsKey(roomId)) {
+				Rooms[roomId].Dispose();
+				Rooms.Remove(roomId);
+			}
 		}
 
 

@@ -3,12 +3,8 @@ using Paradise.Core.Models;
 using Paradise.Core.Serialization;
 using Paradise.Core.Types;
 using Paradise.DataCenter.Common.Entities;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
@@ -102,7 +98,6 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		public void SendAllPlayers(List<GameActorInfo> allPlayers, List<PlayerMovement> allPositions, ushort gameframe) {
-			Log.Info($"send all players to {Peer}");
 			using (var bytes = new MemoryStream()) {
 				ListProxy<GameActorInfo>.Serialize(bytes, allPlayers, GameActorInfoProxy.Serialize);
 				ListProxy<PlayerMovement>.Serialize(bytes, allPositions, PlayerMovementProxy.Serialize);

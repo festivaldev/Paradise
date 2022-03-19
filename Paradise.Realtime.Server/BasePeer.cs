@@ -79,6 +79,9 @@ namespace Paradise.Realtime.Server {
 				using (var bytes = new MemoryStream(data)) {
 					try {
 						handler.OnOperationRequest(this, operationRequest.OperationCode, bytes);
+					} catch (NotImplementedException ex) {
+						var stackTrace = new System.Diagnostics.StackTrace(ex);
+						Log.Warn($"Not Implemented: {handler.GetType().Name}:{stackTrace.GetFrame(0).GetMethod().Name}");
 					} catch (Exception ex) {
 						Log.Error($"Error while handling request {handler.GetType().Name}:{handlerId} -> OpCode: {operationRequest.OperationCode}", ex);
 					}

@@ -1,8 +1,7 @@
-using log4net;
+﻿using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Serialization;
 using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace Paradise.Realtime.Server.Game {
@@ -83,29 +82,20 @@ namespace Paradise.Realtime.Server.Game {
 		private void SendHeartbeatResponse(GamePeer peer, MemoryStream bytes) {
 			var authToken = StringProxy.Deserialize(bytes);
 			var magicHash = StringProxy.Deserialize(bytes);
-
-			DebugOperation(peer, authToken, magicHash);
-
 			OnSendHeartbeatResponse(peer, authToken, magicHash);
 		}
 
 		private void GetServerLoad(GamePeer peer, MemoryStream bytes) {
-			DebugOperation(peer);
-
 			OnGetServerLoad(peer);
 		}
 
 		private void GetGameInformation(GamePeer peer, MemoryStream bytes) {
 			var number = Int32Proxy.Deserialize(bytes);
 
-			DebugOperation(peer, number);
-
 			OnGetGameInformation(peer, number);
 		}
 
 		private void GetGameListUpdates(GamePeer peer, MemoryStream bytes) {
-			DebugOperation(peer);
-
 			OnGetGameListUpdates(peer);
 		}
 
@@ -115,8 +105,6 @@ namespace Paradise.Realtime.Server.Game {
 			var clientVersion = StringProxy.Deserialize(bytes);
 			var authToken = StringProxy.Deserialize(bytes);
 			var magicHash = StringProxy.Deserialize(bytes);
-
-			DebugOperation(peer, roomId, password, clientVersion, authToken, magicHash);
 
 			OnEnterRoom(peer, roomId, password, clientVersion, authToken, magicHash);
 		}
@@ -128,14 +116,10 @@ namespace Paradise.Realtime.Server.Game {
 			var authToken = StringProxy.Deserialize(bytes);
 			var magicHash = StringProxy.Deserialize(bytes);
 
-			DebugOperation(peer, metaData, password, clientVersion, authToken, magicHash);
-
 			OnCreateRoom(peer, metaData, password, clientVersion, authToken, magicHash);
 		}
 
 		private void LeaveRoom(GamePeer peer, MemoryStream bytes) {
-			DebugOperation(peer);
-
 			OnLeaveRoom(peer);
 		}
 
@@ -144,8 +128,6 @@ namespace Paradise.Realtime.Server.Game {
 			var authToken = StringProxy.Deserialize(bytes);
 			var magicHash = StringProxy.Deserialize(bytes);
 
-			DebugOperation(peer, roomId, authToken, magicHash);
-
 			OnCloseRoom(peer, roomId, authToken, magicHash);
 		}
 
@@ -153,16 +135,12 @@ namespace Paradise.Realtime.Server.Game {
 			var roomId = Int32Proxy.Deserialize(bytes);
 			var authToken = StringProxy.Deserialize(bytes);
 
-			DebugOperation(peer, roomId, authToken);
-
 			OnInspectRoom(peer, roomId, authToken);
 		}
 
 		private void ReportPlayer(GamePeer peer, MemoryStream bytes) {
 			var cmid = Int32Proxy.Deserialize(bytes);
 			var authToken = StringProxy.Deserialize(bytes);
-
-			DebugOperation(peer, cmid, authToken);
 
 			OnReportPlayer(peer, cmid, authToken);
 		}
@@ -172,29 +150,21 @@ namespace Paradise.Realtime.Server.Game {
 			var authToken = StringProxy.Deserialize(bytes);
 			var magicHash = StringProxy.Deserialize(bytes);
 
-			DebugOperation(peer, cmid, authToken, magicHash);
-
 			OnKickPlayer(peer, cmid, authToken, magicHash);
 		}
 
 		private void UpdateLoadout(GamePeer peer, MemoryStream bytes) {
-			DebugOperation(peer);
-
 			OnUpdateLoadout(peer);
 		}
 
 		private void UpdatePing(GamePeer peer, MemoryStream bytes) {
 			var ping = UInt16Proxy.Deserialize(bytes);
 
-			//DebugOperation(peer, ping);
-
 			OnUpdatePing(peer, ping);
 		}
 
 		private void UpdateKeyState(GamePeer peer, MemoryStream bytes) {
 			var state = ByteProxy.Deserialize(bytes);
-
-			//DebugOperation(peer, state);
 
 			OnUpdateKeyState(peer, state);
 		}
@@ -203,15 +173,7 @@ namespace Paradise.Realtime.Server.Game {
 			var authToken = StringProxy.Deserialize(bytes);
 			var magicHash = StringProxy.Deserialize(bytes);
 
-			DebugOperation(peer, authToken, magicHash);
-
 			OnRefreshBackendData(peer, authToken, magicHash);
-		}
-
-		private void DebugOperation(params object[] data) {
-#if DEBUG
-			Log.Info($"[{DateTime.UtcNow.ToString("o")}] {GetType().Name}:{new StackTrace().GetFrame(1).GetMethod().Name} -> {string.Join(", ", data)}");
-#endif
 		}
 	}
 }

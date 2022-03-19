@@ -4,5 +4,5 @@ obj/
 packages/
 photon/*
 release-test/
-realtime old/
 node_modules/
+*.old/

@@ -8,6 +8,8 @@ namespace Paradise.Realtime.Server.Game {
 		public PlayerMovement Movement { get; private set; }
 		public DamageEvent Damage { get; private set; }
 
+		public GameActorInfoDelta Delta => Info.Delta;
+
 		public TeamID Team {
 			get { return Info.TeamID; }
 			set { Info.TeamID = value; }
@@ -25,14 +27,16 @@ namespace Paradise.Realtime.Server.Game {
 		public string PlayerName => Info.PlayerName;
 		public MemberAccessLevel AccessLevel => Info.AccessLevel;
 
-		public GameActor(GameActorInfo data) {
-			if (data == null) {
-				throw new ArgumentNullException(nameof(data));
+		public GameActor(GameActorInfo actorInfo) {
+			if (actorInfo == null) {
+				throw new ArgumentNullException(nameof(actorInfo));
 			}
 
-			Info = data;
+			Info = actorInfo;
 			Movement = new PlayerMovement();
 			Damage = new DamageEvent();
+
+			Info.Delta.Id = actorInfo.PlayerId;
 		}
 	}
 }

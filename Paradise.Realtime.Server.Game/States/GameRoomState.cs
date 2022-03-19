@@ -7,7 +7,9 @@ namespace Paradise.Realtime.Server.Game {
 			WaitingForPlayers,
 			Countdown,
 			Running,
-			End
+			End,
+
+			Debug
 		}
 
 		protected BaseGameRoom Room { get; private set; }

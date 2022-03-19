@@ -1,4 +1,4 @@
-using Photon.SocketServer;
+﻿using Photon.SocketServer;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameApplication : BaseApplication {
@@ -9,8 +9,8 @@ namespace Paradise.Realtime.Server.Game {
 		public int Peers {
 			get {
 				var count = 0;
-				foreach (var room in RoomManager.Rooms) {
-					count += room.Value.Peers.Count;
+				foreach (var room in RoomManager.Rooms.Values) {
+					count += room.Peers.Count;
 				}
 				return count;
 			}
@@ -19,16 +19,14 @@ namespace Paradise.Realtime.Server.Game {
 		public int Players {
 			get {
 				var count = 0;
-				foreach (var room in RoomManager.Rooms) {
-					count += room.Value.Players.Count;
+				foreach (var room in RoomManager.Rooms.Values) {
+					count += room.Players.Count;
 				}
 				return count;
 			}
 		}
 
 		protected override PeerBase OnCreatePeer(InitRequest initRequest) {
-			Log.Info($"Accepted new connection at {initRequest.RemoteIP}:{initRequest.RemotePort}");
-
 			return new GamePeer(initRequest);
 		}
 

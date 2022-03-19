@@ -89,6 +89,15 @@ namespace Paradise.Core.Models {
 
 		public readonly Dictionary<GameActorInfoDelta.Keys, object> Changes = new Dictionary<GameActorInfoDelta.Keys, object>();
 
+		public void UpdateDeltaMask()
+        {
+            var mask = 0;
+            foreach (var key in Changes.Keys)
+                mask |= 1 << (int)key;
+
+            DeltaMask = mask;
+        }
+
 		public enum Keys {
 			AccessLevel,
 			ArmorPointCapacity,

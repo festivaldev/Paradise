@@ -1,9 +1,11 @@
 ﻿using log4net;
+using log4net.Appender;
 using log4net.Config;
 using Newtonsoft.Json;
 using Photon.SocketServer;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace Paradise.Realtime.Server {
 	public abstract class BaseApplication : ApplicationBase {
@@ -27,6 +29,12 @@ namespace Paradise.Realtime.Server {
 			var configFile = new FileInfo(Path.Combine(BinaryPath, "log4net.config"));
 			if (configFile.Exists) {
 				XmlConfigurator.ConfigureAndWatch(configFile);
+			}
+
+			var logFile = LogManager.GetRepository().GetAppenders().OfType<FileAppender>().FirstOrDefault()?.File;
+
+			if (logFile != null) {
+				File.WriteAllText(logFile, "");
 			}
 
 			var applicationConfigPath = Path.Combine(BinaryPath, "Paradise.Realtime.Server.json");
