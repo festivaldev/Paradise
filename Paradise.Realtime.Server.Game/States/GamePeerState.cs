@@ -8,7 +8,9 @@ namespace Paradise.Realtime.Server.Game {
 			WaitingForPlayers,
 			Countdown,
 			Playing,
-			Killed
+			Killed,
+
+			Debug
 		}
 
 		protected GamePeer Peer { get; private set; }

@@ -19,17 +19,17 @@ namespace Paradise.Realtime.Server.Game {
 				return;
 			}
 
-			var userWebServiceClient = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl);
-
 			peer.Authenticate(authToken, magicHash);
-			peer.Member = userWebServiceClient.GetMember(authToken);
+
+			var userWebServiceClient = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl);
+			peer.Member = userWebServiceClient.GetMember(peer.AuthToken);
+			peer.Loadout = userWebServiceClient.GetLoadout(peer.AuthToken);
 
 			var room = default(BaseGameRoom);
 			try {
 				room = GameApplication.Instance.RoomManager.CreateRoom(metaData, password);
 			} catch (NotSupportedException e) {
 				peer.Events.SendRoomEnterFailed(string.Empty, -1, "There was an error creating the game room: Unsupported game mode.");
-
 				return;
 			} catch (Exception e) {
 #if !DEBUG
@@ -40,7 +40,12 @@ namespace Paradise.Realtime.Server.Game {
 				return;
 			}
 
-			room.Join(peer);
+			try {
+				room.Join(peer);
+			} catch (Exception e) {
+				peer.Events.SendRoomEnterFailed(string.Empty, -1, "Failed to join game room.");
+				GameApplication.Instance.RoomManager.RemoveRoom(room.RoomId);
+			}
 		}
 
 		protected override void OnEnterRoom(GamePeer peer, int roomId, string password, string clientVersion, string authToken, string magicHash) {
@@ -49,10 +54,11 @@ namespace Paradise.Realtime.Server.Game {
 				return;
 			}
 
-			var userWebServiceClient = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl);
-
 			peer.Authenticate(authToken, magicHash);
-			peer.Member = userWebServiceClient.GetMember(authToken);
+
+			var userWebServiceClient = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl);
+			peer.Member = userWebServiceClient.GetMember(peer.AuthToken);
+			peer.Loadout = userWebServiceClient.GetLoadout(peer.AuthToken);
 
 			var room = GameApplication.Instance.RoomManager.GetRoom(roomId);
 			if (room != null) {

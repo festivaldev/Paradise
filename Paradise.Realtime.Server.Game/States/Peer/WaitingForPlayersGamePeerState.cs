@@ -1,4 +1,5 @@
 using log4net;
+using System;
 
 namespace Paradise.Realtime.Server.Game {
 	public class WaitingForPlayersGamePeerState : GamePeerState {

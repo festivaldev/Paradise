@@ -2,11 +2,24 @@
 using Paradise.Core.Types;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
 	public abstract partial class BaseGameRoom : BaseGameRoomOperationsHandler, IRoom<GamePeer>, IDisposable {
 		protected override void OnJoinGame(GamePeer peer, TeamID team) {
+			peer.Actor.Team = team;
+			peer.Actor.Info.Health = 100;
+			peer.Actor.Info.Ping = (ushort)(peer.RoundTripTime / 2);
+			peer.Actor.Info.PlayerState = PlayerStates.Ready;
+			peer.Actor.Info.SkinColor = Color.white;
+
+			lock (_peers) {
+				if (_players.FirstOrDefault(_ => _.Cmid == peer.Actor.Cmid) == null) {
+					_players.Add(peer.Actor);
+				}
+			}
+
 			OnPlayerJoined(new PlayerJoinedEventArgs {
 				Player = peer,
 				Team = team
@@ -38,11 +51,51 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnRespawnRequest(GamePeer peer) {
-			throw new NotImplementedException();
+			OnPlayerRespawned(new PlayerRespawnedEventArgs { Player = peer });
 		}
 
 		protected override void OnDirectHitDamage(GamePeer peer, int target, byte bodyPart, byte bullets) {
-			throw new NotImplementedException();
+			foreach (var otherPeer in Peers) {
+				if (otherPeer.Actor.Cmid != target) continue;
+
+				// TODO: Actual damage calculation
+				var damage = 10;
+
+				var shortDamage = (short)damage;
+
+				var victimPos = otherPeer.Actor.Movement.Position;
+				var attackerPos = peer.Actor.Movement.Position;
+
+				var direction = attackerPos - victimPos;
+				var back = new Vector3(0, 0, -1);
+
+				var angle = Vector3.Angle(direction, back);
+				if (direction.x < 0)
+					angle = 360 - angle;
+
+				var byteAngle = Conversions.Angle2Byte(angle);
+
+				otherPeer.Actor.Damage.AddDamage(byteAngle, shortDamage, bodyPart, 0, 0);
+				otherPeer.Actor.Info.Health -= shortDamage;
+
+				if (otherPeer.Actor.Info.Health <= 0) {
+					otherPeer.Actor.Info.PlayerState |= PlayerStates.Dead;
+					otherPeer.Actor.Info.Deaths++;
+					peer.Actor.Info.Kills++;
+
+					//peer.IncrementKills(weapon.ItemClass, part);
+
+					//otherPeer.State.SetState(GamePeerState.Id.Killed);
+					OnPlayerKilled(new PlayerKilledEventArgs {
+						AttackerCmid = peer.Actor.Cmid,
+						VictimCmid = otherPeer.Actor.Cmid,
+						ItemClass = UberstrikeItemClass.WeaponHandgun,
+						Damage = (ushort)shortDamage,
+						Part = (BodyPart)bodyPart,
+						Direction = -NormalizeVector(direction)
+					});
+				}
+			}
 		}
 
 		protected override void OnExplosionDamage(GamePeer peer, int target, byte slot, byte distance, Vector3 force) {
@@ -84,7 +137,14 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnIsFiring(GamePeer peer, bool on) {
-			throw new NotImplementedException();
+			var state = peer.Actor.Info.PlayerState;
+			if (on) {
+				state |= PlayerStates.Shooting;
+			} else {
+				state &= ~PlayerStates.Shooting;
+			}
+
+			peer.Actor.Info.PlayerState = state;
 		}
 
 		protected override void OnIsReadyForNextMatch(GamePeer peer, bool on) {
@@ -92,20 +152,37 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnIsPaused(GamePeer peer, bool on) {
-			throw new NotImplementedException();
+			var state = peer.Actor.Info.PlayerState;
+			if (on) {
+				state |= PlayerStates.Paused;
+			} else {
+				state &= ~PlayerStates.Paused;
+			}
+
+			peer.Actor.Info.PlayerState = state;
 		}
 
 		protected override void OnIsInSniperMode(GamePeer peer, bool on) {
-			throw new NotImplementedException();
+			var state = peer.Actor.Info.PlayerState;
+			if (on) {
+				state |= PlayerStates.Sniping;
+			} else {
+				state &= ~PlayerStates.Sniping;
+			}
+
+			peer.Actor.Info.PlayerState = state;
 		}
 
 		protected override void OnSingleBulletFire(GamePeer peer) {
-			throw new NotImplementedException();
+			foreach (var otherPeer in Peers) {
+				if (peer.Actor.Cmid != otherPeer.Actor.Cmid) {
+					otherPeer.Events.Game.SendSingleBulletFire(peer.Actor.Cmid);
+				}
+			}
 		}
 
 		protected override void OnSwitchWeapon(GamePeer peer, byte weaponSlot) {
 			peer.Actor.Info.CurrentWeaponSlot = weaponSlot;
-			Log.Info($"changed weapon slot, delta count: {peer.Actor.Info.Delta.Changes.Count}");
 		}
 
 		protected override void OnSwitchTeam(GamePeer peer) {
@@ -137,7 +214,31 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnChatMessage(GamePeer peer, string message, byte context) {
-			throw new NotImplementedException();
+			var actor = peer.Actor;
+
+			var cmid = actor.Cmid;
+			var playerName = actor.Info.PlayerName;
+			var accessLevel = actor.Info.AccessLevel;
+
+			foreach (var otherPeer in Peers) {
+				if (otherPeer.Actor.Cmid != cmid) {
+					otherPeer.Events.Game.SendChatMessage(
+						cmid,
+						playerName,
+						message,
+						accessLevel,
+						context
+					);
+				}
+			}
+		}
+
+		private Vector3 NormalizeVector(Vector3 vector) {
+			float magnitude = vector.magnitude;
+			if (magnitude > 1E-05f) {
+				return vector / magnitude;
+			}
+			return new Vector3(0, 0, 0);
 		}
 	}
 }

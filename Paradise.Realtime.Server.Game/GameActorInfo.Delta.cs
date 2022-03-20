@@ -14,7 +14,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.Cmid != value) {
 					base.Cmid = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.Cmid, value);
+					Delta.Changes[GameActorInfoDelta.Keys.Cmid] = value;
 				}
 			}
 		}
@@ -24,7 +24,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.PlayerName != value) {
 					base.PlayerName = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.PlayerName, value);
+					Delta.Changes[GameActorInfoDelta.Keys.PlayerName] = value;
 				}
 			}
 		}
@@ -34,7 +34,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.AccessLevel != value) {
 					base.AccessLevel = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.AccessLevel, value);
+					Delta.Changes[GameActorInfoDelta.Keys.AccessLevel] = value;
 				}
 			}
 		}
@@ -44,7 +44,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.Channel != value) {
 					base.Channel = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.Channel, value);
+					Delta.Changes[GameActorInfoDelta.Keys.Channel] = value;
 				}
 			}
 		}
@@ -54,7 +54,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.ClanTag != value) {
 					base.ClanTag = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.ClanTag, value);
+					Delta.Changes[GameActorInfoDelta.Keys.ClanTag] = value;
 				}
 			}
 		}
@@ -64,7 +64,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.Rank != value) {
 					base.Rank = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.Rank, value);
+					Delta.Changes[GameActorInfoDelta.Keys.Rank] = value;
 				}
 			}
 		}
@@ -74,7 +74,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.PlayerId != value) {
 					base.PlayerId = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.PlayerId, value);
+					Delta.Changes[GameActorInfoDelta.Keys.PlayerId] = value;
 				}
 			}
 		}
@@ -84,7 +84,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.PlayerState != value) {
 					base.PlayerState = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.PlayerState, value);
+					Delta.Changes[GameActorInfoDelta.Keys.PlayerState] = value;
 				}
 			}
 		}
@@ -94,7 +94,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.Health != value) {
 					base.Health = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.Health, value);
+					Delta.Changes[GameActorInfoDelta.Keys.Health] = value;
 				}
 			}
 		}
@@ -104,7 +104,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.TeamID != value) {
 					base.TeamID = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.TeamID, value);
+					Delta.Changes[GameActorInfoDelta.Keys.TeamID] = value;
 				}
 			}
 		}
@@ -114,7 +114,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.Level != value) {
 					base.Level = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.Level, value);
+					Delta.Changes[GameActorInfoDelta.Keys.Level] = value;
 				}
 			}
 		}
@@ -124,7 +124,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.Ping != value) {
 					base.Ping = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.Ping, value);
+					Delta.Changes[GameActorInfoDelta.Keys.Ping] = value;
 				}
 			}
 		}
@@ -134,7 +134,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.CurrentWeaponSlot != value) {
 					base.CurrentWeaponSlot = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.CurrentWeaponSlot, value);
+					Delta.Changes[GameActorInfoDelta.Keys.CurrentWeaponSlot] = value;
 				}
 			}
 		}
@@ -144,7 +144,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.CurrentFiringMode != value) {
 					base.CurrentFiringMode = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.CurrentFiringMode, value);
+					Delta.Changes[GameActorInfoDelta.Keys.CurrentFiringMode] = value;
 				}
 			}
 		}
@@ -154,7 +154,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.ArmorPoints != value) {
 					base.ArmorPoints = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.ArmorPoints, value);
+					Delta.Changes[GameActorInfoDelta.Keys.ArmorPoints] = value;
 				}
 			}
 		}
@@ -164,7 +164,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.ArmorPointCapacity != value) {
 					base.ArmorPointCapacity = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.ArmorPointCapacity, value);
+					Delta.Changes[GameActorInfoDelta.Keys.ArmorPointCapacity] = value;
 				}
 			}
 		}
@@ -174,7 +174,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.SkinColor != value) {
 					base.SkinColor = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.SkinColor, value);
+					Delta.Changes[GameActorInfoDelta.Keys.SkinColor] = value;
 				}
 			}
 		}
@@ -184,7 +184,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.Kills != value) {
 					base.Kills = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.Kills, value);
+					Delta.Changes[GameActorInfoDelta.Keys.Kills] = value;
 				}
 			}
 		}
@@ -194,7 +194,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.Deaths != value) {
 					base.Deaths = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.Deaths, value);
+					Delta.Changes[GameActorInfoDelta.Keys.Deaths] = value;
 				}
 			}
 		}
@@ -204,7 +204,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.Weapons != value) {
 					base.Weapons = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.Weapons, value);
+					Delta.Changes[GameActorInfoDelta.Keys.Weapons] = value;
 				}
 			}
 		}
@@ -214,7 +214,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.Gear != value) {
 					base.Gear = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.Gear, value);
+					Delta.Changes[GameActorInfoDelta.Keys.Gear] = value;
 				}
 			}
 		}
@@ -224,7 +224,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.FunctionalItems != value) {
 					base.FunctionalItems = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.FunctionalItems, value);
+					Delta.Changes[GameActorInfoDelta.Keys.FunctionalItems] = value;
 				}
 			}
 		}
@@ -234,7 +234,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.QuickItems != value) {
 					base.QuickItems = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.QuickItems, value);
+					Delta.Changes[GameActorInfoDelta.Keys.QuickItems] = value;
 				}
 			}
 		}
@@ -244,7 +244,7 @@ namespace Paradise.Realtime.Server.Game {
 			set {
 				if (base.StepSound != value) {
 					base.StepSound = value;
-					Delta.Changes.Add(GameActorInfoDelta.Keys.StepSound, value);
+					Delta.Changes[GameActorInfoDelta.Keys.StepSound] = value;
 				}
 			}
 		}

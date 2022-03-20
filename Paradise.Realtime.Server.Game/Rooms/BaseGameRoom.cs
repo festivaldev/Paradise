@@ -10,8 +10,11 @@ namespace Paradise.Realtime.Server.Game {
 	public abstract partial class BaseGameRoom : BaseGameRoomOperationsHandler, IRoom<GamePeer>, IDisposable {
 		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseGameRoom));
 
-		public int RoomId;
 		public GameRoomData MetaData { get; private set; }
+		public int RoomId {
+			get { return MetaData.Number; }
+			set { MetaData.Number = value; }
+		}
 
 		private List<GamePeer> _peers = new List<GamePeer>();
 		public IReadOnlyList<GamePeer> Peers => _peers.AsReadOnly();
@@ -60,7 +63,7 @@ namespace Paradise.Realtime.Server.Game {
 			State.RegisterState(GameRoomState.Id.Countdown, new CountdownGameRoomState(this));
 			State.RegisterState(GameRoomState.Id.Running, new RunningGameRoomState(this));
 
-			State.SetState(GameRoomState.Id.WaitingForPlayers);
+			State.SetState(GameRoomState.Id.Debug);
 
 			Scheduler.Schedule(Loop);
 		}
@@ -118,8 +121,9 @@ namespace Paradise.Realtime.Server.Game {
 			peer.AddOperationHandler(this);
 
 			peer.Events.SendRoomEntered(MetaData);
+			peer.State.SetState(GamePeerState.Id.Debug);
 
-			peer.State.SetState(GamePeerState.Id.Overview);
+			MetaData.ConnectedPlayers = Peers.Count;
 		}
 
 		public void Leave(GamePeer peer) {
@@ -130,26 +134,19 @@ namespace Paradise.Realtime.Server.Game {
 			System.Diagnostics.Debug.Assert(peer.Room != null, "GamePeer is leaving room, but is not in any room.");
 			System.Diagnostics.Debug.Assert(peer.Room == this, "GamePeer is leaving room, but is not leaving the correct room.");
 
-			/* Let other peers know that the peer has left the room. */
-
 			foreach (var otherPeer in Peers) {
 				otherPeer.Events.Game.SendPlayerLeftGame(peer.Actor.Cmid);
-				//otherPeer.KnownActors.Remove(peer.Actor.Cmid);
 			}
-
-			//Actions.PlayerLeft(peer);
 
 			lock (_peers) {
 				_peers.Remove(peer);
 				_players.Remove(peer.Actor);
 
-				MetaData.ConnectedPlayers = Players.Count;
+				MetaData.ConnectedPlayers = Peers.Count;
 			}
 
-			/* Set peer state to none, and clean up. */
 			peer.State.SetState(GamePeerState.Id.None);
 			peer.RemoveOperationHandler(Id);
-			//peer.KnownActors.Clear();
 			peer.Actor = null;
 			peer.Room = null;
 		}
@@ -159,7 +156,6 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void OnTickError(Exception e) {
-
 			Log.Info("loop tick error", e);
 		}
 
@@ -174,14 +170,12 @@ namespace Paradise.Realtime.Server.Game {
 			if (disposing) {
 				Scheduler.Unschedule(Loop);
 
-				///* Best effort clean up. */
 				foreach (var peer in Peers) {
 					foreach (var player in Players) {
 						peer.Events.Game.SendPlayerLeftGame(player.Cmid);
 					}
 				}
 
-				///* Clean up actors. */
 				foreach (var peer in Peers) {
 					peer.Actor = null;
 					peer.RemoveOperationHandler(Id);
@@ -190,13 +184,15 @@ namespace Paradise.Realtime.Server.Game {
 					peer.Dispose();
 				}
 
-				///* Clear to lose refs to GameActor objects. */
 				_peers.Clear();
 				_players.Clear();
 			}
 
 			IsDisposed = true;
 		}
+
+
+
 		#region Events
 		protected virtual void OnMatchEnded(EventArgs args) {
 			MatchEnded?.Invoke(this, args);
@@ -207,7 +203,6 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected virtual void OnPlayerJoined(PlayerJoinedEventArgs args) {
-			Log.Info($"player joined: {args.Player}");
 			PlayerJoined?.Invoke(this, args);
 		}
 

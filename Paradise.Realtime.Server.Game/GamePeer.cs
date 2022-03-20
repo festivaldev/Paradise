@@ -18,6 +18,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			State = new StateMachine<GamePeerState.Id>();
 			State.RegisterState(GamePeerState.Id.None, null);
+			State.RegisterState(GamePeerState.Id.Debug, new DebugGamePeerState(this));
 			State.RegisterState(GamePeerState.Id.Overview, new OverviewGamePeerState(this));
 			State.RegisterState(GamePeerState.Id.WaitingForPlayers, new WaitingForPlayersGamePeerState(this));
 			State.RegisterState(GamePeerState.Id.Countdown, new CountdownGamePeerState(this));

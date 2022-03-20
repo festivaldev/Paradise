@@ -79,6 +79,7 @@
     <Compile Include="States\Game\WaitingForPlayersGameRoomState.cs" />
     <Compile Include="States\Peer\CountdownGamePeerState.cs" />
     <Compile Include="States\Peer\KilledGamePeerState.cs" />
+    <Compile Include="States\Peer\DebugGamePeerState.cs" />
     <Compile Include="States\Peer\OverviewGamePeerState.cs" />
     <Compile Include="States\Peer\PlayingGamePeerState.cs" />
     <Compile Include="States\Peer\WaitingForPlayersGamePeerState.cs" />
@@ -103,7 +104,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BaseGameRoom.Handler.cs" />
+    <Compile Include="Rooms\BaseGameRoom.Handlers.cs" />
     <None Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

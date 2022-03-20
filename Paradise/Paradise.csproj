@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="BalancingLoopScheduler.cs" />
     <Compile Include="BaseTimer.cs" />
+    <Compile Include="Conversions.cs" />
     <Compile Include="Countdown.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="Core\Models\AchievementType.cs" />

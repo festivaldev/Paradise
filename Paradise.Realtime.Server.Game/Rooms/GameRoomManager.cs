@@ -62,7 +62,7 @@ namespace Paradise.Realtime.Server.Game {
 				Rooms.Add(room.RoomId, room);
 				UpdatedRooms.Add(room.MetaData);
 
-				Log.Info($"Created {room}");
+				Log.Info($"Created {room}({room.RoomId})");
 			}
 
 			return room;
