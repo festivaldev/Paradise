@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.ServiceModel;
 
 namespace Paradise.WebServices.Services {
@@ -29,6 +30,23 @@ namespace Paradise.WebServices.Services {
 				gameConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data", "ApplicationConfiguration.json")));
 				defaultAppAuthentication = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data", "ApplicationData.json")));
 				mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data", "Maps.json")));
+
+				// Resolve them domains
+				try {
+					defaultAppAuthentication.CommServer.IP = Dns.GetHostAddresses(defaultAppAuthentication.CommServer.IP).FirstOrDefault().ToString();
+					Log.Debug(defaultAppAuthentication.CommServer.IP);
+				} catch (Exception e) {
+					Log.Error($"Failed to resolve CommServer IP: {e.Message}{Environment.NewLine}{e.StackTrace}");
+				}
+
+				try {
+					foreach (var gameServer in defaultAppAuthentication.GameServers) {
+						gameServer.IP = Dns.GetHostAddresses(gameServer.IP).FirstOrDefault().ToString();
+						Log.Debug(gameServer.IP);
+					}
+				} catch (Exception e) {
+					Log.Error($"Failed to resolve GameServer IP: {e.Message}{Environment.NewLine}{e.StackTrace}");
+				}
 			} catch (Exception e) {
 				Log.Error($"Failed to load {ServiceName} data: {e.Message}");
 			}
