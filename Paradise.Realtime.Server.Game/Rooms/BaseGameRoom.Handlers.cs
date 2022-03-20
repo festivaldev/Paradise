@@ -1,4 +1,5 @@
 ﻿using Paradise.Core.Models;
+using Paradise.Core.Models.Views;
 using Paradise.Core.Types;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ namespace Paradise.Realtime.Server.Game {
 		protected override void OnJoinGame(GamePeer peer, TeamID team) {
 			peer.Actor.Team = team;
 			peer.Actor.Info.Health = 100;
+			peer.Actor.Info.ArmorPoints = peer.Actor.Info.ArmorPointCapacity;
 			peer.Actor.Info.Ping = (ushort)(peer.RoundTripTime / 2);
 			peer.Actor.Info.PlayerState = PlayerStates.Ready;
 			peer.Actor.Info.SkinColor = Color.white;
@@ -47,7 +49,9 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnSpawnPositions(GamePeer peer, TeamID team, List<Vector3> positions, List<byte> rotations) {
-			throw new NotImplementedException();
+			if (!SpawnPointManager.IsLoaded(team)) {
+				SpawnPointManager.Load(team, positions, rotations);
+			}
 		}
 
 		protected override void OnRespawnRequest(GamePeer peer) {
@@ -58,42 +62,77 @@ namespace Paradise.Realtime.Server.Game {
 			foreach (var otherPeer in Peers) {
 				if (otherPeer.Actor.Cmid != target) continue;
 
-				// TODO: Actual damage calculation
-				var damage = 10;
+				var weapon = default(UberStrikeItemWeaponView);
 
-				var shortDamage = (short)damage;
+				switch (peer.Actor.Info.CurrentWeaponSlot) {
+					case 0:
+						ShopManager.WeaponItems.TryGetValue(peer.Loadout.MeleeWeapon, out weapon);
+						break;
+					case 1:
+						ShopManager.WeaponItems.TryGetValue(peer.Loadout.Weapon1, out weapon);
+						break;
+					case 2:
+						ShopManager.WeaponItems.TryGetValue(peer.Loadout.Weapon2, out weapon);
+						break;
+					case 3:
+						ShopManager.WeaponItems.TryGetValue(peer.Loadout.Weapon3, out weapon);
+						break;
+					default: break;
+				}
 
-				var victimPos = otherPeer.Actor.Movement.Position;
-				var attackerPos = peer.Actor.Movement.Position;
+				if (weapon != null) {
+					var damage = (weapon.DamagePerProjectile * bullets);
 
-				var direction = attackerPos - victimPos;
-				var back = new Vector3(0, 0, -1);
+					var part = (BodyPart)bodyPart;
+					var bonus = weapon.CriticalStrikeBonus;
+					if (bonus > 0) {
+						if (part == BodyPart.Head || part == BodyPart.Nuts) {
+							damage = (int)Math.Round(damage + (damage * (bonus / 100f)));
+						}
+					}
 
-				var angle = Vector3.Angle(direction, back);
-				if (direction.x < 0)
-					angle = 360 - angle;
+					var shortDamage = (short)damage;
 
-				var byteAngle = Conversions.Angle2Byte(angle);
+					var victimPos = otherPeer.Actor.Movement.Position;
+					var attackerPos = peer.Actor.Movement.Position;
 
-				otherPeer.Actor.Damage.AddDamage(byteAngle, shortDamage, bodyPart, 0, 0);
-				otherPeer.Actor.Info.Health -= shortDamage;
+					var direction = attackerPos - victimPos;
+					var back = new Vector3(0, 0, -1);
 
-				if (otherPeer.Actor.Info.Health <= 0) {
-					otherPeer.Actor.Info.PlayerState |= PlayerStates.Dead;
-					otherPeer.Actor.Info.Deaths++;
-					peer.Actor.Info.Kills++;
+					var angle = Vector3.Angle(direction, back);
+					if (direction.x < 0)
+						angle = 360 - angle;
 
-					//peer.IncrementKills(weapon.ItemClass, part);
+					var byteAngle = Conversions.Angle2Byte(angle);
 
-					//otherPeer.State.SetState(GamePeerState.Id.Killed);
-					OnPlayerKilled(new PlayerKilledEventArgs {
-						AttackerCmid = peer.Actor.Cmid,
-						VictimCmid = otherPeer.Actor.Cmid,
-						ItemClass = UberstrikeItemClass.WeaponHandgun,
-						Damage = (ushort)shortDamage,
-						Part = (BodyPart)bodyPart,
-						Direction = -NormalizeVector(direction)
-					});
+					if (otherPeer.Actor.Info.ArmorPoints > 0) {
+						int originalArmor = otherPeer.Actor.Info.ArmorPoints;
+						otherPeer.Actor.Info.ArmorPoints = (byte)Math.Max(0, otherPeer.Actor.Info.ArmorPoints - shortDamage);
+
+						double diff = (originalArmor - otherPeer.Actor.Info.ArmorPoints) * 0.75f;
+						shortDamage -= (short)diff;
+					}
+
+					otherPeer.Actor.Damage.AddDamage(byteAngle, shortDamage, bodyPart, 0, 0);
+					otherPeer.Actor.Info.Health -= shortDamage;
+
+					if (otherPeer.Actor.Info.Health <= 0) {
+						otherPeer.Actor.Info.PlayerState = PlayerStates.Dead;
+						otherPeer.Actor.Info.Deaths++;
+						peer.Actor.Info.Kills++;
+
+						//peer.IncrementKills(weapon.ItemClass, part);
+
+						//otherPeer.State.SetState(GamePeerState.Id.Killed);
+						OnPlayerKilled(new PlayerKilledEventArgs {
+							AttackerCmid = peer.Actor.Cmid,
+							VictimCmid = otherPeer.Actor.Cmid,
+							ItemClass = UberstrikeItemClass.WeaponHandgun,
+							Damage = (ushort)shortDamage,
+							Part = (BodyPart)bodyPart,
+							Direction = -NormalizeVector(direction)
+						});
+					}
 				}
 			}
 		}
@@ -107,6 +146,9 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnDirectDeath(GamePeer peer) {
+			peer.Actor.Info.PlayerState = PlayerStates.Dead;
+			peer.Actor.Info.Deaths++;
+
 			OnPlayerKilled(new PlayerKilledEventArgs {
 				AttackerCmid = peer.Actor.Cmid,
 				VictimCmid = peer.Actor.Cmid,
@@ -194,15 +236,29 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnEmitProjectile(GamePeer peer, Vector3 origin, Vector3 direction, byte slot, int projectileID, bool explode) {
-			throw new NotImplementedException();
+			var shooterCmid = peer.Actor.Cmid;
+
+			foreach (var otherPeer in Peers) {
+				if (otherPeer.Actor.Cmid != shooterCmid) {
+					otherPeer.Events.Game.SendEmitProjectile(shooterCmid, origin, direction, slot, projectileID, explode);
+				}
+			}
 		}
 
 		protected override void OnEmitQuickItem(GamePeer peer, Vector3 origin, Vector3 direction, int itemId, byte playerNumber, int projectileID) {
-			throw new NotImplementedException();
+			var emitterCmid = peer.Actor.Cmid;
+
+			foreach (var otherPeer in Peers) {
+				if (otherPeer.Actor.Cmid != emitterCmid) {
+					peer.Events.Game.SendEmitQuickItem(origin, direction, itemId, playerNumber, projectileID);
+				}
+			}
 		}
 
 		protected override void OnRemoveProjectile(GamePeer peer, int projectileID, bool explode) {
-			throw new NotImplementedException();
+			foreach (var otherPeer in Peers) {
+				otherPeer.Events.Game.SendRemoveProjectile(projectileID, explode);
+			}
 		}
 
 		protected override void OnHitFeedback(GamePeer peer, int targetCmid, Vector3 force) {
@@ -219,6 +275,8 @@ namespace Paradise.Realtime.Server.Game {
 			var cmid = actor.Cmid;
 			var playerName = actor.Info.PlayerName;
 			var accessLevel = actor.Info.AccessLevel;
+
+			Log.Info($"{playerName}: {message}");
 
 			foreach (var otherPeer in Peers) {
 				if (otherPeer.Actor.Cmid != cmid) {

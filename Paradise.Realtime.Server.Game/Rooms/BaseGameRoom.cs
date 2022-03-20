@@ -1,9 +1,11 @@
 ﻿using log4net;
 using Paradise.Core.Models;
+using Paradise.Core.Models.Views;
 using Paradise.DataCenter.Common.Entities;
 using Paradise.WebServices.Client;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
@@ -27,10 +29,15 @@ namespace Paradise.Realtime.Server.Game {
 		public Loop Loop { get; private set; }
 		public ILoopScheduler Scheduler { get; private set; }
 
+		private Timer frameTimer;
+		private ushort _frame;
+
 		public StateMachine<GameRoomState.Id> State { get; private set; }
 
 		private bool IsDisposed = false;
 
+		public SpawnPointManager SpawnPointManager { get; private set; } = new SpawnPointManager();
+		public ShopManager ShopManager { get; private set; } = new ShopManager();
 
 		private string _password;
 		public string Password {
@@ -55,6 +62,12 @@ namespace Paradise.Realtime.Server.Game {
 			Scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
 
 			Loop = new Loop(OnTick, OnTickError);
+
+			ShopManager.Load();
+
+			_frame = 6;
+			frameTimer = new Timer(Loop, 1000 / 10f);
+			frameTimer.Restart();
 
 			State = new StateMachine<GameRoomState.Id>();
 			State.RegisterState(GameRoomState.Id.None, null);
@@ -99,10 +112,23 @@ namespace Paradise.Realtime.Server.Game {
 			actorInfo.Gear[5] = peer.Loadout.LowerBody;
 			actorInfo.Gear[6] = peer.Loadout.Boots;
 
+			byte armorPointCapacity = 0;
+			foreach (var armor in actorInfo.Gear) {
+				if (armor == 0) continue;
+
+				var gear = default(UberStrikeItemGearView);
+				if (ShopManager.GearItems.TryGetValue(armor, out gear)) {
+					armorPointCapacity = (byte)Math.Min(200, armorPointCapacity + gear.ArmorPoints);
+				}
+			}
+
+			actorInfo.ArmorPointCapacity = armorPointCapacity;
+			actorInfo.ArmorPoints = actorInfo.ArmorPointCapacity;
+
 			actorInfo.Weapons[0] = peer.Loadout.MeleeWeapon;
-            actorInfo.Weapons[1] = peer.Loadout.Weapon1;
-            actorInfo.Weapons[2] = peer.Loadout.Weapon2;
-            actorInfo.Weapons[3] = peer.Loadout.Weapon3;
+			actorInfo.Weapons[1] = peer.Loadout.Weapon1;
+			actorInfo.Weapons[2] = peer.Loadout.Weapon2;
+			actorInfo.Weapons[3] = peer.Loadout.Weapon3;
 
 			var number = -1;
 
@@ -152,7 +178,56 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void OnTick() {
+			var updatePositions = frameTimer.Tick();
+			if (updatePositions) _frame++;
+
 			State.Update();
+
+			var positions = new List<PlayerMovement>();
+			var deltas = new List<GameActorInfoDelta>();
+
+			foreach (var peer in Peers) {
+				var actor = peer.Actor;
+				peer.State.Update();
+
+				if (Players.Contains(actor)) {
+					var delta = actor.Delta;
+
+					if (delta.Changes.Count > 0) {
+						delta.UpdateDeltaMask();
+						deltas.Add(delta);
+					}
+
+					if (actor.Damage.Count > 0) {
+						peer.Events.Game.SendDamageEvent(actor.Damage);
+						actor.Damage.Clear();
+					}
+
+					if (updatePositions && actor.Info.IsAlive) {
+						positions.Add(actor.Movement);
+					}
+				}
+			}
+
+			if (deltas.Count > 0) {
+				foreach (var peer in Peers) {
+					peer.Events.Game.SendAllPlayerDeltas(deltas);
+				}
+
+				foreach (var delta in deltas) {
+					delta.Reset();
+				}
+
+				deltas.Clear();
+			}
+
+			if (positions.Count > 0 && updatePositions) {
+				foreach (var peer in Peers) {
+					peer.Events.Game.SendAllPlayerPositions(positions, _frame);
+				}
+
+				positions.Clear();
+			}
 		}
 
 		private void OnTickError(Exception e) {

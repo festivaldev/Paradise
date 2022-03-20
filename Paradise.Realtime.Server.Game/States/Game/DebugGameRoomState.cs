@@ -7,9 +7,6 @@ namespace Paradise.Realtime.Server.Game {
 	public class DebugGameRoomState : GameRoomState {
 		private static readonly ILog Log = LogManager.GetLogger(typeof(DebugGameRoomState));
 
-		private Timer frameTimer;
-		private ushort _frame;
-
 		public DebugGameRoomState(BaseGameRoom room) : base(room) { }
 
 		public override void OnEnter() {
@@ -17,10 +14,6 @@ namespace Paradise.Realtime.Server.Game {
 			Room.PlayerJoined += OnPlayerJoined;
 			Room.PlayerKilled += OnPlayerKilled;
 			Room.PlayerRespawned += OnPlayerRespawned;
-
-			_frame = 6;
-			frameTimer = new Timer(Room.Loop, 1000 / 9.25f);
-			frameTimer.Restart();
 		}
 
 		public override void OnExit() {
@@ -33,56 +26,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		public override void OnResume() { }
 
-		public override void OnUpdate() {
-			var updatePositions = frameTimer.Tick();
-			if (updatePositions) _frame++;
-
-			var positions = new List<PlayerMovement>();
-			var deltas = new List<GameActorInfoDelta>();
-
-			foreach (var peer in Room.Peers) {
-				var actor = peer.Actor;
-				peer.State.Update();
-
-				if (Room.Players.Contains(actor)) {
-					var delta = actor.Delta;
-
-					if (delta.Changes.Count > 0) {
-						delta.UpdateDeltaMask();
-						deltas.Add(delta);
-					}
-
-					if (actor.Damage.Count > 0) {
-						peer.Events.Game.SendDamageEvent(actor.Damage);
-						actor.Damage.Clear();
-					}
-
-					if (updatePositions && actor.Info.IsAlive) {
-						positions.Add(actor.Movement);
-					}
-				}
-			}
-
-			if (deltas.Count > 0) {
-				foreach (var peer in Room.Peers) {
-					peer.Events.Game.SendAllPlayerDeltas(deltas);
-				}
-
-				foreach (var delta in deltas) {
-					delta.Reset();
-				}
-
-				deltas.Clear();
-			}
-
-			if (positions.Count > 0 && updatePositions) {
-				foreach (var peer in Room.Peers) {
-					peer.Events.Game.SendAllPlayerPositions(positions, _frame);
-				}
-
-				positions.Clear();
-			}
-		}
+		public override void OnUpdate() { }
 
 
 
@@ -90,6 +34,11 @@ namespace Paradise.Realtime.Server.Game {
 			Log.Info("player joined");
 
 			var player = e.Player;
+
+			var spawn = Room.SpawnPointManager.Get(player.Actor.Team);
+
+			player.Actor.Movement.Position = spawn.Position;
+			player.Actor.Movement.HorizontalRotation = spawn.Rotation;
 
 			foreach (var otherPeer in Room.Peers) {
 				otherPeer.Events.Game.SendPlayerJoinedGame(player.Actor.Info, player.Actor.Movement);
@@ -110,17 +59,25 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void OnPlayerRespawned(object sender, PlayerRespawnedEventArgs e) {
-			/* Let all peers know that the player has respawned. */
-			e.Player.Actor.Info.Health = 100;
-			e.Player.Actor.Info.PlayerState &= ~PlayerStates.Dead;
+			Log.Info("player respawned");
 
-			//var spawn = Room.SpawnManager.Get(e.Player.Actor.Team);
+			var player = e.Player;
+
+			player.Actor.Info.Health = 100;
+			player.Actor.Info.ArmorPoints = player.Actor.Info.ArmorPointCapacity;
+			player.Actor.Info.PlayerState = PlayerStates.None;
+
+			var spawn = Room.SpawnPointManager.Get(player.Actor.Team);
+
+			player.Actor.Movement.Position = spawn.Position;
+			player.Actor.Movement.HorizontalRotation = spawn.Rotation;
+
 			foreach (var otherPeer in Room.Peers) {
-				otherPeer.Events.Game.SendPlayerRespawned(e.Player.Actor.Cmid, e.Player.Actor.Movement.Position, e.Player.Actor.Movement.HorizontalRotation);
+				otherPeer.Events.Game.SendPlayerRespawned(player.Actor.Cmid, spawn.Position, spawn.Rotation);
 			}
 
 			/* Switch to previous state which should be 'playing state'. */
-			e.Player.State.SetState(GamePeerState.Id.WaitingForPlayers);
+			player.State.SetState(GamePeerState.Id.WaitingForPlayers);
 		}
 	}
 }

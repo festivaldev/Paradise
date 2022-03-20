@@ -7,6 +7,14 @@ using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GamePeerOperationsHandler : BaseGamePeerOperationsHandler {
+		public enum GAME_FLAGS {
+			None = 0,
+			LowGravity = 1,
+			NoArmor = 2,
+			QuickSwitch = 4,
+			MeleeOnly = 8
+		}
+
 		private static readonly ILog Log = LogManager.GetLogger(typeof(GamePeerOperationsHandler));
 
 		protected override void OnCloseRoom(GamePeer peer, int roomId, string authToken, string magicHash) {
@@ -18,6 +26,9 @@ namespace Paradise.Realtime.Server.Game {
 				peer.Events.SendRoomEnterFailed(string.Empty, -1, $"Unsupported client version {clientVersion}, expected 4.7.1");
 				return;
 			}
+
+			// Since a game host cannot set game flags (yet), we're doing it for them ;)
+			metaData.GameFlags = (int)GAME_FLAGS.QuickSwitch;
 
 			peer.Authenticate(authToken, magicHash);
 
@@ -36,6 +47,7 @@ namespace Paradise.Realtime.Server.Game {
 				peer.Events.SendRoomEnterFailed(string.Empty, -1, $"Failed to create game room.");
 #else
 				peer.Events.SendRoomEnterFailed(string.Empty, -1, $"Failed to create game room.\n{e.Message}");
+				Log.Error("Failed to create game room.", e);
 #endif
 				return;
 			}
@@ -43,7 +55,12 @@ namespace Paradise.Realtime.Server.Game {
 			try {
 				room.Join(peer);
 			} catch (Exception e) {
-				peer.Events.SendRoomEnterFailed(string.Empty, -1, "Failed to join game room.");
+#if !DEBUG
+				peer.Events.SendRoomEnterFailed(string.Empty, -1, $"Failed to join game room.");
+#else
+				peer.Events.SendRoomEnterFailed(string.Empty, -1, $"Failed to join game room.\n{e.Message}");
+				Log.Error("Failed to join game room.", e);
+#endif
 				GameApplication.Instance.RoomManager.RemoveRoom(room.RoomId);
 			}
 		}
@@ -149,7 +166,24 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnUpdateLoadout(GamePeer peer) {
-			throw new NotImplementedException();
+			var loadout = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).GetLoadout(peer.AuthToken);
+
+			peer.Actor.Info.Weapons = new List<int> {
+				loadout.MeleeWeapon,
+				loadout.Weapon1,
+				loadout.Weapon2,
+				loadout.Weapon3
+			};
+
+			peer.Actor.Info.Gear = new List<int> {
+				(int)loadout.Webbing,
+				loadout.Head,
+				loadout.Face,
+				loadout.Gloves,
+				loadout.UpperBody,
+				loadout.LowerBody,
+				loadout.Boots
+			};
 		}
 
 		protected override void OnUpdatePing(GamePeer peer, ushort ping) {

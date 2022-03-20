@@ -70,6 +70,8 @@
     <Compile Include="GamePeerEvents.cs" />
     <Compile Include="GameRoomEvents.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Managers\SpawnPointManager.cs" />
+    <Compile Include="Managers\ShopManager.cs" />
     <Compile Include="States\GamePeerState.cs" />
     <Compile Include="States\GameRoomState.cs" />
     <Compile Include="States\Game\CountdownGameRoomState.cs" />
@@ -109,5 +111,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
