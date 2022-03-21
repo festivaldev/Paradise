@@ -100,6 +100,7 @@ namespace Paradise.WebServices.CLI {
 						PrintHeaderSubtitle();
 						break;
 					case "database":
+					case "db":
 						if (cmdArgs.Length < 2) {
 							Console.WriteLine("database: Controls the LiteDB database instance." + Environment.NewLine);
 							Console.WriteLine("close\t\t\tSaves the database and closes the instance.");
