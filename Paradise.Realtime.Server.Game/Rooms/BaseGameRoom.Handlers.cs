@@ -8,6 +8,8 @@ using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
 	public abstract partial class BaseGameRoom : BaseGameRoomOperationsHandler, IRoom<GamePeer>, IDisposable {
+		private const float ARMOR_ABSORPTION = 0.66f;
+
 		protected override void OnJoinGame(GamePeer peer, TeamID team) {
 			peer.Actor.Team = team;
 			peer.Actor.Info.Health = 100;
@@ -80,6 +82,8 @@ namespace Paradise.Realtime.Server.Game {
 					default: break;
 				}
 
+				//Log.Info($"{peer.Actor.Cmid} damaged {target} using {weapon.PrefabName}");
+
 				if (weapon != null) {
 					var damage = (weapon.DamagePerProjectile * bullets);
 
@@ -109,7 +113,7 @@ namespace Paradise.Realtime.Server.Game {
 						int originalArmor = otherPeer.Actor.Info.ArmorPoints;
 						otherPeer.Actor.Info.ArmorPoints = (byte)Math.Max(0, otherPeer.Actor.Info.ArmorPoints - shortDamage);
 
-						double diff = (originalArmor - otherPeer.Actor.Info.ArmorPoints) * 0.75f;
+						double diff = (originalArmor - otherPeer.Actor.Info.ArmorPoints) * ARMOR_ABSORPTION;
 						shortDamage -= (short)diff;
 					}
 
@@ -118,8 +122,11 @@ namespace Paradise.Realtime.Server.Game {
 
 					if (otherPeer.Actor.Info.Health <= 0) {
 						otherPeer.Actor.Info.PlayerState = PlayerStates.Dead;
-						otherPeer.Actor.Info.Deaths++;
-						peer.Actor.Info.Kills++;
+
+						if (State.CurrentStateId == GameStateId.MatchRunning) {
+							otherPeer.Actor.Info.Deaths++;
+							peer.Actor.Info.Kills++;
+						}
 
 						//peer.IncrementKills(weapon.ItemClass, part);
 
@@ -127,7 +134,7 @@ namespace Paradise.Realtime.Server.Game {
 						OnPlayerKilled(new PlayerKilledEventArgs {
 							AttackerCmid = peer.Actor.Cmid,
 							VictimCmid = otherPeer.Actor.Cmid,
-							ItemClass = UberstrikeItemClass.WeaponHandgun,
+							ItemClass = weapon.ItemClass,
 							Damage = (ushort)shortDamage,
 							Part = (BodyPart)bodyPart,
 							Direction = -NormalizeVector(direction)
@@ -138,7 +145,96 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnExplosionDamage(GamePeer peer, int target, byte slot, byte distance, Vector3 force) {
-			throw new NotImplementedException();
+			foreach (var otherPeer in Peers) {
+				if (otherPeer.Actor.Cmid != target) continue;
+
+				var weapon = default(UberStrikeItemWeaponView);
+
+				switch (peer.Actor.Info.CurrentWeaponSlot) {
+					case 0:
+						ShopManager.WeaponItems.TryGetValue(peer.Loadout.MeleeWeapon, out weapon);
+						break;
+					case 1:
+						ShopManager.WeaponItems.TryGetValue(peer.Loadout.Weapon1, out weapon);
+						break;
+					case 2:
+						ShopManager.WeaponItems.TryGetValue(peer.Loadout.Weapon2, out weapon);
+						break;
+					case 3:
+						ShopManager.WeaponItems.TryGetValue(peer.Loadout.Weapon3, out weapon);
+						break;
+					default: break;
+				}
+
+				Log.Info($"{weapon.Name}({weapon.PrefabName})");
+
+				if (weapon != null) {
+					float damage = weapon.DamagePerProjectile;
+					float radius = weapon.SplashRadius / 100f;
+					float damageExplosion = damage * (radius - distance) / radius;
+
+					//peer.IncrementDamageDone(weapon.ItemClass, weaponId, (int)damageExplosion);
+					//peer.IncrementShotsHit(weapon.ItemClass, weaponId);
+
+					var shortDamage = (short)damageExplosion;
+
+					var victimPos = otherPeer.Actor.Movement.Position;
+					var attackerPos = peer.Actor.Movement.Position;
+
+					var direction = attackerPos - victimPos;
+					var back = new Vector3(0, 0, -1);
+
+					var angle = Vector3.Angle(direction, back);
+					if (direction.x < 0)
+						angle = 360 - angle;
+
+					var byteAngle = Conversions.Angle2Byte(angle);
+
+					if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
+						if (otherPeer.Actor.Info.ArmorPoints > 0) {
+							int originalArmor = otherPeer.Actor.Info.ArmorPoints;
+							otherPeer.Actor.Info.ArmorPoints = (byte)Math.Max(0, otherPeer.Actor.Info.ArmorPoints - shortDamage);
+
+							double diff = (originalArmor - otherPeer.Actor.Info.ArmorPoints) * ARMOR_ABSORPTION;
+							shortDamage -= (short)diff;
+						}
+
+						otherPeer.Actor.Damage.AddDamage(byteAngle, shortDamage, (byte)BodyPart.Body, 0, 0);
+					} else {
+						shortDamage /= 2;
+
+						if (otherPeer.Actor.Info.ArmorPoints > 0) {
+							int originalArmor = otherPeer.Actor.Info.ArmorPoints;
+							otherPeer.Actor.Info.ArmorPoints = (byte)Math.Max(0, otherPeer.Actor.Info.ArmorPoints - shortDamage);
+							double diff = (originalArmor - otherPeer.Actor.Info.ArmorPoints) * ARMOR_ABSORPTION;
+							shortDamage -= (short)diff;
+						}
+					}
+
+					otherPeer.Actor.Info.Health -= shortDamage;
+
+					if (otherPeer.Actor.Info.Health <= 0) {
+						otherPeer.Actor.Info.PlayerState = PlayerStates.Dead;
+
+						if (State.CurrentStateId == GameStateId.MatchRunning) {
+							otherPeer.Actor.Info.Deaths++;
+							peer.Actor.Info.Kills++;
+						}
+
+						OnPlayerKilled(new PlayerKilledEventArgs {
+							AttackerCmid = peer.Actor.Cmid,
+							VictimCmid = otherPeer.Actor.Cmid,
+							ItemClass = weapon.ItemClass,
+							Damage = (ushort)shortDamage,
+							Part = BodyPart.Body,
+							Direction = -(Vector3)direction
+						});
+					} else if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
+						Log.Info(force);
+						otherPeer.Events.Game.SendPlayerHit(force * weapon.DamageKnockback);
+					}
+				}
+			}
 		}
 
 		protected override void OnDirectDamage(GamePeer peer, ushort damage) {
@@ -147,7 +243,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		protected override void OnDirectDeath(GamePeer peer) {
 			peer.Actor.Info.PlayerState = PlayerStates.Dead;
-			peer.Actor.Info.Deaths++;
+			//peer.Actor.Info.Deaths++;
 
 			OnPlayerKilled(new PlayerKilledEventArgs {
 				AttackerCmid = peer.Actor.Cmid,
