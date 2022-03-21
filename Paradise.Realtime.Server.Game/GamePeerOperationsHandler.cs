@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Types;
 using Paradise.WebServices.Client;
@@ -167,6 +167,8 @@ namespace Paradise.Realtime.Server.Game {
 
 		protected override void OnUpdateLoadout(GamePeer peer) {
 			var loadout = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).GetLoadout(peer.AuthToken);
+
+			peer.Loadout = loadout;
 
 			peer.Actor.Info.Weapons = new List<int> {
 				loadout.MeleeWeapon,
