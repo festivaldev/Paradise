@@ -2,7 +2,7 @@
 
 	{
 		"DisplayName": "Apex Twin",
-		"Description": "Reaching the lifeguard's place in the middle of these great mountains seems like an impossible mission when you're shot from everywhere. Snipers, raise your weapons! Enemies try to swim to your shrine. At least it's warm at this place.",
+		"Description": "Reaching the lifeguard's place in the middle of these great mountains seems like an impossible mission when you're shot from everywhere. Snipers, raise your weapons! Enemies try to swim to your shrine. At least the weather is nice around this place.",
 		"SceneName": "ApexTwin",
 		"MapId": 3,
 		"IsBlueBox": false,
@@ -45,7 +45,7 @@
 	},
 	{
 		"DisplayName": "Aqualab Research Hub",
-		"Description": "A small research lab under the waters of Lost Paradise. As it's in a shape of a square, players would need to make a detour to reach the enemies' base, so don't let the game result in a deadly ring-round-the-rosie face-off.",
+		"Description": "A small research lab located under the waters of Lost Paradise. Conveniently shaped like a square, players just need to make a detour to reach the enemies' base, so don't let the game result in a deadly ring-round-the-rosie face-off.",
 		"SceneName": "AqualabResearchHub",
 		"MapId": 4,
 		"IsBlueBox": false,
@@ -131,7 +131,7 @@
 	},
 	{
 		"DisplayName": "CuberSpace",
-		"Description": "Ready, Set, Go! Flying through a low-gravity piece of space could be fun. But this ride will end quickly if players are not giving caution to all those hide-n-seek snipers covering the Cubes",
+		"Description": "Ready, Set, Go! Hovering through a low-gravity piece of space should be fun. But this ride will end quickly if players are not giving caution to all those hide-and-seek snipers covering the cubes.",
 		"SceneName": "CuberSpace",
 		"MapId": 6,
 		"IsBlueBox": false,
@@ -174,7 +174,7 @@
 	},
 	{
 		"DisplayName": "CuberStrike",
-		"Description": "A cube-like square-illusional world where players see nothing but cubes. Plunge into this combat. The higher you get, the bigger the chance of being sniped accross the map. The freightened won't survive, that's for sure!",
+		"Description": "A cube-like square-illusional world where players see nothing but cubes, so plunge into combat. The higher you get, the bigger the chance of being sniped accross the map. The freightened won't survive, that's for sure!",
 		"SceneName": "CuberStrike",
 		"MapId": 7,
 		"IsBlueBox": false,
@@ -217,7 +217,7 @@
 	},
 	{
 		"DisplayName": "Fort Winter",
-		"Description": "Heavy snowstorms covering the sky, anxious gunslingers covering the map. A helicopter is looking for all villains involved. Players don't have hiding spots, leading to a chaotic snow-fight that freezes every soul.",
+		"Description": "Heavy snowstorms covering the sky, anxious gunslingers lingering around the map. A helicopter is looking for all villains involved. Players don't have hiding spots, leading to a chaotic snow-fight that freezes every soul.",
 		"SceneName": "FortWinter",
 		"MapId": 8,
 		"IsBlueBox": false,
@@ -260,7 +260,7 @@
 	},
 	{
 		"DisplayName": "Ghost Island",
-		"Description": "Halloween isn't just cute pumpkins and candles in the evening. You were brought to this place consisting of toxic purple oil-swamps, which transforms this island into an extremely scary place to be.",
+		"Description": "Halloween isn't just cute pumpkins and candles in the evening. You were brought to this place made of toxic purple oil-swamps, which transforms this island into an extremely scary place to be.",
 		"SceneName": "GhostIsland",
 		"MapId": 9,
 		"IsBlueBox": false,
@@ -432,7 +432,7 @@
 	},
 	{
 		"DisplayName": "Sky Garden",
-		"Description": "This symmetrical place is the definition of war, spawning on the end of the team's territory before beating up the enemies. But be aware of the edges on this beautifully coloured sky garden",
+		"Description": "This symmetrical place is the definition of war, spawning on the end of the team's territory before beating up the enemies. But be aware of the edges on this beautifully coloured sky garden, as falling off will result in certain death.",
 		"SceneName": "SkyGarden",
 		"MapId": 13,
 		"IsBlueBox": false,
@@ -475,7 +475,7 @@
 	},
 	{
 		"DisplayName": "SuperPRISM Reactor",
-		"Description": "PRISM is the name of a top secret program of the American security authority NSA, which has been monitoring and storing global data traffic. Your unit has broken into this place to find the information they stole from you!",
+		"Description": "Powering NSA's top secret spy program PRISM, monitoring and storing global data traffic, your Spec-Ops unit has broken into this place with the goal to secure the infomation stolen from the innocent. Expect heavy resistance trying to stop you, though.",
 		"SceneName": "SuperPRISMReactor",
 		"MapId": 14,
 		"IsBlueBox": false,
@@ -518,7 +518,7 @@
 	},
 	{
 		"DisplayName": "Temple of the Raven",
-		"Description": "A tropical adventure for everyone. The three-staged egyptian temple was made hundreds of years ago and is now the host of great warfare. Can you find the secret room and make history?",
+		"Description": "A tropical adventure for everyone. The three-staged Mayan temple was made hundreds of years ago by an ancient civilization and is now the host of immeasurable warfare. Can you find the secret chamber and make history?",
 		"SceneName": "TempleOfTheRaven",
 		"MapId": 15,
 		"IsBlueBox": false,
@@ -561,7 +561,7 @@
 	},
 	{
 		"DisplayName": "The Hangar",
-		"Description": "Big hangars aroung the map provide an ideal shelter, don't they? However, experienced fighters are gonna takeover Yours if youre too slow on your team. A bridge seperates the two great hangars, leaving the Uber Armor and Health though.",
+		"Description": "The large containers around the map seem to provide an ideal shelter, don't they? However, experienced fighters will takeover Yours if your team is too slow. A bridge seperates the two main hangar areas, leaving only Uber Armor and Health. And lots of bullets.",
 		"SceneName": "TheHangar",
 		"MapId": 16,
 		"IsBlueBox": false,
@@ -604,7 +604,7 @@
 	},
 	{
 		"DisplayName": "The Warehouse",
-		"Description": " Used by RAID Corporation for the storage of weapons and other experimental technology, the Warehouse is a fast paced arena for short range fire fights. Only for privateers who can handle the adrenaline hit",
+		"Description": "Used by RAID Corporation for the storage of weapons and other experimental technology, the Warehouse is a fast paced arena for short range fire fights. Only for privateers who can handle the adrenaline hit.",
 		"SceneName": "TheWarehouse",
 		"MapId": 17,
 		"IsBlueBox": false,
@@ -647,23 +647,12 @@
 	},
 	{
 		"DisplayName": "Danger Zone",
-		"Description": "Watch out dodgeball fans, teams are only seperated by a medium-sized glass wall. This is pretty much open 1v1. You're advised to take a grenade launcher with you, otherwise you're getting blown away by the opponent",
+		"Description": "Watch out, dodgeball fans: Teams are only seperated by a glass wall. As open as warfare can be. You're advised to take a grenade launcher with you, or else you're probably getting blown away by the opponent.",
 		"SceneName": "Volley",
 		"MapId": 18,
 		"IsBlueBox": false,
 		"MaxPlayer": 32,
 		"Settings": {
-			"1": {
-				"KillsMin": 1,
-				"KillsMax": 200,
-				"KillsCurrent": 100,
-				"PlayersMin": 2,
-				"PlayersMax": 32,
-				"PlayersCurrent": 10,
-				"TimeMin": 60,
-				"TimeMax": 600,
-				"TimeCurrent": 300
-			},
 			"2": {
 				"KillsMin": 1,
 				"KillsMax": 200,
