@@ -1,20 +1,19 @@
-using System;
+﻿using System;
 
 namespace Paradise.Realtime.Server.Game {
-	public abstract class GameRoomState : IState {
-		public enum Id {
-			None,
-			WaitingForPlayers,
-			Countdown,
-			Running,
-			End,
+	public enum GameStateId {
+		None,
+		WaitingForPlayers,
+		Countdown,
+		MatchRunning,
+		EndOfMatch,
+		Debug
+	}
 
-			Debug
-		}
-
+	public abstract class GameState : IState {
 		protected BaseGameRoom Room { get; private set; }
 
-		public GameRoomState(BaseGameRoom room) {
+		public GameState(BaseGameRoom room) {
 			Room = room ?? throw new ArgumentNullException(nameof(room));
 		}
 

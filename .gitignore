@@ -5,4 +5,4 @@ packages/
 photon/*
 release-test/
 node_modules/
-*.old/
+*old*/

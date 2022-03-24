@@ -1,29 +1,34 @@
 ﻿using Paradise.Core.ViewModel;
 using Paradise.DataCenter.Common.Entities;
 using Photon.SocketServer;
+using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GamePeer : BasePeer {
-		public UberstrikeUserViewModel Member;
-		public LoadoutView Loadout;
 		public GameActor Actor;
 		public BaseGameRoom Room;
+		public StateMachine<PlayerStateId> State { get; private set; }
 
-		public GamePeerEvents Events { get; private set; }
+		public List<int> KnownActors = new List<int>();
 
-		public StateMachine<GamePeerState.Id> State { get; private set; }
+		public UberstrikeUserViewModel Member;
+		public LoadoutView Loadout;
+
+		public GamePeerEvents PeerEvents { get; private set; }
+		public GameRoomEvents GameEvents => PeerEvents.GameEvents;
 
 		public GamePeer(InitRequest initRequest) : base(initRequest) {
-			Events = new GamePeerEvents(this);
+			PeerEvents = new GamePeerEvents(this);
 
-			State = new StateMachine<GamePeerState.Id>();
-			State.RegisterState(GamePeerState.Id.None, null);
-			State.RegisterState(GamePeerState.Id.Debug, new DebugGamePeerState(this));
-			State.RegisterState(GamePeerState.Id.Overview, new OverviewGamePeerState(this));
-			State.RegisterState(GamePeerState.Id.WaitingForPlayers, new WaitingForPlayersGamePeerState(this));
-			State.RegisterState(GamePeerState.Id.Countdown, new CountdownGamePeerState(this));
-			State.RegisterState(GamePeerState.Id.Playing, new PlayingGamePeerState(this));
-			State.RegisterState(GamePeerState.Id.Killed, new KilledGamePeerState(this));
+			State = new StateMachine<PlayerStateId>();
+			State.RegisterState(PlayerStateId.None, null);
+			State.RegisterState(PlayerStateId.Overview, new OverviewPlayerState(this));
+			State.RegisterState(PlayerStateId.WaitingForPlayers, new WaitingForPlayersPlayerState(this));
+			State.RegisterState(PlayerStateId.Countdown, new CountdownPlayerState(this));
+			State.RegisterState(PlayerStateId.Playing, new PlayingPlayerState(this));
+			State.RegisterState(PlayerStateId.Killed, new KilledPlayerState(this));
+			State.RegisterState(PlayerStateId.AfterRound, new AfterRoundPlayerState(this));
+			State.RegisterState(PlayerStateId.Debug, new DebugPlayerState(this));
 
 			AddOperationHandler(new GamePeerOperationsHandler());
 		}

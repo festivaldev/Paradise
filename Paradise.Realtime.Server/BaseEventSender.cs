@@ -16,12 +16,13 @@ namespace Paradise.Realtime.Server {
 
 		protected SendResult SendEvent(byte opCode, MemoryStream bytes, bool unreliable) {
 			var eventData = new EventData(opCode, new Dictionary<byte, object> {
-				{0,  bytes.ToArray() }
+				{ 0, bytes.ToArray() }
 			});
 
 			var result = Peer.SendEvent(eventData, new SendParameters { Unreliable = unreliable });
-			if (result != SendResult.Ok)
+			if (result != SendResult.Ok) {
 				Log.Error($"Send event failed {opCode} -> {result}");
+			}
 
 			return result;
 		}

@@ -1,19 +1,13 @@
-﻿using log4net;
-using Paradise.Core.Models;
+﻿using Paradise.Core.Models;
 using Paradise.Core.Serialization;
 using Paradise.Core.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
 	public abstract class BaseGameRoomOperationsHandler : BaseOperationHandler<GamePeer> {
-		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseGameRoomOperationsHandler).Name);
-
 		protected object _lock { get; } = new object();
 
 		public override int Id => 0;

@@ -1,22 +1,22 @@
-using System;
+﻿using System;
 
 namespace Paradise.Realtime.Server.Game {
-	public abstract class GamePeerState : IState {
-		public enum Id {
-			None,
-			Overview,
-			WaitingForPlayers,
-			Countdown,
-			Playing,
-			Killed,
+	public enum PlayerStateId {
+		None,
+		Overview,
+		WaitingForPlayers,
+		Countdown,
+		Playing,
+		Killed,
+		AfterRound,
+		Debug
+	}
 
-			Debug
-		}
-
+	public abstract class PlayerState : IState {
 		protected GamePeer Peer { get; private set; }
 		protected BaseGameRoom Room => Peer.Room;
 
-		public GamePeerState(GamePeer peer) {
+		public PlayerState(GamePeer peer) {
 			Peer = peer ?? throw new ArgumentNullException(nameof(peer));
 		}
 

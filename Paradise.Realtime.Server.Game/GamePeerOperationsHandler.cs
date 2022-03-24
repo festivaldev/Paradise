@@ -1,13 +1,14 @@
-using log4net;
+﻿using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Types;
 using Paradise.WebServices.Client;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GamePeerOperationsHandler : BaseGamePeerOperationsHandler {
-		public enum GAME_FLAGS {
+		private enum GAME_FLAGS {
 			None = 0,
 			LowGravity = 1,
 			NoArmor = 2,
@@ -17,57 +18,52 @@ namespace Paradise.Realtime.Server.Game {
 
 		private static readonly ILog Log = LogManager.GetLogger(typeof(GamePeerOperationsHandler));
 
-		protected override void OnCloseRoom(GamePeer peer, int roomId, string authToken, string magicHash) {
+		protected override void OnSendHeartbeatResponse(GamePeer peer, string authToken, string responseHash) {
 			throw new NotImplementedException();
 		}
 
-		protected override void OnCreateRoom(GamePeer peer, GameRoomData metaData, string password, string clientVersion, string authToken, string magicHash) {
-			if (clientVersion != "4.7.1") {
-				peer.Events.SendRoomEnterFailed(string.Empty, -1, $"Unsupported client version {clientVersion}, expected 4.7.1");
-				return;
+		protected override void OnGetServerLoad(GamePeer peer) {
+			peer.PeerEvents.SendServerLoadData(new PhotonServerLoad {
+				MaxPlayerCount = 100,
+				PeersConnected = GameApplication.Instance.Peers,
+				RoomsCreated = GameApplication.Instance.RoomManager.Rooms.Count,
+				TimeStamp = DateTime.UtcNow,
+				State = PhotonServerLoad.Status.Alive
+			});
+		}
+
+		protected override void OnGetGameInformation(GamePeer peer, int number) {
+			throw new NotImplementedException();
+		}
+
+		protected override void OnGetGameListUpdates(GamePeer peer) {
+			var rooms = new List<GameRoomData>();
+
+			rooms.AddRange(GameApplication.Instance.RoomManager.Rooms.Select(_ => _.Value.MetaData));
+
+#if DEBUG
+			if (rooms.Count == 0) {
+				rooms.Add(new GameRoomData {
+					ConnectedPlayers = -1,
+					PlayerLimit = -3,
+					LevelMin = 127,
+					LevelMax = 1,
+					Name = "DEBUG GAME: DO NOT JOIN!",
+					//MapID = new Random((int)DateTime.UtcNow.Ticks).Next(3, 18),
+					MapID = 0,
+					GameMode = GameModeType.TeamDeathMatch,
+					IsPermanentGame = true,
+					Server = new ConnectionAddress("127.0.0.1", 5056)
+				});
 			}
-
-			// Since a game host cannot set game flags (yet), we're doing it for them ;)
-			metaData.GameFlags = (int)GAME_FLAGS.QuickSwitch;
-
-			peer.Authenticate(authToken, magicHash);
-
-			var userWebServiceClient = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl);
-			peer.Member = userWebServiceClient.GetMember(peer.AuthToken);
-			peer.Loadout = userWebServiceClient.GetLoadout(peer.AuthToken);
-
-			var room = default(BaseGameRoom);
-			try {
-				room = GameApplication.Instance.RoomManager.CreateRoom(metaData, password);
-			} catch (NotSupportedException e) {
-				peer.Events.SendRoomEnterFailed(string.Empty, -1, "There was an error creating the game room: Unsupported game mode.");
-				return;
-			} catch (Exception e) {
-#if !DEBUG
-				peer.Events.SendRoomEnterFailed(string.Empty, -1, $"Failed to create game room.");
-#else
-				peer.Events.SendRoomEnterFailed(string.Empty, -1, $"Failed to create game room.\n{e.Message}");
-				Log.Error("Failed to create game room.", e);
 #endif
-				return;
-			}
 
-			try {
-				room.Join(peer);
-			} catch (Exception e) {
-#if !DEBUG
-				peer.Events.SendRoomEnterFailed(string.Empty, -1, $"Failed to join game room.");
-#else
-				peer.Events.SendRoomEnterFailed(string.Empty, -1, $"Failed to join game room.\n{e.Message}");
-				Log.Error("Failed to join game room.", e);
-#endif
-				GameApplication.Instance.RoomManager.RemoveRoom(room.RoomId);
-			}
+			peer.PeerEvents.SendFullGameList(rooms);
 		}
 
 		protected override void OnEnterRoom(GamePeer peer, int roomId, string password, string clientVersion, string authToken, string magicHash) {
 			if (clientVersion != "4.7.1") {
-				peer.Events.SendRoomEnterFailed(string.Empty, -1, $"Unsupported client version {clientVersion}, expected 4.7.1");
+				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, $"Unsupported client version {clientVersion}, expected 4.7.1");
 				return;
 			}
 
@@ -80,59 +76,54 @@ namespace Paradise.Realtime.Server.Game {
 			var room = GameApplication.Instance.RoomManager.GetRoom(roomId);
 			if (room != null) {
 				if (room.MetaData.IsPasswordProtected && password != room.Password) {
-					peer.Events.SendRequestPasswordForRoom(room.MetaData.Server.ConnectionString, room.RoomId);
+					peer.PeerEvents.SendRequestPasswordForRoom(room.MetaData.Server.ConnectionString, room.RoomId);
 				} else {
 					room.Join(peer);
 				}
 			} else {
-				peer.Events.SendRoomEnterFailed(string.Empty, roomId, "Game does not exist anymore.");
+				peer.PeerEvents.SendRoomEnterFailed(string.Empty, roomId, "Game does not exist anymore.");
 			}
 		}
 
-		protected override void OnGetGameInformation(GamePeer peer, int number) {
-			throw new NotImplementedException();
-		}
-
-		protected override void OnGetGameListUpdates(GamePeer peer) {
-			var rooms = new List<GameRoomData>(GameApplication.Instance.RoomManager.Rooms.Count);
-
-			foreach (var room in GameApplication.Instance.RoomManager.Rooms.Values) {
-				rooms.Add(room.MetaData);
+		protected override void OnCreateRoom(GamePeer peer, GameRoomData metaData, string password, string clientVersion, string authToken, string magicHash) {
+			if (clientVersion != "4.7.1") {
+				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, $"Unsupported client version {clientVersion}, expected 4.7.1");
+				return;
 			}
 
-			if (rooms.Count == 0) {
-				rooms.Add(new GameRoomData {
-					ConnectedPlayers = -1,
-					PlayerLimit = -3,
-					LevelMin = 127,
-					LevelMax = 1,
-					Name = "debug do not join",
-					MapID = new Random((int)DateTime.UtcNow.Ticks).Next(3, 18),
-					GameMode = GameModeType.TeamDeathMatch,
-					IsPermanentGame = true,
-					Server = new ConnectionAddress("127.0.0.1", 5056)
-				});
+			// Since a game host cannot set game flags (yet), we're doing it for them ;)
+			metaData.GameFlags = (int)GAME_FLAGS.QuickSwitch;
+
+			peer.Authenticate(authToken, magicHash);
+			peer.Member = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).GetMember(peer.AuthToken);
+
+			var room = default(BaseGameRoom);
+			try {
+				room = GameApplication.Instance.RoomManager.CreateRoom(metaData, password);
+			} catch (NotSupportedException e) {
+				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, "There was an error creating the game room: Unsupported game mode.");
+				return;
+			} catch (Exception e) {
+#if !DEBUG
+				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, $"Failed to create game room.");
+#else
+				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, $"Failed to create game room.\n{e.Message}");
+				Log.Error("Failed to create game room.", e);
+#endif
+				return;
 			}
 
-			peer.Events.SendFullGameList(rooms);
-		}
-
-		protected override void OnGetServerLoad(GamePeer peer) {
-			peer.Events.SendServerLoadData(new PhotonServerLoad {
-				MaxPlayerCount = 20,
-				PeersConnected = GameApplication.Instance.Peers,
-				RoomsCreated = GameApplication.Instance.RoomManager.Rooms.Count,
-				TimeStamp = DateTime.UtcNow,
-				State = PhotonServerLoad.Status.Alive
-			});
-		}
-
-		protected override void OnInspectRoom(GamePeer peer, int roomId, string authToken) {
-			throw new NotImplementedException();
-		}
-
-		protected override void OnKickPlayer(GamePeer peer, int cmid, string authToken, string magicHash) {
-			throw new NotImplementedException();
+			try {
+				room.Join(peer);
+			} catch (Exception e) {
+#if !DEBUG
+				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, $"Failed to join game room.");
+#else
+				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, $"Failed to join game room.\n{e.Message}");
+				Log.Error("Failed to join game room.", e);
+#endif
+				GameApplication.Instance.RoomManager.RemoveRoom(room.RoomId);
+			}
 		}
 
 		protected override void OnLeaveRoom(GamePeer peer) {
@@ -149,7 +140,11 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
-		protected override void OnRefreshBackendData(GamePeer peer, string authToken, string magicHash) {
+		protected override void OnCloseRoom(GamePeer peer, int roomId, string authToken, string magicHash) {
+			throw new NotImplementedException();
+		}
+
+		protected override void OnInspectRoom(GamePeer peer, int roomId, string authToken) {
 			throw new NotImplementedException();
 		}
 
@@ -157,12 +152,8 @@ namespace Paradise.Realtime.Server.Game {
 			throw new NotImplementedException();
 		}
 
-		protected override void OnSendHeartbeatResponse(GamePeer peer, string authToken, string responseHash) {
+		protected override void OnKickPlayer(GamePeer peer, int cmid, string authToken, string magicHash) {
 			throw new NotImplementedException();
-		}
-
-		protected override void OnUpdateKeyState(GamePeer peer, byte state) {
-			peer.Actor.Movement.KeyState = state;
 		}
 
 		protected override void OnUpdateLoadout(GamePeer peer) {
@@ -191,5 +182,14 @@ namespace Paradise.Realtime.Server.Game {
 		protected override void OnUpdatePing(GamePeer peer, ushort ping) {
 			peer.Actor.Info.Ping = (ushort)(peer.RoundTripTime / 2);
 		}
+
+		protected override void OnUpdateKeyState(GamePeer peer, byte state) {
+			peer.Actor.Movement.KeyState = state;
+		}
+
+		protected override void OnRefreshBackendData(GamePeer peer, string authToken, string magicHash) {
+			throw new NotImplementedException();
+		}
+
 	}
 }

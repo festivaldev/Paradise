@@ -1,9 +1,7 @@
 ﻿using log4net;
 using Paradise.Core.Models;
-using Paradise.Core.Types;
 using System;
 using System.Collections.Generic;
-using System.Collections.Concurrent;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameRoomManager : IDisposable {

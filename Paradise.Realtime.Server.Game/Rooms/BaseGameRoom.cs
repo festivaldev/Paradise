@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.DataCenter.Common.Entities;
@@ -12,6 +12,8 @@ namespace Paradise.Realtime.Server.Game {
 	public abstract partial class BaseGameRoom : BaseGameRoomOperationsHandler, IRoom<GamePeer>, IDisposable {
 		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseGameRoom));
 
+		private bool IsDisposed = false;
+
 		public GameRoomData MetaData { get; private set; }
 		public int RoomId {
 			get { return MetaData.Number; }
@@ -24,6 +26,9 @@ namespace Paradise.Realtime.Server.Game {
 		private List<GameActor> _players = new List<GameActor>();
 		public IReadOnlyList<GameActor> Players => _players.AsReadOnly();
 
+		public int RoundNumber;
+		public int RoundStartTime;
+		public int RoundEndTime;
 		private byte NextPlayerId;
 
 		public Loop Loop { get; private set; }
@@ -32,12 +37,11 @@ namespace Paradise.Realtime.Server.Game {
 		private Timer frameTimer;
 		private ushort _frame;
 
-		public StateMachine<GameRoomState.Id> State { get; private set; }
+		public StateMachine<GameStateId> State { get; private set; }
 
-		private bool IsDisposed = false;
-
-		public SpawnPointManager SpawnPointManager { get; private set; } = new SpawnPointManager();
-		public ShopManager ShopManager { get; private set; } = new ShopManager();
+		public SpawnPointManager SpawnPointManager { get; private set; }
+		public ShopManager ShopManager { get; private set; }
+		public PowerUpManager PowerUpManager { get; private set; }
 
 		private string _password;
 		public string Password {
@@ -49,6 +53,7 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
+		public TeamID WinningTeam = TeamID.NONE;
 
 		public event EventHandler<EventArgs> MatchEnded;
 		public event EventHandler<PlayerKilledEventArgs> PlayerKilled;
@@ -56,30 +61,36 @@ namespace Paradise.Realtime.Server.Game {
 		public event EventHandler<PlayerJoinedEventArgs> PlayerJoined;
 		public event EventHandler<PlayerLeftEventArgs> PlayerLeft;
 
-
 		public BaseGameRoom(GameRoomData metaData, ILoopScheduler scheduler) {
 			MetaData = metaData ?? throw new ArgumentNullException(nameof(metaData));
 			Scheduler = scheduler ?? throw new ArgumentNullException(nameof(scheduler));
 
-			Loop = new Loop(OnTick, OnTickError);
+			SpawnPointManager = new SpawnPointManager();
+			ShopManager = new ShopManager();
+			PowerUpManager = new PowerUpManager(this);
 
 			ShopManager.Load();
 
+			Loop = new Loop(OnTick, OnTickError);
+
 			_frame = 6;
-			frameTimer = new Timer(Loop, 1000 / 10f);
+			frameTimer = new Timer(Loop, 1000 / 9.5f);
 			frameTimer.Restart();
 
-			State = new StateMachine<GameRoomState.Id>();
-			State.RegisterState(GameRoomState.Id.None, null);
-			State.RegisterState(GameRoomState.Id.Debug, new DebugGameRoomState(this));
-			State.RegisterState(GameRoomState.Id.WaitingForPlayers, new WaitingForPlayersGameRoomState(this));
-			State.RegisterState(GameRoomState.Id.Countdown, new CountdownGameRoomState(this));
-			State.RegisterState(GameRoomState.Id.Running, new RunningGameRoomState(this));
+			State = new StateMachine<GameStateId>();
+			State.RegisterState(GameStateId.None, null);
+			State.RegisterState(GameStateId.WaitingForPlayers, new WaitingForPlayersGameState(this));
+			State.RegisterState(GameStateId.Countdown, new CountdownGameState(this));
+			State.RegisterState(GameStateId.MatchRunning, new MatchRunningGameState(this));
+			State.RegisterState(GameStateId.EndOfMatch, new EndOfMatchGameState(this));
+			State.RegisterState(GameStateId.Debug, new DebugGameState(this));
 
-			State.SetState(GameRoomState.Id.Debug);
+			State.SetState(GameStateId.WaitingForPlayers);
 
 			Scheduler.Schedule(Loop);
 		}
+
+		public abstract bool CanStartMatch { get; }
 
 		public void Join(GamePeer peer) {
 			if (peer == null) {
@@ -95,9 +106,12 @@ namespace Paradise.Realtime.Server.Game {
 				Kills = 0,
 				Level = 1,
 				Channel = ChannelType.Steam,
-				PlayerState = PlayerStates.None,
+				PlayerState = PlayerStates.Ready,
 				Ping = (ushort)(peer.RoundTripTime / 2),
-				SkinColor = Color.white, // Not trying to be racist here, that's what UberStrike wants ¯\_(ツ)_/¯
+
+				// Not trying to be racist here, that's what UberStrike wants ¯\_(ツ)_/¯
+				SkinColor = Color.white,
+
 				Cmid = peer.Member.CmuneMemberView.PublicProfile.Cmid,
 				ClanTag = peer.Member.CmuneMemberView.PublicProfile.GroupTag,
 				AccessLevel = peer.Member.CmuneMemberView.PublicProfile.AccessLevel,
@@ -130,6 +144,16 @@ namespace Paradise.Realtime.Server.Game {
 			actorInfo.Weapons[2] = peer.Loadout.Weapon2;
 			actorInfo.Weapons[3] = peer.Loadout.Weapon3;
 
+			if (actorInfo.Weapons[1] > 0) {
+				actorInfo.CurrentWeaponSlot = 1;
+			} else if (actorInfo.Weapons[2] > 0) {
+				actorInfo.CurrentWeaponSlot = 2;
+			} else if (actorInfo.Weapons[3] > 0) {
+				actorInfo.CurrentWeaponSlot = 3;
+			} else if (actorInfo.Weapons[0] > 0) {
+				actorInfo.CurrentWeaponSlot = 0;
+			}
+
 			var number = -1;
 
 			lock (_peers) {
@@ -146,8 +170,8 @@ namespace Paradise.Realtime.Server.Game {
 
 			peer.AddOperationHandler(this);
 
-			peer.Events.SendRoomEntered(MetaData);
-			peer.State.SetState(GamePeerState.Id.Debug);
+			peer.PeerEvents.SendRoomEntered(MetaData);
+			peer.State.SetState(PlayerStateId.Overview);
 
 			MetaData.ConnectedPlayers = Peers.Count;
 		}
@@ -161,7 +185,7 @@ namespace Paradise.Realtime.Server.Game {
 			System.Diagnostics.Debug.Assert(peer.Room == this, "GamePeer is leaving room, but is not leaving the correct room.");
 
 			foreach (var otherPeer in Peers) {
-				otherPeer.Events.Game.SendPlayerLeftGame(peer.Actor.Cmid);
+				otherPeer.GameEvents.SendPlayerLeftGame(peer.Actor.Cmid);
 			}
 
 			lock (_peers) {
@@ -171,7 +195,7 @@ namespace Paradise.Realtime.Server.Game {
 				MetaData.ConnectedPlayers = Peers.Count;
 			}
 
-			peer.State.SetState(GamePeerState.Id.None);
+			peer.State.SetState(PlayerStateId.None);
 			peer.RemoveOperationHandler(Id);
 			peer.Actor = null;
 			peer.Room = null;
@@ -183,11 +207,13 @@ namespace Paradise.Realtime.Server.Game {
 
 			// Remove all disconnected peers and dispose the room if 0
 			if (updatePositions) {
-				_peers.RemoveAll(_ => !_.Connected);
+				var removed = _peers.RemoveAll(_ => !_.Connected);
 
 				if (_peers.Count != 0) {
-					foreach (var peer in Peers) {
-						peer.Events.Game.SendPlayerLeftGame(peer.Actor.Cmid);
+					if (removed > 0) {
+						foreach (var peer in Peers) {
+							peer.GameEvents.SendPlayerLeftGame(peer.Actor.Cmid);
+						}
 					}
 				} else {
 					Log.Info($"disposing room {RoomId}: all peers disconnected");
@@ -213,7 +239,7 @@ namespace Paradise.Realtime.Server.Game {
 					}
 
 					if (actor.Damage.Count > 0) {
-						peer.Events.Game.SendDamageEvent(actor.Damage);
+						peer.GameEvents.SendDamageEvent(actor.Damage);
 						actor.Damage.Clear();
 					}
 
@@ -225,7 +251,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			if (deltas.Count > 0) {
 				foreach (var peer in Peers) {
-					peer.Events.Game.SendAllPlayerDeltas(deltas);
+					peer.GameEvents.SendAllPlayerDeltas(deltas);
 				}
 
 				foreach (var delta in deltas) {
@@ -237,7 +263,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			if (positions.Count > 0 && updatePositions) {
 				foreach (var peer in Peers) {
-					peer.Events.Game.SendAllPlayerPositions(positions, _frame);
+					peer.GameEvents.SendAllPlayerPositions(positions, _frame);
 				}
 
 				positions.Clear();
@@ -252,16 +278,15 @@ namespace Paradise.Realtime.Server.Game {
 			Dispose(true);
 		}
 
-		protected virtual void Dispose(bool disposing) {
-			if (IsDisposed)
-				return;
+		private void Dispose(bool disposing) {
+			if (IsDisposed) return;
 
 			if (disposing) {
 				Scheduler.Unschedule(Loop);
 
 				foreach (var peer in Peers) {
 					foreach (var player in Players) {
-						peer.Events.Game.SendPlayerLeftGame(player.Cmid);
+						peer.GameEvents.SendPlayerLeftGame(player.Cmid);
 					}
 				}
 
@@ -280,11 +305,13 @@ namespace Paradise.Realtime.Server.Game {
 			IsDisposed = true;
 		}
 
-
-
 		#region Events
 		protected virtual void OnMatchEnded(EventArgs args) {
 			MatchEnded?.Invoke(this, args);
+		}
+
+		protected virtual void OnPlayerKilled(PlayerKilledEventArgs args) {
+			PlayerKilled?.Invoke(this, args);
 		}
 
 		protected virtual void OnPlayerRespawned(PlayerRespawnedEventArgs args) {
@@ -295,8 +322,8 @@ namespace Paradise.Realtime.Server.Game {
 			PlayerJoined?.Invoke(this, args);
 		}
 
-		protected virtual void OnPlayerKilled(PlayerKilledEventArgs args) {
-			PlayerKilled?.Invoke(this, args);
+		protected virtual void OnPlayerLeft(PlayerLeftEventArgs args) {
+			PlayerLeft?.Invoke(this, args);
 		}
 		#endregion
 	}

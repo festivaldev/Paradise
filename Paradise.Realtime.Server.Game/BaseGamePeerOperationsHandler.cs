@@ -6,8 +6,6 @@ using System.IO;
 
 namespace Paradise.Realtime.Server.Game {
 	public abstract class BaseGamePeerOperationsHandler : BaseOperationHandler<GamePeer> {
-		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseGamePeerOperationsHandler).Name);
-
 		public override int Id => 1;
 
 		protected abstract void OnSendHeartbeatResponse(GamePeer peer, string authToken, string responseHash);

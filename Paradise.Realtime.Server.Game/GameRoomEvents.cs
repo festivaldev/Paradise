@@ -1,5 +1,4 @@
-﻿using log4net;
-using Paradise.Core.Models;
+﻿using Paradise.Core.Models;
 using Paradise.Core.Serialization;
 using Paradise.Core.Types;
 using Paradise.DataCenter.Common.Entities;
@@ -9,8 +8,6 @@ using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameRoomEvents : BaseEventSender {
-		private static readonly ILog Log = LogManager.GetLogger(typeof(GameRoomEvents));
-
 		public GameRoomEvents(BasePeer peer) : base(peer) { }
 
 		public void SendPowerUpPicked(int id, byte flag) {

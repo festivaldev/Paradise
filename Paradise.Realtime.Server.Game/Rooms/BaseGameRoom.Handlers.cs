@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
-	public abstract partial class BaseGameRoom : BaseGameRoomOperationsHandler, IRoom<GamePeer>, IDisposable {
+	public abstract partial class BaseGameRoom : BaseGameRoomOperationsHandler {
 		private const float ARMOR_ABSORPTION = 0.66f;
 
 		protected override void OnJoinGame(GamePeer peer, TeamID team) {
@@ -35,11 +35,13 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnPowerUpRespawnTimes(GamePeer peer, List<ushort> respawnTimes) {
-			throw new NotImplementedException();
+			if (!PowerUpManager.IsLoaded) {
+				PowerUpManager.Load(respawnTimes);
+			}
 		}
 
 		protected override void OnPowerUpPicked(GamePeer peer, int powerupId, byte type, byte value) {
-			throw new NotImplementedException();
+			PowerUpManager.PickUp(peer, powerupId, (PickupItemType)type, value);
 		}
 
 		protected override void OnIncreaseHealthAndArmor(GamePeer peer, byte health, byte armor) {
@@ -121,7 +123,7 @@ namespace Paradise.Realtime.Server.Game {
 					otherPeer.Actor.Info.Health -= shortDamage;
 
 					if (otherPeer.Actor.Info.Health <= 0) {
-						otherPeer.Actor.Info.PlayerState = PlayerStates.Dead;
+						//otherPeer.Actor.Info.PlayerState = PlayerStates.Dead;
 
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
 							otherPeer.Actor.Info.Deaths++;
@@ -166,7 +168,7 @@ namespace Paradise.Realtime.Server.Game {
 					default: break;
 				}
 
-				Log.Info($"{weapon.Name}({weapon.PrefabName})");
+				//Log.Info($"{weapon.Name}({weapon.PrefabName})");
 
 				if (weapon != null) {
 					float damage = weapon.DamagePerProjectile;
@@ -231,7 +233,7 @@ namespace Paradise.Realtime.Server.Game {
 						});
 					} else if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
 						Log.Info(force);
-						otherPeer.Events.Game.SendPlayerHit(force * weapon.DamageKnockback);
+						otherPeer.GameEvents.SendPlayerHit(force * weapon.DamageKnockback);
 					}
 				}
 			}
@@ -257,7 +259,7 @@ namespace Paradise.Realtime.Server.Game {
 		protected override void OnJump(GamePeer peer, Vector3 position) {
 			foreach (var otherPeer in Peers) {
 				if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
-					otherPeer.Events.Game.SendPlayerJumped(peer.Actor.Cmid, peer.Actor.Movement.Position);
+					otherPeer.GameEvents.SendPlayerJumped(peer.Actor.Cmid, peer.Actor.Movement.Position);
 				}
 			}
 		}
@@ -276,6 +278,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		protected override void OnIsFiring(GamePeer peer, bool on) {
 			var state = peer.Actor.Info.PlayerState;
+
 			if (on) {
 				state |= PlayerStates.Shooting;
 			} else {
@@ -291,6 +294,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		protected override void OnIsPaused(GamePeer peer, bool on) {
 			var state = peer.Actor.Info.PlayerState;
+
 			if (on) {
 				state |= PlayerStates.Paused;
 			} else {
@@ -302,6 +306,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		protected override void OnIsInSniperMode(GamePeer peer, bool on) {
 			var state = peer.Actor.Info.PlayerState;
+
 			if (on) {
 				state |= PlayerStates.Sniping;
 			} else {
@@ -314,7 +319,7 @@ namespace Paradise.Realtime.Server.Game {
 		protected override void OnSingleBulletFire(GamePeer peer) {
 			foreach (var otherPeer in Peers) {
 				if (peer.Actor.Cmid != otherPeer.Actor.Cmid) {
-					otherPeer.Events.Game.SendSingleBulletFire(peer.Actor.Cmid);
+					otherPeer.GameEvents.SendSingleBulletFire(peer.Actor.Cmid);
 				}
 			}
 		}
@@ -336,7 +341,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			foreach (var otherPeer in Peers) {
 				if (otherPeer.Actor.Cmid != shooterCmid) {
-					otherPeer.Events.Game.SendEmitProjectile(shooterCmid, origin, direction, slot, projectileID, explode);
+					otherPeer.GameEvents.SendEmitProjectile(shooterCmid, origin, direction, slot, projectileID, explode);
 				}
 			}
 		}
@@ -346,14 +351,14 @@ namespace Paradise.Realtime.Server.Game {
 
 			foreach (var otherPeer in Peers) {
 				if (otherPeer.Actor.Cmid != emitterCmid) {
-					peer.Events.Game.SendEmitQuickItem(origin, direction, itemId, playerNumber, projectileID);
+					peer.GameEvents.SendEmitQuickItem(origin, direction, itemId, playerNumber, projectileID);
 				}
 			}
 		}
 
 		protected override void OnRemoveProjectile(GamePeer peer, int projectileID, bool explode) {
 			foreach (var otherPeer in Peers) {
-				otherPeer.Events.Game.SendRemoveProjectile(projectileID, explode);
+				otherPeer.GameEvents.SendRemoveProjectile(projectileID, explode);
 			}
 		}
 
@@ -376,7 +381,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			foreach (var otherPeer in Peers) {
 				if (otherPeer.Actor.Cmid != cmid) {
-					otherPeer.Events.Game.SendChatMessage(
+					otherPeer.GameEvents.SendChatMessage(
 						cmid,
 						playerName,
 						message,
@@ -386,6 +391,8 @@ namespace Paradise.Realtime.Server.Game {
 				}
 			}
 		}
+
+
 
 		private Vector3 NormalizeVector(Vector3 vector) {
 			float magnitude = vector.magnitude;

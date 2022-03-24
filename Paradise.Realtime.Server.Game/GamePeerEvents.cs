@@ -1,19 +1,19 @@
-﻿using log4net;
-using Paradise.Core.Models;
+﻿using Paradise.Core.Models;
 using Paradise.Core.Serialization;
 using System.Collections.Generic;
 using System.IO;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GamePeerEvents : BaseEventSender {
-		private static readonly ILog Log = LogManager.GetLogger(typeof(GamePeerEvents));
+		public GameRoomEvents GameEvents { get; private set; }
 
-		public GameRoomEvents Game { get; private set; }
-
-		public GamePeerEvents(GamePeer peer) : base(peer) {
-			Game = new GameRoomEvents(peer);
+		public GamePeerEvents(BasePeer peer) : base(peer) {
+			GameEvents = new GameRoomEvents(peer);
 		}
 
+		/// <summary>
+		/// Sends the heartbeat challenge to the client.
+		/// </summary>
 		public void SendHeartbeatChallenge(string challengeHash) {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, challengeHash);
@@ -22,6 +22,9 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
+		/// <summary>
+		/// Sends information about the room (aka session) a client just entered to that client.
+		/// </summary>
 		public void SendRoomEntered(GameRoomData game) {
 			using (var bytes = new MemoryStream()) {
 				GameRoomDataProxy.Serialize(bytes, game);
@@ -30,6 +33,9 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
+		/// <summary>
+		/// Sends a message to the client why a room could not be entered.
+		/// </summary>
 		public void SendRoomEnterFailed(string server, int roomId, string message) {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, server);
@@ -40,6 +46,12 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
+		/// <summary>
+		/// Sends a password request to the client. Will be called every time the client enters a wrong password.
+		/// </summary>
+		/// <remarks>
+		/// Maybe add a counter + error to prevent a client from spamming?
+		/// </remarks>
 		public void SendRequestPasswordForRoom(string server, int roomId) {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, server);
@@ -49,12 +61,18 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
+		/// <summary>
+		/// Informs the client that they left a room.
+		/// </summary>
 		public void SendRoomLeft() {
 			using (var bytes = new MemoryStream()) {
 				SendEvent((byte)IGamePeerEventsType.RoomLeft, bytes);
 			}
 		}
 
+		/// <summary>
+		/// Sends the full list of games to a client.
+		/// </summary>
 		public void SendFullGameList(List<GameRoomData> gameList) {
 			using (var bytes = new MemoryStream()) {
 				ListProxy<GameRoomData>.Serialize(bytes, gameList, GameRoomDataProxy.Serialize);
@@ -63,6 +81,12 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
+		/// <summary>
+		/// Sends a list of updated (created, players changed, etc.) and removed games to the client.
+		/// </summary>
+		/// <remarks>
+		/// Should probably be sent to clients periodically or automatically
+		/// </remarks>
 		public void SendGameListUpdate(List<GameRoomData> updatedGames, List<int> removedGames) {
 			using (var bytes = new MemoryStream()) {
 				ListProxy<GameRoomData>.Serialize(bytes, updatedGames, GameRoomDataProxy.Serialize);
@@ -72,12 +96,18 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
+		/// <summary>
+		/// Clears the game list client-side
+		/// </summary>
 		public void SendGameListUpdateEnd() {
 			using (var bytes = new MemoryStream()) {
 				SendEvent((byte)IGamePeerEventsType.GameListUpdateEnd, bytes);
 			}
 		}
 
+		/// <summary>
+		/// Unknown use. Probably sends game details to the client. Appears to be unused.
+		/// </summary>
 		public void SendGetGameInformation(GameRoomData room, List<GameActorInfo> players, int endTime) {
 			using (var bytes = new MemoryStream()) {
 				GameRoomDataProxy.Serialize(bytes, room);
@@ -88,6 +118,10 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
+		/// <summary>
+		/// Sends the current server load (players connected, capacity) to the client
+		/// </summary>
+		/// <param name="data"></param>
 		public void SendServerLoadData(PhotonServerLoad data) {
 			using (var bytes = new MemoryStream()) {
 				PhotonServerLoadProxy.Serialize(bytes, data);
@@ -96,6 +130,9 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
+		/// <summary>
+		/// Sends an error message to the clients and makes the game quit.
+		/// </summary>
 		public void SendDisconnectAndDisablePhoton(string message) {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, message);
