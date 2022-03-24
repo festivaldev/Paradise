@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.DataCenter.Common.Entities;
@@ -222,22 +222,6 @@ namespace Paradise.Realtime.Server.Game {
 		private void OnTick() {
 			var updatePositions = frameTimer.Tick();
 			if (updatePositions) _frame++;
-
-			// Remove all disconnected peers and dispose the room if 0
-			if (updatePositions) {
-				var removed = _peers.RemoveAll(_ => !_.Connected);
-
-				if (_peers.Count != 0) {
-					if (removed > 0) {
-						foreach (var peer in Peers) {
-							peer.GameEvents.SendPlayerLeftGame(peer.Actor.Cmid);
-						}
-					}
-				} else {
-					Log.Info($"disposing room {RoomId}: all peers disconnected");
-					GameApplication.Instance.RoomManager.RemoveRoom(RoomId);
-				}
-			}
 
 			State.Update();
 

@@ -1,6 +1,7 @@
-using Paradise.Core.Models;
+﻿using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.Core.Types;
+using PhotonHostRuntimeInterfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,20 @@ using UnityEngine;
 namespace Paradise.Realtime.Server.Game {
 	public abstract partial class BaseGameRoom : BaseGameRoomOperationsHandler {
 		private const float ARMOR_ABSORPTION = 0.66f;
+
+		public override void OnDisconnect(GamePeer peer, DisconnectReason reason, string reasonDetail) {
+			var room = peer.Room;
+
+			if (room != null) {
+				room.Leave(peer);
+
+				if (room.Peers.Count <= 0) {
+					GameApplication.Instance.RoomManager.RemoveRoom(room.RoomId);
+				}
+
+				peer.Dispose();
+			}
+		}
 
 		protected override void OnJoinGame(GamePeer peer, TeamID team) {
 			peer.Actor.Team = team;
