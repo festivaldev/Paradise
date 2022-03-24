@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.DataCenter.Common.Entities;
@@ -106,7 +106,7 @@ namespace Paradise.Realtime.Server.Game {
 				Kills = 0,
 				Level = 1,
 				Channel = ChannelType.Steam,
-				PlayerState = PlayerStates.Ready,
+				PlayerState = PlayerStates.None,
 				Ping = (ushort)(peer.RoundTripTime / 2),
 
 				// Not trying to be racist here, that's what UberStrike wants ¯\_(ツ)_/¯
@@ -199,6 +199,24 @@ namespace Paradise.Realtime.Server.Game {
 			peer.RemoveOperationHandler(Id);
 			peer.Actor = null;
 			peer.Room = null;
+		}
+
+		public void Reset() {
+			_frame = 6;
+			frameTimer.Restart();
+
+			NextPlayerId = 0;
+
+			foreach (var peer in Peers) {
+				foreach (var otherPeer in Peers) {
+					otherPeer.GameEvents.SendPlayerLeftGame(peer.Actor.Cmid);
+				}
+			}
+
+			_players.Clear();
+
+			State.ResetState();
+			State.SetState(GameStateId.WaitingForPlayers);
 		}
 
 		private void OnTick() {
@@ -308,6 +326,16 @@ namespace Paradise.Realtime.Server.Game {
 		#region Events
 		protected virtual void OnMatchEnded(EventArgs args) {
 			MatchEnded?.Invoke(this, args);
+
+			foreach (var i in Peers) {
+				i.Actor.Info.PlayerState &= ~PlayerStates.Shooting;
+
+				foreach (var j in Peers) {
+					if (j.Actor.Info.Cmid == i.Actor.Info.Cmid) continue;
+
+					j.GameEvents.SendPlayerLeftGame(i.Actor.Cmid);
+				}
+			}
 		}
 
 		protected virtual void OnPlayerKilled(PlayerKilledEventArgs args) {

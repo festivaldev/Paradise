@@ -1,14 +1,15 @@
 ﻿using Paradise.Core.Models;
 using System;
+using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	public class AfterRoundPlayerState : PlayerState {
 		public AfterRoundPlayerState(GamePeer peer) : base(peer) { }
 
 		public override void OnEnter() {
-			Peer.GameEvents.SendMatchEnd(new EndOfMatchData {
+			//Peer.GameEvents.SendMatchEnd(new EndOfMatchData {
 			
-			});
+			//});
 		}
 
 		public override void OnExit() { }
