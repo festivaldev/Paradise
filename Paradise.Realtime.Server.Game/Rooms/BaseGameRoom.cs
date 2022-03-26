@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.DataCenter.Common.Entities;
@@ -23,8 +23,8 @@ namespace Paradise.Realtime.Server.Game {
 		private List<GamePeer> _peers = new List<GamePeer>();
 		public IReadOnlyList<GamePeer> Peers => _peers.AsReadOnly();
 
-		private List<GameActor> _players = new List<GameActor>();
-		public IReadOnlyList<GameActor> Players => _players.AsReadOnly();
+		private List<GamePeer> _players = new List<GamePeer>();
+		public IReadOnlyList<GamePeer> Players => _players.AsReadOnly();
 
 		public int RoundNumber;
 		public int RoundStartTime;
@@ -190,7 +190,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			lock (_peers) {
 				_peers.Remove(peer);
-				_players.Remove(peer.Actor);
+				_players.Remove(peer);
 
 				MetaData.ConnectedPlayers = Peers.Count;
 			}
@@ -239,7 +239,7 @@ namespace Paradise.Realtime.Server.Game {
 				peer.Tick();
 				peer.State.Update();
 
-				if (Players.Contains(actor)) {
+				if (Players.Contains(peer)) {
 					var delta = actor.Delta;
 
 					if (delta.Changes.Count > 0) {
@@ -295,7 +295,7 @@ namespace Paradise.Realtime.Server.Game {
 
 				foreach (var peer in Peers) {
 					foreach (var player in Players) {
-						peer.GameEvents.SendPlayerLeftGame(player.Cmid);
+						peer.GameEvents.SendPlayerLeftGame(player.Actor.Cmid);
 					}
 				}
 

@@ -13,8 +13,8 @@ namespace Paradise.Realtime.Server.Game {
 				var allPositions = new List<PlayerMovement>(players.Count);
 
 				foreach (var player in players) {
-					allPlayers.Add(player.Info);
-					allPositions.Add(player.Movement);
+					allPlayers.Add(player.Actor.Info);
+					allPositions.Add(player.Actor.Movement);
 				}
 
 				Peer.GameEvents.SendAllPlayers(allPlayers, allPositions, 0);

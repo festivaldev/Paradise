@@ -37,8 +37,8 @@ namespace Paradise.Realtime.Server.Game {
 			peer.Actor.Info.Deaths = 0;
 
 			lock (_peers) {
-				if (_players.FirstOrDefault(_ => _.Cmid == peer.Actor.Cmid) == null) {
-					_players.Add(peer.Actor);
+				if (_players.FirstOrDefault(_ => _.Actor.Cmid == peer.Actor.Cmid) == null) {
+					_players.Add(peer);
 				}
 			}
 

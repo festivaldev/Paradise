@@ -45,7 +45,7 @@ namespace Paradise.Realtime.Server.Game {
 				achievements.Add(5, (ushort)1337);
 
 				MostValuablePlayers.Add(new StatsSummary {
-					Cmid = mvp.Cmid,
+					Cmid = mvp.Actor.Cmid,
 					Achievements = achievements,
 					Deaths = 1337,
 					Kills = 1337,

@@ -16,13 +16,13 @@ namespace Paradise.Realtime.Server.Game {
 		protected override void OnPlayerKilled(PlayerKilledEventArgs args) {
 			base.OnPlayerKilled(args);
 
-			var leader = Players.OrderByDescending(_ => _.Info.Kills).First();
+			var leader = Players.OrderByDescending(_ => _.Actor.Info.Kills).First();
 
 			foreach (var peer in Peers) {
-				peer.GameEvents.SendKillsRemaining(MetaData.KillLimit - leader.Info.Kills, leader.Cmid);
+				peer.GameEvents.SendKillsRemaining(MetaData.KillLimit - leader.Actor.Info.Kills, leader.Actor.Cmid);
 			}
 
-			if (leader.Info.Kills >= MetaData.KillLimit) {
+			if (leader.Actor.Info.Kills >= MetaData.KillLimit) {
 				OnMatchEnded(new EventArgs());
 			}
 		}
