@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.DataCenter.Common.Entities;
@@ -318,13 +318,13 @@ namespace Paradise.Realtime.Server.Game {
 		protected virtual void OnMatchEnded(EventArgs args) {
 			MatchEnded?.Invoke(this, args);
 
-			foreach (var i in Peers) {
-				i.Actor.Info.PlayerState &= ~PlayerStates.Shooting;
+			foreach (var peer in Peers) {
+				peer.Actor.Info.PlayerState &= ~PlayerStates.Shooting;
 
-				foreach (var j in Peers) {
-					if (j.Actor.Info.Cmid == i.Actor.Info.Cmid) continue;
+				foreach (var player in Players) {
+					if (player.Actor.Info.Cmid == peer.Actor.Info.Cmid) continue;
 
-					j.GameEvents.SendPlayerLeftGame(i.Actor.Cmid);
+					player.GameEvents.SendPlayerLeftGame(peer.Actor.Cmid);
 				}
 			}
 		}

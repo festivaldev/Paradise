@@ -1,4 +1,4 @@
-﻿using Paradise.Core.Models;
+using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.WebServices.Client;
 using System;
@@ -14,8 +14,8 @@ namespace Paradise.Realtime.Server.Game {
 
 			Room.WinningTeam = TeamID.NONE;
 
-			foreach (var peer in Room.Peers) {
-				PrepareAndSpawnPlayer(peer);
+			foreach (var player in Room.Players) {
+				PrepareAndSpawnPlayer(player);
 			}
 
 			// We need to add an additional count because the game client seems to ignore the first count
@@ -96,9 +96,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void OnCountdownCounted(int count) {
-			if (count > 5) return;
-
-			foreach (var peer in Room.Peers) {
+			foreach (var peer in Room.Players) {
 				peer.GameEvents.SendMatchStartCountdown((byte)count);
 			}
 		}

@@ -1,4 +1,4 @@
-﻿using Paradise.Core.Models;
+using Paradise.Core.Models;
 using System;
 
 namespace Paradise.Realtime.Server.Game {
@@ -14,7 +14,7 @@ namespace Paradise.Realtime.Server.Game {
 			Room.RoundStartTime = Environment.TickCount;
 			Room.RoundEndTime = Room.RoundStartTime + (Room.MetaData.TimeLimit * 1000);
 
-			foreach (var peer in Room.Peers) {
+			foreach (var peer in Room.Players) {
 				peer.State.SetState(PlayerStateId.Playing);
 			}
 		}
@@ -39,22 +39,11 @@ namespace Paradise.Realtime.Server.Game {
 
 
 		private void OnPlayerJoined(object sender, PlayerJoinedEventArgs e) {
-			//var player = e.Player;
+			foreach (var otherPeer in Room.Peers) {
+				otherPeer.GameEvents.SendPlayerJoinedGame(e.Player.Actor.Info, e.Player.Actor.Movement);
+			}
 
-			//var spawn = Room.SpawnPointManager.Get(player.Actor.Team);
-
-			//player.Actor.Movement.Position = spawn.Position;
-			//player.Actor.Movement.HorizontalRotation = spawn.Rotation;
-
-			//foreach (var otherPeer in Room.Peers) {
-			//	otherPeer.GameEvents.SendPlayerJoinedGame(player.Actor.Info, player.Actor.Movement);
-			//}
-
-			//if (Room.CanStartMatch) {
-
-			//} else {
-			//	player.State.SetState(PlayerStateId.WaitingForPlayers);
-			//}
+			PrepareAndSpawnPlayer(e.Player);
 		}
 
 		private void OnPlayerKilled(object sender, PlayerKilledEventArgs e) {

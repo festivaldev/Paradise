@@ -147,9 +147,9 @@ namespace Paradise.Realtime.Server {
 			heartbeatExpireTime = DateTime.UtcNow.AddSeconds(HeartbeatTimeout);
 			heartbeatState = HeartbeatState.Waiting;
 
-#if DEBUG
-			Log.Debug($"Heartbeat({heartbeat}) with {HeartbeatTimeout}s timeout, expires at {heartbeatExpireTime}");
-#endif
+//#if DEBUG
+//			Log.Debug($"Heartbeat({heartbeat}) with {HeartbeatTimeout}s timeout, expires at {heartbeatExpireTime}");
+//#endif
 
 			SendHeartbeat(heartbeat);
 		}
@@ -161,9 +161,9 @@ namespace Paradise.Realtime.Server {
 				throw new ArgumentNullException(nameof(responseHash));
 			}
 
-#if DEBUG
-			Log.Info($"HeartbeatCheck({responseHash})");
-#endif
+//#if DEBUG
+//			Log.Info($"HeartbeatCheck({responseHash})");
+//#endif
 
 			if (heartbeat == null) {
 				Log.Error("Heartbeat was null while checking.");

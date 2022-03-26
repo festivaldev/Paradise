@@ -81,8 +81,8 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnDirectHitDamage(GamePeer peer, int target, byte bodyPart, byte bullets) {
-			foreach (var otherPeer in Peers) {
-				if (otherPeer.Actor.Cmid != target) continue;
+			foreach (var player in Players) {
+				if (player.Actor.Cmid != target) continue;
 
 				var weapon = default(UberStrikeItemWeaponView);
 
@@ -117,7 +117,7 @@ namespace Paradise.Realtime.Server.Game {
 
 					var shortDamage = (short)damage;
 
-					var victimPos = otherPeer.Actor.Movement.Position;
+					var victimPos = player.Actor.Movement.Position;
 					var attackerPos = peer.Actor.Movement.Position;
 
 					var direction = attackerPos - victimPos;
@@ -129,22 +129,22 @@ namespace Paradise.Realtime.Server.Game {
 
 					var byteAngle = Conversions.Angle2Byte(angle);
 
-					if (otherPeer.Actor.Info.ArmorPoints > 0) {
-						int originalArmor = otherPeer.Actor.Info.ArmorPoints;
-						otherPeer.Actor.Info.ArmorPoints = (byte)Math.Max(0, otherPeer.Actor.Info.ArmorPoints - shortDamage);
+					if (player.Actor.Info.ArmorPoints > 0) {
+						int originalArmor = player.Actor.Info.ArmorPoints;
+						player.Actor.Info.ArmorPoints = (byte)Math.Max(0, player.Actor.Info.ArmorPoints - shortDamage);
 
-						double diff = (originalArmor - otherPeer.Actor.Info.ArmorPoints) * ARMOR_ABSORPTION;
+						double diff = (originalArmor - player.Actor.Info.ArmorPoints) * ARMOR_ABSORPTION;
 						shortDamage -= (short)diff;
 					}
 
-					otherPeer.Actor.Damage.AddDamage(byteAngle, shortDamage, bodyPart, 0, 0);
-					otherPeer.Actor.Info.Health -= shortDamage;
+					player.Actor.Damage.AddDamage(byteAngle, shortDamage, bodyPart, 0, 0);
+					player.Actor.Info.Health -= shortDamage;
 
-					if (otherPeer.Actor.Info.Health <= 0) {
+					if (player.Actor.Info.Health <= 0) {
 						//otherPeer.Actor.Info.PlayerState = PlayerStates.Dead;
 
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
-							otherPeer.Actor.Info.Deaths++;
+							player.Actor.Info.Deaths++;
 							peer.Actor.Info.Kills++;
 						}
 
@@ -153,7 +153,7 @@ namespace Paradise.Realtime.Server.Game {
 						//otherPeer.State.SetState(GamePeerState.Id.Killed);
 						OnPlayerKilled(new PlayerKilledEventArgs {
 							AttackerCmid = peer.Actor.Cmid,
-							VictimCmid = otherPeer.Actor.Cmid,
+							VictimCmid = player.Actor.Cmid,
 							ItemClass = weapon.ItemClass,
 							Damage = (ushort)shortDamage,
 							Part = (BodyPart)bodyPart,
@@ -165,8 +165,8 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnExplosionDamage(GamePeer peer, int target, byte slot, byte distance, Vector3 force) {
-			foreach (var otherPeer in Peers) {
-				if (otherPeer.Actor.Cmid != target) continue;
+			foreach (var player in Players) {
+				if (player.Actor.Cmid != target) continue;
 
 				var weapon = default(UberStrikeItemWeaponView);
 
@@ -198,7 +198,7 @@ namespace Paradise.Realtime.Server.Game {
 
 					var shortDamage = (short)damageExplosion;
 
-					var victimPos = otherPeer.Actor.Movement.Position;
+					var victimPos = player.Actor.Movement.Position;
 					var attackerPos = peer.Actor.Movement.Position;
 
 					var direction = attackerPos - victimPos;
@@ -210,48 +210,47 @@ namespace Paradise.Realtime.Server.Game {
 
 					var byteAngle = Conversions.Angle2Byte(angle);
 
-					if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
-						if (otherPeer.Actor.Info.ArmorPoints > 0) {
-							int originalArmor = otherPeer.Actor.Info.ArmorPoints;
-							otherPeer.Actor.Info.ArmorPoints = (byte)Math.Max(0, otherPeer.Actor.Info.ArmorPoints - shortDamage);
+					if (player.Actor.Cmid != peer.Actor.Cmid) {
+						if (player.Actor.Info.ArmorPoints > 0) {
+							int originalArmor = player.Actor.Info.ArmorPoints;
+							player.Actor.Info.ArmorPoints = (byte)Math.Max(0, player.Actor.Info.ArmorPoints - shortDamage);
 
-							double diff = (originalArmor - otherPeer.Actor.Info.ArmorPoints) * ARMOR_ABSORPTION;
+							double diff = (originalArmor - player.Actor.Info.ArmorPoints) * ARMOR_ABSORPTION;
 							shortDamage -= (short)diff;
 						}
 
-						otherPeer.Actor.Damage.AddDamage(byteAngle, shortDamage, (byte)BodyPart.Body, 0, 0);
+						player.Actor.Damage.AddDamage(byteAngle, shortDamage, (byte)BodyPart.Body, 0, 0);
 					} else {
 						shortDamage /= 2;
 
-						if (otherPeer.Actor.Info.ArmorPoints > 0) {
-							int originalArmor = otherPeer.Actor.Info.ArmorPoints;
-							otherPeer.Actor.Info.ArmorPoints = (byte)Math.Max(0, otherPeer.Actor.Info.ArmorPoints - shortDamage);
-							double diff = (originalArmor - otherPeer.Actor.Info.ArmorPoints) * ARMOR_ABSORPTION;
+						if (player.Actor.Info.ArmorPoints > 0) {
+							int originalArmor = player.Actor.Info.ArmorPoints;
+							player.Actor.Info.ArmorPoints = (byte)Math.Max(0, player.Actor.Info.ArmorPoints - shortDamage);
+							double diff = (originalArmor - player.Actor.Info.ArmorPoints) * ARMOR_ABSORPTION;
 							shortDamage -= (short)diff;
 						}
 					}
 
-					otherPeer.Actor.Info.Health -= shortDamage;
+					player.Actor.Info.Health -= shortDamage;
 
-					if (otherPeer.Actor.Info.Health <= 0) {
-						otherPeer.Actor.Info.PlayerState = PlayerStates.Dead;
+					if (player.Actor.Info.Health <= 0) {
+						player.Actor.Info.PlayerState = PlayerStates.Dead;
 
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
-							otherPeer.Actor.Info.Deaths++;
+							player.Actor.Info.Deaths++;
 							peer.Actor.Info.Kills++;
 						}
 
 						OnPlayerKilled(new PlayerKilledEventArgs {
 							AttackerCmid = peer.Actor.Cmid,
-							VictimCmid = otherPeer.Actor.Cmid,
+							VictimCmid = player.Actor.Cmid,
 							ItemClass = weapon.ItemClass,
 							Damage = (ushort)shortDamage,
 							Part = BodyPart.Body,
 							Direction = -(Vector3)direction
 						});
-					} else if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
-						Log.Info(force);
-						otherPeer.GameEvents.SendPlayerHit(force * weapon.DamageKnockback);
+					} else if (player.Actor.Cmid != peer.Actor.Cmid) {
+						player.GameEvents.SendPlayerHit(force * weapon.DamageKnockback);
 					}
 				}
 			}
