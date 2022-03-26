@@ -1,4 +1,4 @@
-using Paradise.Core.Models;
+﻿using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.WebServices.Client;
 using System;
@@ -17,9 +17,6 @@ namespace Paradise.Realtime.Server.Game {
 			foreach (var player in Room.Players) {
 				PrepareAndSpawnPlayer(player);
 			}
-
-			// We need to add an additional count because the game client seems to ignore the first count
-			OnCountdownCounted(5);
 
 			Countdown = new Countdown(Room.Loop, 5, 0);
 			Countdown.Counted += OnCountdownCounted;
@@ -41,6 +38,10 @@ namespace Paradise.Realtime.Server.Game {
 
 
 		private void OnPlayerJoined(object sender, PlayerJoinedEventArgs e) {
+			foreach (var otherPeer in Room.Peers) {
+				otherPeer.GameEvents.SendPlayerJoinedGame(e.Player.Actor.Info, e.Player.Actor.Movement);
+			}
+
 			PrepareAndSpawnPlayer(e.Player);
 		}
 
