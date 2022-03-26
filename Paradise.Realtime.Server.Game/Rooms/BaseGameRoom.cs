@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.DataCenter.Common.Entities;
@@ -229,7 +229,14 @@ namespace Paradise.Realtime.Server.Game {
 			var deltas = new List<GameActorInfoDelta>();
 
 			foreach (var peer in Peers) {
+				if (peer.HasError) {
+					peer.Disconnect();
+
+					continue;
+				}
+
 				var actor = peer.Actor;
+				peer.Tick();
 				peer.State.Update();
 
 				if (Players.Contains(actor)) {

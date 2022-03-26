@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -47,6 +47,9 @@ namespace Paradise.Realtime.Server {
 			} else if (HeartbeatTimeout == 0) {
 				HeartbeatTimeout = 5;
 			}
+
+			ValidateHashes(CompositeHashes, CompositeHashBytes);
+			ValidateHashes(JunkHashes, JunkHashBytes);
 		}
 
 		private void ValidateHashes(List<string> hashes, List<byte[]> hashBytes) {

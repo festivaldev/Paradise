@@ -32,5 +32,9 @@ namespace Paradise.Realtime.Server.Game {
 
 			AddOperationHandler(new GamePeerOperationsHandler());
 		}
+
+		public override void SendHeartbeat(string hash) {
+			PeerEvents.SendHeartbeatChallenge(hash);
+		}
 	}
 }

@@ -19,7 +19,14 @@ namespace Paradise.Realtime.Server.Game {
 		private static readonly ILog Log = LogManager.GetLogger(typeof(GamePeerOperationsHandler));
 
 		protected override void OnSendHeartbeatResponse(GamePeer peer, string authToken, string responseHash) {
-			throw new NotImplementedException();
+			try {
+				if (!peer.CheckHeartbeat(responseHash)) {
+					peer.Disconnect();
+				}
+			} catch {
+				peer.SendError();
+				throw;
+			}
 		}
 
 		protected override void OnGetServerLoad(GamePeer peer) {
