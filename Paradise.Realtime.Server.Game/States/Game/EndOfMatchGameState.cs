@@ -1,5 +1,7 @@
 ﻿using Paradise.Core.Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Paradise.Realtime.Server.Game {
 	public class EndOfMatchGameState : GameState {
@@ -25,33 +27,59 @@ namespace Paradise.Realtime.Server.Game {
 			}
 
 			List<StatsSummary> MostValuablePlayers = new List<StatsSummary>();
-			foreach (var mvp in Room.Players) {
+			foreach (var player in Room.Players) {
 				Dictionary<byte, ushort> achievements = new Dictionary<byte, ushort>();
+
 				// Most Valuable (Highest KD)
-				// KD is divided by 10 by the client because you cant send decimals through ushort
-				//if (Players.MaxBy(x => x.TotalStats.GetKills()).Actor.Cmid == mvp.Actor.Cmid)
-				achievements.Add(1, (ushort)(8) * 10);
+				if (Room.Players.Where(_ => _.Actor.KillDeathRatio > 1).Count() > 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.KillDeathRatio).First().Actor.Cmid == player.Actor.Cmid) {
+						achievements.Add((byte)AchievementType.MostValuable, Convert.ToUInt16(player.Actor.KillDeathRatio * 10));
+					}
+				}
+
 				// Most Aggressive (Most Kills Total)
-				//if (Players.MaxBy(x => x.TotalStats.GetKills()).Actor.Cmid == mvp.Actor.Cmid)
-				achievements.Add(2, (ushort)1337);
-				// Sharpest Shooter (Most Crits aka Most Headshots and Nutshots)
-				//if (Players.MaxBy(x => x.TotalStats.Headshots + x.TotalStats.Nutshots).Actor.Cmid == mvp.Actor.Cmid)
-				achievements.Add(3, (ushort)(1337));
+				if (Room.Players.Where(_ => _.Actor.Kills > 0).Count() > 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.Kills).First().Actor.Cmid == player.Actor.Cmid) {
+						achievements.Add((byte)AchievementType.MostAggressive, Convert.ToUInt16(player.Actor.Kills));
+					}
+				}
+
+				// Sharpest Shooter (Most Critical Hits)
+				if (Room.Players.Where(_ => _.Actor.MatchStatistics.Headshots + _.Actor.MatchStatistics.Nutshots > 0).Count() > 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.MatchStatistics.Headshots + _.Actor.MatchStatistics.Nutshots).First().Actor.Cmid == player.Actor.Cmid) {
+						achievements.Add((byte)AchievementType.SharpestShooter, (ushort)(player.Actor.MatchStatistics.Headshots + player.Actor.MatchStatistics.Nutshots));
+					}
+				}
+
 				// Most Trigger Happy (Highest Killstreak)
-				//if (Players.MaxBy(x => x.TotalStats.ConsecutiveSnipes).Actor.Cmid == mvp.Actor.Cmid)
-				achievements.Add(4, (ushort)(1337));
+				if (Room.Players.Where(_ => _.Actor.MatchStatistics.ConsecutiveSnipes > 0).Count() > 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.MatchStatistics.ConsecutiveSnipes).First().Actor.Cmid == player.Actor.Cmid) {
+						achievements.Add((byte)AchievementType.TriggerHappy, (ushort)player.Actor.MatchStatistics.ConsecutiveSnipes);
+					}
+				}
+
 				// Hardest Hitter (Highest Damage Dealt)
-				//if (Players.MaxBy(x => x.TotalStats.GetDamageDealt()).Actor.Cmid == mvp.Actor.Cmid)
-				achievements.Add(5, (ushort)1337);
+				if (Room.Players.Where(_ => _.Actor.MatchStatistics.GetDamageDealt() > 0).Count() > 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.MatchStatistics.GetDamageDealt()).First().Actor.Cmid == player.Actor.Cmid) {
+						achievements.Add((byte)AchievementType.HardestHitter, (ushort)player.Actor.MatchStatistics.GetDamageDealt());
+					}
+				}
+
+				// Cost Effective (Highest Accuracy)
+				if (Room.Players.Where(_ => _.Actor.Accuracy > 0).Count() > 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.Accuracy).First().Actor.Cmid == player.Actor.Cmid) {
+						achievements.Add((byte)AchievementType.CostEffective, Convert.ToUInt16(player.Actor.Accuracy * 10));
+					}
+				}
 
 				MostValuablePlayers.Add(new StatsSummary {
-					Cmid = mvp.Actor.Cmid,
+					Cmid = player.Actor.Cmid,
 					Achievements = achievements,
-					Deaths = 1337,
-					Kills = 1337,
-					Level = 1337,
-					Name = "debug",
-					Team = TeamID.NONE
+					Deaths = player.Actor.Info.Deaths,
+					Kills = player.Actor.Info.Kills,
+					Level = player.Actor.Info.Level,
+					Name = player.Actor.Info.PlayerName,
+					Team = player.Actor.Info.TeamID
 				});
 			}
 
@@ -64,7 +92,7 @@ namespace Paradise.Realtime.Server.Game {
 					MostValuablePlayers = MostValuablePlayers,
 					MatchGuid = Room.MetaData.Guid,
 					HasWonMatch = false,
-					TimeInGameMinutes = 300
+					TimeInGameMinutes = (int)TimeSpan.FromMilliseconds(Room.RoundEndTime - Room.RoundStartTime).TotalSeconds
 				});
 			}
 		}

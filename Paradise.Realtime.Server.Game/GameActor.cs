@@ -10,6 +10,8 @@ namespace Paradise.Realtime.Server.Game {
 
 		public GameActorInfoDelta Delta => Info.Delta;
 
+		public StatsCollection MatchStatistics { get; private set; } = new StatsCollection();
+
 		public TeamID Team {
 			get { return Info.TeamID; }
 			set { Info.TeamID = value; }
@@ -38,5 +40,11 @@ namespace Paradise.Realtime.Server.Game {
 
 			Info.Delta.Id = actorInfo.PlayerId;
 		}
+
+
+		public short Kills => Info?.Kills ?? 0;
+		public short Deaths => Info?.Deaths ?? 0;
+		public double KillDeathRatio => Kills / Math.Max(1, (int)Deaths);
+		public double Accuracy => MatchStatistics.GetHits() / Math.Max(1, MatchStatistics.GetShots());
 	}
 }
