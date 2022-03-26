@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.DataCenter.Common.Entities;
@@ -199,6 +199,10 @@ namespace Paradise.Realtime.Server.Game {
 			peer.RemoveOperationHandler(Id);
 			peer.Actor = null;
 			peer.Room = null;
+
+			if (!CanStartMatch && (State.CurrentStateId == GameStateId.Countdown || State.CurrentStateId == GameStateId.MatchRunning)) {
+				OnMatchEnded(new EventArgs());
+			}
 		}
 
 		public void Reset() {
@@ -316,6 +320,8 @@ namespace Paradise.Realtime.Server.Game {
 
 		#region Events
 		protected virtual void OnMatchEnded(EventArgs args) {
+			RoundEndTime = Environment.TickCount;
+
 			MatchEnded?.Invoke(this, args);
 
 			foreach (var peer in Peers) {
