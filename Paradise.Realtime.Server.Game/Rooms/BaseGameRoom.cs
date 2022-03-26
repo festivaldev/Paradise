@@ -239,9 +239,10 @@ namespace Paradise.Realtime.Server.Game {
 					continue;
 				}
 
-				var actor = peer.Actor;
 				peer.Tick();
 				peer.State.Update();
+
+				var actor = peer.Actor;
 
 				if (Players.Contains(peer)) {
 					var delta = actor.Delta;
@@ -320,8 +321,6 @@ namespace Paradise.Realtime.Server.Game {
 
 		#region Events
 		protected virtual void OnMatchEnded(EventArgs args) {
-			RoundEndTime = Environment.TickCount;
-
 			MatchEnded?.Invoke(this, args);
 
 			foreach (var peer in Peers) {

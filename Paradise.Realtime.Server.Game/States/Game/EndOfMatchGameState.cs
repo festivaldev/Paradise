@@ -10,21 +10,12 @@ namespace Paradise.Realtime.Server.Game {
 		public EndOfMatchGameState(BaseGameRoom room) : base(room) { }
 
 		public override void OnEnter() {
+			Room.RoundEndTime = Environment.TickCount;
+
 			RestartCountdown = new Countdown(Room.Loop, 5, 0);
 			RestartCountdown.Completed += OnRestartCountdownCompleted;
 
 			RestartCountdown.Restart();
-
-			foreach (var peer in Room.Peers) {
-				//	peer.GameEvents.SendTeamWins(TeamID.BLUE);
-				//	peer.GameEvents.SendMatchEnd(new EndOfMatchData {
-				//		HasWonMatch = true,
-				//		MatchGuid = Room.MetaData.Guid
-				//	});
-
-				peer.GameEvents.SendTeamWins(Room.WinningTeam);
-				peer.State.SetState(PlayerStateId.AfterRound);
-			}
 
 			List<StatsSummary> MostValuablePlayers = new List<StatsSummary>();
 			foreach (var player in Room.Players) {

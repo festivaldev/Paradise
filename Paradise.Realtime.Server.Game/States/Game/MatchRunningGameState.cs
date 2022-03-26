@@ -5,6 +5,8 @@ using System;
 
 namespace Paradise.Realtime.Server.Game {
 	public class MatchRunningGameState : GameState {
+		private Countdown MatchEndCountdown;
+
 		public MatchRunningGameState(BaseGameRoom room) : base(room) { }
 
 		public override void OnEnter() {
@@ -36,6 +38,8 @@ namespace Paradise.Realtime.Server.Game {
 			if (Environment.TickCount > Room.RoundEndTime) {
 				Room.State.SetState(GameStateId.EndOfMatch);
 			}
+
+			MatchEndCountdown?.Tick();
 		}
 
 
@@ -78,7 +82,14 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void OnMatchEnded(object sender, EventArgs e) {
-			Room.State.SetState(GameStateId.EndOfMatch);
+			MatchEndCountdown = new Countdown(Room.Loop, 3, 0);
+			MatchEndCountdown.Completed += OnMatchEndCountdownCompleted;
+			MatchEndCountdown.Restart();
+
+			foreach (var peer in Room.Players) {
+				peer.GameEvents.SendTeamWins(Room.WinningTeam);
+				peer.State.SetState(PlayerStateId.AfterRound);
+			}
 		}
 
 		private void PrepareAndSpawnPlayer(GamePeer peer) {
@@ -130,6 +141,10 @@ namespace Paradise.Realtime.Server.Game {
 			foreach (var otherPeer in Room.Peers) {
 				otherPeer.GameEvents.SendPlayerRespawned(peer.Actor.Info.Cmid, peer.Actor.Movement.Position, peer.Actor.Movement.HorizontalRotation);
 			}
+		}
+
+		private void OnMatchEndCountdownCompleted() {
+			Room.State.SetState(GameStateId.EndOfMatch);
 		}
 	}
 }
