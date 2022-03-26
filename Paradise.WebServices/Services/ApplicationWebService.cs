@@ -34,7 +34,6 @@ namespace Paradise.WebServices.Services {
 				// Resolve them domains
 				try {
 					defaultAppAuthentication.CommServer.IP = Dns.GetHostAddresses(defaultAppAuthentication.CommServer.IP).FirstOrDefault().ToString();
-					Log.Debug(defaultAppAuthentication.CommServer.IP);
 				} catch (Exception e) {
 					Log.Error($"Failed to resolve CommServer IP: {e.Message}{Environment.NewLine}{e.StackTrace}");
 				}
@@ -42,7 +41,6 @@ namespace Paradise.WebServices.Services {
 				try {
 					foreach (var gameServer in defaultAppAuthentication.GameServers) {
 						gameServer.IP = Dns.GetHostAddresses(gameServer.IP).FirstOrDefault().ToString();
-						Log.Debug(gameServer.IP);
 					}
 				} catch (Exception e) {
 					Log.Error($"Failed to resolve GameServer IP: {e.Message}{Environment.NewLine}{e.StackTrace}");
