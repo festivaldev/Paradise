@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="BaseGamePeerOperationsHandler.cs" />
     <Compile Include="EventArgs.cs" />
+    <Compile Include="GameActor.Statistics.cs" />
     <Compile Include="States\Game\MatchRunningGameState.cs" />
     <Compile Include="States\Game\CountdownGameState.cs" />
     <Compile Include="States\Game\EndOfMatchGameState.cs" />

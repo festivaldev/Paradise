@@ -76,8 +76,8 @@ namespace Paradise.Realtime.Server.Game {
 
 			foreach (var peer in Room.Peers) {
 				peer.GameEvents.SendMatchEnd(new EndOfMatchData {
-					PlayerStatsTotal = new StatsCollection(),
-					PlayerStatsBestPerLife = new StatsCollection(),
+					PlayerStatsTotal = peer.Actor.MatchStatistics,
+					PlayerStatsBestPerLife = peer.Actor.MatchStatistics,
 					MostEffecientWeaponId = 0,
 					PlayerXpEarned = null,
 					MostValuablePlayers = MostValuablePlayers.OrderByDescending(_ => _.Kills).ToList(),

@@ -3,14 +3,12 @@ using Paradise.DataCenter.Common.Entities;
 using System;
 
 namespace Paradise.Realtime.Server.Game {
-	public class GameActor {
+	public partial class GameActor {
 		public GameActorInfo Info { get; private set; }
 		public PlayerMovement Movement { get; private set; }
 		public DamageEvent Damage { get; private set; }
 
 		public GameActorInfoDelta Delta => Info.Delta;
-
-		public StatsCollection MatchStatistics { get; private set; } = new StatsCollection();
 
 		public TeamID Team {
 			get { return Info.TeamID; }
@@ -40,11 +38,5 @@ namespace Paradise.Realtime.Server.Game {
 
 			Info.Delta.Id = actorInfo.PlayerId;
 		}
-
-
-		public short Kills => Info?.Kills ?? 0;
-		public short Deaths => Info?.Deaths ?? 0;
-		public double KillDeathRatio => Kills / Math.Max(1, (int)Deaths);
-		public double Accuracy => MatchStatistics.GetHits() / Math.Max(1, MatchStatistics.GetShots());
 	}
 }

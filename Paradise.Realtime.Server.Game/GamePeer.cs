@@ -17,6 +17,10 @@ namespace Paradise.Realtime.Server.Game {
 		public GamePeerEvents PeerEvents { get; private set; }
 		public GameRoomEvents GameEvents => PeerEvents.GameEvents;
 
+		public int ShootingStartTime;
+		public int ShootingEndTime;
+		public int ShootingWeapon;
+
 		public GamePeer(InitRequest initRequest) : base(initRequest) {
 			PeerEvents = new GamePeerEvents(this);
 

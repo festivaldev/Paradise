@@ -102,8 +102,6 @@ namespace Paradise.Realtime.Server.Game {
 					default: break;
 				}
 
-				//Log.Info($"{peer.Actor.Cmid} damaged {target} using {weapon.PrefabName}");
-
 				if (weapon != null) {
 					var damage = (weapon.DamagePerProjectile * bullets);
 
@@ -140,17 +138,19 @@ namespace Paradise.Realtime.Server.Game {
 					player.Actor.Damage.AddDamage(byteAngle, shortDamage, bodyPart, 0, 0);
 					player.Actor.Info.Health -= shortDamage;
 
-					if (player.Actor.Info.Health <= 0) {
-						//otherPeer.Actor.Info.PlayerState = PlayerStates.Dead;
+					peer.Actor.IncreaseWeaponShotsHit(weapon.ItemClass);
+					peer.Actor.IncreaseWeaponDamageDone(weapon.ItemClass, shortDamage);
 
+					player.Actor.IncreaseDamageReceived(shortDamage);
+
+					if (player.Actor.Info.Health <= 0) {
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
 							player.Actor.Info.Deaths++;
 							peer.Actor.Info.Kills++;
+
+							peer.Actor.IncreaseWeaponKills(weapon.ItemClass, (BodyPart)bodyPart);
 						}
 
-						//peer.IncrementKills(weapon.ItemClass, part);
-
-						//otherPeer.State.SetState(GamePeerState.Id.Killed);
 						OnPlayerKilled(new PlayerKilledEventArgs {
 							AttackerCmid = peer.Actor.Cmid,
 							VictimCmid = player.Actor.Cmid,
@@ -186,15 +186,10 @@ namespace Paradise.Realtime.Server.Game {
 					default: break;
 				}
 
-				//Log.Info($"{weapon.Name}({weapon.PrefabName})");
-
 				if (weapon != null) {
 					float damage = weapon.DamagePerProjectile;
 					float radius = weapon.SplashRadius / 100f;
 					float damageExplosion = damage * (radius - distance) / radius;
-
-					//peer.IncrementDamageDone(weapon.ItemClass, weaponId, (int)damageExplosion);
-					//peer.IncrementShotsHit(weapon.ItemClass, weaponId);
 
 					var shortDamage = (short)damageExplosion;
 
@@ -233,12 +228,17 @@ namespace Paradise.Realtime.Server.Game {
 
 					player.Actor.Info.Health -= shortDamage;
 
+					peer.Actor.IncreaseWeaponShotsHit(weapon.ItemClass);
+					peer.Actor.IncreaseWeaponDamageDone(weapon.ItemClass, shortDamage);
+
 					if (player.Actor.Info.Health <= 0) {
 						player.Actor.Info.PlayerState = PlayerStates.Dead;
 
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
 							player.Actor.Info.Deaths++;
 							peer.Actor.Info.Kills++;
+
+							peer.Actor.IncreaseWeaponKills(weapon.ItemClass, BodyPart.Body);
 						}
 
 						OnPlayerKilled(new PlayerKilledEventArgs {
@@ -297,8 +297,29 @@ namespace Paradise.Realtime.Server.Game {
 			var state = peer.Actor.Info.PlayerState;
 
 			if (on) {
+				peer.ShootingStartTime = Environment.TickCount;
+				peer.ShootingWeapon = peer.Actor.Info.CurrentWeaponID;
+
 				state |= PlayerStates.Shooting;
 			} else {
+				peer.ShootingEndTime = Environment.TickCount;
+
+				var weapon = default(UberStrikeItemWeaponView);
+				if (ShopManager.WeaponItems.TryGetValue(peer.ShootingWeapon, out weapon)) {
+					TimeSpan shootTime = TimeSpan.FromMilliseconds(peer.ShootingEndTime - peer.ShootingStartTime);
+
+					// TODO: Consider click spam?
+					var shots = (int)Math.Ceiling(shootTime.TotalMilliseconds / weapon.RateOfFire);
+
+					if (State.CurrentStateId == GameStateId.MatchRunning) {
+						peer.Actor.IncreaseWeaponShotsFired(weapon.ItemClass, shots);
+					}
+				}
+
+				peer.ShootingStartTime = 0;
+				peer.ShootingEndTime = 0;
+				peer.ShootingWeapon = 0;
+
 				state &= ~PlayerStates.Shooting;
 			}
 
@@ -334,6 +355,28 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnSingleBulletFire(GamePeer peer) {
+			var weapon = default(UberStrikeItemWeaponView);
+
+			switch (peer.Actor.Info.CurrentWeaponSlot) {
+				case 0:
+					ShopManager.WeaponItems.TryGetValue(peer.Loadout.MeleeWeapon, out weapon);
+					break;
+				case 1:
+					ShopManager.WeaponItems.TryGetValue(peer.Loadout.Weapon1, out weapon);
+					break;
+				case 2:
+					ShopManager.WeaponItems.TryGetValue(peer.Loadout.Weapon2, out weapon);
+					break;
+				case 3:
+					ShopManager.WeaponItems.TryGetValue(peer.Loadout.Weapon3, out weapon);
+					break;
+				default: break;
+			}
+
+			if (weapon != null) {
+				peer.Actor.IncreaseWeaponShotsFired(weapon.ItemClass, 1);
+			}
+
 			foreach (var otherPeer in Peers) {
 				if (peer.Actor.Cmid != otherPeer.Actor.Cmid) {
 					otherPeer.GameEvents.SendSingleBulletFire(peer.Actor.Cmid);
