@@ -17,14 +17,14 @@ namespace Paradise.Realtime.Server.Game {
 			// Not pretty, but works for now
 			// SendKillsRemaining needs to be called after a player's delta update
 			Task.Run(async () => {
-				await Task.Delay(15);
+				await Task.Delay(30);
 
 				foreach (var peer in Peers) {
 					peer.GameEvents.SendKillsRemaining(MetaData.KillLimit - leader.Actor.Info.Kills, leader.Actor.Cmid);
 				}
-			});
 
-			base.OnPlayerKilled(args);
+				base.OnPlayerKilled(args);
+			});
 
 			if (leader.Actor.Info.Kills >= MetaData.KillLimit) {
 				HasRoundEnded = true;

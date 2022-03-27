@@ -6,6 +6,8 @@ namespace Paradise.Realtime.Server.Game {
 		public WaitingForPlayersGameState(BaseGameRoom room) : base(room) { }
 
 		public override void OnEnter() {
+			Room.HasRoundEnded = false;
+
 			Room.PlayerJoined += OnPlayerJoined;
 		}
 
