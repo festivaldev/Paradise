@@ -10,8 +10,6 @@ namespace Paradise.Realtime.Server.Game {
 		public EndOfMatchGameState(BaseGameRoom room) : base(room) { }
 
 		public override void OnEnter() {
-			Room.RoundEndTime = Environment.TickCount;
-
 			RestartCountdown = new Countdown(Room.Loop, 5, 0);
 			RestartCountdown.Completed += OnRestartCountdownCompleted;
 
@@ -74,6 +72,8 @@ namespace Paradise.Realtime.Server.Game {
 				});
 			}
 
+			var endTime = Environment.TickCount;
+
 			foreach (var peer in Room.Peers) {
 				peer.GameEvents.SendMatchEnd(new EndOfMatchData {
 					PlayerStatsTotal = new StatsCollection(),
@@ -83,7 +83,7 @@ namespace Paradise.Realtime.Server.Game {
 					MostValuablePlayers = MostValuablePlayers,
 					MatchGuid = Room.MetaData.Guid,
 					HasWonMatch = false,
-					TimeInGameMinutes = (int)TimeSpan.FromMilliseconds(Room.RoundEndTime - Room.RoundStartTime).TotalSeconds
+					TimeInGameMinutes = (int)TimeSpan.FromMilliseconds(endTime - Room.RoundStartTime).TotalSeconds
 				});
 			}
 

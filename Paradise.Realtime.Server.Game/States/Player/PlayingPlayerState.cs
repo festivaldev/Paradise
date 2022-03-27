@@ -6,9 +6,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		public PlayingPlayerState(GamePeer peer) : base(peer) { }
 
-		public override void OnEnter() {
-			Peer.GameEvents.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
-		}
+		public override void OnEnter() { }
 
 		public override void OnExit() { }
 

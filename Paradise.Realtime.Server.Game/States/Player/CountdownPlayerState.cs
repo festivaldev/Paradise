@@ -3,7 +3,6 @@
 		public CountdownPlayerState(GamePeer peer) : base(peer) { }
 
 		public override void OnEnter() {
-			Peer.GameEvents.SendKillsRemaining(Room.MetaData.KillLimit, default);
 			Peer.GameEvents.SendPrepareNextRound();
 		}
 

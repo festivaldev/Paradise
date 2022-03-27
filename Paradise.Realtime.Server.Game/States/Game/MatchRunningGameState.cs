@@ -1,12 +1,12 @@
-﻿using Paradise.Core.Models;
+using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.WebServices.Client;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Paradise.Realtime.Server.Game {
 	public class MatchRunningGameState : GameState {
-		private Countdown MatchEndCountdown;
-
 		public MatchRunningGameState(BaseGameRoom room) : base(room) { }
 
 		public override void OnEnter() {
@@ -20,6 +20,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			foreach (var peer in Room.Players) {
 				peer.State.SetState(PlayerStateId.Playing);
+				peer.GameEvents.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
 			}
 		}
 
@@ -38,8 +39,6 @@ namespace Paradise.Realtime.Server.Game {
 			if (Environment.TickCount > Room.RoundEndTime) {
 				Room.State.SetState(GameStateId.EndOfMatch);
 			}
-
-			MatchEndCountdown?.Tick();
 		}
 
 
@@ -79,17 +78,22 @@ namespace Paradise.Realtime.Server.Game {
 			}
 
 			player.State.SetState(PlayerStateId.Playing);
+
+			var leader = Room.Players.OrderByDescending(_ => _.Actor.Info.Kills).First();
+			player.GameEvents.SendKillsRemaining(Room.MetaData.KillLimit - leader.Actor.Info.Kills, leader.Actor.Cmid);
 		}
 
 		private void OnMatchEnded(object sender, EventArgs e) {
-			MatchEndCountdown = new Countdown(Room.Loop, 3, 0);
-			MatchEndCountdown.Completed += OnMatchEndCountdownCompleted;
-			MatchEndCountdown.Restart();
-
 			foreach (var peer in Room.Players) {
 				peer.GameEvents.SendTeamWins(Room.WinningTeam);
 				peer.State.SetState(PlayerStateId.AfterRound);
 			}
+
+			Task t = Task.Run(async () => {
+				await Task.Delay(3000);
+
+				Room.State.SetState(GameStateId.EndOfMatch);
+			});
 		}
 
 		private void PrepareAndSpawnPlayer(GamePeer peer) {
@@ -141,10 +145,6 @@ namespace Paradise.Realtime.Server.Game {
 			foreach (var otherPeer in Room.Peers) {
 				otherPeer.GameEvents.SendPlayerRespawned(peer.Actor.Info.Cmid, peer.Actor.Movement.Position, peer.Actor.Movement.HorizontalRotation);
 			}
-		}
-
-		private void OnMatchEndCountdownCompleted() {
-			Room.State.SetState(GameStateId.EndOfMatch);
 		}
 	}
 }

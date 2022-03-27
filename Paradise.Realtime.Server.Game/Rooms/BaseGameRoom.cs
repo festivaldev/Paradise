@@ -29,6 +29,7 @@ namespace Paradise.Realtime.Server.Game {
 		public int RoundNumber;
 		public int RoundStartTime;
 		public int RoundEndTime;
+		public bool HasRoundEnded;
 
 		private byte NextPlayerId;
 
@@ -201,8 +202,8 @@ namespace Paradise.Realtime.Server.Game {
 			peer.Actor = null;
 			peer.Room = null;
 
-			if (!CanStartMatch && (State.CurrentStateId == GameStateId.Countdown || State.CurrentStateId == GameStateId.MatchRunning)) {
-				OnMatchEnded(new EventArgs());
+			if (!CanStartMatch && (State.CurrentStateId == GameStateId.Countdown || State.CurrentStateId == GameStateId.MatchRunning) && !HasRoundEnded) {
+				HasRoundEnded = true;
 			}
 		}
 
@@ -282,6 +283,10 @@ namespace Paradise.Realtime.Server.Game {
 				}
 
 				positions.Clear();
+			}
+
+			if (HasRoundEnded && (State.CurrentStateId == GameStateId.Countdown || State.CurrentStateId == GameStateId.MatchRunning)) {
+				OnMatchEnded(new EventArgs());
 			}
 		}
 
