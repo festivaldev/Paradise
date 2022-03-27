@@ -2,9 +2,12 @@
 using Paradise.Core.Models.Views;
 using Paradise.WebServices.Client;
 using System;
+using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	public class CountdownGameState : GameState {
+		private Dictionary<TeamID, List<SpawnPoint>> SpawnPointsInUse = new Dictionary<TeamID, List<SpawnPoint>>();
+
 		private Countdown Countdown;
 
 		public CountdownGameState(BaseGameRoom room) : base(room) { }
@@ -47,6 +50,16 @@ namespace Paradise.Realtime.Server.Game {
 
 		private void PrepareAndSpawnPlayer(GamePeer peer) {
 			var spawn = Room.SpawnPointManager.Get(peer.Actor.Team);
+
+			if (!SpawnPointsInUse.ContainsKey(peer.Actor.Team)) {
+				SpawnPointsInUse[peer.Actor.Team] = new List<SpawnPoint> { spawn };
+			} else {
+				while (SpawnPointsInUse[peer.Actor.Team].Contains(spawn)) {
+					spawn = Room.SpawnPointManager.Get(peer.Actor.Team);
+				}
+
+				SpawnPointsInUse[peer.Actor.Team].Add(spawn);
+			}
 
 			peer.Actor.Movement.Position = spawn.Position;
 			peer.Actor.Movement.HorizontalRotation = spawn.Rotation;
