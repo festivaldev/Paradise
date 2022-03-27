@@ -80,7 +80,7 @@ namespace Paradise.Realtime.Server.Game {
 					PlayerStatsBestPerLife = new StatsCollection(),
 					MostEffecientWeaponId = 0,
 					PlayerXpEarned = null,
-					MostValuablePlayers = MostValuablePlayers,
+					MostValuablePlayers = MostValuablePlayers.OrderByDescending(_ => _.Kills).ToList(),
 					MatchGuid = Room.MetaData.Guid,
 					HasWonMatch = false,
 					TimeInGameMinutes = (int)TimeSpan.FromMilliseconds(endTime - Room.RoundStartTime).TotalSeconds
