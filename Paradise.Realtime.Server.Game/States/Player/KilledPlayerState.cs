@@ -26,7 +26,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void OnRespawnCountdownCounted(int count) {
-			Peer.GameEvents.SendPlayerRespawnCountdown((byte)new Random((int)DateTime.UtcNow.Ticks).Next(1, byte.MaxValue));
+			Peer.GameEvents.SendPlayerRespawnCountdown((byte)count);
 		}
 
 		private void OnRespawnCountdownCompleted() { 
