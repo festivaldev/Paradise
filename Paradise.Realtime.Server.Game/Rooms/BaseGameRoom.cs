@@ -29,6 +29,7 @@ namespace Paradise.Realtime.Server.Game {
 		public int RoundNumber;
 		public int RoundStartTime;
 		public int RoundEndTime;
+
 		private byte NextPlayerId;
 
 		public Loop Loop { get; private set; }
@@ -322,16 +323,6 @@ namespace Paradise.Realtime.Server.Game {
 		#region Events
 		protected virtual void OnMatchEnded(EventArgs args) {
 			MatchEnded?.Invoke(this, args);
-
-			foreach (var peer in Peers) {
-				peer.Actor.Info.PlayerState &= ~PlayerStates.Shooting;
-
-				foreach (var player in Players) {
-					if (player.Actor.Info.Cmid == peer.Actor.Info.Cmid) continue;
-
-					player.GameEvents.SendPlayerLeftGame(peer.Actor.Cmid);
-				}
-			}
 		}
 
 		protected virtual void OnPlayerKilled(PlayerKilledEventArgs args) {

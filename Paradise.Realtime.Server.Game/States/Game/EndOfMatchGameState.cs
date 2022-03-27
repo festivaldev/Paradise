@@ -86,6 +86,16 @@ namespace Paradise.Realtime.Server.Game {
 					TimeInGameMinutes = (int)TimeSpan.FromMilliseconds(Room.RoundEndTime - Room.RoundStartTime).TotalSeconds
 				});
 			}
+
+			foreach (var peer in Room.Peers) {
+				peer.Actor.Info.PlayerState &= ~PlayerStates.Shooting;
+
+				foreach (var player in Room.Players) {
+					if (player.Actor.Info.Cmid == peer.Actor.Info.Cmid) continue;
+
+					player.GameEvents.SendPlayerLeftGame(peer.Actor.Cmid);
+				}
+			}
 		}
 
 		public override void OnExit() { }
