@@ -59,6 +59,9 @@
     <None Include="Data\ApplicationData.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="Data\Bundles.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Data\Maps.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
