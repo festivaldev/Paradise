@@ -26,7 +26,11 @@ namespace Paradise.Client {
 		}
 
 		public static bool BuyBundle_m__A7_Prefix(bool success) {
-			typeof(BundleManager).GetMethod("OnMicroTxnCallback", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Instance, new object[] { new Steamworks.MicroTxnAuthorizationResponse_t { m_bAuthorized = (byte)(success ? 1 : 0) } });
+			typeof(BundleManager).GetMethod("OnMicroTxnCallback", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Instance, new object[] {
+				new Steamworks.MicroTxnAuthorizationResponse_t {
+					m_bAuthorized = (byte)(success ? 1 : 0)
+				}
+			});
 
 			return false;
 		}

@@ -18,12 +18,14 @@ namespace Paradise.WebServices.Services {
 		protected override Type ServiceInterface => typeof(IShopWebServiceContract);
 
 		private UberStrikeItemShopClientView shopData;
+		private List<BundleView> bundleData;
 
 		public ShopWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
 
 		protected override void Setup() {
 			try {
 				shopData = JsonConvert.DeserializeObject<UberStrikeItemShopClientView>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data", "Shop.json")));
+				bundleData = JsonConvert.DeserializeObject<List<BundleView>>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data", "Bundles.json")));
 			} catch (Exception e) {
 				Log.Error($"Failed to load {ServiceName} data: {e.Message}");
 			}
@@ -74,7 +76,29 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(bundleId, steamId, authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						BooleanProxy.Serialize(outputStream, true);
+						var steamMember = SteamMemberFromAuthToken(authToken);
+						var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+						if (steamMember != null && publicProfile != null) {
+							var bundle = bundleData.Find(_ => _.Id == bundleId);
+
+							if (bundle != null) {
+								var memberWallet = DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+								if (memberWallet != null) {
+									memberWallet.Credits += bundle.Credits;
+									memberWallet.Points += bundle.Points;
+
+									DatabaseManager.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+									DatabaseManager.MemberWallets.Insert(memberWallet);
+
+									BooleanProxy.Serialize(outputStream, true);
+									return outputStream.ToArray();
+								}
+							}
+						}
+						BooleanProxy.Serialize(outputStream, false);
+
 
 						return outputStream.ToArray();
 					}
@@ -334,23 +358,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(channelType);
 
 					using (var outputStream = new MemoryStream()) {
-						ListProxy<BundleView>.Serialize(outputStream, new List<BundleView> {
-							new BundleView {
-								PromotionTag = "no_bundles",
-								Availability = new List<ChannelType> {
-									ChannelType.Steam
-								},
-								IsPromoted = true,
-								Description = "Jonas tinkt",
-								Name = "No bundles available",
-								ApplicationId = 1,
-								Id = 1,
-								USDPrice = (decimal)0.00,
-								IsDefault = true,
-								Points = 1337,
-								Credits = 1338
-							}
-						}, BundleViewProxy.Serialize);
+						ListProxy<BundleView>.Serialize(outputStream, bundleData, BundleViewProxy.Serialize);
 
 						return outputStream.ToArray();
 					}

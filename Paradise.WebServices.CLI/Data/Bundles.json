@@ -1,0 +1,19 @@
+﻿[
+	{
+		"Id": 1,
+		"ApplicationId": 1,
+		"Name": "Example Bundle",
+		"ImageUrl": "https://via.placeholder.com/150",
+		"IconUrl": "https://via.placeholder.com/32",
+		"Description": "This is an example bundle",
+		"IsOnSale": true,
+		"IsPromoted": true,
+		"USDPrice": 0.00,
+		"Credits": 1,
+		"Points": 1,
+		"Category": 0,
+		"Availability": [ 12 ],
+		"PromotionTag": "unused",
+		"IsDefault": true
+	}
+]
