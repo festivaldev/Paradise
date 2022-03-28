@@ -8,5 +8,11 @@ namespace Paradise.Client {
 				resolutions.Add(Screen.currentResolution);
 			}
 		}
+
+		public static void Hook() {
+			if (ScreenResolutionManager.Resolutions.Count == 0 || !ScreenResolutionManager.Resolutions.Contains(Screen.currentResolution)) {
+				ScreenResolutionManager.Resolutions.Add(Screen.currentResolution);
+			}
+		}
 	}
 }

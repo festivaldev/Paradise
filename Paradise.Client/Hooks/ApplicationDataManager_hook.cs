@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
@@ -22,6 +23,16 @@ namespace Paradise.Client {
 					Debug.LogError(e.Message);
 				}
 			}
+		}
+
+		public static void Hook() {
+			var type = typeof(ApplicationDataManager);
+
+			var WebServiceBaseUrl_field = type.GetField("WebServiceBaseUrl", BindingFlags.Public | BindingFlags.Static);
+			WebServiceBaseUrl_field.SetValue(null, WebServiceBaseUrl);
+
+			var ImagePath_field = type.GetField("ImagePath", BindingFlags.Public | BindingFlags.Static);
+			ImagePath_field.SetValue(null, ImagePath);
 		}
 
 		private static string ForceTrailingSlash(string uri) {
