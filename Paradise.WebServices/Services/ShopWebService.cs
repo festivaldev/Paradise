@@ -229,7 +229,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(orderId);
 
 					using (var outputStream = new MemoryStream()) {
-						throw new NotImplementedException();
+						BooleanProxy.Serialize(outputStream, true);
 
 						return outputStream.ToArray();
 					}
