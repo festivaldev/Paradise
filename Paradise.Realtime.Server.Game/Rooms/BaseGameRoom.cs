@@ -57,11 +57,12 @@ namespace Paradise.Realtime.Server.Game {
 
 		public TeamID WinningTeam = TeamID.NONE;
 
-		public event EventHandler<EventArgs> MatchEnded;
-		public event EventHandler<PlayerKilledEventArgs> PlayerKilled;
-		public event EventHandler<PlayerRespawnedEventArgs> PlayerRespawned;
 		public event EventHandler<PlayerJoinedEventArgs> PlayerJoined;
 		public event EventHandler<PlayerLeftEventArgs> PlayerLeft;
+		public event EventHandler<PlayerKilledEventArgs> PlayerKilled;
+		public event EventHandler<PlayerRespawnedEventArgs> PlayerRespawned;
+		public event EventHandler<EventArgs> MatchStarted;
+		public event EventHandler<EventArgs> MatchEnded;
 
 		public BaseGameRoom(GameRoomData metaData, ILoopScheduler scheduler) {
 			MetaData = metaData ?? throw new ArgumentNullException(nameof(metaData));
@@ -81,11 +82,11 @@ namespace Paradise.Realtime.Server.Game {
 
 			State = new StateMachine<GameStateId>();
 			State.RegisterState(GameStateId.None, null);
-			State.RegisterState(GameStateId.WaitingForPlayers, new WaitingForPlayersGameState(this));
-			State.RegisterState(GameStateId.Countdown, new CountdownGameState(this));
-			State.RegisterState(GameStateId.MatchRunning, new MatchRunningGameState(this));
-			State.RegisterState(GameStateId.EndOfMatch, new EndOfMatchGameState(this));
-			State.RegisterState(GameStateId.Debug, new DebugGameState(this));
+			State.RegisterState(GameStateId.WaitingForPlayers, new WaitingForPlayersState(this));
+			State.RegisterState(GameStateId.PrepareNextRound, new PrepareNextRoundState(this));
+			State.RegisterState(GameStateId.MatchRunning, new MatchRunningState(this));
+			State.RegisterState(GameStateId.EndOfMatch, new EndOfMatchState(this));
+			State.RegisterState(GameStateId.AfterRound, new AfterRoundState(this));
 
 			State.SetState(GameStateId.WaitingForPlayers);
 
@@ -93,6 +94,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		public abstract bool CanStartMatch { get; }
+		public abstract void GetCurrentScore(out short killsRemaining, out short blueTeamScore, out short redTeamScore);
 
 		public void Join(GamePeer peer) {
 			if (peer == null) {
@@ -202,12 +204,12 @@ namespace Paradise.Realtime.Server.Game {
 			peer.Actor = null;
 			peer.Room = null;
 
-			if (!CanStartMatch && (State.CurrentStateId == GameStateId.Countdown || State.CurrentStateId == GameStateId.MatchRunning) && !HasRoundEnded) {
-				HasRoundEnded = true;
-			}
+			OnPlayerLeft(new PlayerLeftEventArgs {
+				Player = peer
+			});
 		}
 
-		public void Reset() {
+		public virtual void Reset() {
 			_frame = 6;
 			frameTimer.Restart();
 
@@ -285,7 +287,7 @@ namespace Paradise.Realtime.Server.Game {
 				positions.Clear();
 			}
 
-			if (HasRoundEnded && (State.CurrentStateId == GameStateId.Countdown || State.CurrentStateId == GameStateId.MatchRunning)) {
+			if (HasRoundEnded && (State.CurrentStateId == GameStateId.PrepareNextRound || State.CurrentStateId == GameStateId.MatchRunning)) {
 				OnMatchEnded(new EventArgs());
 			}
 		}

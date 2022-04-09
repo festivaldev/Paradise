@@ -1,19 +1,24 @@
-﻿using System;
+﻿using log4net;
+using System;
 
 namespace Paradise.Realtime.Server.Game {
 	public enum GameStateId {
 		None,
-		WaitingForPlayers,
-		Countdown,
 		MatchRunning,
+		PregameLoadout,
+		WaitingForPlayers,
 		EndOfMatch,
-		Debug
+		InGameShop,
+		PrepareNextRound,
+		AfterRound
 	}
 
-	public abstract class GameState : IState {
+	public abstract class BaseMatchState : IState {
+		protected static readonly ILog Log = LogManager.GetLogger(typeof(BaseMatchState));
+
 		protected BaseGameRoom Room { get; private set; }
 
-		public GameState(BaseGameRoom room) {
+		public BaseMatchState(BaseGameRoom room) {
 			Room = room ?? throw new ArgumentNullException(nameof(room));
 		}
 

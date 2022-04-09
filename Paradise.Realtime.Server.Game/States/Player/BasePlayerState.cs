@@ -1,22 +1,25 @@
-﻿using System;
+﻿using log4net;
+using System;
 
 namespace Paradise.Realtime.Server.Game {
 	public enum PlayerStateId {
 		None,
-		Overview,
-		WaitingForPlayers,
-		Countdown,
 		Playing,
+		Spectating,
 		Killed,
-		AfterRound,
-		Debug
+		Paused,
+		PrepareForMatch,
+		Overview,
+		AfterRound
 	}
 
-	public abstract class PlayerState : IState {
+	public abstract class BasePlayerState : IState {
+		protected static readonly ILog Log = LogManager.GetLogger(typeof(BasePlayerState));
+
 		protected GamePeer Peer { get; private set; }
 		protected BaseGameRoom Room => Peer.Room;
 
-		public PlayerState(GamePeer peer) {
+		public BasePlayerState(GamePeer peer) {
 			Peer = peer ?? throw new ArgumentNullException(nameof(peer));
 		}
 

@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
-	public class OverviewPlayerState : PlayerState {
-		public OverviewPlayerState(GamePeer peer) : base(peer) { }
+	internal class PlayerOverviewState : BasePlayerState {
+		public PlayerOverviewState(GamePeer peer) : base(peer) { }
 
 		public override void OnEnter() {
+			Peer.Actor.ResetStatistics();
+
 			var players = Room.Players;
 
 			if (players.Count > 0) {

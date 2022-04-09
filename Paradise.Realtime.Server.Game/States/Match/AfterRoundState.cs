@@ -1,21 +1,18 @@
 ﻿using Paradise.Core.Models;
+using Paradise.Core.Models.Views;
+using Paradise.WebServices.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Paradise.Realtime.Server.Game {
-	public class EndOfMatchGameState : GameState {
-		private Countdown RestartCountdown;
-
-		public EndOfMatchGameState(BaseGameRoom room) : base(room) { }
+	internal class AfterRoundState : BaseMatchState {
+		public AfterRoundState(BaseGameRoom room) : base(room) { }
 
 		public override void OnEnter() {
-			RestartCountdown = new Countdown(Room.Loop, 5, 0);
-			RestartCountdown.Completed += OnRestartCountdownCompleted;
-
-			RestartCountdown.Restart();
-
 			List<StatsSummary> MostValuablePlayers = new List<StatsSummary>();
+
 			foreach (var player in Room.Players) {
 				Dictionary<byte, ushort> achievements = new Dictionary<byte, ushort>();
 
@@ -72,7 +69,7 @@ namespace Paradise.Realtime.Server.Game {
 				});
 			}
 
-			var endTime = Environment.TickCount;
+			ApplicationConfigurationView appConfig = new ApplicationWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).GetConfigurationData("4.7.1");
 
 			foreach (var peer in Room.Peers) {
 				peer.GameEvents.SendMatchEnd(new EndOfMatchData {
@@ -83,12 +80,11 @@ namespace Paradise.Realtime.Server.Game {
 					MostValuablePlayers = MostValuablePlayers.OrderByDescending(_ => _.Kills).ToList(),
 					MatchGuid = Room.MetaData.Guid,
 					HasWonMatch = false,
-					TimeInGameMinutes = (int)TimeSpan.FromMilliseconds(endTime - Room.RoundStartTime).TotalSeconds
+					TimeInGameMinutes = (int)TimeSpan.FromMilliseconds(Room.RoundEndTime - Room.RoundStartTime).TotalSeconds
 				});
 			}
 
 			foreach (var peer in Room.Peers) {
-				peer.Actor.Info.PlayerState &= ~PlayerStates.Shooting;
 
 				foreach (var player in Room.Players) {
 					if (player.Actor.Info.Cmid == peer.Actor.Info.Cmid) continue;
@@ -96,20 +92,14 @@ namespace Paradise.Realtime.Server.Game {
 					player.GameEvents.SendPlayerLeftGame(peer.Actor.Cmid);
 				}
 			}
+
+			Room.Reset();
 		}
 
 		public override void OnExit() { }
 
 		public override void OnResume() { }
 
-		public override void OnUpdate() {
-			RestartCountdown.Tick();
-		}
-
-
-
-		private void OnRestartCountdownCompleted() {
-			Room.Reset();
-		}
+		public override void OnUpdate() { }
 	}
 }

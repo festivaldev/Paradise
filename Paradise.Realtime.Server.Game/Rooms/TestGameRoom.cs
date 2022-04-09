@@ -11,6 +11,10 @@ namespace Paradise.Realtime.Server.Game {
 
 		public override bool CanStartMatch => Players.Count > 1;
 
+		public override void GetCurrentScore(out short killsRemaining, out short blueTeamScore, out short redTeamScore) {
+			throw new System.NotImplementedException();
+		}
+
 		protected override void OnPlayerKilled(PlayerKilledEventArgs args) {
 			var leader = Players.OrderByDescending(_ => _.Actor.Info.Kills).First();
 

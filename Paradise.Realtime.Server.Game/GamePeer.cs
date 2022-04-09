@@ -26,13 +26,10 @@ namespace Paradise.Realtime.Server.Game {
 
 			State = new StateMachine<PlayerStateId>();
 			State.RegisterState(PlayerStateId.None, null);
-			State.RegisterState(PlayerStateId.Overview, new OverviewPlayerState(this));
-			State.RegisterState(PlayerStateId.WaitingForPlayers, new WaitingForPlayersPlayerState(this));
-			State.RegisterState(PlayerStateId.Countdown, new CountdownPlayerState(this));
-			State.RegisterState(PlayerStateId.Playing, new PlayingPlayerState(this));
-			State.RegisterState(PlayerStateId.Killed, new KilledPlayerState(this));
-			State.RegisterState(PlayerStateId.AfterRound, new AfterRoundPlayerState(this));
-			State.RegisterState(PlayerStateId.Debug, new DebugPlayerState(this));
+			State.RegisterState(PlayerStateId.Overview, new PlayerOverviewState(this));
+			State.RegisterState(PlayerStateId.PrepareForMatch, new PlayerPrepareState(this));
+			State.RegisterState(PlayerStateId.Playing, new PlayerPlayingState(this));
+			State.RegisterState(PlayerStateId.Killed, new PlayerKilledState(this));
 
 			AddOperationHandler(new GamePeerOperationsHandler());
 		}

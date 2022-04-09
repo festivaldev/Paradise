@@ -144,6 +144,8 @@ namespace Paradise.Realtime.Server.Game {
 					player.Actor.IncreaseDamageReceived(shortDamage);
 
 					if (player.Actor.Info.Health <= 0) {
+						player.Actor.Info.PlayerState = PlayerStates.Dead;
+
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
 							player.Actor.Info.Deaths++;
 							peer.Actor.Info.Kills++;

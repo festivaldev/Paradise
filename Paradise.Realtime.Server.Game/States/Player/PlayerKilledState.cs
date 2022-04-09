@@ -1,13 +1,8 @@
-﻿using log4net;
-using System;
-
-namespace Paradise.Realtime.Server.Game {
-	public class KilledPlayerState : PlayerState {
+﻿namespace Paradise.Realtime.Server.Game {
+	internal class PlayerKilledState : BasePlayerState {
 		private Countdown RespawnCountdown;
 
-		public KilledPlayerState(GamePeer peer) : base(peer) {
-
-		}
+		public PlayerKilledState(GamePeer peer) : base(peer) { }
 
 		public override void OnEnter() {
 			RespawnCountdown = new Countdown(Room.Loop, 5, 0);
@@ -22,15 +17,17 @@ namespace Paradise.Realtime.Server.Game {
 		public override void OnResume() { }
 
 		public override void OnUpdate() {
-			RespawnCountdown.Tick();
+			RespawnCountdown?.Tick();
 		}
 
+		#region Handlers
 		private void OnRespawnCountdownCounted(int count) {
 			Peer.GameEvents.SendPlayerRespawnCountdown((byte)count);
 		}
 
-		private void OnRespawnCountdownCompleted() { 
+		private void OnRespawnCountdownCompleted() {
 			Peer.GameEvents.SendPlayerRespawnCountdown(0);
 		}
+		#endregion
 	}
 }
