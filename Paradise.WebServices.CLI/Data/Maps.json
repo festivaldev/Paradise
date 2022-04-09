@@ -1,26 +1,5 @@
 ﻿[
 	{
-		"DisplayName": "Spaceport Alpha",
-		"Description": "Map Description",
-		"SceneName": "SpaceportAlpha",
-		"MapId": 64,
-		"IsBlueBox": false,
-		"MaxPlayer": 20,
-		"Settings": {
-			"1": {
-				"KillsMin": 1,
-				"KillsMax": 200,
-				"KillsCurrent": 100,
-				"PlayersMin": 2,
-				"PlayersMax": 20,
-				"PlayersCurrent": 20,
-				"TimeMin": 60,
-				"TimeMax": 600,
-				"TimeCurrent": 300
-			}
-		}
-	},
-	{
 		"DisplayName": "Apex Twin",
 		"Description": "Reaching the lifeguard's place in the middle of these great mountains seems like an impossible mission when you're shot from everywhere. Snipers, raise your weapons! Enemies try to swim to your shrine. At least the weather is nice around this place.",
 		"SceneName": "ApexTwin",
@@ -236,6 +215,38 @@
 		}
 	},
 	{
+		"DisplayName": "Danger Zone",
+		"Description": "Watch out, dodgeball fans: Teams are only seperated by a glass wall. As open as warfare can be. You're advised to take a grenade launcher with you, or else you're probably getting blown away by the opponent.",
+		"SceneName": "Volley",
+		"MapId": 18,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
 		"DisplayName": "Fort Winter",
 		"Description": "Heavy snowstorms covering the sky, anxious gunslingers lingering around the map. A helicopter is looking for all villains involved. Players don't have hiding spots, leading to a chaotic snow-fight that freezes every soul.",
 		"SceneName": "FortWinter",
@@ -365,10 +376,10 @@
 		}
 	},
 	{
-		"DisplayName": "Monkey Island 2",
-		"Description": "The last resting place of the feared pirate Captain Bradford Pegleg. The forgotten island is rumoured to be home to Bradford's treasrue and was once a place of worship for the tribe of the Monkey King. Nowadays, it is home to adventures, splatting others for dear life.",
-		"SceneName": "MonkeyIsland",
-		"MapId": 11,
+		"DisplayName": "Lost Paradise 2",
+		"Description": "A group of islands just off the coast of Costa Rica, the Paradise Islands are a great hunting ground for privateers with a keen eye for sniping. Two towering volcanic pillars provide the perfect lookout for those able to make it there in one piece.",
+		"SceneName": "LostParadise2",
+		"MapId": 12,
 		"IsBlueBox": false,
 		"MaxPlayer": 32,
 		"Settings": {
@@ -408,10 +419,10 @@
 		}
 	},
 	{
-		"DisplayName": "Lost Paradise 2",
-		"Description": "A group of islands just off the coast of Costa Rica, the Paradise Islands are a great hunting ground for privateers with a keen eye for sniping. Two towering volcanic pillars provide the perfect lookout for those able to make it there in one piece.",
-		"SceneName": "LostParadise2",
-		"MapId": 12,
+		"DisplayName": "Monkey Island 2",
+		"Description": "The last resting place of the feared pirate Captain Bradford Pegleg. The forgotten island is rumoured to be home to Bradford's treasrue and was once a place of worship for the tribe of the Monkey King. Nowadays, it is home to adventures, splatting others for dear life.",
+		"SceneName": "MonkeyIsland",
+		"MapId": 11,
 		"IsBlueBox": false,
 		"MaxPlayer": 32,
 		"Settings": {
@@ -487,6 +498,27 @@
 				"PlayersMin": 2,
 				"PlayersMax": 18,
 				"PlayersCurrent": 18,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Spaceport Alpha",
+		"Description": "Map Description",
+		"SceneName": "SpaceportAlpha",
+		"MapId": 64,
+		"IsBlueBox": false,
+		"MaxPlayer": 20,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 20,
+				"PlayersCurrent": 20,
 				"TimeMin": 60,
 				"TimeMax": 600,
 				"TimeCurrent": 300
@@ -659,38 +691,6 @@
 				"PlayersMin": 2,
 				"PlayersMax": 18,
 				"PlayersCurrent": 18,
-				"TimeMin": 60,
-				"TimeMax": 600,
-				"TimeCurrent": 300
-			}
-		}
-	},
-	{
-		"DisplayName": "Danger Zone",
-		"Description": "Watch out, dodgeball fans: Teams are only seperated by a glass wall. As open as warfare can be. You're advised to take a grenade launcher with you, or else you're probably getting blown away by the opponent.",
-		"SceneName": "Volley",
-		"MapId": 18,
-		"IsBlueBox": false,
-		"MaxPlayer": 32,
-		"Settings": {
-			"2": {
-				"KillsMin": 1,
-				"KillsMax": 200,
-				"KillsCurrent": 100,
-				"PlayersMin": 2,
-				"PlayersMax": 16,
-				"PlayersCurrent": 16,
-				"TimeMin": 60,
-				"TimeMax": 600,
-				"TimeCurrent": 300
-			},
-			"3": {
-				"KillsMin": 1,
-				"KillsMax": 200,
-				"KillsCurrent": 100,
-				"PlayersMin": 2,
-				"PlayersMax": 16,
-				"PlayersCurrent": 16,
 				"TimeMin": 60,
 				"TimeMax": 600,
 				"TimeCurrent": 300
