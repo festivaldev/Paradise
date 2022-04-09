@@ -1,5 +1,6 @@
 ﻿using log4net;
 using Paradise.Core.Models;
+using Paradise.Core.Types;
 using System;
 using System.Collections.Generic;
 
@@ -33,21 +34,21 @@ namespace Paradise.Realtime.Server.Game {
 
 			BaseGameRoom room = null;
 			try {
-				//switch (data.GameMode) {
-				//	case GameModeType.DeathMatch:
-				//		//room = new DeathmatchGameRoom(data, LoopScheduler);
-				//		//break;
-				//	case GameModeType.TeamDeathMatch:
-				//		//room = new TeamDeathmatchGameRoom(data, LoopScheduler);
-				//		//break;
-				//	case GameModeType.EliminationMode:
-				//		//room = new TeamEliminationGameRoom(data, LoopScheduler);
-				//		//break;
-				//	default:
-				//		throw new NotSupportedException();
-				//}
+				switch (data.GameMode) {
+					case GameModeType.DeathMatch:
+						room = new DeathMatchGameRoom(data, LoopScheduler);
+						break;
+					case GameModeType.TeamDeathMatch:
+						room = new TeamDeathMatchGameRoom(data, LoopScheduler);
+						break;
+					//case GameModeType.EliminationMode:
+					//	room = new TeamEliminationGameRoom(data, LoopScheduler);
+					//	break;
+					default:
+						throw new NotSupportedException();
+				}
 
-				room = new TestGameRoom(data, LoopScheduler);
+				//room = new TestGameRoom(data, LoopScheduler);
 			} catch {
 				room?.Dispose();
 				throw;

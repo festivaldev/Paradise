@@ -61,6 +61,8 @@
     <Compile Include="BaseGamePeerOperationsHandler.cs" />
     <Compile Include="EventArgs.cs" />
     <Compile Include="GameActor.Statistics.cs" />
+    <Compile Include="Rooms\TeamDeathMatchGameRoom.cs" />
+    <Compile Include="Rooms\DeathMatchGameRoom.cs" />
     <Compile Include="Managers\PowerUpManager.cs" />
     <Compile Include="Managers\SpawnPointManager.cs" />
     <Compile Include="Managers\ShopManager.cs" />
