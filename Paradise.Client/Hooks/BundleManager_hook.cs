@@ -6,7 +6,7 @@ namespace Paradise.Client {
 		private static BundleManager Instance;
 
 		public static void Hook() {
-			var harmony = new Harmony("tf.festival.Paradise.Patch_BundleManager");
+			var harmony = new Harmony("tf.festival.Paradise.BundleManager_hook");
 
 			var orig_BundleManager_Initialize = typeof(BundleManager).GetMethod("Initialize", BindingFlags.Instance | BindingFlags.Public);
 			var prefix_BundleManager_Initialize = typeof(BundleManager_hook).GetMethod("Initialize_Prefix", BindingFlags.Static | BindingFlags.Public);

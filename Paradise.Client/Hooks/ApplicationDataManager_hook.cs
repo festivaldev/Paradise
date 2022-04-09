@@ -33,6 +33,11 @@ namespace Paradise.Client {
 
 			var ImagePath_field = type.GetField("ImagePath", BindingFlags.Public | BindingFlags.Static);
 			ImagePath_field.SetValue(null, ImagePath);
+
+			GameObject pluginHolder = new GameObject("Plugin Holder");
+			pluginHolder.AddComponent<CustomMapManager>();
+			//pluginHolder.AddComponent<DebugConsoleGUI>();
+			UnityEngine.Object.DontDestroyOnLoad(pluginHolder);
 		}
 
 		private static string ForceTrailingSlash(string uri) {
