@@ -19,7 +19,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 				foreach (var otherPeer in Peers) {
 					if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
-						peer.Events.Lobby.SendPlayerJoined(peer.Actor.ActorInfo);
+						peer.LobbyEvents.SendPlayerJoined(peer.Actor.ActorInfo);
 					}
 				}
 
@@ -34,7 +34,7 @@ namespace Paradise.Realtime.Server.Comm {
 				peers.Remove(peer.Actor.Cmid);
 
 				foreach (var otherPeer in Peers) {
-					peer.Events.Lobby.SendPlayerLeft(peer.Actor.Cmid, true);
+					peer.LobbyEvents.SendPlayerLeft(peer.Actor.Cmid, true);
 				}
 
 				Log.Info($"{peer.Actor.Name} ({peer.Actor.Cmid}) left the lobby");
@@ -49,7 +49,7 @@ namespace Paradise.Realtime.Server.Comm {
 				}
 
 				foreach (var peer in Peers) {
-					peer.Events.Lobby.SendFullPlayerListUpdate(actorsInfo);
+					peer.LobbyEvents.SendFullPlayerListUpdate(actorsInfo);
 				}
 			}
 		}

@@ -4,10 +4,10 @@ using System.IO;
 
 namespace Paradise.Realtime.Server.Comm {
 	public class CommPeerEvents : BaseEventSender {
-		public LobbyRoomEvents Lobby { get; private set; }
+		public LobbyRoomEvents LobbyEvents { get; private set; }
 
 		public CommPeerEvents(BasePeer peer) : base(peer) {
-			Lobby = new LobbyRoomEvents(peer);
+			LobbyEvents = new LobbyRoomEvents(peer);
 		}
 
 		public void SendHeartbeatChallenge(string challengeHash) {
