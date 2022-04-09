@@ -1,5 +1,25 @@
 ﻿[
-
+	{
+		"DisplayName": "Spaceport Alpha",
+		"Description": "Map Description",
+		"SceneName": "SpaceportAlpha",
+		"MapId": 64,
+		"IsBlueBox": false,
+		"MaxPlayer": 20,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 20,
+				"PlayersCurrent": 20,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
 	{
 		"DisplayName": "Apex Twin",
 		"Description": "Reaching the lifeguard's place in the middle of these great mountains seems like an impossible mission when you're shot from everywhere. Snipers, raise your weapons! Enemies try to swim to your shrine. At least the weather is nice around this place.",
