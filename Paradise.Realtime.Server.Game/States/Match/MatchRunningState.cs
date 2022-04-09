@@ -39,6 +39,8 @@ namespace Paradise.Realtime.Server.Game {
 		public override void OnResume() { }
 
 		public override void OnUpdate() {
+			Room.PowerUpManager.Update();
+
 			if (Environment.TickCount > Room.RoundEndTime) {
 				Room.State.SetState(GameStateId.EndOfMatch);
 			}
