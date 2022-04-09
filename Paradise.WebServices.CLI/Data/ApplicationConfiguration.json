@@ -1,5 +1,5 @@
 ﻿{
-	"MaxLevel": 10,
+	"MaxLevel": 80,
 	"XpRequiredPerLevel": {
 		"1": 0,
 		"2": 800,
@@ -101,5 +101,21 @@
 		"98": 1527300,
 		"99": 1555800,
 		"100": 1584350
-	}
+	},
+	"PointsBaseLoser": 16,
+	"PointsPerMinuteLoser": 32,
+	"PointsBaseWinner": 50,
+	"PointsPerMinuteWinner": 100,
+	"PointsHeadshot": 15,
+	"PointsNutshot": 25,
+	"PointsSmackdown": 20,
+	"PointsKill": 50,
+	"XpBaseLoser": 50,
+	"XpPerMinuteLoser": 100,
+	"XpBaseWinner": 150,
+	"XpPerMinuteWinner": 300,
+	"XpHeadshot": 50,
+	"XpNutshot": 75,
+	"XpSmackdown": 65,
+	"XpKill": 100
 }
