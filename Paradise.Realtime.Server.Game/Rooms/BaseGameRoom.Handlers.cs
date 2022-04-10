@@ -148,7 +148,10 @@ namespace Paradise.Realtime.Server.Game {
 
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
 							player.Actor.Info.Deaths++;
-							peer.Actor.Info.Kills++;
+
+							if (player.Actor.Cmid != peer.Actor.Cmid) {
+								peer.Actor.Info.Kills++;
+							}
 
 							peer.Actor.IncreaseWeaponKills(weapon.ItemClass, (BodyPart)bodyPart);
 						}
@@ -238,7 +241,10 @@ namespace Paradise.Realtime.Server.Game {
 
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
 							player.Actor.Info.Deaths++;
-							peer.Actor.Info.Kills++;
+							
+							if (player.Actor.Cmid != peer.Actor.Cmid) {
+								peer.Actor.Info.Kills++;
+							}
 
 							peer.Actor.IncreaseWeaponKills(weapon.ItemClass, BodyPart.Body);
 						}
