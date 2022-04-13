@@ -68,5 +68,9 @@ namespace Paradise.Realtime.Server.Game {
 				return SpawnPointsByTeam[team][Index];
 			}
 		}
+
+		public int GetSpawnPointCount(TeamID team) {
+			return SpawnPointsByTeam[team].Count;
+		}
 	}
 }

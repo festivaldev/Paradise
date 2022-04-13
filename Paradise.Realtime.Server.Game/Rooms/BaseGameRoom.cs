@@ -101,6 +101,8 @@ namespace Paradise.Realtime.Server.Game {
 				throw new ArgumentNullException(nameof(peer));
 			}
 
+			peer.PreviousSpawnPoints.Clear();
+
 			peer.Loadout = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).GetLoadout(peer.AuthToken);
 
 			var actorInfo = new GameActorInfo {

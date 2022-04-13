@@ -104,7 +104,17 @@ namespace Paradise.Realtime.Server.Game {
 			player.Actor.Info.ArmorPoints = player.Actor.Info.ArmorPointCapacity;
 			player.Actor.Info.PlayerState = PlayerStates.Ready;
 
+			if (player.PreviousSpawnPoints.Count >= Room.SpawnPointManager.GetSpawnPointCount(player.Actor.Team)) {
+				player.PreviousSpawnPoints.Clear();
+			}
+
 			var spawn = Room.SpawnPointManager.Get(player.Actor.Team);
+
+			while (player.PreviousSpawnPoints.Contains(spawn)) {
+				spawn = Room.SpawnPointManager.Get(player.Actor.Team);
+			}
+
+			player.PreviousSpawnPoints.Add(spawn);
 
 			player.Actor.Movement.Position = spawn.Position;
 			player.Actor.Movement.HorizontalRotation = spawn.Rotation;

@@ -10,6 +10,7 @@ namespace Paradise.Realtime.Server.Game {
 		public StateMachine<PlayerStateId> State { get; private set; }
 
 		public List<int> KnownActors = new List<int>();
+		public List<SpawnPoint> PreviousSpawnPoints = new List<SpawnPoint>();
 
 		public UberstrikeUserViewModel Member;
 		public LoadoutView Loadout;
