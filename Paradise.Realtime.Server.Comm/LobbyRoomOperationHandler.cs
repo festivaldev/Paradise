@@ -120,7 +120,15 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		protected override void OnResetPlayerRoom(CommPeer peer) {
-			throw new NotImplementedException();
+			peer.Actor.ActorInfo.CurrentRoom = null;
+
+			lock (_lock) {
+				foreach (var otherPeer in LobbyManager.Instance.Peers) {
+					if (peer.Actor.Cmid != otherPeer.Actor.Cmid) {
+						otherPeer.LobbyEvents.SendFullPlayerListUpdate(LobbyManager.Instance.Peers.Select(_ => _.Actor.ActorInfo).ToList());
+					}
+				}
+			}
 		}
 
 		protected override void OnSetContactList(CommPeer peer, List<int> cmids) { }
@@ -170,7 +178,13 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		protected override void OnUpdatePlayerRoom(CommPeer peer, GameRoom room) {
-			throw new NotImplementedException();
+			peer.Actor.ActorInfo.CurrentRoom = room;
+
+			foreach (var otherPeer in LobbyManager.Instance.Peers) {
+				if (peer.Actor.Cmid != otherPeer.Actor.Cmid) {
+					otherPeer.LobbyEvents.SendFullPlayerListUpdate(LobbyManager.Instance.Peers.Select(_ => _.Actor.ActorInfo).ToList());
+				}
+			}
 		}
 	}
 }

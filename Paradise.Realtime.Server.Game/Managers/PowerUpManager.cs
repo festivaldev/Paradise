@@ -25,8 +25,6 @@ namespace Paradise.Realtime.Server.Game {
 			RespawnTimes = new List<TimeSpan>(length);
 			Respawning = new List<int>(length);
 
-			Log.Info($"respawn times: {string.Join(", ", respawnTimes)}");
-
 			for (int i = 0; i < length; i++) {
 				var time = TimeSpan.FromSeconds(respawnTimes[i]);
 

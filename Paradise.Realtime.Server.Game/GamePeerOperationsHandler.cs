@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Types;
+using Paradise.DataCenter.Common.Entities;
 using Paradise.WebServices.Client;
 using System;
 using System.Collections.Generic;
@@ -160,7 +161,13 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnKickPlayer(GamePeer peer, int cmid, string authToken, string magicHash) {
-			throw new NotImplementedException();
+			if (peer.Actor.AccessLevel < MemberAccessLevel.Moderator) return;
+
+			var targetPeer = GameApplication.Instance.RoomManager.FindPeerWithCmid(cmid);
+
+			if (targetPeer != null) {
+				targetPeer.PeerEvents.SendRoomEnterFailed(string.Empty, 0, "You have been removed from the game.");
+			}
 		}
 
 		protected override void OnUpdateLoadout(GamePeer peer) {

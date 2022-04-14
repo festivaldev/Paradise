@@ -87,5 +87,17 @@ namespace Paradise.Realtime.Server.Game {
 			LoopScheduler.Dispose();
 			IsDisposed = true;
 		}
+
+		public GamePeer FindPeerWithCmid(int cmid) {
+			foreach (var room in Rooms) {
+				foreach (var peer in room.Value.Peers) {
+					if (peer.Actor.Cmid == cmid) {
+						return peer;
+					}
+				}
+			}
+
+			return null;
+		}
 	}
 }
