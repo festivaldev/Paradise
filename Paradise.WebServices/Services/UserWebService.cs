@@ -1,4 +1,4 @@
-﻿using Paradise.Core.Serialization;
+using Paradise.Core.Serialization;
 using Paradise.Core.ViewModel;
 using Paradise.DataCenter.Common.Entities;
 using Paradise.WebServices.Contracts;
@@ -93,7 +93,7 @@ namespace Paradise.WebServices.Services {
 		/// Gets a list of historical currency deposits (such as purchasing credit bundles) for the current user
 		/// </summary>
 		/// <seealso cref="ShopWebService.BuyBundleSteam(byte[])"/>
-		public byte[] GetCurrentDeposits(byte[] data) {
+		public byte[] GetCurrencyDeposits(byte[] data) {
 			try {
 				using (var bytes = new MemoryStream(data)) {
 					var authToken = StringProxy.Deserialize(bytes);

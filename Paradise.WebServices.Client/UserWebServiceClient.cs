@@ -43,7 +43,7 @@ namespace Paradise.WebServices.Client {
 				Int32Proxy.Serialize(bytes, pageIndex);
 				Int32Proxy.Serialize(bytes, elementPerPage);
 
-				var result = Service.GetCurrentDeposits(bytes.ToArray());
+				var result = Service.GetCurrencyDeposits(bytes.ToArray());
 
 				using (var inputStream = new MemoryStream(result)) {
 					return MemberWalletViewProxy.Deserialize(inputStream);

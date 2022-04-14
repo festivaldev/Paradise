@@ -19,7 +19,7 @@ namespace Paradise.WebServices.Contracts {
 		byte[] GetInventory(byte[] data);
 
 		[OperationContract]
-		byte[] GetCurrentDeposits(byte[] data);
+		byte[] GetCurrencyDeposits(byte[] data);
 
 		[OperationContract]
 		byte[] GetItemTransactions(byte[] data);
