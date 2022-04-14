@@ -25,7 +25,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 				Log.Info($"{peer.Actor.Name} ({peer.Actor.Cmid}) joined the lobby");
 
-				peer.Events.SendLobbyEntered();
+				peer.PeerEvents.SendLobbyEntered();
 			}
 		}
 

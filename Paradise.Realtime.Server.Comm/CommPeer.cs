@@ -6,8 +6,6 @@ namespace Paradise.Realtime.Server.Comm {
 		private static readonly ILog Log = LogManager.GetLogger(typeof(CommPeer));
 
 		public CommActor Actor { get; set; }
-
-		public CommPeerEvents Events { get; private set; }
 		public LobbyRoom Lobby { get; private set; }
 
 		public CommPeerEvents PeerEvents { get; private set; }
@@ -15,7 +13,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 		public CommPeer(InitRequest initRequest) : base(initRequest) {
 			Lobby = new LobbyRoom(this);
-			Events = new CommPeerEvents(this);
+			PeerEvents = new CommPeerEvents(this);
 
 			AddOperationHandler(new CommPeerOperationHandler());
 		}
@@ -26,7 +24,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 		public override void SendError(string message = "An error occured that forced UberStrike to halt.") {
 			base.SendError(message);
-			Events.SendDisconnectAndDisablePhoton(message);
+			PeerEvents.SendDisconnectAndDisablePhoton(message);
 		}
 
 		public override string ToString() {
