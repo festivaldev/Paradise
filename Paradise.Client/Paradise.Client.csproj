@@ -60,6 +60,7 @@
   <ItemGroup>
     <Compile Include="CustomMaps\CustomMapManager.cs" />
     <Compile Include="Hooks\ApplicationDataManager_hook.cs" />
+    <Compile Include="Hooks\WeaponController_hook.cs" />
     <Compile Include="Hooks\BundleManager_hook.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ParadiseSettings.cs" />
