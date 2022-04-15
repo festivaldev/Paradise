@@ -31,11 +31,11 @@ namespace Paradise.Realtime.Server {
 				XmlConfigurator.ConfigureAndWatch(configFile);
 			}
 
-			var logFile = LogManager.GetRepository().GetAppenders().OfType<FileAppender>().FirstOrDefault()?.File;
+			//var logFile = LogManager.GetRepository().GetAppenders().OfType<FileAppender>().FirstOrDefault()?.File;
 
-			if (logFile != null) {
-				File.WriteAllText(logFile, "");
-			}
+			//if (logFile != null) {
+			//	File.WriteAllText(logFile, "");
+			//}
 
 			var applicationConfigPath = Path.Combine(BinaryPath, "Paradise.Realtime.Server.json");
 			if (!File.Exists(applicationConfigPath)) {
