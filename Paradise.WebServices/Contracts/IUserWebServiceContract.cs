@@ -1,4 +1,4 @@
-﻿using System.ServiceModel;
+using System.ServiceModel;
 
 namespace Paradise.WebServices.Contracts {
 	[ServiceContract]
@@ -41,5 +41,14 @@ namespace Paradise.WebServices.Contracts {
 
 		[OperationContract]
 		byte[] GetMemberListSessionData(byte[] data);
+
+		[OperationContract]
+		byte[] AddItemTransaction(byte[] data);
+
+		[OperationContract]
+		byte[] DepositCredits(byte[] data);
+		
+		[OperationContract]
+		byte[] DepositPoints(byte[] data);
 	}
 }

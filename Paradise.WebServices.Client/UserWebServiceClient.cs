@@ -1,4 +1,4 @@
-﻿using Paradise.Core.Models.Views;
+using Paradise.Core.Models.Views;
 using Paradise.Core.Serialization;
 using Paradise.Core.ViewModel;
 using Paradise.DataCenter.Common.Entities;
@@ -10,7 +10,20 @@ namespace Paradise.WebServices.Client {
 	public class UserWebServiceClient : WebServiceClientBase<IUserWebServiceContract> {
 		public UserWebServiceClient(string endpointUrl) : base(endpointUrl, $"{Properties.Resources.WebServicePrefix}UserWebService{Properties.Resources.WebServiceSuffix}") { }
 
-		public MemberOperationResult AuthenticateApplication(string authToken, string name, string locale, string machineId) {
+		public bool AddItemTransaction(ItemTransactionView itemTransaction, string authToken) {
+			using (var bytes = new MemoryStream()) {
+				ItemTransactionViewProxy.Serialize(bytes, itemTransaction);
+				StringProxy.Serialize(bytes, authToken);
+
+				var result = Service.AddItemTransaction(bytes.ToArray());
+
+				using (var inputStream = new MemoryStream(result)) {
+					return BooleanProxy.Deserialize(inputStream);
+				}
+			}
+		}
+
+		public MemberOperationResult ChangeMemberName(string authToken, string name, string locale, string machineId) {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 				StringProxy.Serialize(bytes, name);
@@ -21,6 +34,32 @@ namespace Paradise.WebServices.Client {
 
 				using (var inputStream = new MemoryStream(result)) {
 					return EnumProxy<MemberOperationResult>.Deserialize(inputStream);
+				}
+			}
+		}
+
+		public bool DepositCredits(CurrencyDepositView depositTransaction, string authToken) {
+			using (var bytes = new MemoryStream()) {
+				CurrencyDepositViewProxy.Serialize(bytes, depositTransaction);
+				StringProxy.Serialize(bytes, authToken);
+
+				var result = Service.DepositCredits(bytes.ToArray());
+
+				using (var inputStream = new MemoryStream(result)) {
+					return BooleanProxy.Deserialize(inputStream);
+				}
+			}
+		}
+
+		public bool DepositPoints(PointDepositView depositTransaction, string authToken) {
+			using (var bytes = new MemoryStream()) {
+				PointDepositViewProxy.Serialize(bytes, depositTransaction);
+				StringProxy.Serialize(bytes, authToken);
+
+				var result = Service.DepositPoints(bytes.ToArray());
+
+				using (var inputStream = new MemoryStream(result)) {
+					return BooleanProxy.Deserialize(inputStream);
 				}
 			}
 		}

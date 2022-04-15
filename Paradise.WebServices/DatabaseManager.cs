@@ -55,6 +55,10 @@ namespace Paradise.WebServices {
 		public static ILiteCollection<PlayerStatisticsView> PlayerStatistics { get; private set; }
 		public static ILiteCollection<PublicProfileView> PublicProfiles { get; private set; }
 
+		public static ILiteCollection<ItemTransactionView> ItemTransactions { get; private set; }
+		public static ILiteCollection<CurrencyDepositView> CurrencyDeposits { get; private set; }
+		public static ILiteCollection<PointDepositView> PointDeposits { get; private set; }
+
 		static DatabaseManager() {
 			BsonMapper.Global.Entity<PublicProfileView>().Id(_ => _.Cmid);
 			BsonMapper.Global.Entity<LoadoutView>().Id(_ => _.Cmid);
@@ -88,6 +92,9 @@ namespace Paradise.WebServices {
 				PlayerLoadouts = null;
 				PlayerStatistics = null;
 				PublicProfiles = null;
+				ItemTransactions = null;
+				CurrencyDeposits = null;
+				PointDeposits = null;
 			} catch (Exception e) {
 				Log.Error($"Failed to save database tables: {e.Message}");
 				return;
@@ -139,6 +146,12 @@ namespace Paradise.WebServices {
 
 				PublicProfiles = databaseInstance.GetCollection<PublicProfileView>("PublicProfiles");
 				PublicProfiles.EnsureIndex("Cmid");
+
+				ItemTransactions = databaseInstance.GetCollection<ItemTransactionView>("ItemTransactions");
+
+				CurrencyDeposits = databaseInstance.GetCollection<CurrencyDepositView>("CurrencyDeposits");
+
+				PointDeposits = databaseInstance.GetCollection<PointDepositView>("PointDeposits");
 			} catch (Exception e) {
 				Log.Error($"Failed to connect to database: {e.Message}");
 				return;

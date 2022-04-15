@@ -20,6 +20,36 @@ namespace Paradise.WebServices.Services {
 		protected override void Setup() { }
 
 		/// <summary>
+		/// Adds an item transaction to a player's history
+		/// </summary>
+		public byte[] AddItemTransaction(byte[] data) {
+			try {
+				using (var bytes = new MemoryStream(data)) {
+					var itemTransaction = ItemTransactionViewProxy.Deserialize(bytes);
+					var authToken = StringProxy.Deserialize(bytes);
+
+					DebugEndpoint(itemTransaction, authToken);
+
+					using (var outputStream = new MemoryStream()) {
+						var steamMember = SteamMemberFromAuthToken(authToken);
+
+						if (steamMember != null) {
+							DatabaseManager.ItemTransactions.Insert(itemTransaction);
+
+							BooleanProxy.Serialize(outputStream, true);
+						}
+
+						return outputStream.ToArray();
+					}
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
+
+			return null;
+		}
+
+		/// <summary>
 		/// Changes a member's name for using the Name Change item
 		/// </summary>
 		public byte[] ChangeMemberName(byte[] data) {
@@ -54,6 +84,87 @@ namespace Paradise.WebServices.Services {
 							}
 						} else {
 							EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.MemberNotFound);
+						}
+
+						return outputStream.ToArray();
+					}
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Adds a credit deposit transaction to a player's history
+		/// </summary>
+		public byte[] DepositCredits(byte[] data) {
+			try {
+				using (var bytes = new MemoryStream(data)) {
+					var depositTransaction = CurrencyDepositViewProxy.Deserialize(bytes);
+					var authToken = StringProxy.Deserialize(bytes);
+
+					DebugEndpoint(depositTransaction, authToken);
+
+					using (var outputStream = new MemoryStream()) {
+						var steamMember = SteamMemberFromAuthToken(authToken);
+
+						if (steamMember != null) {
+							var memberWallet = DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+							if (memberWallet != null) {
+								DatabaseManager.CurrencyDeposits.Insert(depositTransaction);
+
+								memberWallet.Credits += depositTransaction.Credits;
+								memberWallet.Points += depositTransaction.Points;
+
+								DatabaseManager.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+								DatabaseManager.MemberWallets.Insert(memberWallet);
+
+								BooleanProxy.Serialize(outputStream, true);
+							}
+						}
+
+						return outputStream.ToArray();
+					}
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Adds a point deposit transaction to a player's history
+		/// </summary>
+		public byte[] DepositPoints(byte[] data) {
+			try {
+				using (var bytes = new MemoryStream(data)) {
+					var depositTransaction = PointDepositViewProxy.Deserialize(bytes);
+					var authToken = StringProxy.Deserialize(bytes);
+
+					DebugEndpoint(depositTransaction, authToken);
+
+					using (var outputStream = new MemoryStream()) {
+						var steamMember = SteamMemberFromAuthToken(authToken);
+
+						if (steamMember != null) {
+							var memberWallet = DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+							if (memberWallet != null) {
+								DatabaseManager.PointDeposits.Insert(depositTransaction);
+
+								memberWallet.Points += depositTransaction.Points;
+
+								DatabaseManager.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+								DatabaseManager.MemberWallets.Insert(memberWallet);
+
+								BooleanProxy.Serialize(outputStream, true);
+							}
+
+							BooleanProxy.Serialize(outputStream, true);
 						}
 
 						return outputStream.ToArray();
@@ -103,7 +214,16 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, pageIndex, elementPerPage);
 
 					using (var outputStream = new MemoryStream()) {
-						throw new NotImplementedException();
+						var steamMember = SteamMemberFromAuthToken(authToken);
+
+						if (steamMember != null) {
+							var currencyDeposits = DatabaseManager.CurrencyDeposits.Find(_ => _.Cmid == steamMember.Cmid);
+
+							CurrencyDepositsViewModelProxy.Serialize(outputStream, new CurrencyDepositsViewModel {
+								CurrencyDeposits = currencyDeposits.Skip((pageIndex - 1) * elementPerPage).Take(elementPerPage).ToList(),
+								TotalCount = currencyDeposits.Count()
+							});
+						}
 
 						return outputStream.ToArray();
 					}
@@ -157,7 +277,16 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, pageIndex, elementPerPage);
 
 					using (var outputStream = new MemoryStream()) {
-						throw new NotImplementedException();
+						var steamMember = SteamMemberFromAuthToken(authToken);
+
+						if (steamMember != null) {
+							var itemTransactions = DatabaseManager.ItemTransactions.Find(_ => _.Cmid == steamMember.Cmid);
+
+							ItemTransactionsViewModelProxy.Serialize(outputStream, new ItemTransactionsViewModel {
+								ItemTransactions = itemTransactions.Skip((pageIndex - 1) * elementPerPage).Take(elementPerPage).ToList(),
+								TotalCount = itemTransactions.Count()
+							});
+						}
 
 						return outputStream.ToArray();
 					}
@@ -336,7 +465,16 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, pageIndex, elementPerPage);
 
 					using (var outputStream = new MemoryStream()) {
-						throw new NotImplementedException();
+						var steamMember = SteamMemberFromAuthToken(authToken);
+
+						if (steamMember != null) {
+							var pointDeposits = DatabaseManager.PointDeposits.Find(_ => _.Cmid == steamMember.Cmid);
+
+							PointDepositsViewModelProxy.Serialize(outputStream, new PointDepositsViewModel {
+								PointDeposits = pointDeposits.Skip((pageIndex - 1) * elementPerPage).Take(elementPerPage).ToList(),
+								TotalCount = pointDeposits.Count()
+							});
+						}
 
 						return outputStream.ToArray();
 					}
@@ -418,7 +556,7 @@ namespace Paradise.WebServices.Services {
 								playerLoadout.Boots = loadoutView.Boots;
 								playerLoadout.Backpack = loadoutView.Backpack;
 								playerLoadout.LoadoutId = loadoutView.LoadoutId;
-								playerLoadout.Webbing = loadoutView.Webbing;
+								playerLoadout.Webbing = loadoutView.Webbing; // Holo
 								playerLoadout.SkinColor = loadoutView.SkinColor;
 
 								DatabaseManager.PlayerLoadouts.Update(playerLoadout);

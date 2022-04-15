@@ -86,6 +86,30 @@ namespace Paradise.WebServices.Services {
 								var memberWallet = DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
 
 								if (memberWallet != null) {
+									var transactionKey = new byte[32];
+									new Random((int)DateTime.UtcNow.Ticks).NextBytes(transactionKey);
+
+									var builder = new StringBuilder(64);
+									for (int i = 0; i < transactionKey.Length; i++) {
+										Log.Debug(i.ToString());
+										builder.Append(transactionKey[i].ToString("x2"));
+									}
+
+									DatabaseManager.CurrencyDeposits.Insert(new CurrencyDepositView {
+										BundleId = bundle.Id,
+										BundleName = bundle.Name,
+										ChannelId = ChannelType.Steam,
+										Cmid = publicProfile.Cmid,
+										Credits = bundle.Credits,
+										CreditsDepositId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue),
+										CurrencyLabel = "$",
+										DepositDate = DateTime.UtcNow,
+										PaymentProviderId = PaymentProviderType.Cmune,
+										Points = bundle.Points,
+										TransactionKey = builder.ToString(),
+										UsdAmount = bundle.USDPrice
+									});
+
 									memberWallet.Credits += bundle.Credits;
 									memberWallet.Points += bundle.Points;
 
@@ -181,6 +205,15 @@ namespace Paradise.WebServices.Services {
 									return outputStream.ToArray();
 								} else {
 									memberWallet.Credits -= price.Price;
+
+									DatabaseManager.ItemTransactions.Insert(new ItemTransactionView {
+										Cmid = publicProfile.Cmid,
+										Duration = durationType,
+										ItemId = itemId,
+										Points = price.Price,
+										WithdrawalDate = DateTime.UtcNow,
+										WithdrawalId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue)
+									});
 								}
 							}
 						} else if (currencyType == UberStrikeCurrencyType.Points) {
@@ -191,9 +224,21 @@ namespace Paradise.WebServices.Services {
 									return outputStream.ToArray();
 								} else {
 									memberWallet.Points -= price.Price;
+
+									DatabaseManager.ItemTransactions.Insert(new ItemTransactionView {
+										Cmid = publicProfile.Cmid,
+										Credits = price.Price,
+										Duration = durationType,
+										ItemId = itemId,
+										WithdrawalDate = DateTime.UtcNow,
+										WithdrawalId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue)
+									});
 								}
 							}
 						}
+
+						DatabaseManager.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+						DatabaseManager.MemberWallets.Insert(memberWallet);
 
 						DatabaseManager.PlayerInventoryItems.Insert(new ItemInventoryView {
 							Cmid = publicProfile.Cmid,

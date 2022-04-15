@@ -61,6 +61,25 @@ namespace Paradise.WebServices.Services {
 								}
 							});
 
+							DatabaseManager.ItemTransactions.InsertBulk(new List<ItemTransactionView> {
+								new ItemTransactionView {
+									Cmid = publicProfile.Cmid,
+									Credits = 0,
+									Duration = BuyingDurationType.Permanent,
+									ItemId = (int)UberstrikeInventoryItem.TheSplatbat,
+									Points = 0,
+									WithdrawalDate = DateTime.UtcNow
+								},
+								new ItemTransactionView {
+									Cmid = publicProfile.Cmid,
+									Credits = 0,
+									Duration = BuyingDurationType.Permanent,
+									ItemId = (int)UberstrikeInventoryItem.MachineGun,
+									Points = 0,
+									WithdrawalDate = DateTime.UtcNow
+								}
+							});
+
 							var playerLoadout = DatabaseManager.PlayerLoadouts.FindOne(_ => _.Cmid == cmid);
 							playerLoadout.MeleeWeapon = (int)UberstrikeInventoryItem.TheSplatbat;
 							playerLoadout.Weapon1 = (int)UberstrikeInventoryItem.MachineGun;
@@ -283,6 +302,13 @@ namespace Paradise.WebServices.Services {
 							};
 
 							DatabaseManager.MemberWallets.Insert(memberWallet);
+
+							DatabaseManager.CurrencyDeposits.Insert(new CurrencyDepositView {
+								Cmid = Cmid,
+								Credits = memberWallet.Credits,
+								DepositDate = DateTime.UtcNow,
+								Points = memberWallet.Points
+							});
 
 							var playerStatistics = new PlayerStatisticsView {
 								Cmid = Cmid,

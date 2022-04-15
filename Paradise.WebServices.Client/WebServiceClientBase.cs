@@ -6,7 +6,6 @@ namespace Paradise.WebServices.Client {
 	public abstract class WebServiceClientBase<T> {
 		private readonly T _service;
 
-
 		private static readonly BasicHttpBinding binding = new BasicHttpBinding {
 			MaxBufferSize = ushort.MaxValue * 4,
 			MaxReceivedMessageSize = ushort.MaxValue * 4
