@@ -1,4 +1,4 @@
-using System.ServiceModel;
+﻿using System.ServiceModel;
 
 namespace Paradise.WebServices.Contracts {
 	[ServiceContract]
@@ -50,5 +50,8 @@ namespace Paradise.WebServices.Contracts {
 		
 		[OperationContract]
 		byte[] DepositPoints(byte[] data);
+
+		[OperationContract]
+		byte[] UpdatePlayerStatistics(byte[] data);
 	}
 }

@@ -50,9 +50,11 @@ namespace Paradise.Realtime.Server.Game {
 
 			switch (type) {
 				case PickupItemType.Health:
+					peer.Actor.IncreaseHealthPickedUp(Math.Min(200 - peer.Actor.Info.Health, value));
 					peer.Actor.Info.Health = (byte)Math.Min(200, peer.Actor.Info.Health + value);
 					break;
 				case PickupItemType.Armor:
+					peer.Actor.IncreaseArmorPickedUp(Math.Min(200 - peer.Actor.Info.ArmorPoints, value));
 					peer.Actor.Info.ArmorPoints = (byte)Math.Min(200, peer.Actor.Info.ArmorPoints + value);
 					break;
 				default: break;

@@ -583,5 +583,113 @@ namespace Paradise.WebServices.Services {
 			return null;
 		}
 
+		public byte[] UpdatePlayerStatistics(byte[] data) {
+			try {
+				using (var bytes = new MemoryStream(data)) {
+					var authToken = StringProxy.Deserialize(bytes);
+					var playerStatistics = PlayerStatisticsViewProxy.Deserialize(bytes);
+
+					DebugEndpoint(authToken, playerStatistics);
+
+					using (var outputStream = new MemoryStream()) {
+						var steamMember = SteamMemberFromAuthToken(authToken);
+
+						if (steamMember != null) {
+							var statistics = DatabaseManager.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+							if (statistics != null) {
+								statistics.Hits = playerStatistics.Hits;
+								statistics.Shots = playerStatistics.Shots;
+								statistics.Splats = playerStatistics.Splats;
+								statistics.Splatted = playerStatistics.Splatted;
+								statistics.Headshots = playerStatistics.Headshots;
+								statistics.Nutshots = playerStatistics.Nutshots;
+								statistics.Xp = playerStatistics.Xp;
+								statistics.TimeSpentInGame = playerStatistics.TimeSpentInGame;
+								statistics.Level = playerStatistics.Level;
+
+								// Machine Gun
+								statistics.WeaponStatistics.MachineGunTotalDamageDone = playerStatistics.WeaponStatistics.MachineGunTotalDamageDone;
+								statistics.WeaponStatistics.MachineGunTotalSplats = playerStatistics.WeaponStatistics.MachineGunTotalSplats;
+								statistics.WeaponStatistics.MachineGunTotalShotsFired = playerStatistics.WeaponStatistics.MachineGunTotalShotsFired;
+								statistics.WeaponStatistics.MachineGunTotalShotsHit = playerStatistics.WeaponStatistics.MachineGunTotalShotsHit;
+
+								// Shotgun
+								statistics.WeaponStatistics.ShotgunTotalDamageDone = playerStatistics.WeaponStatistics.ShotgunTotalDamageDone;
+								statistics.WeaponStatistics.ShotgunTotalSplats = playerStatistics.WeaponStatistics.ShotgunTotalSplats;
+								statistics.WeaponStatistics.ShotgunTotalShotsFired = playerStatistics.WeaponStatistics.ShotgunTotalShotsFired;
+								statistics.WeaponStatistics.ShotgunTotalShotsHit = playerStatistics.WeaponStatistics.ShotgunTotalShotsHit;
+
+								// Splattergun
+								statistics.WeaponStatistics.SplattergunTotalDamageDone = playerStatistics.WeaponStatistics.SplattergunTotalDamageDone;
+								statistics.WeaponStatistics.SplattergunTotalSplats = playerStatistics.WeaponStatistics.SplattergunTotalSplats;
+								statistics.WeaponStatistics.SplattergunTotalShotsFired = playerStatistics.WeaponStatistics.SplattergunTotalShotsFired;
+								statistics.WeaponStatistics.SplattergunTotalShotsHit = playerStatistics.WeaponStatistics.SplattergunTotalShotsHit;
+
+								// Sniper Rifle
+								statistics.WeaponStatistics.SniperTotalDamageDone = playerStatistics.WeaponStatistics.SniperTotalDamageDone;
+								statistics.WeaponStatistics.SniperTotalSplats = playerStatistics.WeaponStatistics.SniperTotalSplats;
+								statistics.WeaponStatistics.SniperTotalShotsFired = playerStatistics.WeaponStatistics.SniperTotalShotsFired;
+								statistics.WeaponStatistics.SniperTotalShotsHit = playerStatistics.WeaponStatistics.SniperTotalShotsHit;
+
+								// Melee Weapons
+								statistics.WeaponStatistics.MeleeTotalDamageDone = playerStatistics.WeaponStatistics.MeleeTotalDamageDone;
+								statistics.WeaponStatistics.MeleeTotalSplats = playerStatistics.WeaponStatistics.MeleeTotalSplats;
+								statistics.WeaponStatistics.MeleeTotalShotsFired = playerStatistics.WeaponStatistics.MeleeTotalShotsFired;
+								statistics.WeaponStatistics.MeleeTotalShotsHit = playerStatistics.WeaponStatistics.MeleeTotalShotsHit;
+
+								// Cannon
+								statistics.WeaponStatistics.CannonTotalDamageDone = playerStatistics.WeaponStatistics.CannonTotalDamageDone;
+								statistics.WeaponStatistics.CannonTotalSplats = playerStatistics.WeaponStatistics.CannonTotalSplats;
+								statistics.WeaponStatistics.CannonTotalShotsFired = playerStatistics.WeaponStatistics.CannonTotalShotsFired;
+								statistics.WeaponStatistics.CannonTotalShotsHit = playerStatistics.WeaponStatistics.CannonTotalShotsHit;
+
+								// Launcher
+								statistics.WeaponStatistics.LauncherTotalDamageDone = playerStatistics.WeaponStatistics.LauncherTotalDamageDone;
+								statistics.WeaponStatistics.LauncherTotalSplats = playerStatistics.WeaponStatistics.LauncherTotalSplats;
+								statistics.WeaponStatistics.LauncherTotalShotsFired = playerStatistics.WeaponStatistics.LauncherTotalShotsFired;
+								statistics.WeaponStatistics.LauncherTotalShotsHit = playerStatistics.WeaponStatistics.LauncherTotalShotsHit;
+
+								statistics.PersonalRecord.MostArmorPickedUp = playerStatistics.PersonalRecord.MostArmorPickedUp;
+								statistics.PersonalRecord.MostCannonSplats = playerStatistics.PersonalRecord.MostCannonSplats;
+								statistics.PersonalRecord.MostConsecutiveSnipes = playerStatistics.PersonalRecord.MostConsecutiveSnipes;
+								statistics.PersonalRecord.MostDamageDealt = playerStatistics.PersonalRecord.MostDamageDealt;
+								statistics.PersonalRecord.MostDamageReceived = playerStatistics.PersonalRecord.MostDamageReceived;
+								statistics.PersonalRecord.MostHeadshots = playerStatistics.PersonalRecord.MostHeadshots;
+								statistics.PersonalRecord.MostHealthPickedUp = playerStatistics.PersonalRecord.MostHealthPickedUp;
+								statistics.PersonalRecord.MostLauncherSplats = playerStatistics.PersonalRecord.MostLauncherSplats;
+								statistics.PersonalRecord.MostMachinegunSplats = playerStatistics.PersonalRecord.MostMachinegunSplats;
+								statistics.PersonalRecord.MostMeleeSplats = playerStatistics.PersonalRecord.MostMeleeSplats;
+								statistics.PersonalRecord.MostNutshots = playerStatistics.PersonalRecord.MostNutshots;
+								statistics.PersonalRecord.MostShotgunSplats = playerStatistics.PersonalRecord.MostShotgunSplats;
+								statistics.PersonalRecord.MostSniperSplats = playerStatistics.PersonalRecord.MostSniperSplats;
+								statistics.PersonalRecord.MostSplats = playerStatistics.PersonalRecord.MostSplats;
+								statistics.PersonalRecord.MostSplattergunSplats = playerStatistics.PersonalRecord.MostSplattergunSplats;
+								statistics.PersonalRecord.MostXPEarned = playerStatistics.PersonalRecord.MostXPEarned;
+
+								DatabaseManager.PlayerStatistics.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+								DatabaseManager.PlayerStatistics.Insert(statistics);
+							} else {
+								EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.InvalidData);
+								return outputStream.ToArray();
+							}
+
+							EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.Ok);
+
+							return outputStream.ToArray();
+						} else {
+							EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.MemberNotFound);
+							return outputStream.ToArray();
+						}
+					}
+
+					throw new NotImplementedException();
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
+
+			return null;
+		}
 	}
 }

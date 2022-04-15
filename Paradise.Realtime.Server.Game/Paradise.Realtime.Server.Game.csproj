@@ -90,6 +90,7 @@
     <Compile Include="States\Player\PlayerOverviewState.cs" />
     <Compile Include="States\Player\PlayerKilledState.cs" />
     <Compile Include="States\Player\PlayerPrepareState.cs" />
+    <Compile Include="XpPointsUtil.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Paradise.Realtime.Server\Paradise.Realtime.Server.csproj">

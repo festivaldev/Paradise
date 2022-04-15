@@ -1,13 +1,15 @@
 ﻿using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
+using Paradise.DataCenter.Common.Entities;
 using Paradise.WebServices.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class AfterRoundState : BaseMatchState {
+		public ApplicationConfigurationView ApplicationConfiguration => new ApplicationWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).GetConfigurationData("4.7.1");
+
 		public AfterRoundState(BaseGameRoom room) : base(room) { }
 
 		public override void OnEnter() {
@@ -38,7 +40,7 @@ namespace Paradise.Realtime.Server.Game {
 				}
 
 				// Most Trigger Happy (Highest Killstreak)
-				if (Room.Players.Where(_ => _.Actor.MatchStatistics.ConsecutiveSnipes > 0).Count() > 0) {
+				if (Room.Players.Where(_ => _.Actor.MatchStatistics.ConsecutiveSnipes > 1).Count() > 0) {
 					if (Room.Players.OrderByDescending(_ => _.Actor.MatchStatistics.ConsecutiveSnipes).First().Actor.Cmid == player.Actor.Cmid) {
 						achievements.Add((byte)AchievementType.TriggerHappy, (ushort)player.Actor.MatchStatistics.ConsecutiveSnipes);
 					}
@@ -69,19 +71,34 @@ namespace Paradise.Realtime.Server.Game {
 				});
 			}
 
-			ApplicationConfigurationView appConfig = new ApplicationWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).GetConfigurationData("4.7.1");
+			foreach (var player in Room.Players) {
+				player.Actor.PerLifeStatistics.Add(player.Actor.CurrentLifeStatistics);
 
-			foreach (var peer in Room.Peers) {
-				peer.GameEvents.SendMatchEnd(new EndOfMatchData {
-					PlayerStatsTotal = peer.Actor.MatchStatistics,
-					PlayerStatsBestPerLife = peer.Actor.MatchStatistics,
+				var matchData = new EndOfMatchData {
+					PlayerStatsTotal = player.Actor.MatchStatistics,
+					PlayerStatsBestPerLife = player.Actor.GetBestPerLifeStatistics(),
 					MostEffecientWeaponId = 0,
 					PlayerXpEarned = null,
 					MostValuablePlayers = MostValuablePlayers.OrderByDescending(_ => _.Kills).ToList(),
 					MatchGuid = Room.MetaData.Guid,
-					HasWonMatch = false,
+					HasWonMatch = Room.IsTeamGame ? player.Actor.Team == Room.WinningTeam : player.Actor.Cmid == Room.WinningCmid,
 					TimeInGameMinutes = (int)TimeSpan.FromMilliseconds(Room.RoundEndTime - Room.RoundStartTime).TotalSeconds
-				});
+				};
+
+				CalculateXp(matchData);
+				CalculatePoints(matchData);
+
+				new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).DepositPoints(new PointDepositView {
+					Cmid = player.Actor.Cmid,
+					DepositDate = DateTime.UtcNow,
+					DepositType = PointsDepositType.Game,
+					PointDepositId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue),
+					Points = matchData.PlayerStatsTotal.Points,
+				}, player.AuthToken);
+
+				player.Actor.SaveStatistics(matchData);
+
+				player.GameEvents.SendMatchEnd(matchData);
 			}
 
 			foreach (var peer in Room.Peers) {
@@ -101,5 +118,39 @@ namespace Paradise.Realtime.Server.Game {
 		public override void OnResume() { }
 
 		public override void OnUpdate() { }
+
+
+
+		private void CalculateXp(EndOfMatchData data) {
+			if (data.PlayerStatsTotal.GetDamageDealt() > 0) {
+				int gainedXp = (!data.HasWonMatch) ? ApplicationConfiguration.XpBaseLoser : ApplicationConfiguration.XpBaseWinner;
+				gainedXp += Math.Max(0, data.PlayerStatsTotal.GetKills()) * ApplicationConfiguration.XpKill;
+				gainedXp += Math.Max(0, data.PlayerStatsTotal.Nutshots) * ApplicationConfiguration.XpNutshot;
+				gainedXp += Math.Max(0, data.PlayerStatsTotal.Headshots) * ApplicationConfiguration.XpHeadshot;
+				gainedXp += Math.Max(0, data.PlayerStatsTotal.MeleeKills) * ApplicationConfiguration.XpSmackdown;
+
+				int xpPerMinute = (!data.HasWonMatch) ? ApplicationConfiguration.XpPerMinuteLoser : ApplicationConfiguration.XpPerMinuteWinner;
+				gainedXp += (int)Math.Ceiling((float)(data.TimeInGameMinutes / 60 * xpPerMinute));
+				gainedXp += ((int)Math.Ceiling((float)(data.TimeInGameMinutes / 60 * xpPerMinute)) * 0 /* CalculateBoost */);
+
+				data.PlayerStatsTotal.Xp = gainedXp;
+			}
+		}
+
+		private void CalculatePoints(EndOfMatchData data) {
+			if (data.PlayerStatsTotal.GetDamageDealt() > 0) {
+				int gainedPoints = (!data.HasWonMatch) ? ApplicationConfiguration.PointsBaseLoser : ApplicationConfiguration.PointsBaseWinner;
+				gainedPoints += Math.Max(0, data.PlayerStatsTotal.GetKills()) * ApplicationConfiguration.PointsKill;
+				gainedPoints += Math.Max(0, data.PlayerStatsTotal.Nutshots) * ApplicationConfiguration.PointsNutshot;
+				gainedPoints += Math.Max(0, data.PlayerStatsTotal.Headshots) * ApplicationConfiguration.PointsHeadshot;
+				gainedPoints += Math.Max(0, data.PlayerStatsTotal.MeleeKills) * ApplicationConfiguration.PointsSmackdown;
+
+				int pointsPerMinute = (!data.HasWonMatch) ? ApplicationConfiguration.PointsPerMinuteLoser : ApplicationConfiguration.PointsPerMinuteWinner;
+				gainedPoints += (int)Math.Ceiling((float)(data.TimeInGameMinutes / 60 * pointsPerMinute));
+				gainedPoints += ((int)Math.Ceiling((float)(data.TimeInGameMinutes / 60 * pointsPerMinute)) * 0 /* CalculateBoost */);
+
+				data.PlayerStatsTotal.Points = gainedPoints;
+			}
+		}
 	}
 }

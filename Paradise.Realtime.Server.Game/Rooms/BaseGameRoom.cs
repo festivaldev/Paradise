@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
+using Paradise.Core.Types;
 using Paradise.DataCenter.Common.Entities;
 using Paradise.WebServices.Client;
 using System;
@@ -18,6 +19,12 @@ namespace Paradise.Realtime.Server.Game {
 		public int RoomId {
 			get { return MetaData.Number; }
 			set { MetaData.Number = value; }
+		}
+
+		public bool IsTeamGame {
+			get {
+				return MetaData.GameMode == GameModeType.TeamDeathMatch || MetaData.GameMode == GameModeType.EliminationMode;
+			}
 		}
 
 		private List<GamePeer> _peers = new List<GamePeer>();
@@ -55,6 +62,7 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
+		public int WinningCmid = 0;
 		public TeamID WinningTeam = TeamID.NONE;
 
 		public event EventHandler<PlayerJoinedEventArgs> PlayerJoined;
@@ -110,7 +118,7 @@ namespace Paradise.Realtime.Server.Game {
 				Health = 100,
 				Deaths = 0,
 				Kills = 0,
-				Level = 1,
+				Level = XpPointsUtil.GetLevelForXp(peer.Member.UberstrikeMemberView.PlayerStatisticsView.Xp),
 				Channel = ChannelType.Steam,
 				PlayerState = PlayerStates.None,
 				Ping = (ushort)(peer.RoundTripTime / 2),
@@ -169,6 +177,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			actorInfo.PlayerId = (byte)number;
 			peer.Actor = new GameActor(actorInfo);
+			peer.Actor.Peer = peer;
 			peer.Actor.Number = number;
 			peer.Room = this;
 

@@ -7,6 +7,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		public override void OnEnter() {
 			Peer.Actor.ResetStatistics();
+			Peer.Actor.ResetCurrentLifeStatistics();
 
 			var players = Room.Players;
 

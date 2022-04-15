@@ -8,6 +8,8 @@ namespace Paradise.Realtime.Server.Game {
 		public PlayerMovement Movement { get; private set; }
 		public DamageEvent Damage { get; private set; }
 
+		public GamePeer Peer { get; set; }
+
 		public GameActorInfoDelta Delta => Info.Delta;
 
 		public TeamID Team {

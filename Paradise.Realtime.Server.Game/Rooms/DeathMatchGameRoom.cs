@@ -23,6 +23,8 @@ namespace Paradise.Realtime.Server.Game {
 
 			var leader = Players.OrderByDescending(_ => _.Actor.Info.Kills).First();
 			if (leader.Actor.Info.Kills >= MetaData.KillLimit) {
+				WinningCmid = leader.Actor.Cmid;
+
 				HasRoundEnded = true;
 			}
 		}

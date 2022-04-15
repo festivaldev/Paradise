@@ -138,8 +138,10 @@ namespace Paradise.Realtime.Server.Game {
 					player.Actor.Damage.AddDamage(byteAngle, shortDamage, bodyPart, 0, 0);
 					player.Actor.Info.Health -= shortDamage;
 
-					peer.Actor.IncreaseWeaponShotsHit(weapon.ItemClass);
-					peer.Actor.IncreaseWeaponDamageDone(weapon.ItemClass, shortDamage);
+					if (player.Actor.Cmid != peer.Actor.Cmid) {
+						peer.Actor.IncreaseWeaponShotsHit(weapon.ItemClass);
+						peer.Actor.IncreaseWeaponDamageDone(weapon.ItemClass, shortDamage);
+					}
 
 					player.Actor.IncreaseDamageReceived(shortDamage);
 
@@ -147,13 +149,14 @@ namespace Paradise.Realtime.Server.Game {
 						player.Actor.Info.PlayerState = PlayerStates.Dead;
 
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
-							player.Actor.Info.Deaths++;
-
 							if (player.Actor.Cmid != peer.Actor.Cmid) {
-								peer.Actor.Info.Kills++;
-							}
+								player.Actor.IncreaseDeaths();
 
-							peer.Actor.IncreaseWeaponKills(weapon.ItemClass, (BodyPart)bodyPart);
+								peer.Actor.IncreaseWeaponKills(weapon.ItemClass, (BodyPart)bodyPart);
+								peer.Actor.IncreaseConsecutiveSnipes();
+							} else {
+								peer.Actor.IncreaseSuicides();
+							}
 						}
 
 						OnPlayerKilled(new PlayerKilledEventArgs {
@@ -233,20 +236,25 @@ namespace Paradise.Realtime.Server.Game {
 
 					player.Actor.Info.Health -= shortDamage;
 
-					peer.Actor.IncreaseWeaponShotsHit(weapon.ItemClass);
-					peer.Actor.IncreaseWeaponDamageDone(weapon.ItemClass, shortDamage);
+					if (player.Actor.Cmid != peer.Actor.Cmid) {
+						peer.Actor.IncreaseWeaponShotsHit(weapon.ItemClass);
+						peer.Actor.IncreaseWeaponDamageDone(weapon.ItemClass, shortDamage);
+					}
+
+					player.Actor.IncreaseDamageReceived(shortDamage);
 
 					if (player.Actor.Info.Health <= 0) {
 						player.Actor.Info.PlayerState = PlayerStates.Dead;
 
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
-							player.Actor.Info.Deaths++;
-							
 							if (player.Actor.Cmid != peer.Actor.Cmid) {
-								peer.Actor.Info.Kills++;
-							}
+								player.Actor.IncreaseDeaths();
 
-							peer.Actor.IncreaseWeaponKills(weapon.ItemClass, BodyPart.Body);
+								peer.Actor.IncreaseWeaponKills(weapon.ItemClass, BodyPart.Body);
+								peer.Actor.IncreaseConsecutiveSnipes();
+							} else {
+								peer.Actor.IncreaseSuicides();
+							}
 						}
 
 						OnPlayerKilled(new PlayerKilledEventArgs {
@@ -271,6 +279,7 @@ namespace Paradise.Realtime.Server.Game {
 		protected override void OnDirectDeath(GamePeer peer) {
 			peer.Actor.Info.PlayerState = PlayerStates.Dead;
 			//peer.Actor.Info.Deaths++;
+			peer.Actor.IncreaseSuicides();
 
 			OnPlayerKilled(new PlayerKilledEventArgs {
 				AttackerCmid = peer.Actor.Cmid,

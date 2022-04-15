@@ -7,6 +7,7 @@ namespace Paradise.Realtime.Server.Game {
 		public override void OnEnter() {
 			Room.PlayerJoined += OnPlayerJoined;
 
+			Room.WinningCmid = 0;
 			Room.WinningTeam = TeamID.NONE;
 		}
 

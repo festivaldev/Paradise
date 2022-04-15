@@ -1,4 +1,4 @@
-using Paradise.Core.Models.Views;
+﻿using Paradise.Core.Models.Views;
 using Paradise.Core.Serialization;
 using Paradise.Core.ViewModel;
 using Paradise.DataCenter.Common.Entities;
@@ -198,6 +198,19 @@ namespace Paradise.WebServices.Client {
 
 				using (var inputStream = new MemoryStream(result)) {
 					return BooleanProxy.Deserialize(inputStream);
+				}
+			}
+		}
+
+		public MemberOperationResult UpdatePlayerStatistics(string authToken, PlayerStatisticsView playerStatistics) {
+			using (var bytes = new MemoryStream()) {
+				StringProxy.Serialize(bytes, authToken);
+				PlayerStatisticsViewProxy.Serialize(bytes, playerStatistics);
+
+				var result = Service.UpdatePlayerStatistics(bytes.ToArray());
+
+				using (var inputStream = new MemoryStream(result)) {
+					return EnumProxy<MemberOperationResult>.Deserialize(inputStream);
 				}
 			}
 		}
