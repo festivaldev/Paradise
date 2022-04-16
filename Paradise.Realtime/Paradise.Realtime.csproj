@@ -44,8 +44,8 @@
       <HintPath>..\photon\lib\ExitGames.Logging.Log4Net.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="log4net">
-      <HintPath>..\photon\lib\log4net.dll</HintPath>
+    <Reference Include="log4net, Version=2.0.14.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\packages\log4net.2.0.14\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -59,7 +59,9 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
@@ -135,9 +137,9 @@
     <Compile Include="Server\StateMachine.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Paradise.WebServices.Client\Paradise.WebServices.Client.csproj">
-      <Project>{f4e4534a-1a69-4a38-bd57-b05ce9bd79fe}</Project>
-      <Name>Paradise.WebServices.Client</Name>
+    <ProjectReference Include="..\Paradise.WebServices\Paradise.WebServices.csproj">
+      <Project>{57f2b315-c424-4d54-85ea-fb222c7e70e8}</Project>
+      <Name>Paradise.WebServices</Name>
     </ProjectReference>
     <ProjectReference Include="..\Paradise\Paradise.csproj">
       <Project>{2c90e774-49b8-4d1e-ba6d-fa9f47b647fb}</Project>
@@ -145,6 +147,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="log4net.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

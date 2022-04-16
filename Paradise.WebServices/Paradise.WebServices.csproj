@@ -49,6 +49,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client\ApplicationWebServiceClient.cs" />
+    <Compile Include="Client\AuthenticationWebServiceClient.cs" />
+    <Compile Include="Client\ClanWebServiceClient.cs" />
+    <Compile Include="Client\ModerationWebServiceClient.cs" />
+    <Compile Include="Client\PrivateMessageWebServiceClient.cs" />
+    <Compile Include="Client\RelationshipWebServiceClient.cs" />
+    <Compile Include="Client\ShopWebServiceClient.cs" />
+    <Compile Include="Client\UserWebServiceClient.cs" />
+    <Compile Include="Client\WebServiceClientBase.cs" />
     <Compile Include="Contracts\IApplicationWebServiceContract.cs" />
     <Compile Include="Contracts\IAuthenticationWebServiceContract.cs" />
     <Compile Include="Contracts\IClanWebServiceContract.cs" />
@@ -68,6 +77,11 @@
     <Compile Include="Contracts\Legacy\IPrivateMessageWebServiceContract_Legacy.cs" />
     <Compile Include="DatabaseManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <DependentUpon>Resources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
     <Compile Include="Services\ApplicationWebService.cs" />
     <Compile Include="Services\AuthenticationWebServices.cs" />
     <Compile Include="Services\ClanWebService.cs" />
@@ -96,6 +110,12 @@
       <Project>{2c90e774-49b8-4d1e-ba6d-fa9f47b647fb}</Project>
       <Name>Paradise</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
