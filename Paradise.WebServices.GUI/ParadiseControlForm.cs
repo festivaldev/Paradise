@@ -1,4 +1,5 @@
-﻿using log4net.Config;
+﻿using log4net;
+using log4net.Config;
 using Paradise.WebServices.Services;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ using System.Reflection;
 using System.Resources;
 using System.ServiceModel;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -19,6 +21,8 @@ using System.Xml.Serialization;
 
 namespace Paradise.WebServices.GUI {
 	public partial class ParadiseControlForm : Form, IServiceCallback {
+		protected static readonly ILog Log = LogManager.GetLogger(typeof(ParadiseControlForm));
+
 		public static ParadiseControlForm Instance;
 
 		private static BasicHttpBinding HttpBinding;
@@ -70,7 +74,7 @@ namespace Paradise.WebServices.GUI {
 			foreach (var service in Services.Values) {
 				var serviceItem = new ToolStripMenuItem {
 					Tag = service.ServiceName,
-					Text = $"{service.ServiceName}[{service.ServiceVersion}]",
+					Text = $"{service.ServiceName} [{service.ServiceVersion}]",
 				};
 
 				var startServiceItem = new ToolStripMenuItem {
@@ -93,6 +97,26 @@ namespace Paradise.WebServices.GUI {
 
 				serviceItem.DropDownItems.Add(stopServiceItem);
 
+				var restartServiceItem = new ToolStripMenuItem {
+					Text = $"Restart Service",
+				};
+
+				restartServiceItem.Click += delegate {
+					Log.Warn($"Restarting {service.ServiceName} [{service.ServiceVersion}]...");
+
+					service.StopService();
+
+					Task.Run(async () => {
+						await Task.Delay(500);
+
+						if (!service.StartService()) {
+							notifyIcon.ShowBalloonTip(3000, "Service Restart Failed", $"Service {service.ServiceName} [{service.ServiceVersion}] failed to restart. Please check the log file for further information.", ToolTipIcon.Error);
+						}
+					});
+				};
+
+				serviceItem.DropDownItems.Add(restartServiceItem);
+
 				serviceListMenuItem.DropDownItems.Add(serviceItem);
 
 				service.StartService();
@@ -106,6 +130,7 @@ namespace Paradise.WebServices.GUI {
 				startFileServerMenuItem.Enabled = false;
 				stopFileServerMenuItem.Enabled = true;
 			} catch (Exception e) {
+				Log.Error(e);
 				notifyIcon.ShowBalloonTip(3000, "File Server failed to start", e.Message, ToolTipIcon.Error);
 
 				startFileServerMenuItem.Enabled = true;
@@ -134,10 +159,11 @@ namespace Paradise.WebServices.GUI {
 			databaseCloseMenuItem.Enabled = false;
 		}
 
-		private void OnDatabaseError(object sender, ErrorEventArgs args) {
-			notifyIcon.ShowBalloonTip(3000, "Database error", args.GetException().Message, ToolTipIcon.Error);
-			notifyIcon.BalloonTipClicked += OpenLogMenuItemClicked;
-		}
+		//private void OnDatabaseError(object sender, ErrorEventArgs args) {
+		//	Log.Error(args.GetException());
+		//	notifyIcon.ShowBalloonTip(3000, "Database error", args.GetException().Message, ToolTipIcon.Error);
+		//	notifyIcon.BalloonTipClicked += OpenLogMenuItemClicked;
+		//}
 		#endregion
 
 		#region Service Callbacks
@@ -255,6 +281,21 @@ namespace Paradise.WebServices.GUI {
 			}
 		}
 
+		private void OnRestartAllServicesMenuItemClicked(object sender, EventArgs args) {
+			Log.Warn($"Restarting all services...");
+			foreach (var service in Services.Values) {
+				service.StopService();
+
+				Task.Run(async () => {
+					await Task.Delay(500);
+
+					if (!service.StartService()) {
+						notifyIcon.ShowBalloonTip(3000, "Service Restart Failed", $"Service {service.ServiceName} [{service.ServiceVersion}] failed to restart. Please check the log file for further information.", ToolTipIcon.Error);
+					}
+				});
+			}
+		}
+
 		private void OnStartFileServerMenuItemClicked(object sender, EventArgs args) {
 			if (!HttpServer.IsRunning) {
 				try {
@@ -263,6 +304,7 @@ namespace Paradise.WebServices.GUI {
 					startFileServerMenuItem.Enabled = false;
 					stopFileServerMenuItem.Enabled = true;
 				} catch (Exception e) {
+					Log.Error(e);
 					notifyIcon.ShowBalloonTip(3000, "File Server failed to start", e.Message, ToolTipIcon.Error);
 
 					startFileServerMenuItem.Enabled = true;
@@ -279,6 +321,7 @@ namespace Paradise.WebServices.GUI {
 					startFileServerMenuItem.Enabled = true;
 					stopFileServerMenuItem.Enabled = false;
 				} catch (Exception e) {
+					Log.Error(e);
 					notifyIcon.ShowBalloonTip(3000, "File Server failed to stop", e.Message, ToolTipIcon.Error);
 
 					startFileServerMenuItem.Enabled = false;
