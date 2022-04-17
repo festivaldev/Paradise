@@ -145,7 +145,12 @@ class SimpleHTTPServer {
 	private void Listen() {
 		_listener = new HttpListener();
 		_listener.Prefixes.Add("http://*:" + _port.ToString() + "/");
-		_listener.Start();
+
+		try {
+			_listener.Start();
+		} catch (Exception e) {
+			Log.Error(e);
+		}
 
 		Log.Info($"HTTP server listening on port {_port}");
 
