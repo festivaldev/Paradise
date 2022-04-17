@@ -37,6 +37,7 @@ namespace Paradise.Client {
 			GameObject pluginHolder = new GameObject("Plugin Holder");
 			pluginHolder.AddComponent<CustomMapManager>();
 			//pluginHolder.AddComponent<DebugConsoleGUI>();
+			pluginHolder.AddComponent<ParadiseApplicationManager>();
 			UnityEngine.Object.DontDestroyOnLoad(pluginHolder);
 		}
 

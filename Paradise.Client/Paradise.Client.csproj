@@ -47,7 +47,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-  	<Reference Include="Assembly-CSharp">
+    <Reference Include="Assembly-CSharp">
       <HintPath>..\AssemblyReferences\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -56,13 +56,13 @@
       <HintPath>..\AssemblyReferences\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>False</Private>
     </Reference>
-  	<Reference Include="UnityEngine">
+    <Reference Include="UnityEngine">
       <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-  	<Reference Include="Assembly-CSharp">
+    <Reference Include="Assembly-CSharp">
       <HintPath>..\AssemblyReferences\Assembly-CSharp.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -71,7 +71,7 @@
       <HintPath>..\AssemblyReferences\Assembly-CSharp-firstpass.dll</HintPath>
       <Private>True</Private>
     </Reference>
-  	<Reference Include="UnityEngine">
+    <Reference Include="UnityEngine">
       <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
       <Private>True</Private>
     </Reference>
@@ -81,6 +81,7 @@
     <Compile Include="Hooks\ApplicationDataManager_hook.cs" />
     <Compile Include="Hooks\WeaponController_hook.cs" />
     <Compile Include="Hooks\BundleManager_hook.cs" />
+    <Compile Include="ParadiseApplicationManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ParadiseSettings.cs" />
     <Compile Include="Hooks\ScreenResolutionManager_hook.cs" />
