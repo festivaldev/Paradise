@@ -304,11 +304,23 @@ namespace Paradise.WebServices.Services {
 
 							DatabaseManager.MemberWallets.Insert(memberWallet);
 
+							var transactionKey = new byte[32];
+							new Random((int)DateTime.UtcNow.Ticks).NextBytes(transactionKey);
+
+							var builder = new StringBuilder(64);
+							for (int i = 0; i < transactionKey.Length; i++) {
+								Log.Debug(i.ToString());
+								builder.Append(transactionKey[i].ToString("x2"));
+							}
+
 							DatabaseManager.CurrencyDeposits.Insert(new CurrencyDepositView {
+								BundleName = "Signup Reward",
 								Cmid = Cmid,
 								Credits = memberWallet.Credits,
+								CurrencyLabel = "$",
 								DepositDate = DateTime.UtcNow,
-								Points = memberWallet.Points
+								Points = memberWallet.Points,
+								TransactionKey = builder.ToString(),
 							});
 
 							var playerStatistics = new PlayerStatisticsView {
