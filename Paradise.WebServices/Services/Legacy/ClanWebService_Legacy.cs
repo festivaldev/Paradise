@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Paradise.WebServices.Services {
 	public class ClanWebService_Legacy : WebServiceBase, IClanWebServiceContract_Legacy {
-		protected override string ServiceName => "ClanWebService";
+		public override string ServiceName => "ClanWebService";
 		public override string ServiceVersion => "1.0.1";
 		protected override Type ServiceInterface => typeof(IClanWebServiceContract_Legacy);
 

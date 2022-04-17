@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Paradise.WebServices.Services {
 	public class RelationshipWebService_Legacy : WebServiceBase, IRelationshipWebServiceContract_Legacy {
-		protected override string ServiceName => "RelationshipWebService";
+		public override string ServiceName => "RelationshipWebService";
 		public override string ServiceVersion => "1.0.1";
 		protected override Type ServiceInterface => typeof(IRelationshipWebServiceContract_Legacy);
 

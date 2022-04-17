@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Paradise.WebServices.Services {
 	public class PrivateMessageWebService_Legacy : WebServiceBase, IPrivateMessageWebServiceContract_Legacy {
-		protected override string ServiceName => "PrivateMessageWebService";
+		public override string ServiceName => "PrivateMessageWebService";
 		public override string ServiceVersion => "1.0.1";
 		protected override Type ServiceInterface => typeof(IPrivateMessageWebServiceContract_Legacy);
 

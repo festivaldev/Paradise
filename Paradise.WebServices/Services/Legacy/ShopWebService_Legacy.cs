@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Paradise.WebServices.Services {
 	public class ShopWebService_Legacy : WebServiceBase, IShopWebServiceContract_Legacy {
-		protected override string ServiceName => "ShopWebService";
+		public override string ServiceName => "ShopWebService";
 		public override string ServiceVersion => "1.0.1";
 		protected override Type ServiceInterface => typeof(IShopWebServiceContract_Legacy);
 

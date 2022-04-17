@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using log4net;
+using Newtonsoft.Json;
 using Paradise.Core.Models.Views;
 using Paradise.Core.Serialization;
 using Paradise.Core.Types;
@@ -13,7 +14,9 @@ using System.ServiceModel;
 
 namespace Paradise.WebServices.Services {
 	public class ApplicationWebService : WebServiceBase, IApplicationWebServiceContract {
-		protected override string ServiceName => "ApplicationWebService";
+		protected static readonly ILog Log = LogManager.GetLogger(typeof(ApplicationWebService));
+
+		public override string ServiceName => "ApplicationWebService";
 		public override string ServiceVersion => "2.0";
 		protected override Type ServiceInterface => typeof(IApplicationWebServiceContract);
 
@@ -24,6 +27,7 @@ namespace Paradise.WebServices.Services {
 		private AuthenticateApplicationView defaultAppAuthentication;
 
 		public ApplicationWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
+		public ApplicationWebService(WebServiceConfiguration serviceConfig, IServiceCallback serviceCallback) : base(serviceConfig, serviceCallback) { }
 
 		protected override void Setup() {
 			try {
@@ -36,6 +40,11 @@ namespace Paradise.WebServices.Services {
 					defaultAppAuthentication.CommServer.IP = Dns.GetHostAddresses(defaultAppAuthentication.CommServer.IP).FirstOrDefault().ToString();
 				} catch (Exception e) {
 					Log.Error($"Failed to resolve CommServer IP: {e.Message}{Environment.NewLine}{e.StackTrace}");
+					ServiceError?.Invoke(this, new ServiceEventArgs {
+						ServiceName = ServiceName,
+						ServiceVersion = ServiceVersion,
+						Exception = e
+					});
 				}
 
 				try {
@@ -44,9 +53,19 @@ namespace Paradise.WebServices.Services {
 					}
 				} catch (Exception e) {
 					Log.Error($"Failed to resolve GameServer IP: {e.Message}{Environment.NewLine}{e.StackTrace}");
+					ServiceError?.Invoke(this, new ServiceEventArgs {
+						ServiceName = ServiceName,
+						ServiceVersion = ServiceVersion,
+						Exception = e
+					});
 				}
 			} catch (Exception e) {
 				Log.Error($"Failed to load {ServiceName} data: {e.Message}");
+				ServiceError?.Invoke(this, new ServiceEventArgs {
+					ServiceName = ServiceName,
+					ServiceVersion = ServiceVersion,
+					Exception = e
+				});
 			}
 		}
 

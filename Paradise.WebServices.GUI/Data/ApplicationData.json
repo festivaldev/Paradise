@@ -1,6 +1,6 @@
 ﻿{
 	"CommServer": {
-		"IP": "127.0.0.1",
+		"IP": "festivaldev.dnshome.de",
 		"MinLatency": 100,
 		"Name": "Dropshot Comm Server",
 		"PhotonId": 34579385,
@@ -12,7 +12,7 @@
 		{
 			"PhotonId": 5982379,
 			"Name": "Test",
-			"IP": "127.0.0.1",
+			"IP": "festivaldev.dnshome.de",
 			"Region": 1,
 			"Port": 5056,
 			"UsageType": 1,

@@ -9,11 +9,12 @@ using System.Text;
 
 namespace Paradise.WebServices.Services {
 	public class ClanWebService : WebServiceBase, IClanWebServiceContract {
-		protected override string ServiceName => "ClanWebService";
+		public override string ServiceName => "ClanWebService";
 		public override string ServiceVersion => "2.0";
 		protected override Type ServiceInterface => typeof(IClanWebServiceContract);
 
 		public ClanWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
+		public ClanWebService(WebServiceConfiguration serviceConfig, IServiceCallback serviceCallback) : base(serviceConfig, serviceCallback) { }
 
 		protected override void Setup() { }
 

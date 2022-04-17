@@ -11,11 +11,12 @@ using System.Text;
 
 namespace Paradise.WebServices.Services {
 	public class AuthenticationWebService : WebServiceBase, IAuthenticationWebServiceContract {
-		protected override string ServiceName => "AuthenticationWebService";
+		public override string ServiceName => "AuthenticationWebService";
 		public override string ServiceVersion => "2.0";
 		protected override Type ServiceInterface => typeof(IAuthenticationWebServiceContract);
 
 		public AuthenticationWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
+		public AuthenticationWebService(WebServiceConfiguration serviceConfig, IServiceCallback serviceCallback) : base(serviceConfig, serviceCallback) { }
 
 		protected override void Setup() { }
 

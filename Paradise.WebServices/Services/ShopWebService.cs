@@ -13,7 +13,7 @@ using System.Text;
 
 namespace Paradise.WebServices.Services {
 	public class ShopWebService : WebServiceBase, IShopWebServiceContract {
-		protected override string ServiceName => "ShopWebService";
+		public override string ServiceName => "ShopWebService";
 		public override string ServiceVersion => "2.0";
 		protected override Type ServiceInterface => typeof(IShopWebServiceContract);
 
@@ -21,6 +21,7 @@ namespace Paradise.WebServices.Services {
 		private List<BundleView> bundleData;
 
 		public ShopWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
+		public ShopWebService(WebServiceConfiguration serviceConfig, IServiceCallback serviceCallback) : base(serviceConfig, serviceCallback) { }
 
 		protected override void Setup() {
 			try {
@@ -28,6 +29,11 @@ namespace Paradise.WebServices.Services {
 				bundleData = JsonConvert.DeserializeObject<List<BundleView>>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data", "Bundles.json")));
 			} catch (Exception e) {
 				Log.Error($"Failed to load {ServiceName} data: {e.Message}");
+				ServiceError?.Invoke(this, new ServiceEventArgs {
+					ServiceName = ServiceName,
+					ServiceVersion = ServiceVersion,
+					Exception = e
+				});
 			}
 		}
 

@@ -1,4 +1,5 @@
 ﻿using LiteDB;
+using log4net;
 using Paradise.DataCenter.Common.Entities;
 using System;
 using System.Collections.Generic;
@@ -29,7 +30,10 @@ namespace Paradise.WebServices {
 	}
 
 	public static class DatabaseManager {
+		static readonly ILog Log = LogManager.GetLogger(typeof(DatabaseManager));
 		private static LiteDatabase databaseInstance;
+
+		public static bool IsOpen => databaseInstance != null;
 
 		// Authentication
 		public static ILiteCollection<SteamMember> SteamMembers { get; private set; }
@@ -58,6 +62,9 @@ namespace Paradise.WebServices {
 		public static ILiteCollection<ItemTransactionView> ItemTransactions { get; private set; }
 		public static ILiteCollection<CurrencyDepositView> CurrencyDeposits { get; private set; }
 		public static ILiteCollection<PointDepositView> PointDeposits { get; private set; }
+
+		public static EventHandler<EventArgs> DatabaseOpened;
+		public static EventHandler<EventArgs> DatabaseClosed;
 
 		static DatabaseManager() {
 			BsonMapper.Global.Entity<PublicProfileView>().Id(_ => _.Cmid);
@@ -100,7 +107,8 @@ namespace Paradise.WebServices {
 				return;
 			}
 
-			Log.Success($"Finished saving database tables.");
+			Log.Info($"Finished saving database tables.");
+			DatabaseClosed?.Invoke(null, new EventArgs());
 		}
 
 		public static void OpenDatabase() {
@@ -157,7 +165,8 @@ namespace Paradise.WebServices {
 				return;
 			}
 
-			Log.Success($"Database opened.");
+			Log.Info($"Database opened.");
+			DatabaseOpened?.Invoke(null, new EventArgs());
 		}
 
 		public static void ReloadDatabase() {
@@ -169,7 +178,7 @@ namespace Paradise.WebServices {
 				OpenDatabase();
 			}
 
-			Log.Success($"Finished reloading database tables.");
+			Log.Info($"Finished reloading database tables.");
 		}
 	}
 }

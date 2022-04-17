@@ -3,6 +3,7 @@ bin/
 obj/
 packages/
 photon/*
+AssemblyReferences/*
 release-test/
 node_modules/
 *old*/

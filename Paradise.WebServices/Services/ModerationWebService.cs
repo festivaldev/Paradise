@@ -6,11 +6,12 @@ using System.ServiceModel;
 
 namespace Paradise.WebServices.Services {
 	public class ModerationWebService : WebServiceBase, IModerationWebServiceContract {
-		protected override string ServiceName => "ModerationWebService";
+		public override string ServiceName => "ModerationWebService";
 		public override string ServiceVersion => "2.0";
 		protected override Type ServiceInterface => typeof(IModerationWebServiceContract);
 
 		public ModerationWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
+		public ModerationWebService(WebServiceConfiguration serviceConfig, IServiceCallback serviceCallback) : base(serviceConfig, serviceCallback) { }
 
 		protected override void Setup() { }
 

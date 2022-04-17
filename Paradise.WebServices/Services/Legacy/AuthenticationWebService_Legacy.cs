@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Paradise.WebServices.Services {
 	public class AuthenticationWebService_Legacy : WebServiceBase, IAuthenticationWebServiceContract_Legacy {
-		protected override string ServiceName => "AuthenticationWebService";
+		public override string ServiceName => "AuthenticationWebService";
 		public override string ServiceVersion => "1.0.1";
 		protected override Type ServiceInterface => typeof(IAuthenticationWebServiceContract_Legacy);
 

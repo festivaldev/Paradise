@@ -10,11 +10,12 @@ using System.Text;
 
 namespace Paradise.WebServices.Services {
 	public class RelationshipWebService : WebServiceBase, IRelationshipWebServiceContract {
-		protected override string ServiceName => "RelationshipWebService";
+		public override string ServiceName => "RelationshipWebService";
 		public override string ServiceVersion => "2.0";
 		protected override Type ServiceInterface => typeof(IRelationshipWebServiceContract);
 
 		public RelationshipWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
+		public RelationshipWebService(WebServiceConfiguration serviceConfig, IServiceCallback serviceCallback) : base(serviceConfig, serviceCallback) { }
 
 		protected override void Setup() { }
 
