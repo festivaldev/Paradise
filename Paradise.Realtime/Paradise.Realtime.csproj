@@ -40,7 +40,7 @@
 	</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <ItemGroup>
- 	<Reference Include="PhotonHostRuntimeInterfaces">
+    <Reference Include="PhotonHostRuntimeInterfaces">
       <HintPath>..\photon\lib\PhotonHostRuntimeInterfaces.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
@@ -58,9 +58,7 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<Reference Include="ExitGames.Logging.Log4Net">
+    <Reference Include="ExitGames.Logging.Log4Net">
       <HintPath>..\photon\lib\ExitGames.Logging.Log4Net.dll</HintPath>
       <Private>False</Private>
     </Reference>
@@ -68,27 +66,9 @@
       <HintPath>..\photon\lib\Photon.SocketServer.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PhotonHostRuntimeInterfaces">
-      <HintPath>..\photon\lib\PhotonHostRuntimeInterfaces.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </Reference>
-	<Reference Include="UnityEngine">
+    <Reference Include="UnityEngine">
       <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<Reference Include="ExitGames.Logging.Log4Net">
-      <HintPath>..\photon\lib\ExitGames.Logging.Log4Net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Photon.SocketServer">
-      <HintPath>..\photon\lib\Photon.SocketServer.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-	<Reference Include="UnityEngine">
-      <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +153,5 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

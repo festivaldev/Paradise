@@ -39,17 +39,9 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<Reference Include="UnityEngine">
+    <Reference Include="UnityEngine">
       <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<Reference Include="UnityEngine">
-      <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
-      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

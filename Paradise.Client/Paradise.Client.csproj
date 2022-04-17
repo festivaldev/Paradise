@@ -61,21 +61,6 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
-  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <Reference Include="Assembly-CSharp">
-      <HintPath>..\AssemblyReferences\Assembly-CSharp.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\AssemblyReferences\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="UnityEngine">
-      <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="CustomMaps\CustomMapManager.cs" />
     <Compile Include="Hooks\ApplicationDataManager_hook.cs" />
