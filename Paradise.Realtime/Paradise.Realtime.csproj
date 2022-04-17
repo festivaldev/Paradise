@@ -40,23 +40,15 @@
 	</AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ExitGames.Logging.Log4Net">
-      <HintPath>..\photon\lib\ExitGames.Logging.Log4Net.dll</HintPath>
-      <Private>False</Private>
+ 	<Reference Include="PhotonHostRuntimeInterfaces">
+      <HintPath>..\photon\lib\PhotonHostRuntimeInterfaces.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="log4net, Version=2.0.14.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\packages\log4net.2.0.14\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Photon.SocketServer">
-      <HintPath>..\photon\lib\Photon.SocketServer.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="PhotonHostRuntimeInterfaces">
-      <HintPath>..\photon\lib\PhotonHostRuntimeInterfaces.dll</HintPath>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -66,9 +58,37 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine">
-      <HintPath>K:\Steam\steamapps\common\UberStrike\UberStrike_Data\Managed\UnityEngine.dll</HintPath>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<Reference Include="ExitGames.Logging.Log4Net">
+      <HintPath>..\photon\lib\ExitGames.Logging.Log4Net.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+    <Reference Include="Photon.SocketServer">
+      <HintPath>..\photon\lib\Photon.SocketServer.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="PhotonHostRuntimeInterfaces">
+      <HintPath>..\photon\lib\PhotonHostRuntimeInterfaces.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
+	<Reference Include="UnityEngine">
+      <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<Reference Include="ExitGames.Logging.Log4Net">
+      <HintPath>..\photon\lib\ExitGames.Logging.Log4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Photon.SocketServer">
+      <HintPath>..\photon\lib\Photon.SocketServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+	<Reference Include="UnityEngine">
+      <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

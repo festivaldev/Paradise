@@ -39,9 +39,17 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine">
-      <HintPath>K:\Steam\steamapps\common\UberStrike\UberStrike_Data\Managed\UnityEngine.dll</HintPath>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+	<Reference Include="UnityEngine">
+      <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
       <Private>False</Private>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+	<Reference Include="UnityEngine">
+      <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
