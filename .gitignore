@@ -1,9 +1,10 @@
 .vs/
-bin/
-obj/
+*/bin/
+*/obj/
 packages/
 photon/*
-AssemblyReferences/*
+AssemblyReferences/*.dll
 release-test/
 node_modules/
 *old*/
+*.lnk
