@@ -14,7 +14,7 @@ namespace Paradise.WebServices.Services {
 		protected override Type ServiceInterface => typeof(IClanWebServiceContract);
 
 		public ClanWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
-		public ClanWebService(WebServiceConfiguration serviceConfig, IServiceCallback serviceCallback) : base(serviceConfig, serviceCallback) { }
+		public ClanWebService(BasicHttpBinding binding, ParadiseSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() { }
 

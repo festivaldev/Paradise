@@ -11,9 +11,12 @@ using System.IO;
 using System.Threading;
 using System.Diagnostics;
 using log4net;
+using Paradise.WebServices;
 
 class SimpleHTTPServer {
 	protected static readonly ILog Log = LogManager.GetLogger(typeof(SimpleHTTPServer));
+
+	protected ParadiseSettings Settings;
 
 	private readonly string[] _indexFiles = {
 		"index.html",
@@ -100,27 +103,33 @@ class SimpleHTTPServer {
 		private set { }
 	}
 
+	public SimpleHTTPServer(string path, ParadiseSettings settings) {
+		Settings = settings;
+
+		this.Initialize(path, settings.FileServerPort);
+	}
+
 	/// <summary>
 	/// Construct server with given port.
 	/// </summary>
 	/// <param name="path">Directory path to serve.</param>
 	/// <param name="port">Port of the server.</param>
-	public SimpleHTTPServer(string path, int port) {
-		this.Initialize(path, port);
-	}
+	//public SimpleHTTPServer(string path, int port) {
+	//	this.Initialize(path, port);
+	//}
 
 	/// <summary>
 	/// Construct server with suitable port.
 	/// </summary>
 	/// <param name="path">Directory path to serve.</param>
-	public SimpleHTTPServer(string path) {
-		//get an empty port
-		TcpListener l = new TcpListener(IPAddress.Loopback, 0);
-		l.Start();
-		int port = ((IPEndPoint)l.LocalEndpoint).Port;
-		l.Stop();
-		this.Initialize(path, port);
-	}
+	//public SimpleHTTPServer(string path) {
+	//	//get an empty port
+	//	TcpListener l = new TcpListener(IPAddress.Loopback, 0);
+	//	l.Start();
+	//	int port = ((IPEndPoint)l.LocalEndpoint).Port;
+	//	l.Stop();
+	//	this.Initialize(path, port);
+	//}
 
 	/// <summary>
 	/// Starts server
@@ -144,7 +153,12 @@ class SimpleHTTPServer {
 
 	private void Listen() {
 		_listener = new HttpListener();
-		_listener.Prefixes.Add("http://*:" + _port.ToString() + "/");
+
+		if (Settings.EnableSSL) {
+			_listener.Prefixes.Add($"https://{Settings.FileServerHostName}:{_port}/");
+		} else {
+			_listener.Prefixes.Add($"http://{Settings.FileServerHostName}:{_port}/");
+		}
 
 		try {
 			_listener.Start();

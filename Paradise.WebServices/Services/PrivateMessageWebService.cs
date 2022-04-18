@@ -14,7 +14,7 @@ namespace Paradise.WebServices.Services {
 		protected override Type ServiceInterface => typeof(IPrivateMessageWebServiceContract);
 
 		public PrivateMessageWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
-		public PrivateMessageWebService(WebServiceConfiguration serviceConfig, IServiceCallback serviceCallback) : base(serviceConfig, serviceCallback) { }
+		public PrivateMessageWebService(BasicHttpBinding binding, ParadiseSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() { }
 

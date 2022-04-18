@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ParadiseSettings>
-	<WebServiceBaseUrl>http://festivaldev.dnshome.de:5053/</WebServiceBaseUrl>
-	<ImagePath>http://festivaldev.dnshome.de:5054/</ImagePath>
-
+	<EnableSSL>true</EnableSSL>
+	<WebServiceHostName>localhost</WebServiceHostName>
+	<WebServicePort>5053</WebServicePort>
 	<WebServicePrefix>UberStrike.DataCenter.WebService.CWS.</WebServicePrefix>
 	<WebServiceSuffix>Contract.svc</WebServiceSuffix>
+
+	<FileServerHostName>localhost</FileServerHostName>
+	<FileServerPort>5054</FileServerPort>
 </ParadiseSettings>

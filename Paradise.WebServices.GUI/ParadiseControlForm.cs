@@ -3,17 +3,13 @@ using log4net.Config;
 using Paradise.WebServices.Services;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Reflection;
-using System.Resources;
 using System.ServiceModel;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
@@ -56,19 +52,24 @@ namespace Paradise.WebServices.GUI {
 			DatabaseManager.OpenDatabase();
 
 			HttpBinding = new BasicHttpBinding();
-			HttpBinding.Security.Mode = BasicHttpSecurityMode.None;
 
-			var serviceConfig = new WebServiceConfiguration(HttpBinding, WebServiceSettings.WebServiceBaseUrl, WebServiceSettings.WebServicePrefix, WebServiceSettings.WebServiceSuffix);
+			if (WebServiceSettings.EnableSSL) {
+				HttpBinding.Security.Mode = BasicHttpSecurityMode.Transport;
+				HttpBinding.Security.Transport.ClientCredentialType = HttpClientCredentialType.None;
+				ServicePointManager.ServerCertificateValidationCallback += (sender, cert, chain, errors) => true;
+			} else {
+				HttpBinding.Security.Mode = BasicHttpSecurityMode.None;
+			}
 
 			Services = new Dictionary<string, WebServiceBase> {
-				["Application"] = new ApplicationWebService(serviceConfig, this),
-				["Authentication"] = new AuthenticationWebService(serviceConfig, this),
-				["Clan"] = new ClanWebService(serviceConfig, this),
-				["Moderation"] = new ModerationWebService(serviceConfig, this),
-				["PrivateMessage"] = new PrivateMessageWebService(serviceConfig, this),
-				["Relationship"] = new RelationshipWebService(serviceConfig, this),
-				["Shop"] = new ShopWebService(serviceConfig, this),
-				["User"] = new UserWebService(serviceConfig, this)
+				["Application"] = new ApplicationWebService(HttpBinding, WebServiceSettings, this),
+				["Authentication"] = new AuthenticationWebService(HttpBinding, WebServiceSettings, this),
+				["Clan"] = new ClanWebService(HttpBinding, WebServiceSettings, this),
+				["Moderation"] = new ModerationWebService(HttpBinding, WebServiceSettings, this),
+				["PrivateMessage"] = new PrivateMessageWebService(HttpBinding, WebServiceSettings, this),
+				["Relationship"] = new RelationshipWebService(HttpBinding, WebServiceSettings, this),
+				["Shop"] = new ShopWebService(HttpBinding, WebServiceSettings, this),
+				["User"] = new UserWebService(HttpBinding, WebServiceSettings, this)
 			};
 
 			foreach (var service in Services.Values) {
@@ -122,7 +123,7 @@ namespace Paradise.WebServices.GUI {
 				service.StartService();
 			}
 
-			HttpServer = new SimpleHTTPServer(Path.Combine(Directory.GetCurrentDirectory(), "www"), 5054);
+			HttpServer = new SimpleHTTPServer(Path.Combine(Directory.GetCurrentDirectory(), "www"), WebServiceSettings);
 
 			try {
 				HttpServer.Start();

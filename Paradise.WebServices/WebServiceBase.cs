@@ -2,29 +2,17 @@
 using Paradise.Core.Serialization;
 using Paradise.Util.Ciphers;
 using System;
-using System.Diagnostics;
 using System.IO;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
-using System.Text;
+using System.ServiceModel.Security;
 
 namespace Paradise.WebServices {
-	public struct WebServiceConfiguration {
-		public WebServiceConfiguration(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) {
-			Binding = binding;
-			ServiceBaseUrl = serviceBaseUrl;
-			WebServicePrefix = webServicePrefix;
-			WebServiceSuffix = webServiceSuffix;
-		}
-
-		public BasicHttpBinding Binding { get; }
-		public string ServiceBaseUrl { get; }
-		public string WebServicePrefix { get; }
-		public string WebServiceSuffix { get; }
-	}
-
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, AddressFilterMode = AddressFilterMode.Any)]
 	public abstract class WebServiceBase {
 		protected static readonly ILog Log = LogManager.GetLogger(typeof(WebServiceBase));
+
+		protected ParadiseSettings Settings;
 
 		protected BasicHttpBinding HttpBinding { get; }
 		protected EndpointAddress ServiceEndpoint { get; private set; }
@@ -65,10 +53,19 @@ namespace Paradise.WebServices {
 			ServiceEndpoint = new EndpointAddress($"{serviceBaseUrl.TrimEnd(new[] { '/' })}/{ServiceVersion}/{webServicePrefix}{ServiceName}{webServiceSuffix}");
 		}
 
-		protected WebServiceBase(WebServiceConfiguration serviceConfig, IServiceCallback serviceCallback) {
+		protected WebServiceBase(BasicHttpBinding binding, ParadiseSettings settings, IServiceCallback serviceCallback) {
 			Log.Info($"Initializing {ServiceName} ({ServiceVersion})...");
-			HttpBinding = serviceConfig.Binding;
-			ServiceEndpoint = new EndpointAddress($"{serviceConfig.ServiceBaseUrl.TrimEnd(new[] { '/' })}/{ServiceVersion}/{serviceConfig.WebServicePrefix}{ServiceName}{serviceConfig.WebServiceSuffix}");
+
+			Settings = settings;
+			HttpBinding = binding;
+
+			var uriBuilder = new UriBuilder();
+			uriBuilder.Scheme = settings.EnableSSL ? "https" : "http";
+			uriBuilder.Host = settings.WebServiceHostName;
+			uriBuilder.Port = settings.WebServicePort;
+			uriBuilder.Path = $"{ServiceVersion}/{settings.WebServicePrefix}{ServiceName}{settings.WebServiceSuffix}";
+
+			ServiceEndpoint = new EndpointAddress(uriBuilder.ToString());
 
 			ServiceStarted += serviceCallback.OnServiceStarted;
 			ServiceStopped += serviceCallback.OnServiceStopped;
@@ -79,6 +76,17 @@ namespace Paradise.WebServices {
 			if (ServiceHost?.State != CommunicationState.Opening && ServiceHost?.State != CommunicationState.Opened) {
 				try {
 					ServiceHost = new ServiceHost(this);
+
+					if (Settings.EnableSSL && ServiceEndpoint.Uri.Scheme == "https") {
+						ServiceHost.Credentials.ServiceCertificate.SetCertificate(
+							StoreLocation.LocalMachine,
+							StoreName.My,
+							X509FindType.FindBySubjectName,
+							ServiceEndpoint.Uri.Host
+						);
+						ServiceHost.Credentials.ClientCertificate.Authentication.CertificateValidationMode = X509CertificateValidationMode.None;
+					}
+
 					ServiceHost.AddServiceEndpoint(ServiceInterface, HttpBinding, ServiceEndpoint.Uri);
 
 					ServiceHost.Open();
