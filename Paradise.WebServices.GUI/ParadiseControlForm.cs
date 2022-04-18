@@ -107,13 +107,9 @@ namespace Paradise.WebServices.GUI {
 
 					service.StopService();
 
-					Task.Run(async () => {
-						await Task.Delay(500);
-
-						if (!service.StartService()) {
-							notifyIcon.ShowBalloonTip(3000, "Service Restart Failed", $"Service {service.ServiceName} [{service.ServiceVersion}] failed to restart. Please check the log file for further information.", ToolTipIcon.Error);
-						}
-					});
+					if (!service.StartService()) {
+						notifyIcon.ShowBalloonTip(3000, "Service Restart Failed", $"Service {service.ServiceName} [{service.ServiceVersion}] failed to restart. Please check the log file for further information.", ToolTipIcon.Error);
+					}
 				};
 
 				serviceItem.DropDownItems.Add(restartServiceItem);
@@ -287,13 +283,9 @@ namespace Paradise.WebServices.GUI {
 			foreach (var service in Services.Values) {
 				service.StopService();
 
-				Task.Run(async () => {
-					await Task.Delay(500);
-
-					if (!service.StartService()) {
-						notifyIcon.ShowBalloonTip(3000, "Service Restart Failed", $"Service {service.ServiceName} [{service.ServiceVersion}] failed to restart. Please check the log file for further information.", ToolTipIcon.Error);
-					}
-				});
+				if (!service.StartService()) {
+					notifyIcon.ShowBalloonTip(3000, "Service Restart Failed", $"Service {service.ServiceName} [{service.ServiceVersion}] failed to restart. Please check the log file for further information.", ToolTipIcon.Error);
+				}
 			}
 		}
 
