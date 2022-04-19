@@ -1,0 +1,563 @@
++++ Exit Games GmbH - Photon SDK +++
+License Agreement for Exit Games Photon
+
+
+
+THIS LICENSE AGREEMENT FOR EXIT GAMES PHOTON (THE "AGREEMENT") APPLIES TO EXIT GAMES INC.'S ("EXIT GAMES" OR "WE") PHOTON PRODUCTS AND SERVICES (THE "PHOTON OFFERINGS"). ANYONE LICENSING, ACCESSING OR USING THE PHOTON OFFERINGS IS SUBJECT TO THIS AGREEMENT.
+
+PLEASE READ THIS AGREEMENT CAREFULLY BEFORE LICENSING, ACCESSING OR USING THE PHOTON OFFERINGS. BY COMPLETING THE ONLINE REGISTRATION FORM AND CLICKING THE AFFIRMATION BOX, ACCESSING OR USING THE PHOTON OFFERINGS, OR  OTHERWISE AGREEING IN WRITING TO THE TERMS AND CONDITIONS SET FORTH HEREIN, YOU AGREE THAT YOU HAVE READ, UNDERSTAND AND AGREE TO BE BOUND BY THE TERMS OF THIS AGREEMENT (EXCEPT AS NOTED BELOW IF YOU HAVE ANOTHER RELEVANT AGREEMENT WITH EXIT GAMES) AND YOU REPRESENT THAT YOU HAVE AUTHORITY TO BIND YOUR COMPANY AND/OR OTHER ENTITY(IES) (COLLECTIVELY, THE "CUSTOMER" OR "YOU") TO THIS AGREEMENT.
+
+EXIT GAMES MAY REVISE AND UPDATE THIS AGREEMENT AT ANY TIME WITHOUT NOTICE BY POSTING THE AMENDED TERMS TO HTTPS://WWW.PHOTONENGINE.COM. YOUR CONTINUED USE OF THE PHOTON OFFERINGS MEANS THAT YOU ACCEPT AND AGREE TO THE REVISED AGREEMENT.
+
+IN ADDITION TO THIS AGREEMENT, CUSTOMERS THAT PURCHASE THE BASIC COMMUNITY-SIFT SERVICES FOR MONITORING AND FILTRATION OF USER GENERATED CONTENT ("COMMUNITY-SIFT"), A THIRD-PARTY SERVICE OFFERED BY EXIT GAMES, ARE SUBJECT TO ADDITIONAL TERMS AND CONDITIONS FOUND HTTPS://WWW.PHOTONENGINE.COM/TERMS WITH RESPECT TO ACCESSING AND USING COMMUNITY-SIFT.
+
+CUSTOMERS WITH AN EXISTING AGREEMENT WITH EXIT GAMES: IN THE EVENT THAT YOU ALREADY HAVE A BINDING AGREEMENT, WRITTEN OR ELECTRONIC, IN EFFECT WITH EXIT GAMES RELATING TO THE LICENSING AND USE OF THE PHOTON OFFERINGS ("OTHER AGREEMENT"), THE TERMS OF THE OTHER AGREEMENT SHALL CONTROL AND THE TERMS OF THIS AGREEMENT WILL NOT APPLY (EVEN IF YOU ARE REQUIRED TO CLICK THE BOX AFFIRMING YOUR CONSENT TO THE TERMS OF THIS AGREEMENT).
+
+
+
+
+
+1.	Photon Offerings and License Schemes
+
+
+
+1.1	Photon Offerings
+
+The Photon Offerings include the Licensed Software, associated Software Development Kits and any Samples(collectively, the "Licensed Products"). "Licensed Software" means an Exit Games Photon software licensed hereunder, as well as any documentation, operating instructions, user manuals and other materials which may be licensed by and furnished to Customer by Exit Games in printed or electronic format. "Software Development Kit" or "SDK" means software development kit, including any subsequent Updates or Upgrades (each as defined below) made available to Customer, and any associated documentation, software code, or other materials made available by Exit Games to assist Customer in providing Customer's applications that interoperate with the Licensed Software (each a "Customer Application"). "Sample" means a small software and/or software development kit in object code to support, demonstrate and illustrate the use of the SDK in the Customer Application.
+
+
+
+1.2	Cloud Version
+
+With a subscription of a cloud Version, the Licensed Software is made available by Exit Games on a hosted, software-as-a-service (SaaS) basis("Cloud Version"). Under a Cloud Version license, Customer is authorized to use the Licensed Software for the agreed number of dedicated Customer Applications and for no more than the agreed number of Customer's individual, concurrently active users that are logged into the Licensed Software per one Customer Application("CCU"). A subscription to the Cloud Version also includes applicable SDKs provided to Customer to assist Customer in developing the Customer Application that interoperates with the Licensed Software. The SDKs are provided for download by Customer. Certain Licensed Software is only available as Cloud Version.
+
+
+
+1.3	Server Versions
+
+(a)	License. With a subscription of a server version("Server Version"), the Licensed Software is provided for download and installation on Servers. Customer may not use  a licensed Server Version for more than the agreed number of Servers and CCU per a one single Server and only for one single Customer Application per one single Server. "Server" means one server that is either bare metal hardware or a virtual machine (VM) that is operated by or in behalf of Customer.
+
+(b)	Offline Server Version. Customer can use certain Server Versions only with a pre-named Server ("Offline Server Version"). Customer needs to name Exit Games such Server prior to the use of an Offline Server Version and the Offline Server Version is assigned to this Server. Customer acknowledges and agrees that (i) each change or replacement of an pre-named and assigned Server requires a new assignment of this Server to the licensed Offline Server Version and (ii) Offline Server Versions contain a functionality that Customer will not be able to access and use an Offline Server Version after expiration of the relevant Term.
+
+(c)	Redistribution License. Under a redistribution license ("Redistribution License"), Customer licenses a certain Server Version including, for avoidance of doubt, an Offline Server Version, but may in addition include binaries of the SDKs for that Server Version in a Customer Application. A Redistribution License is subject to the same terms that apply to that Server Version unless explicitly set out otherwise in this Agreement.
+
+
+
+1.4	Bolt Dedicated Server Offline
+
+With a subscription of Exit Games Bolt Pro ("Bolt Pro-Subscription"), the Licensed Software is provided for download and installation on Servers. Customer may not use Bolt Pro-Subscription for more than the agreed number of CCU.
+
+
+
+1.5	Free and Trial License Types
+
+In addition to commercial licenses for the Licensed Products, from time to time, Exit Games may, but shall not be obliged to, offer free or trial versions of the Licensed Products on a limited time and/or volume basis (each a "Trial Software License"). Each Trial Software License shall be subject to the access and use restrictions of this Agreement, as well as any time and/or volume restrictions applicable to a Trial Software License. Time and/or volume restrictions applicable to a Trial Software License shall be specified at the time the relevant Trial Software License is ordered and may be updated from time to time. Customer acknowledges and agrees that under a Trial Software License Customer may not directly or indirectly use the Licensed Products or any part thereof with or for a Customer Application, video game or software modification or other variant of a software application, video game or software that changes some aspects or one aspect of this Customer Application/ software application/video game/software (each a "Mod"). Exit Games reserves the right to discontinue free or trial versions of the Licensed Products and/or to terminate a Trial Software License at any time and for any reason.
+
+
+
+1.6	Administrative Interface
+
+Customer's designated Authorized Users of the Cloud Version Licensed Software will have access to a restricted-access administrative interface feature which allows for configuration, management and monitoring of, and restricting access to, the Cloud Version Licensed Software. Customer is solely responsible for all actions taken by Authorized Users or through use of the passwords provided to such Authorized Users. For purposes of this Agreement, an "Authorized User" is:
+
+(i) if Customer is an individual: solely Customer and other temporary workers authorized by Customer to use the Licensed Products while performing duties within the scope of their employment or assignment; or
+
+(ii) if Customer is a legal entity: any employee, independent contractor and other temporary worker authorized by Customer to use the Cloud Version Licensed Products while performing duties within the scope of their employment or assignment.
+
+
+
+
+
+2.	Increase and Decrease of CCU and Server numbers
+
+
+
+2.1	Increase of CCU
+
+Subject to payment of additional Fees (as defined below), Customer may at any time increase the number of CCU licensed by Customer for Customer's use of a licensed Cloud Version by ordering additional CCU (each, an "Additional CCU"). The term pertaining to the Additional CCU shall equal the period of time remaining for the then-current Term (as defined below) pertaining to the applicable Cloud Version license that is in effect when ordering Additional CCU so that the Term relating to the applicable Cloud Version license shall be coterminous, regardless of when the Additional CCU for the Cloud Version were ordered. Exit Games shall charge such additional Fees on a pro-rata basis for the rest of the Term.
+
+
+
+2.2	Decrease of CCU
+
+Customer may at any time also decrease the number of the CCU licensed by Customer for a Cloud Version. Such decrease of CCU shall take immediate effect. The term pertaining to the then remaining CCU shall equal the Term pertaining to the relevant Cloud Version license . Upon decreasing the number of CCU, Exit Games will not refund to Customer any Fees that Customer has paid for any CCU, but shall issue a bonus equal to the amount of Fees that Customer has paid in advance for the decreased number of CCU for the benefit of the Customer (the "CCU-Bonus"). The CCU-Bonus shall be deducted from any Fees or additional Fees Customer may pay for any future use of the Licensed Products under this Agreement; provided, however, that the CCU-Bonus shall only be valid for three (3) years, commencing on the day Customer elects to decrease the number of CCU.
+
+
+
+2.3	Increase of Servers
+
+Subject to payment of additional Fees, Customer may at any time increase the number of licensed Servers  for Customer's use with a Server Version (each, an "Additional Server License"). The term pertaining to the Additional Server License shall equal the period of time remaining for the then-current Term pertaining to the applicable Server Version license that is in effect when ordering Additional Server License so that the Term relating to the applicable Server Version license shall be coterminous, regardless of when the Additional Server License for the Server Version were ordered. Exit Games shall charge such additional Fees on a pro-rata basis for the rest of the Term.
+
+
+
+2.4	Decrease of Servers
+
+Customer may at any time also decrease the number of licensed Servers. Such decrease shall take immediate effect. The term pertaining to the then remaining licensed Servers shall equal the term pertaining to the relevant Server Version license. Upon decreasing the number of licensed Servers, Exit Games will not refund to Customer any Fees that Customer has paid for any Additional Server Licenses or Server Versions, but shall issue a bonus equal to the amount of Fees that Customer has paid in advance for the decreased number of licensed Servers for the benefit of the Customer (the "Server-Bonus"). The Server-Bonus shall be deducted from any Fees or additional Fees Customer may pay for any future use of the Licensed Products under this Agreement; provided, however, that the Server-Bonus shall only be valid for three (3) years, commencing on the day Customer elects to decrease the number of licensed Servers. This Section 2.4 does not apply to Offline Server Versions.
+
+
+
+
+
+3.	Software, License Grants and Restrictions
+
+
+
+3.1	License Grants
+
+Subject to the terms of this Agreement and during the applicable license Term, Exit Games grants to Customer a non-perpetual, non-exclusive, non-transferable, non-sublicensable right to: (a) permit Customer's end users to access and use the Licensed Software with the Customer Application in accordance with the applicable license agreed between Exit Games and Customer; (b) download, install, and use, each as licensed from Exit Games to Customer, Server Versions, the Bolt Pro-Subscription, SDKs  but solely to design, develop, test and operate Customer Applications; (c) modify BOLT User Code and BOLT applications, if provided to Customer under a Bolt Pro-Subscription license, for the sole purpose to design, develop, test and operate Customer Applications; and (d) use and make a reasonable number of copies of any descriptions, instructions, or other documentation made available in connection with the Licensed Products, if any ("Documentation"). The Licensed Software is deemed accepted upon Customer's receipt of the license key if the Licensed Software is provided as Server Version or a Bolt Pro-Subscription is licensed or, if the Software is provided as Cloud Version, upon Customer's first use of the Licensed Software. Notwithstanding the foregoing, under a Redistribution License Customer may modify SDKs provided by Exit Games to Customer under that Redistribution License to implement them into a Customer Application and sub-license the right to use such SDKs to its end users as part of this Customer Application however provided that such sublicense is limited to the mere use of the SDKs as part of this Customer Application.
+
+
+
+3.2	Samples
+
+Exit Games will, from time to time and in its sole discretion, provide Customer with one or more Samples. The license to use such Samples includes the right to install, modify, use the Samples solely to design, develop, and/or test the Customer Application and/or to implement the modified or unmodified Samples in the Customer Application. Customer acknowledges and agrees that Customer's use or modification of a Sample might be subject to additional restrictions. Exit Games will make available such restrictions in the download section of the respective Sample, for example by providing a .txt file that sets out the applicable restrictions.
+
+
+
+3.3	License Restrictions
+
+Except as otherwise expressly permitted under this Agreement, Customer agrees to not: (a) reverse engineer or otherwise attempt to discover the source code of or trade secrets embodied in the Licensed Products or any portion thereof; (b) distribute, transfer, grant sublicenses to, or otherwise make available the Licensed Products (or any portion thereof) to third parties; provided, however, that Customer can make the Licensed Products available to Authorized Users and/or the Licensed Software available to its end users in connection with providing access to the Customer Application(s) (however, for purposes of clarity, Customer shall not make the Licensed Software available through resellers or other distributors); (c) embed or incorporate in any manner the Licensed Software (or any element thereof) into Customer and/or third-party applications, except for Customer Applications; (d) create modifications to or derivative works of the Licensed Software; (e) reproduce the Licensed Products, except that Customer may make up to two archival copies of the Licensed Software solely for backup purposes and a limited number of copies of SDKs as necessary to use the Licensed Software and develop Customer Applications; (f) attempt, or permit any third party to attempt, to modify, alter, or circumvent the license control and protection mechanisms within the Licensed Software; (g) use or transmit the Licensed Software in violation of any applicable law, rule or regulation, including any export/import laws; (h) remove, obscure or alter any copyright notices or any name, trademark, service mark, tagline, hyperlink or other designation of Exit Games displayed on any display screen within the Licensed Software ("Exit Games Marks"); (i) commercially exploit the Licensed Products in a way that competes with Exit Games business (e.g., offering the Licensed Software as part of a commercial gaming service); (j) use SDKs or Bolt Pro-Subscription to create, design, or develop anything other than Customer Applications; (k)use SDKs or Bolt Pro-Subscription to create or attempt to create a product that will understand and interpret the communications and commands between Licensed Software; (l) use SDKs to circumvent any technical or licensing restrictions of the Licensed Software, or to upload or otherwise transmit any material containing software viruses or other computer code, files or programs designed to interrupt, destroy, or limit the functionality of any software or hardware; (m) directly or indirectly use any Licensed Products or any part thereof that are licensed under a Trial Software License with or for a Mod; (n) use more than one (1) license of Photon Offerings for or with the same Customer Application; (o) license Photon Offerings for a Customer Application if any Customer affiliate already has licensed Photon Offerings for the same application; (p) use Licensed Software that is licensed under a Trial Software License for commercial purposes, if not agreed otherwise between the parties; (q) ask or otherwise encourage users of a Customer Application or any other third party to license any Photon Offerings in order to play or otherwise use the Customer Application or any Mod, (r) implement a Sample or a SDK provided under a Redistribution License in anything else than a Customer Application; or (s) exploit, install, run or otherwise use Licensed Products with more CCU or Servers than licensed from Exit Games under this Agreement. Customer shall not permit any third party, including, for avoidance of doubt, its end users, to perform any of the foregoing actions and shall be responsible for all damages and liabilities incurred as a result of such actions. The Licensed Products are "commercial items," as that term is defined at 48 C.F.R. 2.101 (OCT 1995), and more specifically is "commercial computer software" and "commercial computer software documentation," as such terms are used in 48 C.F.R. 12.212 (SEPT 1995). Consistent with 48 C.F.R. 12.212 and 48 C.F.R. 227.7202-1 through 227.7202-4 (JUNE 1995), the Licensed Products are provided to U.S. Government end users (i) only as a commercial end item and (ii) with only those rights as are granted to all other end users pursuant to the terms and conditions herein.
+
+
+
+3.4	License Verification
+
+(a) Server Version. For Customer's first initialization of the Server Version and every 60 minutes after its first successful initialization, the Server Version connects automatically to Exit Games' license servers via HTTPS protocol (port 443) to verify that Customer does not exceed the agreed number of Servers and CCU and to prevent access to and use of the Server Version in the event that Customer fails to pay the applicable fees when due. Customer will not be able to use the Server Version (i) at all if the verification test for the first initialization fails or (ii) 24 hours after a subsequent verification test has failed. This Section 3.4 does not apply to Offline Server Versions.
+
+(b) Bolt Pro-Subscription. Customer acknowledges and agrees that the use of the Bolt Pro-Subscription may require a positive verification of the Bolt Pro-Subscription license by Exit Games' technology and such verifications take place in regular intervals.
+
+
+
+3.5	Customer Data
+
+Customer grants Exit Games a non-exclusive, non-transferable, non-sublicensable, royalty-free, limited license to store and use any data, information, images, text, media, and content of Customer or its end users processed by the Licensed Products ("Customer Data"), subject to all the terms and conditions of this Agreement, solely (a) as legally possible and as necessary to perform Exit Games' obligations and exercise its rights under this Agreement, or (b) to respond to service or technical problems of Customer with the Licensed Products. Customer is responsible for the content and all data submitted by Customer or Customer's end users to Exit Games. Neither Customer nor its end users will upload as part of the Customer Data any of the following types of information, and Exit Games assumes no liability with respect to such information:  (a) information protected under the privacy or security regulations issued pursuant to the Health Insurance Portability and Accountability Act of 1996 (HIPAA), and (b) personally identifiable information including (i) driver's license numbers, (ii) passport numbers or (iii) social security, tax ID or similar numbers. Customer and all its end users will use the Licensed Products in compliance with applicable laws and in a manner that does not violate or infringe any rights of any third party. Customer will at its own expense indemnify, defend and hold harmless any action against Exit Games and/or Exit Games' affiliates, their officers, directors, employees, consultants and/or agents, brought by a third party to the extent that the action (including but not limited to any governmental investigations, complaints, and actions) relates to Customer Data, including but not limited to, infringement or misappropriation any third partyÂ´s intellectual property rights or violation of applicable law. Customer will pay those costs and damages finally awarded against Exit Games in any such action that are specifically attributable to such claim or those costs and damages agreed to in a monetary settlement of such action.
+
+
+
+3.6	Bankruptcy
+
+All licenses granted pursuant to this Agreement are, for purposes of Section 365(n) of the U.S. Bankruptcy Code, deemed to be licenses of rights to "intellectual property" as defined under Section 101 of the U.S. Bankruptcy Code. In any bankruptcy or insolvency proceeding involving Exit Games, Customer, as licensee of such rights, will retain and fully exercise all of its rights and elections under the U.S. Bankruptcy Code, which will apply notwithstanding conflict of law principles.
+
+
+
+3.7	Subcontractors
+
+Exit Games may from time to time in its discretion engage third parties to provide a portion or all of the Photon Offerings (each, a "Subcontractor"). Exit Games shall not be liable for the acts and omissions of its Subcontractors to the extent any such acts or omissions are outside of Exit Games' direct control (including, but not limited to, any unavailability of the Cloud Version and/or failure of the Cloud Version to be fully operational as a result of the acts or omissions of third-party Subcontractors providing hosting services on behalf of Exit Games).
+
+
+
+4.	Upgrades and Updates
+
+Exit Games may, in its sole discretion, either for free or at an additional charge, provide to Customer Upgrades or Updates to the Licensed Products. "Upgrade" means an incremental release of the Licensed Products, including significant improvements (not merely corrections for software defects and deficiencies) and changes to the basic character or structure of the Licensed Products, including, by way of example only, the inclusion of additional features and/or functionality. Upon Upgrading or Updating to a new version of the Licensed Products, Customer shall immediately cease using the previous version of the Licensed Products, and shall also ensure that it is not used by anybody else. "Update" means a patch, including patch releases, issued by Exit Games to correct defects or deficiencies in the Licensed Products or to provide minor modifications that do not substantially change the basic character or structure of the Licensed Products.
+
+
+
+5.	Publicity
+
+During the Term of this Agreement, Customer hereby agrees that Exit Games shall have the right, but not the obligation, to include Customer's name and logo as a customer that uses the Licensed Products on the Exit Games website and in other materials promoting the Licensed Products.
+
+
+
+
+
+6.	Proprietary Rights
+
+As between the parties, Exit Games will retain all ownership rights in and to the Exit Games Marks, the Licensed Products (including any optional functionality), the Documentation, all Updates and Upgrades and other derivative works of the Licensed Products and/or Documentation that are provided by Exit Games, and all intellectual property rights incorporated into or related to the foregoing.  Customer acknowledges that the goodwill associated with the Exit Games Marks belongs exclusively to Exit Games and, upon request, Customer will modify or cease its use of any Exit Games Marks.  All rights not expressly licensed by Exit Games under this Agreement are reserved.
+
+
+
+
+
+7.	Warranties and Disclaimer
+
+
+
+7.1	Warranties
+
+Exit Games represents and warrants that the Licensed Products, as delivered and when used in accordance with the Documentation, (a) will perform in all material respects as specified in such Documentation for a period of 30 calendar days of the Initial Term as defined below), and (b) will not, upon delivery, contain, any "back door", "Trojan horse", "worm", "drop dead device", "virus", "preventative routines" or other computer software routines intentionally designed to permit unauthorized access to or use of either the Licensed Software or Customer's computer systems ("Viruses"); provided that the Licensed Software may include functionality that verifies that Customer does not exceed the agreed number of Servers and/or CCU, and prevents access to and use of the Licensed Software in the event that Customer fails to pay the applicable fees when due.  In the event of any breach of the warranty in subsection (a) above, Exit Games shall, as its sole liability and Customer's sole remedy, use reasonable efforts to remedy any deficiencies that cause the Licensed Products to not conform to the foregoing warranty promptly after its receipt of written notice from Customer.  Exit Games will not be liable to the extent that any breach of the foregoing warranties are caused by (i) third-party components (including in combination with the Licensed Software) not provided by Exit Games or any open source components or freeware included within the Licensed Software; (ii) modifications to the Licensed Products; (iii) unauthorized use or use of the Licensed Products other than in accordance with the Documentation or (iv) Viruses introduced by Customer or its agents or customers ((i) to (iv) each an "Exclusion").
+
+
+
+7.2	Disclaimer
+
+THE EXPRESS WARRANTIES IN SECTION 7.1 ARE THE EXCLUSIVE WARRANTIES OFFERED BY EXIT GAMES AND ALL OTHER CONDITIONS AND WARRANTIES, INCLUDING, WITHOUT LIMITATION, ANY CONDITIONS OR WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, ACCURACY, QUIET ENJOYMENT, TITLE, MERCHANTABILITY AND THOSE THAT ARISE FROM ANY COURSE OF DEALING OR COURSE OF PERFORMANCE ARE HEREBY DISCLAIMED.  EXIT GAMES DOES NOT WARRANT THAT CUSTOMER'S USE THE LICENSED PRODUCTS WILL BE UNINTERRUPTED OR ERROR-FREE, THAT ERRORS WILL BE CORRECTED OR THAT IT WILL BE FREE OF VIRUSES OR OTHER HARMFUL COMPONENTS.  THE LICENSED PRODUCTS (INCLUDING ALL COMPONENTS THEREOF AND THE DOCUMENTATION) AND ALL DELIVERABLES ARE PROVIDED "AS IS" AND WITHOUT WARRANTY OF ANY KIND.
+
+
+
+
+
+8.	Indemnification
+
+Exit Games will indemnify, hold harmless and defend at its own expense any action against Customer brought by a third party to the extent that the action is based upon a claim that the Licensed Products (or any component thereof owned by Exit Games) when used as authorized under this Agreement and in accordance with the Documentation, infringe or misappropriate any United States, European Union or Japan copyrights or misappropriates any trade secret rights, and Exit Games will pay those costs and damages finally awarded against Customer in any such action that are specifically attributable to such claim or those costs and damages agreed to in a monetary settlement of such action. The foregoing obligations are conditioned on Customer notifying Exit Games promptly in writing of such action, Customer giving Exit Games sole control of the defense thereof and any related settlement negotiations, and Customer cooperating and, at Exit Games' reasonable request and expense, assisting in such defense. If the Licensed Products (or any component thereof owned by Exit Games) becomes, or in Exit Games' opinion is likely to become, the subject of an infringement claim, Exit Games may, at its option and expense, either (a) procure for Customer the right to continue exercising the rights licensed to Customer in this Agreement, or (b) replace or modify the Licensed Product so that it becomes non-infringing and remains functionally equivalent.  If neither of the foregoing options are, in Exit Games' reasonable opinion, commercially reasonable, Exit Games may terminate this Agreement and will refund to Customer a pro-rata portion of any applicable prepaid Fees.  Notwithstanding the foregoing, Exit Games will have no obligation under this Section 8.0 or otherwise with respect to any infringement claim based upon (i) any unauthorized use or use of the Licensed Products other than in accordance with this Agreement, (ii) any Exclusions or (iii)not installing and using an Update within three months or an Upgrade within 12 months after its release.  This Section 8.0 states Exit Games' entire liability and Customer's sole and exclusive remedy for infringement claims and actions. Notwithstanding the foregoing, Exit Games' indemnification obligations are subject to the limitations of liability set forth in Section 9.0 below, and in no event shall Exit Games' collective aggregate liability exceed a total amount of ten thousand US-dollars (US-$ 10,000.00).
+
+
+
+
+
+9.0	Limitations on Liability.
+
+TO THE EXTENT PERMITTED BY LAW, IN NO EVENT SHALL EXIT GAMES BE LIABLE TO CUSTOMER, END USERS OR TO ANY THIRD PARTY IN CONNECTION WITH THIS AGREEMENT, INCLUDING THE LICENSED PRODUCTS AND INTELLECTUAL PROPERTY PROVIDED HEREUNDER, WHETHER UNDER THEORY OF CONTRACT, TORT OR OTHERWISE, FOR (A) ANY INDIRECT, INCIDENTAL, PUNITIVE, CONSEQUENTIAL, OR SPECIAL DAMAGES (INCLUDING ANY DAMAGE TO BUSINESS REPUTATION, LOST PROFITS OR LOST DATA), WHETHER FORESEEABLE OR NOT AND WHETHER EXIT GAMES IS ADVISED OF THE POSSIBILITY OF SUCH DAMAGES OR (B) ANY AMOUNTS IN EXCESS OF THE TOTAL OF THE FEES ACTUALLY PAID AND THE FEES PAYABLE TO EXIT GAMES BY CUSTOMER UNDER THIS AGREEMENT DURING THE ONE YEAR PERIOD PRIOR TO THE DATE THAT SUCH LIABILITY FIRST ARISES.
+
+
+
+
+
+10.	Confidentiality, Privacy Security and Audit
+
+
+
+10.1	Confidentiality
+
+The Licensed Products and all trade secret information incorporated therein or derived, directly or indirectly, therefrom are confidential information of Exit Games. Customer shall keep in confidence and trust and not disclose or disseminate, or permit any employee, agent or other party working under Customer's direction to disclose or disseminate, the substance of any such confidential information of Exit Games.  The commitments in this Agreement will not impose any obligations on Customer with respect to any portion of the received information which, as evidenced by independent documentation: (a) is now generally known or available or which hereafter, through no act or failure to act on Customer's part, becomes generally known or available; or (b) is rightfully known to Customer at the time of receiving such information. Customer acknowledges that monetary damages may not be a sufficient remedy for unauthorized disclosure or use of Exit Games' confidential information and that Exit Games may seek, without waiving any other rights or remedies, such injunctive or equitable relief as may be deemed proper by a court of competent jurisdiction.
+
+
+
+10.2	Privacy and Security
+
+(a) Privacy. Each party will be responsible for its own compliance with all applicable data protection/privacy laws and regulations. Notwithstanding the foregoing, Exit Games agrees and undertakes that it will comply with all of the obligations under the applicable privacy laws. Exit Games will process, as defined in the "REGULATION (EU) 2016/679 OF THE EUROPEAN PARLIAMENT AND OF THE COUNCIL of 27 April 2016 on the protection of natural persons with regard to the processing of personal data and on the free movement of such data, and repealing Directive 95/46/EC" (General Data Protection Regulation together with any amended or successor laws thereto), personal data in accordance with the terms and conditions of the Data Processing Addendum available at https://dashboard.photonengine.com/account/terms and incorporated herein by reference.
+
+(b) CCPA. Terms in this subsection shall have the meaning given to them under the California Consumer Privacy Act of 2018 ("CCPA"). To the extent that any Confidential Information is "personal information," Customer shall be a "business" and Exit Games shall be a "service provider" with respect to the processing of the personal information. Exit Games: (1) will not sell the personal information; (2) will not retain, use, or disclose the personal information for any purpose other than for the specific purpose of performing the services as set forth in this Agreement; (3) will not retain, use, or disclose the personal information for a commercial purpose other than providing the services as set forth in this Agreement; (4) will not retain, use, or disclose the personal information outside of the direct business relationship between Customer and Exit Games; and (5) certifies that it understands these restrictions and will comply with them. The parties shall cooperate in good faith to enter into additional or modified contract terms to address any modifications, amendments, or updates to the CCPA, including applicable regulatory or self-regulatory guidance.
+
+(c) Customer Security. Customer shall employ all physical, administrative, and technical controls, screening, and security procedures and other safeguards necessary to (i) securely administer the distribution and use of all access credentials and protect against any unauthorized access to or use of the Cloud Version; and (ii) control the content and use of Customer Data, including the uploading or other provision of Customer Data for processing by Cloud Version.
+
+
+
+10.3	Audit
+
+Exit Games has the right to perform an audit to verify that Customer is using the Licensed Products in compliance with this Agreement. The audit will be performed during normal business hours upon not less than 15 (fifteen) calendar days' prior written notice to Customer (notification via email is deemed sufficient for this purpose). The audit will be conducted at Exit Games' sole cost and expense and will be subject to reasonable security and access restrictions. Customer will be permitted to have Customer personnel present during the audit. If an audit conducted under this Section discloses that Customer has underpaid by more than 5% any Fees payable under this Agreement during the period covered by the audit, Customer will pay Exit Games the amount of that underpayment and, in addition, will reimburse Exit Games' reasonable and actual costs for that audit.
+
+
+
+
+
+11.	Term and Termination
+
+
+
+11.1	Term; Renewals
+
+(a) With the exception of Trial Software Licenses, the initial term of each Licensed Product subject to this Agreement shall be for a period of twelve (12) months or until the end of the then-current calendar month, as agreed upon by the parties, commencing on the date that Exit Games accepts Customer's offer to obtain the right to use the Licensed Product ("Initial Term").
+
+(b) With the exception of Trial Software Licenses, (i) a Licensed Product with an Initial Term of twelve (12) months will automatically renew at the same Fees applicable during the immediately preceding term for renewal periods of 12 months; (ii) a Licensed Product with an Initial Term of one (1) calendar month or less will automatically renew at the same Fees applicable during the immediately preceding term for renewal periods of one (1) calendar month; provided, however, that the Term will not renew if either party notifies the other party prior to the commencement of the applicable renewal period that it does not intend to renew the Term upon the same terms (notification via email or the termination functionality provided in administrative interface feature is deemed sufficient for this purpose). The Initial Term and all renewal terms are collectively referred to hereinafter as the "Term."
+
+(c) The Term of a Trial Software License shall be specified at the time the relevant Trial Software License is ordered by Customer. Notwithstanding the foregoing, Exit Games reserves the right to discontinue free or trial versions of the Licensed Products and/or to terminate Trial Software Licenses at any time and for any reason.
+
+
+
+11.2	Termination
+
+This Agreement shall continue in effect until terminated as set forth herein. This Agreement may be terminated by either party if the other party materially breaches this Agreement and, in case of a breach capable of curation, does not cure the breach within thirty (30) calendar days after receiving written notice thereof from the non-breaching party. Additionally, this Agreement may be terminated by Exit Games in the event that Customer fails to pay applicable Fees when due.  Upon any termination of this Agreement, without prejudice to any other rights or remedies which the parties may have, (a) all rights licensed and obligations required hereunder shall immediately cease (including Customer's and its end users' right to access and use the Licensed Products); provided that Sections 6.0 through 10.0, 12.0 and 13.0 shall survive termination, (b) Customer will promptly delete and destroy all instances of the Licensed Products in its possession or control (if any), and (c) Customer shall pay to Exit Games any outstanding Fees that have accrued prior to the date of termination.
+
+
+
+
+
+12.	Fees and Payment
+
+All fees for the Photon Offerings (the "Fees") are set forth on Exit Games' detail page on Exit Games' website (https://www.photonengine.com)or the individual online-account of Customer with Exit Games. Exit Games may change the Fees at any time but such changes will not apply to previously terms. Exit Games will notify Customer about any increase of the Fees with 60 calendar days' prior written notice (notice via email is deemed sufficient for this purpose). Subject to the terms and conditions below, all fees for the Licensed Products (the "Fees") will be set forth in (i) an order document that references this Agreement and is executed by both parties or (ii) in an online order form that Exit Games provides on its website(s) and that Customer submits to Exit Games. If not set out otherwise in this Agreement, Customer will pay to Exit Games, as applicable, all agreed Fees in advance of the then-current term (i.e., payment for the Initial Term is due prior to the commencement of the Initial Term, and payment for all subsequent renewal terms is due prior to each renewal term) via credit card, PayPal or other payment mechanism accepted by Exit Games. All amounts payable shall be in the currency of the United States and specifically exclude (and Customer is responsible for) any and all applicable sales, use and other taxes, (other than taxes based on Exit Games' income). Late payments will bear interest at the lesser of one and one-half percent (1.5%) per month, compounded monthly (equivalent to 19.56% per annum) or the highest rate permitted by law, until paid in full. Each party is responsible for its own expenses under this Agreement.
+
+
+
+
+
+13.0	Miscellaneous
+
+The parties are independent contractors with respect to each other, and nothing in this Agreement shall be construed as creating an employer-employee relationship, a partnership, agency relationship or a joint venture between the parties. Each party will be excused from any delay or failure in performance hereunder, other than the payment of money, caused by reason of any occurrence or contingency beyond its reasonable control, including but not limited to acts of God, earthquake, labor disputes and strikes, riots, war and governmental requirements.  The obligations and rights of the party so excused will be extended on a day-to-day basis for the period of time equal to that of the underlying cause of the delay. This Agreement controls the actions of all party representatives, officers, agents, employees and associated individuals. The terms of this Agreement shall be binding on the parties, and all successors to the foregoing. Customer will not assign, transfer or delegate its rights or obligations under this Agreement (in whole or in part) without Exit Games' prior written consent.  Any attempted assignment, transfer or delegation in violation of the foregoing shall be null and void. All modifications to or waivers of any terms of this Agreement must be in a writing that is signed by the parties hereto and expressly references this Agreement. This Agreement shall be governed by the laws of the State of New York, without regard to New York conflict of laws rules. The exclusive venue and jurisdiction for any and all disputes, claims and controversies arising from or relating to this Agreement shall be the state or federal courts located in New York.  Each party waives any objection (on the grounds of lack of jurisdiction, forum non conveniens or otherwise) to the exercise of such jurisdiction over it by any such courts.  The United Nations Convention on Contracts for the International Sale of Goods will not apply to the interpretation or enforcement of this Agreement. In the event that any provision of this Agreement conflicts with governing law or if any provision is held to be null, void or otherwise ineffective or invalid by a court of competent jurisdiction, (a) such provision shall be deemed to be restated to reflect as nearly as possible the original intentions of the parties in accordance with applicable law, and (b) the remaining terms, provisions, covenants and restrictions of this Agreement shall remain in full force and effect. No waiver of any breach of any provision of this Agreement shall constitute a waiver of any prior, concurrent or subsequent breach of the same or any other provisions hereof, and no waiver shall be effective unless made in writing and signed by an authorized representative of the waiving party. Collectively the foregoing constitutes the entire agreement between the parties with respect to the subject matter hereof and supersedes all prior and contemporaneous agreements or communications, including, without limitation, any quotations or proposals submitted by Exit Games.  The terms on any purchase order or similar document submitted by Customer to Exit Games will have no effect and are hereby rejected. If not set out otherwise in this Agreement all notices, consents and approvals under this Agreement must be delivered in writing by courier, by facsimile, or by certified or registered mail, (postage prepaid and return receipt requested) to the other party at its main corporate headquarters and sent to the attention of such party's Chief Executive Officer.
+
+
++++ Andreas Pardeike - Lib.Harmony +++
+MIT License
+
+Copyright (c) 2017 Andreas Pardeike
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+
++++ Mauricio David - LiteDB +++
+The MIT License (MIT)
+
+Copyright (c) 2014-2020 Mauricio David
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+
++++ The Apache Software Foundation - log4net +++
+                                 Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      "License" shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      "Licensor" shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      "Legal Entity" shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      "control" means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      "You" (or "Your") shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      "Source" form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      "Object" form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      "Work" shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      "Derivative Works" shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      "Contribution" shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, "submitted"
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as "Not a Contribution."
+
+      "Contributor" shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a "NOTICE" text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS
+
+   APPENDIX: How to apply the Apache License to your work.
+
+      To apply the Apache License to your work, attach the following
+      boilerplate notice, with the fields enclosed by brackets "[]"
+      replaced with your own identifying information. (Don't include
+      the brackets!)  The text should be enclosed in the appropriate
+      comment syntax for the file format. We also recommend that a
+      file or class name and description of purpose be included on the
+      same "printed page" as the copyright notice for easier
+      identification within third-party archives.
+
+   Copyright [yyyy] [name of copyright owner]
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+
+
++++ James Newton-King - Newtonsoft.Json +++
+The MIT License (MIT)
+
+Copyright (c) 2007 James Newton-King
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+the Software, and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
++++ Antoine Aubry - YamlDotNet +++
+Copyright (c) 2008, 2009, 2010, 2011, 2012, 2013, 2014 Antoine Aubry and contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
