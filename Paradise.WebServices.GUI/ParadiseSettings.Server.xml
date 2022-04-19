@@ -2,10 +2,10 @@
 <ParadiseSettings>
 	<EnableSSL>true</EnableSSL>
 	<WebServiceHostName>localhost</WebServiceHostName>
-	<WebServicePort>5053</WebServicePort>
+	<WebServicePort>8080</WebServicePort>
 	<WebServicePrefix>UberStrike.DataCenter.WebService.CWS.</WebServicePrefix>
 	<WebServiceSuffix>Contract.svc</WebServiceSuffix>
 
 	<FileServerHostName>localhost</FileServerHostName>
-	<FileServerPort>5054</FileServerPort>
+	<FileServerPort>8081</FileServerPort>
 </ParadiseSettings>

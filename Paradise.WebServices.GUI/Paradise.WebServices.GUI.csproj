@@ -124,7 +124,7 @@
     <None Include="Data\Shop_Economy.json" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ParadiseSettings.xml">
+    <Content Include="ParadiseSettings.Server.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="Resources\RunningIcon.ico" />

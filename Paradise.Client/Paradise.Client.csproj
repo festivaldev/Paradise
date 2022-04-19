@@ -49,16 +49,16 @@
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <Reference Include="Assembly-CSharp">
       <HintPath>..\AssemblyReferences\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\AssemblyReferences\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -73,7 +73,7 @@
     <Compile Include="CustomMaps\UberstrikeCustomMap.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="ParadiseSettings.xml">
+    <Content Include="ParadiseSettings.Client.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
