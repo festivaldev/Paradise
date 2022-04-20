@@ -9,6 +9,7 @@ namespace Paradise.Client {
 	public class ApplicationDataManager_hook {
 		public static string WebServiceBaseUrl { get; private set; } = "https://ws.uberstrike.com/2.0/";
 		public static string ImagePath { get; private set; } = "https://static.uberstrike.com/images/";
+		public static string UpdateUrl { get; private set; } = "https://localhost:8081/updates/";
 
 		static ApplicationDataManager_hook() {
 			XmlSerializer ser = new XmlSerializer(typeof(ParadiseSettings));
@@ -19,6 +20,7 @@ namespace Paradise.Client {
 
 					WebServiceBaseUrl = ForceTrailingSlash(settings.WebServiceBaseUrl);
 					ImagePath = ForceTrailingSlash(settings.ImagePath);
+					UpdateUrl = ForceTrailingSlash(settings.UpdateUrl);
 				} catch (Exception e) {
 					Debug.LogError(e.Message);
 				}

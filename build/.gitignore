@@ -1,8 +1,0 @@
-Assembly-CSharp.dll
-Assembly-CSharp-firstpass.dll
-ExitGames.Logging.Log4Net.dll
-ExitGamesLibs.dll
-UnityEngine.dll
-
-*.db
-*.pdb

@@ -7,5 +7,8 @@ namespace Paradise.Client {
 
 		[XmlElement]
 		public string ImagePath;
+
+		[XmlElement]
+		public string UpdateUrl;
 	}
 }

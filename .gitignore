@@ -4,6 +4,7 @@
 packages/
 photon/*
 AssemblyReferences/*.dll
+build/
 release-test/
 node_modules/
 *old*/

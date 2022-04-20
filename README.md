@@ -77,6 +77,7 @@ Feel free to open an issue for any compile-time error.
 |---|---|---|---|
 | WebServiceBaseUrl | String | `https://localhost:8080/2.0/` | The URL for the client to connect to the Web Services. If connecting to a server other than `localhost`, you need to enter its IP or FQDN, followed by the port and the API Version (always `2.0` for UberStrike 4.7.3)
 | ImagePath | String | `https://localhost:8081/` | The URL for the client to download map thumbnails. If connecting to a server other than `localhost`, you need to enter its IP or FQDN, followed by the port.
+| UpdateUrl | String | `https://localhost:8081/updates` | The URL for the client to download updates from, usually the same address as the File Server but with `/updates` appended. If connecting to a server other than `localhost`, you need to enter its IP or FQDN, followed by the port.
 | WebServicePrefix | String | UberStrike.DataCenter.WebService.CWS. | **Currently unused!** The prefix used for web service names.
 | WebServiceSuffix | String | Contract.svc | **Currently unused!** The suffix used for web service names.
 

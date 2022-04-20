@@ -118,6 +118,7 @@ namespace Paradise.Client {
 						PopupSystem.ShowMessage("Error", $"An error occured while loading the map: {e.Message}", PopupSystem.AlertType.OK);
 					}
 				} else {
+					PopupSystem.HideMessage(progressPopup);
 					PopupSystem.ShowMessage("Error", $"An error occured while loading the map: {loader.error}", PopupSystem.AlertType.OK);
 					yield return null;
 				}
