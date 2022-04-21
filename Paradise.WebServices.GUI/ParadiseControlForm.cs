@@ -40,7 +40,7 @@ namespace Paradise.WebServices.GUI {
 
 			XmlSerializer serializer = new XmlSerializer(typeof(ParadiseSettings));
 			try {
-				using (XmlReader reader = XmlReader.Create(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "ParadiseSettings.xml")))) {
+				using (XmlReader reader = XmlReader.Create(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "ParadiseSettings.Server.xml")))) {
 					WebServiceSettings = (ParadiseSettings)serializer.Deserialize(reader);
 				}
 			} catch (Exception e) {

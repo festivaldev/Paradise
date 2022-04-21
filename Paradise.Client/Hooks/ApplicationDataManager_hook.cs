@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -14,7 +14,7 @@ namespace Paradise.Client {
 		static ApplicationDataManager_hook() {
 			XmlSerializer ser = new XmlSerializer(typeof(ParadiseSettings));
 
-			using (XmlReader reader = XmlReader.Create(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "UberStrike_Data\\ParadiseSettings.xml")))) {
+			using (XmlReader reader = XmlReader.Create(Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "UberStrike_Data\\ParadiseSettings.Client.xml")))) {
 				try {
 					var settings = (ParadiseSettings)ser.Deserialize(reader);
 
