@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -38,7 +38,7 @@ namespace Paradise.Client {
 
 			GameObject pluginHolder = new GameObject("Plugin Holder");
 			pluginHolder.AddComponent<CustomMapManager>();
-			//pluginHolder.AddComponent<DebugConsoleGUI>();
+			pluginHolder.AddComponent<DebugConsoleGUI>();
 			pluginHolder.AddComponent<ParadiseApplicationManager>();
 			UnityEngine.Object.DontDestroyOnLoad(pluginHolder);
 		}

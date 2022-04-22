@@ -25,9 +25,7 @@ namespace Paradise.Client {
 		}
 
 		public static void Shoot_Postfix(ref bool __result) {
-			UnityEngine.Debug.Log("game flag test");
 			if (GameFlags.IsFlagSet(GameFlags.GAME_FLAGS.QuickSwitch, GameState.Current.RoomData.GameFlags)) {
-				UnityEngine.Debug.Log("game flag is set");
 				typeof(WeaponController).GetField("_holsterTime", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(Instance, 0);
 			}
 		}
