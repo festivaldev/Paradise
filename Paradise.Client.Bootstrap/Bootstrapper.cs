@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace Paradise.Client.Bootstrap {
@@ -6,7 +6,7 @@ namespace Paradise.Client.Bootstrap {
 		public static void Initialize() {
 			var hooks = new List<IParadiseHook> {
 				// Adds update logic on game start
-				new MenuPageManagerHook(),
+				// new MenuPageManagerHook(),
 
 				// Redirects web services to configured URLs and allows loading custom maps
 				new ApplicationDataManagerHook(),
@@ -18,7 +18,10 @@ namespace Paradise.Client.Bootstrap {
 				new BundleManagerHook(),
 
 				// Brings back Quick Switching
-				new WeaponControllerHook()
+				new WeaponControllerHook(),
+
+				//
+				new CreateGamePanelGUIHook()
 			};
 
 			foreach (var hook in hooks) {

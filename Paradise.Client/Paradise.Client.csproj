@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -73,6 +73,7 @@
     <Compile Include="Plugins\Custom Maps\CustomMapManager.cs" />
     <Compile Include="Plugins\Console\DebugConsoleGUI.cs" />
     <Compile Include="Hooks\ApplicationDataManagerHook.cs" />
+    <Compile Include="Hooks\CreateGamePanelGUIHook.cs" />
     <Compile Include="Hooks\WeaponControllerHook.cs" />
     <Compile Include="Hooks\BundleManagerHook.cs" />
     <Compile Include="Hooks\MenuPageManagerHook.cs" />

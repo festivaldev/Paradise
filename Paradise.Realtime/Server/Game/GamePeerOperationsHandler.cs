@@ -99,9 +99,6 @@ namespace Paradise.Realtime.Server.Game {
 				return;
 			}
 
-			// Since a game host cannot set game flags (yet), we're doing it for them ;)
-			metaData.GameFlags = (int)GAME_FLAGS.QuickSwitch;
-
 			peer.Authenticate(authToken, magicHash);
 			peer.Member = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).GetMember(peer.AuthToken);
 
