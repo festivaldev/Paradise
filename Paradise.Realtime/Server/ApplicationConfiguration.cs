@@ -6,7 +6,7 @@ using System.Text;
 namespace Paradise.Realtime.Server {
 	public class ApplicationConfiguration {
 		public static readonly ApplicationConfiguration Default = new ApplicationConfiguration {
-			WebServiceBaseUrl = "http://localhost:5053/2.0/"
+			WebServiceBaseUrl = "https://localhost:8080/2.0/"
 		};
 
 		[JsonRequired]
