@@ -37,7 +37,7 @@ namespace Paradise.Realtime.Server {
 			//	File.WriteAllText(logFile, "");
 			//}
 
-			var applicationConfigPath = Path.Combine(BinaryPath, "Paradise.Realtime.Server.json");
+			var applicationConfigPath = Path.Combine(BinaryPath, "Paradise.Realtime.json");
 			if (!File.Exists(applicationConfigPath)) {
 				Log.Info($"{applicationConfigPath} doesn't exist. Loading default configuration instead.");
 				Configuration = ApplicationConfiguration.Default;
