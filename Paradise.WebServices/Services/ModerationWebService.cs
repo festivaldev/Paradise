@@ -1,4 +1,5 @@
 ﻿using Paradise.Core.Serialization;
+using Paradise.DataCenter.Common.Entities;
 using Paradise.WebServices.Contracts;
 using System;
 using System.IO;
@@ -15,105 +16,54 @@ namespace Paradise.WebServices.Services {
 
 		protected override void Setup() { }
 
-		//public byte[] Ban(byte[] data) {
-		//	try {
-		//		using (var bytes = new MemoryStream(data)) {
-		//			var serviceAuth = StringProxy.Deserialize(bytes);
-		//			var cmid = Int32Proxy.Deserialize(bytes);
+		public byte[] OpPlayer(byte[] data) {
+			try {
+				using (var bytes = new MemoryStream(data)) {
+					var authToken = StringProxy.Deserialize(bytes);
+					var targetCmid = Int32Proxy.Deserialize(bytes);
+					var accessLevel = EnumProxy<MemberAccessLevel>.Deserialize(bytes);
 
-		//			using (var outputStream = new MemoryStream()) {
-		//				throw new NotImplementedException();
+					DebugEndpoint(authToken, targetCmid, accessLevel);
 
-		//				return outputStream.ToArray();
-		//			}
-		//		}
-		//	} catch (Exception e) {
-		//		HandleEndpointError(e);
-		//	}
+					using (var outputStream = new MemoryStream()) {
+						var steamMember = SteamMemberFromAuthToken(authToken);
 
-		//	return null;
-		//}
+						if (steamMember != null) {
+							var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
 
-		//public byte[] BanCmid(byte[] data) {
-		//	try {
-		//		using (var bytes = new MemoryStream(data)) {
-		//			var authToken = StringProxy.Deserialize(bytes);
-		//			var cmid = Int32Proxy.Deserialize(bytes);
+							if (publicProfile != null && publicProfile.AccessLevel >= MemberAccessLevel.Moderator) {
+								var targetProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == targetCmid);
 
-		//			using (var outputStream = new MemoryStream()) {
-		//				throw new NotImplementedException();
+								if (targetProfile != null &&
+									targetProfile.Cmid != publicProfile.Cmid &&
+									targetProfile.AccessLevel < publicProfile.AccessLevel &&
+									accessLevel < publicProfile.AccessLevel &&
+									accessLevel > targetProfile.AccessLevel) {
+									targetProfile.AccessLevel = accessLevel;
 
-		//				return outputStream.ToArray();
-		//			}
-		//		}
-		//	} catch (Exception e) {
-		//		HandleEndpointError(e);
-		//	}
+									DatabaseManager.PublicProfiles.DeleteMany(_ => _.Cmid == targetProfile.Cmid);
+									DatabaseManager.PublicProfiles.Insert(targetProfile);
 
-		//	return null;
-		//}
+									EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.Ok);
 
-		//public byte[] BanHwd(byte[] data) {
-		//	try {
-		//		using (var bytes = new MemoryStream(data)) {
-		//			var authToken = StringProxy.Deserialize(bytes);
-		//			var hwd = StringProxy.Deserialize(bytes);
+									return outputStream.ToArray();
+								}
+							}
+						}
 
-		//			using (var outputStream = new MemoryStream()) {
-		//				throw new NotImplementedException();
+						EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.InvalidData);
 
-		//				return outputStream.ToArray();
-		//			}
-		//		}
-		//	} catch (Exception e) {
-		//		HandleEndpointError(e);
-		//	}
+						return outputStream.ToArray();
+					}
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
 
-		//	return null;
-		//}
+			return null;
+		}
 
-		//public byte[] BanIp(byte[] data) {
-		//	try {
-		//		using (var bytes = new MemoryStream(data)) {
-		//			var authToken = StringProxy.Deserialize(bytes);
-		//			var ip = Int32Proxy.Deserialize(bytes);
-
-		//			using (var outputStream = new MemoryStream()) {
-		//				throw new NotImplementedException();
-
-		//				return outputStream.ToArray();
-		//			}
-		//		}
-		//	} catch (Exception e) {
-		//		HandleEndpointError(e);
-		//	}
-
-		//	return null;
-		//}
-
-		//public byte[] UnbanCmid(byte[] data) {
-		//	try {
-		//		using (var bytes = new MemoryStream(data)) {
-		//			var authToken = StringProxy.Deserialize(bytes);
-		//			var cmid = Int32Proxy.Deserialize(bytes);
-
-		//			using (var outputStream = new MemoryStream()) {
-		//				throw new NotImplementedException();
-
-		//				return outputStream.ToArray();
-		//			}
-		//		}
-		//	} catch (Exception e) {
-		//		HandleEndpointError(e);
-		//	}
-
-		//	return null;
-		//}
-
-		/// <summary>
-		/// Bans a user by Cmid permanently
-		/// </summary>
-		public byte[] BanPermanently(byte[] data) {
+		public byte[] DeopPlayer(byte[] data) {
 			try {
 				using (var bytes = new MemoryStream(data)) {
 					var authToken = StringProxy.Deserialize(bytes);
@@ -127,21 +77,110 @@ namespace Paradise.WebServices.Services {
 						if (steamMember != null) {
 							var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
 
-							if (publicProfile != null && publicProfile.AccessLevel >= DataCenter.Common.Entities.MemberAccessLevel.Moderator) {
-								var bannedProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == targetCmid);
+							if (publicProfile != null && publicProfile.AccessLevel >= MemberAccessLevel.Moderator) {
+								var targetProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == targetCmid);
 
-								if (bannedProfile != null && bannedProfile.Cmid != publicProfile.Cmid && bannedProfile.AccessLevel < publicProfile.AccessLevel) {
-									DatabaseManager.BannedMembers.DeleteMany(_ => _.TargetCmid == bannedProfile.Cmid);
+								if (targetProfile != null &&
+									targetProfile.Cmid != publicProfile.Cmid &&
+									targetProfile.AccessLevel > MemberAccessLevel.Default &&
+									targetProfile.AccessLevel < publicProfile.AccessLevel) {
+									targetProfile.AccessLevel = MemberAccessLevel.Default;
+
+									DatabaseManager.PublicProfiles.DeleteMany(_ => _.Cmid == targetProfile.Cmid);
+									DatabaseManager.PublicProfiles.Insert(targetProfile);
+
+									EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.Ok);
+
+									return outputStream.ToArray();
+								}
+							}
+						}
+
+						return outputStream.ToArray();
+					}
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Bans a user by Cmid permanently
+		/// </summary>
+		public byte[] BanPermanently(byte[] data) {
+			try {
+				using (var bytes = new MemoryStream(data)) {
+					var authToken = StringProxy.Deserialize(bytes);
+					var targetCmid = Int32Proxy.Deserialize(bytes);
+					var reason = StringProxy.Deserialize(bytes);
+
+					DebugEndpoint(authToken, targetCmid, reason);
+
+					using (var outputStream = new MemoryStream()) {
+						var steamMember = SteamMemberFromAuthToken(authToken);
+
+						if (steamMember != null) {
+							var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+							if (publicProfile != null && publicProfile.AccessLevel >= MemberAccessLevel.Moderator) {
+								var profileToBan = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == targetCmid);
+
+								if (profileToBan != null && profileToBan.Cmid != publicProfile.Cmid && profileToBan.AccessLevel < publicProfile.AccessLevel) {
+									DatabaseManager.BannedMembers.DeleteMany(_ => _.TargetCmid == profileToBan.Cmid);
 									DatabaseManager.BannedMembers.Insert(new BannedMember {
 										IsBanned = true,
 										BanningDate = DateTime.UtcNow,
 										SourceCmid = publicProfile.Cmid,
 										SourceName = publicProfile.Name,
-										TargetCmid = bannedProfile.Cmid,
-										TargetName = bannedProfile.Name
+										TargetCmid = profileToBan.Cmid,
+										TargetName = profileToBan.Name,
+										Reason = reason
 									});
 
-									BooleanProxy.Serialize(outputStream, true);
+									EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.Ok);
+								}
+							}
+						}
+
+						return outputStream.ToArray();
+					}
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
+
+			return null;
+		}
+
+		public byte[] UnbanPlayer(byte[] data) {
+			try {
+				using (var bytes = new MemoryStream(data)) {
+					var authToken = StringProxy.Deserialize(bytes);
+					var targetCmid = Int32Proxy.Deserialize(bytes);
+
+					DebugEndpoint(authToken, targetCmid);
+
+					using (var outputStream = new MemoryStream()) {
+						var steamMember = SteamMemberFromAuthToken(authToken);
+
+						if (steamMember != null) {
+							var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+							if (publicProfile != null && publicProfile.AccessLevel >= MemberAccessLevel.Moderator) {
+								var bannedMember = DatabaseManager.BannedMembers.FindOne(_ => _.TargetCmid == targetCmid);
+
+								if (bannedMember != null && bannedMember.TargetCmid != publicProfile.Cmid) {
+									bannedMember.IsBanned = false;
+									bannedMember.IsHwidBanned = false;
+									bannedMember.IsIpBanned = false;
+									bannedMember.BannedUntil = DateTime.UtcNow;
+
+									DatabaseManager.BannedMembers.DeleteMany(_ => _.TargetCmid == bannedMember.TargetCmid);
+									DatabaseManager.BannedMembers.Insert(bannedMember);
+
+										EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.Ok);
 								}
 							}
 						}

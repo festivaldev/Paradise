@@ -25,6 +25,123 @@ namespace Paradise.Realtime.Server.Comm {
 			}
 
 			lock (_lock) {
+				if (message.StartsWith("?") && peer.Actor.AccessLevel >= MemberAccessLevel.Moderator) {
+					var args = message.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+					string response = string.Empty;
+
+					switch (args[0]) {
+						case "?op":
+							if (args.Length != 3) {
+								response = "Usage: ?op <cmid> <level>";
+							} else {
+								if (!int.TryParse(args[1], out int cmid)) {
+									response = "Error: <cmid> must be of type int.";
+									break;
+								}
+
+								if (!int.TryParse(args[2], out int level)) {
+									response = "Error: <level> must be of type int.";
+									break;
+								}
+
+								if (cmid == peer.Actor.Cmid) {
+									response = "Error: You cannot change your own permission level.";
+									break;
+								}
+
+								if (!Enum.IsDefined(typeof(MemberAccessLevel), level)) {
+									response = "Error: Invalid permission level.";
+									break;
+								}
+
+								var result = new ModerationWebServiceClient(CommApplication.Instance.Configuration.WebServiceBaseUrl).OpPlayer(peer.AuthToken, cmid, (MemberAccessLevel)level);
+
+								if (result != MemberOperationResult.Ok) {
+									response = "Error: Could not set the selected player's permission level.\nMake sure the specified CMID is correct and that you are allowed to perform this action.";
+								}
+							}
+
+							break;
+						case "?deop":
+							if (args.Length != 2) {
+								response = "Usage: ?deop <cmid>";
+							} else {
+								if (!int.TryParse(args[1], out int cmid)) {
+									response = "Error: <cmid> must be of type int.";
+									break;
+								}
+
+								if (cmid == peer.Actor.Cmid) {
+									response = "Error: You cannot change your own permission level.";
+									break;
+								}
+
+								var result = new ModerationWebServiceClient(CommApplication.Instance.Configuration.WebServiceBaseUrl).DeopPlayer(peer.AuthToken, cmid);
+
+								if (result != MemberOperationResult.Ok) {
+									response = "Error: Could not set the selected player's permission level.\nMake sure the specified CMID is correct and that you are allowed to perform this action.";
+								}
+							}
+
+							break;
+						case "?ban":
+							if (args.Length != 3) {
+								response = "Usage: ?ban <cmid> <reason>";
+							} else {
+								if (!int.TryParse(args[1], out int cmid)) {
+									response = "Error: <cmid> must be of type int.";
+									break;
+								}
+
+								if (cmid == peer.Actor.Cmid) {
+									response = "Error: You cannot ban yourself.";
+									break;
+								}
+
+								var result = new ModerationWebServiceClient(CommApplication.Instance.Configuration.WebServiceBaseUrl).BanPermanently(peer.AuthToken, cmid, args[2]);
+
+								if (result != MemberOperationResult.Ok) {
+									response = "Error: Failed to ban player.";
+								} else {
+									FindPeerWithCmid(cmid)?.SendError($"You have been permanently banned.\nReason: {args[2]}");
+								}
+							}
+
+							break;
+						case "?unban":
+							if (args.Length != 2) {
+								response = "Usage: ?unban <cmid>";
+							} else {
+								if (!int.TryParse(args[1], out int cmid)) {
+									response = "Error: <cmid> must be of type int.";
+									break;
+								}
+
+								if (cmid == peer.Actor.Cmid) {
+									response = "Error: You cannot unban yourself.";
+									break;
+								}
+
+								var result = new ModerationWebServiceClient(CommApplication.Instance.Configuration.WebServiceBaseUrl).UnbanPlayer(peer.AuthToken, cmid);
+
+								if (result != MemberOperationResult.Ok) {
+									response = "Error: Failed to unban player.";
+								}
+							}
+
+							break;
+						default:
+							response = $"Unknown command \"{args[0]}\"";
+							break;
+					}
+
+					if (!string.IsNullOrEmpty(response)) {
+						peer.LobbyEvents.SendLobbyChatMessage(0, "[MOD]", response);
+					}
+
+					return;
+				}
 				foreach (var otherPeer in LobbyManager.Instance.Peers) {
 					if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
 						otherPeer.LobbyEvents.SendLobbyChatMessage(peer.Actor.Cmid, peer.Actor.Name, message);
@@ -107,7 +224,7 @@ namespace Paradise.Realtime.Server.Comm {
 				return;
 			}
 
-			new ModerationWebServiceClient(CommApplication.Instance.Configuration.WebServiceBaseUrl).BanPermanently(peer.AuthToken, cmid);
+			new ModerationWebServiceClient(CommApplication.Instance.Configuration.WebServiceBaseUrl).BanPermanently(peer.AuthToken, cmid, "");
 			FindPeerWithCmid(cmid)?.SendError("You have been banned permanently.");
 		}
 
