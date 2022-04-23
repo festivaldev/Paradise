@@ -1,20 +1,23 @@
 ﻿using HarmonyLib;
+using System;
 using System.Reflection;
 
 namespace Paradise.Client {
-	public static class BundleManager_hook {
+	public class BundleManagerHook : IParadiseHook {
 		private static BundleManager Instance;
 
-		public static void Hook() {
-			var harmony = new Harmony("tf.festival.Paradise.BundleManager_hook");
+		public Type TypeToHook => typeof(BundleManager);
+
+		public void Hook() {
+			var harmony = new Harmony("tf.festival.Paradise.BundleManagerHook");
 
 			var orig_BundleManager_Initialize = typeof(BundleManager).GetMethod("Initialize", BindingFlags.Instance | BindingFlags.Public);
-			var prefix_BundleManager_Initialize = typeof(BundleManager_hook).GetMethod("Initialize_Prefix", BindingFlags.Static | BindingFlags.Public);
+			var prefix_BundleManager_Initialize = typeof(BundleManagerHook).GetMethod("Initialize_Prefix", BindingFlags.Static | BindingFlags.Public);
 
 			harmony.Patch(orig_BundleManager_Initialize, new HarmonyMethod(prefix_BundleManager_Initialize), null);
 
-			var orig_BundleManager_BuyBundle_m__A7 = typeof(BundleManager).GetMethod("<BuyBundle>m__A7", BindingFlags.NonPublic | BindingFlags.Static);
-			var prefix_BundleManager_BuyBundle_m__A7 = typeof(BundleManager_hook).GetMethod("BuyBundle_m__A7_Prefix", BindingFlags.Static | BindingFlags.Public);
+			var orig_BundleManager_BuyBundle_m__A7 = typeof(BundleManager).GetMethod("<BuyBundle>m__A7", BindingFlags.Static | BindingFlags.NonPublic);
+			var prefix_BundleManager_BuyBundle_m__A7 = typeof(BundleManagerHook).GetMethod("BuyBundle_m__A7_Prefix", BindingFlags.Static | BindingFlags.Public);
 
 			harmony.Patch(orig_BundleManager_BuyBundle_m__A7, new HarmonyMethod(prefix_BundleManager_BuyBundle_m__A7), null);
 		}
