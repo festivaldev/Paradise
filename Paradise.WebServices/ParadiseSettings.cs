@@ -6,6 +6,9 @@ namespace Paradise.WebServices {
 		public bool EnableSSL;
 
 		[XmlElement]
+		public string SSLCertificateName;
+
+		[XmlElement]
 		public string WebServiceHostName = "localhost";
 
 		[XmlElement]

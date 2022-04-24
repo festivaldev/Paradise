@@ -78,12 +78,17 @@ namespace Paradise.WebServices {
 					ServiceHost = new ServiceHost(this);
 
 					if (Settings.EnableSSL && ServiceEndpoint.Uri.Scheme == "https") {
+						var certificate = !string.IsNullOrEmpty(Settings.SSLCertificateName) ? Settings.SSLCertificateName : ServiceEndpoint.Uri.Host;
+
+						Log.Info($"Using HTTPS with certificate \"{certificate}\".");
+
 						ServiceHost.Credentials.ServiceCertificate.SetCertificate(
 							StoreLocation.LocalMachine,
 							StoreName.My,
 							X509FindType.FindBySubjectName,
-							ServiceEndpoint.Uri.Host
+							certificate
 						);
+
 						ServiceHost.Credentials.ClientCertificate.Authentication.CertificateValidationMode = X509CertificateValidationMode.None;
 					}
 

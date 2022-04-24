@@ -35,12 +35,13 @@ If you're playing on a locally hosted server (or any server other than default),
 A UberStrike icon will appear in your system tray, allowing you to control each service, the File Server and the database connection.
 2. Run `build\server\photon\PhotonControl.exe`. If asked for a license, you may add your own, but for testing running without any license is acceptable. Keep in mind running without a license means you're limited to 20 players (or more precisely 20 concurrent connections).
 3. Open the PhotonControl tray icon, select **Paradise** and click **Start as application**.
+4. Make sure your system's firewall is configured to allow inbound TCP and UDP connections to each server by their port.
 
 #### Setting up HTTPS/SSL
 By default, both the Web Services and the File Server are configured to run via HTTPS on `localhost`, ports `8080` and `8081` respectively. Support for HTTPS can be disabled (although not recommended) by setting `EnableSSL` to `false` in `ParadiseSettings.Server.xml`. (See *Configuration* → *Server settings*)
 
 To allow your own server to be accessed via HTTPS, you need your SSL certificate [imported into Windows Certificate Store](https://docs.microsoft.com/en-us/biztalk/adapters-and-accelerators/accelerator-swift/adding-certificates-to-the-certificates-store-on-the-client). You also need to bind the certificates to the ports you're running the servers on, either by using [`netsh`](https://docs.microsoft.com/en-us/dotnet/framework/wcf/feature-details/how-to-configure-a-port-with-an-ssl-certificate?redirectedfrom=MSDN) or a little tool called [HttpConfig](http://www.stevestechspot.com/default.aspx). When binding a certificate to a port, always use `0.0.0.0` as the IP address.  
-The domain or IP address the server is allowing connections to from UberStrike is configured using `WebServiceHostName` and `FileServerHostName` in `ParadiseSettings.Server.xml`. The SSL certificate name **must** match the address for either server! 
+The domain or IP address the server is allowing connections to from UberStrike is configured using `WebServiceHostName` and `FileServerHostName` in `ParadiseSettings.Server.xml`. The SSL certificate's subject (`CN=...`) **must** match the hostname for each server! 
 
 ## Building
 ### Requirements
@@ -75,7 +76,7 @@ Feel free to open an issue for any compile-time error.
 ### Client settings (`ParadiseSettings.Client.xml`)
 | Key | Type | Default | Description |
 |---|---|---|---|
-| WebServiceBaseUrl | String | `https://localhost:8080/2.0/` | The URL for the client to connect to the Web Services. If connecting to a server other than `localhost`, you need to enter its IP or FQDN, followed by the port and the API Version (always `2.0` for UberStrike 4.7.3)
+| WebServiceBaseUrl | String | `https://localhost:8080/2.0/` | The URL for the client to connect to the Web Services. If connecting to a server other than `localhost`, you need to enter its IP or FQDN, followed by the port and the API Version (always `2.0` for UberStrike 4.7.1)
 | ImagePath | String | `https://localhost:8081/` | The URL for the client to download map thumbnails. If connecting to a server other than `localhost`, you need to enter its IP or FQDN, followed by the port.
 | UpdateUrl | String | `https://localhost:8081/updates` | The URL for the client to download updates from, usually the same address as the File Server but with `/updates` appended. If connecting to a server other than `localhost`, you need to enter its IP or FQDN, followed by the port.
 | WebServicePrefix | String | UberStrike.DataCenter.WebService.CWS. | **Currently unused!** The prefix used for web service names.

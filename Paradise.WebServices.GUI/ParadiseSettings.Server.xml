@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ParadiseSettings>
 	<EnableSSL>true</EnableSSL>
-	<WebServiceHostName>localhost</WebServiceHostName>
-	<WebServicePort>8080</WebServicePort>
+	<SSLCertificateName></SSLCertificateName>
+	
 	<WebServicePrefix>UberStrike.DataCenter.WebService.CWS.</WebServicePrefix>
 	<WebServiceSuffix>Contract.svc</WebServiceSuffix>
 
