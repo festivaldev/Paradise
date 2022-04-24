@@ -1,8 +1,8 @@
-﻿{
+{
 	"CommServer": {
-		"IP": "festivaldev.dnshome.de",
+		"IP": "localhost",
 		"MinLatency": 100,
-		"Name": "Dropshot Comm Server",
+		"Name": "Paradise Comm Server",
 		"PhotonId": 34579385,
 		"Port": 5055,
 		"Region": 1,
@@ -12,7 +12,7 @@
 		{
 			"PhotonId": 5982379,
 			"Name": "Test",
-			"IP": "festivaldev.dnshome.de",
+			"IP": "localhost",
 			"Region": 1,
 			"Port": 5056,
 			"UsageType": 1,
