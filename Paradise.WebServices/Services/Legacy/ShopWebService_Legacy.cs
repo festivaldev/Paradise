@@ -26,7 +26,7 @@ namespace Paradise.WebServices.Services {
 
 		protected override void Setup() {
 			try {
-				shopData = JsonConvert.DeserializeObject<UberStrikeItemShopClientView>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data", "Shop_4.3.9.json")));
+				shopData = JsonConvert.DeserializeObject<UberStrikeItemShopClientView>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "Shop_4.3.9.json")));
 			} catch (Exception e) {
 				Log.Error($"Failed to load {ServiceName} data: {e.Message}");
 			}

@@ -16,6 +16,7 @@ using Paradise.WebServices;
 class SimpleHTTPServer {
 	protected static readonly ILog Log = LogManager.GetLogger(typeof(SimpleHTTPServer));
 
+	public static SimpleHTTPServer Instance;
 	protected ParadiseSettings Settings;
 
 	private readonly string[] _indexFiles = {
@@ -104,6 +105,8 @@ class SimpleHTTPServer {
 	}
 
 	public SimpleHTTPServer(string path, ParadiseSettings settings) {
+		Instance = this;
+
 		Settings = settings;
 
 		this.Initialize(path, settings.FileServerPort);
@@ -148,6 +151,8 @@ class SimpleHTTPServer {
 
 		Log.Info($"HTTP server stopped");
 	}
+
+	public Thread ServerThread => _serverThread;
 
 	public bool IsRunning => _serverThread != null && _serverThread.IsAlive;
 

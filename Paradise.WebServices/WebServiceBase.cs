@@ -2,6 +2,7 @@
 using Paradise.Core.Serialization;
 using Paradise.Util.Ciphers;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
@@ -27,6 +28,8 @@ namespace Paradise.WebServices {
 		protected EventHandler<ServiceEventArgs> ServiceStarted;
 		protected EventHandler<ServiceEventArgs> ServiceStopped;
 		protected EventHandler<ServiceEventArgs> ServiceError;
+
+		public static string CurrentDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 
 		public CommunicationState WebServiceState => ServiceHost?.State ?? CommunicationState.Closed;
 		public string State {

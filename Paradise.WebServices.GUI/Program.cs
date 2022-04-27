@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Paradise.WebServices.GUI {
@@ -9,12 +10,18 @@ namespace Paradise.WebServices.GUI {
 		/// </summary>
 		[STAThread]
 		static void Main() {
-			Application.EnableVisualStyles();
-			Application.SetCompatibleTextRenderingDefault(false);
+			using (var mutex = new Mutex(false, "tf.festival.Paradise.WebServices.GUI")) {
+				if (!mutex.WaitOne(TimeSpan.Zero)) return;
 
-			new ParadiseControlForm();
+				Application.EnableVisualStyles();
+				Application.SetCompatibleTextRenderingDefault(false);
 
-			Application.Run();
+				new ParadiseControlForm();
+
+				Application.Run();
+
+				mutex.ReleaseMutex();
+			}
 		}
 	}
 }

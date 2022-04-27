@@ -1,4 +1,4 @@
-{
+﻿{
 	"CommServer": {
 		"IP": "localhost",
 		"MinLatency": 100,

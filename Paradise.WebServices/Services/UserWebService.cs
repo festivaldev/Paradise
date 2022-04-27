@@ -1,4 +1,4 @@
-using Paradise.Core.Serialization;
+﻿using Paradise.Core.Serialization;
 using Paradise.Core.ViewModel;
 using Paradise.DataCenter.Common.Entities;
 using Paradise.WebServices.Contracts;
@@ -252,6 +252,11 @@ namespace Paradise.WebServices.Services {
 						if (steamMember != null) {
 							var playerInventoryItems = DatabaseManager.PlayerInventoryItems.Find(_ => _.Cmid == steamMember.Cmid && (_.ExpirationDate == null || _.ExpirationDate >= DateTime.Now)).ToList();
 
+							// // Remove the golden gun as it's too overpowered
+							// if (playerInventoryItems.Find(_ => _.ItemId == 22) != null) {
+							// 	playerInventoryItems.Remove(playerInventoryItems.Find(_ => _.ItemId == 22));
+							// }
+
 							ListProxy<ItemInventoryView>.Serialize(outputStream, playerInventoryItems, ItemInventoryViewProxy.Serialize);
 						}
 
@@ -323,6 +328,10 @@ namespace Paradise.WebServices.Services {
 								};
 
 								DatabaseManager.PlayerLoadouts.Insert(playerLoadout);
+								// } else {
+								// 	if (playerLoadout.Weapon1 == 22) playerLoadout.Weapon1 = 0;
+								// 	if (playerLoadout.Weapon2 == 22) playerLoadout.Weapon2 = 0;
+								// 	if (playerLoadout.Weapon3 == 22) playerLoadout.Weapon3 = 0;
 							}
 
 							LoadoutViewProxy.Serialize(outputStream, playerLoadout);

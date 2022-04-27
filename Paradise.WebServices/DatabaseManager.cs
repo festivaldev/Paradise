@@ -31,6 +31,9 @@ namespace Paradise.WebServices {
 
 	public static class DatabaseManager {
 		static readonly ILog Log = LogManager.GetLogger(typeof(DatabaseManager));
+
+		private static string CurrentDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+
 		private static LiteDatabase databaseInstance;
 
 		public static bool IsOpen => databaseInstance != null;
@@ -120,7 +123,7 @@ namespace Paradise.WebServices {
 			Log.Info($"Connecting to database... ");
 
 			try {
-				databaseInstance = new LiteDatabase(Path.Combine(Directory.GetCurrentDirectory(), "Data", "Paradise.db"));
+				databaseInstance = new LiteDatabase(Path.Combine(CurrentDirectory, "Data", "Paradise.db"));
 
 				SteamMembers = databaseInstance.GetCollection<SteamMember>("SteamMembers");
 				SteamMembers.EnsureIndex("SteamId");

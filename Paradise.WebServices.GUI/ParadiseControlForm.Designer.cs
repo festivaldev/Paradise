@@ -116,6 +116,7 @@
 			// 
 			// restartAllServicesMenuItem
 			// 
+			this.restartAllServicesMenuItem.Enabled = false;
 			this.restartAllServicesMenuItem.Name = "restartAllServicesMenuItem";
 			this.restartAllServicesMenuItem.Size = new System.Drawing.Size(155, 22);
 			this.restartAllServicesMenuItem.Text = "Restart Services";
@@ -139,7 +140,7 @@
 			// 
 			this.databaseOpenMenuItem.Name = "databaseOpenMenuItem";
 			this.databaseOpenMenuItem.Size = new System.Drawing.Size(212, 22);
-			this.databaseOpenMenuItem.Text = "Coonnect to database";
+			this.databaseOpenMenuItem.Text = "Connect to database";
 			this.databaseOpenMenuItem.Click += new System.EventHandler(this.DatabaseOpenMenuItemClicked);
 			// 
 			// databaseCloseMenuItem

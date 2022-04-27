@@ -31,9 +31,9 @@ namespace Paradise.WebServices.Services {
 
 		protected override void Setup() {
 			try {
-				gameConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data", "ApplicationConfiguration.json")));
-				defaultAppAuthentication = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data", "ApplicationData.json")));
-				mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(Directory.GetCurrentDirectory(), "Data", "Maps.json")));
+				gameConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "ApplicationConfiguration.json")));
+				defaultAppAuthentication = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "ApplicationData.json")));
+				mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "Maps.json")));
 
 				// Resolve them domains
 				try {
