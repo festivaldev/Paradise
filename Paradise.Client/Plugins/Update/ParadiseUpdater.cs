@@ -110,8 +110,8 @@ namespace Paradise.Client {
 							FilesToUpdate.Add(file);
 							continue;
 						} else {
-							using (FileStream fileStream = File.OpenRead(path)) {
-								if (!string.IsNullOrEmpty(file.md5sum)) {
+							if (!string.IsNullOrEmpty(file.md5sum)) {
+								using (FileStream fileStream = File.OpenRead(path)) {
 									using (var md5 = MD5.Create()) {
 										var md5sum = BitConverter.ToString(md5.ComputeHash(fileStream)).Replace("-", "").ToLowerInvariant();
 
@@ -122,8 +122,10 @@ namespace Paradise.Client {
 										}
 									}
 								}
+							}
 
-								if (!string.IsNullOrEmpty(file.sha256)) {
+							if (!string.IsNullOrEmpty(file.sha256)) {
+								using (FileStream fileStream = File.OpenRead(path)) {
 									using (var sha256 = SHA256.Create()) {
 										var sha256sum = BitConverter.ToString(sha256.ComputeHash(fileStream)).Replace("-", "").ToLowerInvariant();
 
@@ -134,8 +136,10 @@ namespace Paradise.Client {
 										}
 									}
 								}
+							}
 
-								if (!string.IsNullOrEmpty(file.sha512)) {
+							if (!string.IsNullOrEmpty(file.sha512)) {
+								using (FileStream fileStream = File.OpenRead(path)) {
 									using (var sha512 = SHA512.Create()) {
 										var sha512sum = BitConverter.ToString(sha512.ComputeHash(fileStream)).Replace("-", "").ToLowerInvariant();
 

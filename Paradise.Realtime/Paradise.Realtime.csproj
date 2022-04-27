@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -25,7 +25,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\build\server\Paradise.Realtime\bin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -115,6 +115,7 @@
     <Compile Include="Server\Game\Rooms\DeathMatchGameRoom.cs" />
     <Compile Include="Server\Game\Rooms\GameRoomManager.cs" />
     <Compile Include="Server\Game\Rooms\TeamDeathMatchGameRoom.cs" />
+    <Compile Include="Server\Game\Rooms\TeamEliminationGameRoom.cs" />
     <Compile Include="Server\Game\Rooms\TestGameRoom.cs" />
     <Compile Include="Server\Game\States\Match\AfterRoundState.cs" />
     <Compile Include="Server\Game\States\Match\BaseMatchState.cs" />

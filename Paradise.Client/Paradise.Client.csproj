@@ -56,16 +56,16 @@
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\AssemblyReferences\Assembly-CSharp.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\AssemblyReferences\Assembly-CSharp-firstpass.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\AssemblyReferences\UnityEngine.dll</HintPath>
-      <Private>True</Private>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.Reflection;
+using System.Threading;
 using UnityEngine;
 
 namespace Paradise.Client {
@@ -39,7 +40,7 @@ namespace Paradise.Client {
 
 		private static void OnUpdateCompleteCallback() {
 			PopupSystem.ShowMessage("Update Complete", "Updates have been installed successfully. UberStrike needs to be restarted for completing the installation.", PopupSystem.AlertType.OK, delegate {
-				System.Diagnostics.Process.Start(Path.Combine(Directory.GetCurrentDirectory(), "UberStrike.exe")).WaitForExit();
+				System.Diagnostics.Process.Start(Path.Combine(Directory.GetCurrentDirectory(), "UberStrike.exe")).WaitForExit(1000);
 				Application.Quit();
 			});
 		}

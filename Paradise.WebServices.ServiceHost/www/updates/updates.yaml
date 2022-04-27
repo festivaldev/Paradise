@@ -1,0 +1,40 @@
+﻿platforms:
+  -
+    platform: win32
+    version: "4.7.1-220427"
+    files:
+        -
+          filename: "0Harmony.dll"
+          description: ""
+          localPath: "Managed/"
+          remotePath: "win32"
+          filesize: 904704
+          md5sum: 9ca83f770164f7bf6f36e2d7fd0fe87e
+          sha256: c985afd8e70d82f4bfc675fdc9c13be323ea637a13a93bdee43c107e4bd772f6
+          sha512: 8f0fc815aa2b0ad55d636af40704a5e58965f544b09b4d98b5e3903ba472e63e9c2f94493444335c3a1271e15c9b5950e994dbb70df0859de731aeca8c9ebd53
+        -
+          filename: "Paradise.Client.Bootstrap.dll"
+          description: ""
+          localPath: "Managed/"
+          remotePath: "win32"
+          filesize: 4608
+          md5sum: b09b96ec796bce7154de1e88a27ee922
+          sha256: ef98651cb37dc3b1468bbff6ce38cf36a7e3708ad0bf5fe4f701a51def94a7f7
+          sha512: 9a99d108a31b5f6d82af7658a94d0605147d0e0013d7dc7feb179661871cf5aa157bc03d2f3e385480e0df40a4961650568fc1121f03cbc4e32f9dda1e7e728e
+        -
+          filename: "Paradise.Client.dll"
+          description: ""
+          localPath: "Managed/"
+          remotePath: "win32"
+          filesize: 39936
+          md5sum: 3c921cd1a698ac916b1fb8e30527a10d
+          sha256: 1c09a47605ce258ad6037c3024dcc78e7bab1ca3d58e610d4066f8c3930e0096
+          sha512: e3d9b161a1d3f569343378c3000872407e271a6f53523431369bb229dcce7083dd9f9824c453d939a23453404b2b7f1b127d7a3600b620dd8a045b2b87e67ba0
+        -
+          filename: "YamlDotNet.dll"
+          description: ""
+          localPath: "Managed/"
+          remotePath: "win32"
+          filesize: 225792
+          md5sum: 4c9182d42ac7468518b90f4df8cca4d7
+          sha256: dca25f9311a1fff4e51c230e5e6d1e116613294e6e6588bb0c47cb87bf59999c
