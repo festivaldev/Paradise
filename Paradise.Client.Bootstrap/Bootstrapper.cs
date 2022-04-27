@@ -6,7 +6,7 @@ namespace Paradise.Client.Bootstrap {
 		public static void Initialize() {
 			var hooks = new List<IParadiseHook> {
 				// Adds update logic on game start
-				// new MenuPageManagerHook(),
+				new MenuPageManagerHook(),
 
 				// Redirects web services to configured URLs and allows loading custom maps
 				new ApplicationDataManagerHook(),
@@ -20,7 +20,7 @@ namespace Paradise.Client.Bootstrap {
 				// Brings back Quick Switching
 				new WeaponControllerHook(),
 
-				//
+				// Reimplements the game creation GUI to allow selecting mods
 				new CreateGamePanelGUIHook()
 			};
 
