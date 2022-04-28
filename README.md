@@ -31,11 +31,23 @@ It was until February 2022 when the three students, since then grouped as Team F
 If you're playing on a locally hosted server (or any server other than default), have a look at *Configuration* → *Client settings* for details on how to switch to a different server.
 
 ### Server
-1. Run `build\server\Paradise.WebServices\Paradise.WebServices.GUI.exe` as an Administrator.  
+*Note*: Please make sure to copy the required assemblies to their respective directories **before running any server**. Due to legal reasons, these assemblies cannot be redistributed. This only needs to be done once. Please refer to **Building** → **Requirements** for where to find them.
+
+* Paradise.Realtime
+	* ExitGames.Logging.Log4Net.dll
+	* ExitGamesLibs.dll
+	* Photon.SocketServer.dll
+	* UnityEngine.dll
+* Paradise.WebServices
+	* UnityEngine.dll
+
+1. Install the Paradise Windows Service by running `InstallParadiseService.bat` as an administrator.
+2. Start the Windows Service using Task Manager or `services.msc`. This is only required for the initial launch, as the service is marked for starting automatically
+3. Run `build\server\Paradise.WebServices\Paradise.WebServices.GUI.exe` as an Administrator.  
 A UberStrike icon will appear in your system tray, allowing you to control each service, the File Server and the database connection.
-2. Run `build\server\photon\PhotonControl.exe`. If asked for a license, you may add your own, but for testing running without any license is acceptable. Keep in mind running without a license means you're limited to 20 players (or more precisely 20 concurrent connections).
-3. Open the PhotonControl tray icon, select **Paradise** and click **Start as application**.
-4. Make sure your system's firewall is configured to allow inbound TCP and UDP connections to each server by their port.
+4. Run `build\server\photon\PhotonControl.exe`. If asked for a license, you may add your own, but for testing running without any license is acceptable. Keep in mind running without a license means you're limited to 20 players (or more precisely 20 concurrent connections).
+5. Open the PhotonControl tray icon, select **Paradise** and click **Install as service**, followed by **Start service**.
+6. Make sure your system's firewall is configured to allow inbound TCP and UDP connections to each server by their port.
 
 #### Setting up HTTPS/SSL
 By default, both the Web Services and the File Server are configured to run via HTTPS on `localhost`, ports `8080` and `8081` respectively. Support for HTTPS can be disabled (although not recommended) by setting `EnableSSL` to `false` in `ParadiseSettings.Server.xml`. (See *Configuration* → *Server settings*)
@@ -62,7 +74,7 @@ The domain or IP address the server is allowing connections to from UberStrike i
 		* ExitGames.Logging.Log4Net.dll
 		* ExitGamesLibs.dll
 		* Photon.SocketServer.dll
-		* PhotonHostRuntimeInterfaces
+		* PhotonHostRuntimeInterfaces.dll
 		
 ### Instructions
 1. Clone this repository
