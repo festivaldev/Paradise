@@ -21,6 +21,7 @@ namespace Paradise.WebServices.Services {
 		protected override Type ServiceInterface => typeof(IPrivateMessageWebServiceContract_Legacy);
 
 		public PrivateMessageWebService_Legacy(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
+		public PrivateMessageWebService_Legacy(BasicHttpBinding binding, ParadiseSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() {}
 

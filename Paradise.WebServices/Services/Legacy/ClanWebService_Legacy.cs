@@ -21,6 +21,7 @@ namespace Paradise.WebServices.Services {
 		protected override Type ServiceInterface => typeof(IClanWebServiceContract_Legacy);
 
 		public ClanWebService_Legacy(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
+		public ClanWebService_Legacy(BasicHttpBinding binding, ParadiseSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() {}
 

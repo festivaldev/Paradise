@@ -25,6 +25,7 @@ namespace Paradise.WebServices.Services {
 		private AuthenticateApplicationView defaultAppAuthentication;
 
 		public ApplicationWebService_Legacy(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
+		public ApplicationWebService_Legacy(BasicHttpBinding binding, ParadiseSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() {
 			try {
@@ -99,14 +100,14 @@ namespace Paradise.WebServices.Services {
 							new LiveFeedView {
 								Date = DateTime.Now,
 								LivedFeedId = 1,
-								Description = "Per isst kacke",
+								Description = "Example News 1",
 								Priority = 0,
 								Url = "https://repo.festival.tf"
 							},
 							new LiveFeedView {
 								Date = DateTime.Now,
 								LivedFeedId = 2,
-								Description = "Per isst Kacke",
+								Description = "Example News 2",
 								Priority = 1,
 								Url = "https://repo.festival.tf"
 							}

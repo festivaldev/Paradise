@@ -23,6 +23,7 @@ namespace Paradise.WebServices.Services {
 		private UberStrikeItemShopClientView shopData;
 
 		public ShopWebService_Legacy(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
+		public ShopWebService_Legacy(BasicHttpBinding binding, ParadiseSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() {
 			try {
