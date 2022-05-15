@@ -123,8 +123,7 @@ namespace Paradise.WebServices.Services {
 							ServerTime = DateTime.Now
 						});
 
-						
-						return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), "voJRIh4LEA/lnk19/HucN9qywkxsYNHHE5H410vTRrw=", "aaaabbbbccccdddd");
+						return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), Settings.EncryptionPassPhrase, Settings.EncryptionInitVector);
 					}
 				}
 			} catch (Exception e) {

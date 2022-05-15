@@ -26,8 +26,8 @@ namespace Paradise.WebServices.ServiceHost {
 
 		private static BasicHttpBinding HttpBinding;
 		static Dictionary<string, WebServiceBase> Services = new Dictionary<string, WebServiceBase>();
-		private static ParadiseSettings WebServiceSettings;
-
+		
+		private ParadiseSettings WebServiceSettings;
 		private SimpleHTTPServer HttpServer;
 
 		private IParadiseServiceClient ClientCallback {

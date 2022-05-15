@@ -540,8 +540,7 @@ namespace Paradise.WebServices.Services {
 							}
 						});
 
-						//return outputStream.ToArray();
-						return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), "voJRIh4LEA/lnk19/HucN9qywkxsYNHHE5H410vTRrw=", "aaaabbbbccccdddd");
+						return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), Settings.EncryptionPassPhrase, Settings.EncryptionInitVector);
 					}
 				}
 			} catch (Exception e) {

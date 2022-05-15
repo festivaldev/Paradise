@@ -114,7 +114,7 @@ namespace Paradise.WebServices.Services {
 						}, LiveFeedViewProxy.Serialize);
 
 						//return outputStream.ToArray();
-						return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), "voJRIh4LEA/lnk19/HucN9qywkxsYNHHE5H410vTRrw=", "aaaabbbbccccdddd");
+						return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), Settings.EncryptionPassPhrase, Settings.EncryptionInitVector);
 					}
 				}
 			} catch (Exception e) {
@@ -174,7 +174,7 @@ namespace Paradise.WebServices.Services {
 						}, MapViewProxy.Serialize);
 
 						//return outputStream.ToArray();
-						return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), "voJRIh4LEA/lnk19/HucN9qywkxsYNHHE5H410vTRrw=", "aaaabbbbccccdddd");
+						return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), Settings.EncryptionPassPhrase, Settings.EncryptionInitVector);
 					}
 				}
 			} catch (Exception e) {
