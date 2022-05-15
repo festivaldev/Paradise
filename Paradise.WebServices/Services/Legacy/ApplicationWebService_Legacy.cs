@@ -31,7 +31,7 @@ namespace Paradise.WebServices.Services {
 			try {
 				gameConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "ApplicationConfiguration.json")));
 				defaultAppAuthentication = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "ApplicationData.json")));
-				mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "Maps.json")));
+				mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "Legacy", "Maps.json")));
 			} catch (Exception e) {
 				Log.Error($"Failed to load {ServiceName} data: {e.Message}");
 			}
@@ -95,25 +95,17 @@ namespace Paradise.WebServices.Services {
 				using (var bytes = new MemoryStream(data)) {
 					DebugEndpoint();
 
-					using (var outputStream = new MemoryStream()) {
-						ListProxy<LiveFeedView>.Serialize(outputStream, new List<LiveFeedView> {
-							new LiveFeedView {
-								Date = DateTime.Now,
-								LivedFeedId = 1,
-								Description = "Example News 1",
-								Priority = 0,
-								Url = "https://repo.festival.tf"
-							},
-							new LiveFeedView {
-								Date = DateTime.Now,
-								LivedFeedId = 2,
-								Description = "Example News 2",
-								Priority = 1,
-								Url = "https://repo.festival.tf"
-							}
-						}, LiveFeedViewProxy.Serialize);
+					List<LiveFeedView> liveFeed = new List<LiveFeedView>();
 
-						//return outputStream.ToArray();
+					try {
+						liveFeed = JsonConvert.DeserializeObject<List<LiveFeedView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "Legacy", "LiveFeed.json")));
+					} catch (Exception e) {
+						Log.Error($"Failed to load LiveFeed data: {e.Message}");
+					}
+
+					using (var outputStream = new MemoryStream()) {
+						ListProxy<LiveFeedView>.Serialize(outputStream, liveFeed, LiveFeedViewProxy.Serialize);
+
 						return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), Settings.EncryptionPassPhrase, Settings.EncryptionInitVector);
 					}
 				}
@@ -130,50 +122,8 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint();
 
 					using (var outputStream = new MemoryStream()) {
-						ListProxy<MapView>.Serialize(outputStream, new List<MapView> {
-							new MapView {
-								Description = "test",
-								DisplayName = "Monkey Island",
-								FileName = "Map-01-60fdc2144516e36004e7b7cb0daeda93-HD.unity3d",
-								SceneName = "LevelMonkeyIsland",
-								IsBlueBox = false,
-								MapId = 1
-							},
-							new MapView {
-								Description = "test",
-								DisplayName = "Lost Paradise 2",
-								FileName = "Map-02-a17ce7bfb24073fb195a79d2bf82f9e0-HD.unity3d",
-								SceneName = "LevelLostParadise2",
-								IsBlueBox = false,
-								MapId = 2
-							},
-							new MapView {
-								Description = "test",
-								DisplayName = "The Warehouse",
-								FileName = "Map-03-80970d51c4d9bc688b8cd2ea756d73ce-HD.unity3d",
-								SceneName = "LevelTheWarehouse",
-								IsBlueBox = false,
-								MapId = 3
-							},
-							new MapView {
-								Description = "test",
-								DisplayName = "TempleOfTheRaven",
-								FileName = "Map-04-e7992ea16dd9e2004e453168308cf0d1-HD.unity3d",
-								SceneName = "LevelTempleOfTheRaven",
-								IsBlueBox = false,
-								MapId = 4
-							},
-							new MapView {
-								Description = "test",
-								DisplayName = "Spaceport Alpha",
-								FileName = "Map-10-52d0276860e8f98015e6a6e7fd9329dd-HD.unity3d",
-								SceneName = "LevelSpaceportAlpha",
-								IsBlueBox = false,
-								MapId = 10
-							}
-						}, MapViewProxy.Serialize);
+						ListProxy<MapView>.Serialize(outputStream, mapData, MapViewProxy.Serialize);
 
-						//return outputStream.ToArray();
 						return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), Settings.EncryptionPassPhrase, Settings.EncryptionInitVector);
 					}
 				}

@@ -1,0 +1,16 @@
+﻿[
+	{
+		"Date": "1970-01-01T01:00:00.000Z",
+		"LivedFeedId": 1,
+		"Description": "Example News 1",
+		"Priority": 0,
+		"Url": "https://repo.festival.tf"
+	},
+	{
+		"Date": "1970-01-01T01:00:00.000Z",
+		"LivedFeedId": 2,
+		"Description": "Example News 2",
+		"Priority": 1,
+		"Url": "https://repo.festival.tf"
+	}
+]

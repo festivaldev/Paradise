@@ -1,0 +1,42 @@
+﻿[
+	{
+		"Description": "test",
+		"DisplayName": "Monkey Island",
+		"FileName": "Map-01-60fdc2144516e36004e7b7cb0daeda93-HD.unity3d",
+		"SceneName": "LevelMonkeyIsland",
+		"IsBlueBox": false,
+		"MapId": 1
+	},
+	{
+		"Description": "test",
+		"DisplayName": "Lost Paradise 2",
+		"FileName": "Map-02-a17ce7bfb24073fb195a79d2bf82f9e0-HD.unity3d",
+		"SceneName": "LevelLostParadise2",
+		"IsBlueBox": false,
+		"MapId": 2
+	},
+	{
+		"Description": "test",
+		"DisplayName": "The Warehouse",
+		"FileName": "Map-03-80970d51c4d9bc688b8cd2ea756d73ce-HD.unity3d",
+		"SceneName": "LevelTheWarehouse",
+		"IsBlueBox": false,
+		"MapId": 3
+	},
+	{
+		"Description": "test",
+		"DisplayName": "TempleOfTheRaven",
+		"FileName": "Map-04-e7992ea16dd9e2004e453168308cf0d1-HD.unity3d",
+		"SceneName": "LevelTempleOfTheRaven",
+		"IsBlueBox": false,
+		"MapId": 4
+	},
+	{
+		"Description": "test",
+		"DisplayName": "Spaceport Alpha",
+		"FileName": "Map-10-52d0276860e8f98015e6a6e7fd9329dd-HD.unity3d",
+		"SceneName": "LevelSpaceportAlpha",
+		"IsBlueBox": false,
+		"MapId": 10
+	}
+]
