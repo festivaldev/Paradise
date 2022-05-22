@@ -21,7 +21,10 @@ namespace Paradise.Client.Bootstrap {
 				new WeaponControllerHook(),
 
 				// Reimplements the game creation GUI to allow selecting mods
-				new CreateGamePanelGUIHook()
+				new CreateGamePanelGUIHook(),
+
+				// Add debug camera for internal staff (Ctrl-Alt-C)
+				new TrainingRoomHook()
 			};
 
 			foreach (var hook in hooks) {
