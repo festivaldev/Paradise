@@ -9,7 +9,7 @@ namespace Paradise.Client {
 		public bool IsDebugConsoleEnabled { get; set; }
 
 		private static IDebugPage _currentPageSelected;
-		private static int _currentPageSelectedIdx = 0;
+		private static int _currentPageSelectedIdx = -1;
 		private static string[] _debugPageDescriptors = new string[0];
 		private static IDebugPage[] _debugPages = new IDebugPage[0];
 		private List<string> _exceptions = new List<string>(10);
@@ -51,17 +51,17 @@ namespace Paradise.Client {
 				_debugPageDescriptors[i] = _debugPages[i].Title;
 			}
 
-			_currentPageSelectedIdx = 0;
-			_currentPageSelected = _debugPages[0];
+			//_currentPageSelectedIdx = 0;
+			//_currentPageSelected = _debugPages[0];
 		}
 
 		private void DrawDebugMenuGrid() {
 			int num = GUILayout.SelectionGrid(
 				selected: _currentPageSelectedIdx,
 				texts: _debugPageDescriptors,
-				xCount: 8,
+				xCount: _debugPages.Length,
 				BlueStonez.tab_medium,
-				GUILayout.MaxWidth(Math.Min(800, Screen.width))
+				GUILayout.MaxWidth(Screen.width)
 			);
 
 			if (num != _currentPageSelectedIdx) {
