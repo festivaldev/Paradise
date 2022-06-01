@@ -1,6 +1,8 @@
 # Project Paradise
 UberStrike Server Emulation. Reimagined.
 
+[Announcement tweet](https://twitter.com/Sniper_GER/status/1532027810792996864)
+
 ## Background
 Back in 2017, three students of Applied Computer Sciences had the idea to bring back their favorite first-person shooter called [UberStrike](https://steamdb.info/app/291210), which was shut down on June 13, 2016.  
 The idea was at first to just emulate the web service responses using Windows' built-in Internet Information Services (IIS), and resulted in the first iteration of [Project Dropshot](https://github.com/festivaldev/dropshot).
