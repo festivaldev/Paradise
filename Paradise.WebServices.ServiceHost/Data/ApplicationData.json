@@ -1,26 +1,19 @@
 ﻿{
 	"CommServer": {
 		"IP": "localhost",
-		"MinLatency": 100,
-		"Name": "Paradise Comm Server",
-		"PhotonId": 34579385,
 		"Port": 5055,
 		"Region": 1,
 		"UsageType": 6
 	},
 	"GameServers": [
 		{
+            "IP": "localhost",
+            "Port": 5056,
+            "Name": "Test",
 			"PhotonId": 5982379,
-			"Name": "Test",
-			"IP": "localhost",
+            "MinLatency": 100,
 			"Region": 1,
-			"Port": 5056,
-			"UsageType": 1,
-			"MinLatency": 100
+			"UsageType": 1
 		}
-	],
-	"EncryptionInitVector": "aaaabbbbccccdddd",
-	"EncryptionPassPhrase": "voJRIh4LEA/lnk19/HucN9qywkxsYNHHE5H410vTRrw=",
-	"IsEnabled": true,
-	"WarnPlayer": false
+	]
 }
