@@ -65,6 +65,11 @@ namespace Paradise.Client {
 			DidCheckForUpdates = true;
 			LastUpdateCheckTimeStamp = DateTime.UtcNow;
 
+			if (!ApplicationDataManagerHook.AutoUpdates) {
+				PopupSystem.ShowMessage("Automatic Updates disabled", "You have disabled automatic updates. If you want to play UberStrike, you may need to update the Paradise runtime.\n\nPlease enable automatic updates in order to receive updates.", PopupSystem.AlertType.OK);
+				yield break;
+			}
+
 			FilesToUpdate.Clear();
 
 			if (string.IsNullOrEmpty(ApplicationDataManagerHook.UpdateUrl)) yield break;

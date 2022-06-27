@@ -9,6 +9,9 @@ namespace Paradise.Client {
 		public string ImagePath;
 
 		[XmlElement]
+		public bool AutoUpdates = true;
+
+		[XmlElement]
 		public string UpdateUrl;
 	}
 }

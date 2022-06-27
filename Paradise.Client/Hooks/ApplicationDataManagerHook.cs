@@ -10,6 +10,7 @@ namespace Paradise.Client {
 		public static string WebServiceBaseUrl { get; private set; } = "https://ws.uberstrike.com/2.0/";
 		public static string ImagePath { get; private set; } = "https://static.uberstrike.com/images/";
 		public static string UpdateUrl { get; private set; } = "https://localhost:8081/updates/";
+		public static bool AutoUpdates { get; private set; } = true;
 
 		public static GameObject PluginHolder;
 
@@ -25,6 +26,7 @@ namespace Paradise.Client {
 					WebServiceBaseUrl = ForceTrailingSlash(settings.WebServiceBaseUrl);
 					ImagePath = ForceTrailingSlash(settings.ImagePath);
 					UpdateUrl = ForceTrailingSlash(settings.UpdateUrl);
+					AutoUpdates = settings.AutoUpdates;
 				} catch (Exception e) {
 					Debug.LogError($"Error while loading Paradise settings: {e}");
 				}
