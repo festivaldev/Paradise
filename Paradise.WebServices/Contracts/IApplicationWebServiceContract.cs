@@ -12,6 +12,10 @@ namespace Paradise.WebServices.Contracts {
 		[OperationContract]
 		byte[] GetMaps(byte[] data);
 
+		// CUSTOM
+		[OperationContract]
+		byte[] GetCustomMaps(byte[] data);
+
 		[OperationContract]
 		byte[] SetMatchScore(byte[] data);
 	}

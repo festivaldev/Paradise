@@ -20,6 +20,8 @@ namespace Paradise.Client {
 
 		public static bool LoadPage_Prefix(MenuPageManager __instance, PageType pageType, bool forceReload = false) {
 			if (pageType == PageType.Home) {
+				UnityRuntime.StartRoutine(CustomMapManager.GetCustomMaps());
+
 				UnityRuntime.StartRoutine(GameObject.Find("Plugin Holder").GetComponent<ParadiseUpdater>().CheckForUpdatesIfNecessary(
 					OnUpdateAvailableCallback,
 					OnUpdateErrorCallback

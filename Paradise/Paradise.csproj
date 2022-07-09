@@ -48,7 +48,9 @@
     <Compile Include="BalancingLoopScheduler.cs" />
     <Compile Include="BaseTimer.cs" />
     <Compile Include="Conversions.cs" />
+    <Compile Include="Core\Serialization\UberstrikeCustomMapViewProxy.cs" />
     <Compile Include="Countdown.cs" />
+    <Compile Include="DataCenter\Common\Entities\UberstrikeCustomMapView.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="Core\Models\AchievementType.cs" />
     <Compile Include="Core\Models\BodyPart.cs" />

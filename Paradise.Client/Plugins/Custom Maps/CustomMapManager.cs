@@ -11,20 +11,11 @@ namespace Paradise.Client {
 		public static CustomMapManager Instance;
 
 		private static AssetBundle bundle;
-		private static List<UberstrikeCustomMap> Maps;
+		private static List<UberstrikeCustomMapView> Maps;
 		private static bool IsLoading = false;
 
 		public void Awake() {
 			Instance = this;
-
-			Maps = new List<UberstrikeCustomMap> {
-				new UberstrikeCustomMap {
-					Name = "Spaceport Alpha",
-					FileName = "SpaceportAlpha.unity3d",
-					MapId = 64,
-					SupportedGameModes = GameModeType.DeathMatch
-				}
-			};
 
 			var harmony = new Harmony("tf.festival.Paradise.CustomMapManager_hook");
 			var orig_MapManager_LoadMap = typeof(MapManager).GetMethod("LoadMap", BindingFlags.Public | BindingFlags.Instance);
@@ -35,7 +26,7 @@ namespace Paradise.Client {
 
 		public static bool LoadMap_Prefix(MapManager __instance, UberstrikeMap map, Action onSuccess) {
 			PickupItem.Reset();
-			Debug.LogWarning($"Loading map: {map.SceneName}");
+			Debug.LogWarning($"Loading custom map: {map.SceneName}");
 
 			if (IsBundleMap(map.Id)) {
 				LoadBundle(map.Id, delegate {
@@ -43,7 +34,7 @@ namespace Paradise.Client {
 						if (onSuccess != null) {
 							onSuccess();
 						}
-						Debug.LogWarning("Finished Loading map");
+						Debug.LogWarning("Finished Loading custom map");
 					});
 				});
 			} else {
@@ -51,7 +42,7 @@ namespace Paradise.Client {
 					if (onSuccess != null) {
 						onSuccess();
 					}
-					Debug.LogWarning("Finished Loading map");
+					Debug.LogWarning("Finished Loading custom map");
 				});
 			}
 
@@ -61,6 +52,7 @@ namespace Paradise.Client {
 
 		public static bool IsBundleMap(int mapid) {
 			foreach (var map in Maps) {
+				Debug.Log($"isBundleMap: {map.Name} {map.FileName} {map.MapId}");
 				if (map.MapId == mapid) {
 					return true;
 				}
@@ -79,13 +71,21 @@ namespace Paradise.Client {
 			}
 		}
 
-		private static UberstrikeCustomMap GetMap(int mapId) {
-			foreach (UberstrikeCustomMap map in Maps) {
+		private static UberstrikeCustomMapView GetMap(int mapId) {
+			foreach (UberstrikeCustomMapView map in Maps) {
 				if (map.MapId.Equals(mapId)) {
 					return map;
 				}
 			}
 			return null;
+		}
+
+		public static IEnumerator GetCustomMaps() {
+			yield return ParadiseApplicationWebServiceClient.GetCustomMaps("4.7.1", DefinitionType.StandardDefinition, delegate (List<UberstrikeCustomMapView> callback) {
+				Maps = callback;
+			}, delegate (Exception ex) {
+				PopupSystem.ShowMessage("Error", $"There was an error loading the maps.", PopupSystem.AlertType.OK);
+			});
 		}
 
 		public static IEnumerator LoadBundleMap(int mapId, Action onSuccess = null) {

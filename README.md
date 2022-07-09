@@ -43,6 +43,3 @@ _Honorable mentions_
 * [@FICTURE7](https://github.com/FICTURE7) - for initially forking Dropshot and investing a lot of time to get things working. Also, you've got us to work on UberStrok with you after we gave up on the realtime stuff, thank you very much!
 * [@SirAnuse](https://github.com/SirAnuse) - for a more complete fork of UberStrok that helped us reimplement and complete the realtime part of Paradise
 * Cmune (especially Shaun LeLacheur Sales) - the developers of UberStrike, and being supportive in the initial attempts of Dropshot. Also, thank you for not obfuscating the UberStrike code, otherwise this wouldn't have been possible in the first place.
-
-_Testers_
-* None so far

@@ -83,12 +83,15 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ParadiseSettings.cs" />
     <Compile Include="Hooks\ScreenResolutionManagerHook.cs" />
-    <Compile Include="Plugins\Custom Maps\UberstrikeCustomMap.cs" />
+    <Compile Include="Plugins\Custom Maps\UberstrikeCustomMapView.cs" />
     <Compile Include="Plugins\Update\ParadiseUpdater.cs" />
+    <Compile Include="ServiceClients\MonoInstance.cs" />
+    <Compile Include="ServiceClients\ParadiseApplicationWebServiceClient.cs" />
+    <Compile Include="ServiceClients\SoapClient.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="ParadiseSettings.Client.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,14 @@
+﻿[
+	{
+		"Name": "Space City",
+		"FileName": "SpaceCity.unity3d",
+		"MapId": 64,
+		"SupportedGameModes": [1, 2, 3]
+	},
+	{
+		"Name": "Spaceport Alpha",
+		"FileName": "SpaceportAlpha.unity3d",
+		"MapId": 65,
+		"SupportedGameModes": [1]
+	}
+]

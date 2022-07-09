@@ -505,10 +505,53 @@
 		}
 	},
 	{
+		"DisplayName": "Space City",
+		"Description": "Map Description",
+		"SceneName": "SpaceCity",
+		"MapId": 64,
+		"IsBlueBox": false,
+		"MaxPlayer": 20,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 18,
+				"PlayersCurrent": 18,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 18,
+				"PlayersCurrent": 18,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 18,
+				"PlayersCurrent": 18,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
 		"DisplayName": "Spaceport Alpha",
 		"Description": "Map Description",
 		"SceneName": "SpaceportAlpha",
-		"MapId": 64,
+		"MapId": 65,
 		"IsBlueBox": false,
 		"MaxPlayer": 20,
 		"Settings": {

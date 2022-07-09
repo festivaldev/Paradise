@@ -24,6 +24,7 @@ namespace Paradise.WebServices.Services {
 
 		private ApplicationConfigurationView gameConfiguration;
 		private List<MapView> mapData;
+		private List<UberstrikeCustomMapView> customMapData;
 		private AuthenticateApplicationView defaultAppAuthentication;
 
 		public ApplicationWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
@@ -34,6 +35,7 @@ namespace Paradise.WebServices.Services {
 				gameConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "ApplicationConfiguration.json")));
 				defaultAppAuthentication = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "ApplicationData.json")));
 				mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "Maps.json")));
+				customMapData = JsonConvert.DeserializeObject<List<UberstrikeCustomMapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "Data", "CustomMaps.json")));
 
 				// Resolve them domains
 				try {
@@ -149,6 +151,34 @@ namespace Paradise.WebServices.Services {
 
 					using (var outputStream = new MemoryStream()) {
 						ListProxy<MapView>.Serialize(outputStream, mapData, MapViewProxy.Serialize);
+
+						return outputStream.ToArray();
+					}
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Gets a list of custom maps that have been made available for the game
+		/// </summary>
+		/// <see cref="MapView"/>
+		public byte[] GetCustomMaps(byte[] data) {
+			try {
+				using (var bytes = new MemoryStream(data)) {
+					var clientVersion = StringProxy.Deserialize(bytes);
+					var clientType = EnumProxy<DefinitionType>.Deserialize(bytes);
+
+					DebugEndpoint(clientVersion, clientType);
+
+					if (!supportedClientVersions.Contains(clientVersion))
+						return null;
+
+					using (var outputStream = new MemoryStream()) {
+						ListProxy<UberstrikeCustomMapView>.Serialize(outputStream, customMapData, UberstrikeCustomMapViewProxy.Serialize);
 
 						return outputStream.ToArray();
 					}
