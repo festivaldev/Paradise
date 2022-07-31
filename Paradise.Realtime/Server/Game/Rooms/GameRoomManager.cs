@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Types;
 using System;
@@ -75,6 +75,8 @@ namespace Paradise.Realtime.Server.Game {
 
 		public void RemoveRoom(int roomId) {
 			if (Rooms.ContainsKey(roomId)) {
+				Log.Info($"Destroyed {Rooms[roomId]}({Rooms[roomId].RoomId})");
+
 				Rooms[roomId].Dispose();
 				Rooms.Remove(roomId);
 			}

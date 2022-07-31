@@ -57,7 +57,7 @@ namespace Paradise.Realtime.Server {
 				throw new ArgumentNullException(nameof(magicHash));
 			}
 
-			Log.Info($"Received AuthenticationRequest! {authToken}:{magicHash} (at {RemoteIP}:{RemotePort})");
+			Log.Debug($"Received AuthenticationRequest! {authToken}:{magicHash} (at {RemoteIP}:{RemotePort})");
 		}
 
 		public void Tick() {

@@ -12,7 +12,7 @@ namespace Paradise.Realtime.Server.Comm {
 		private static readonly ILog Log = LogManager.GetLogger(typeof(CommPeerOperationHandler).Name);
 
 		public override void OnDisconnect(CommPeer peer, DisconnectReason reasonCode, string reasonDetail) {
-			Log.Info($"{peer.Actor.Cmid} Disconnected {reasonCode} -> {reasonDetail}");
+			Log.Debug($"{peer.Actor.Cmid} Disconnected {reasonCode} -> {reasonDetail}");
 
 			// Remove the peer from the lobby list & update all peer's CommActor list.
 			LobbyManager.Instance.Leave(peer);
@@ -237,14 +237,18 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		protected override void OnResetPlayerRoom(CommPeer peer) {
-			peer.Actor.ActorInfo.CurrentRoom = null;
+			try {
+				peer.Actor.ActorInfo.CurrentRoom = null;
 
-			lock (_lock) {
-				foreach (var otherPeer in LobbyManager.Instance.Peers) {
-					if (peer.Actor.Cmid != otherPeer.Actor.Cmid) {
-						otherPeer.LobbyEvents.SendFullPlayerListUpdate(LobbyManager.Instance.Peers.Select(_ => _.Actor.ActorInfo).ToList());
+				lock (_lock) {
+					foreach (var otherPeer in LobbyManager.Instance.Peers) {
+						if (peer.Actor.Cmid != otherPeer.Actor.Cmid) {
+							otherPeer.LobbyEvents.SendFullPlayerListUpdate(LobbyManager.Instance.Peers.Select(_ => _.Actor.ActorInfo).ToList());
+						}
 					}
 				}
+			} catch (NullReferenceException e) {
+				Log.Info("Trying to reset nonexistent player room. Did the server restart while players were ingame?");
 			}
 		}
 

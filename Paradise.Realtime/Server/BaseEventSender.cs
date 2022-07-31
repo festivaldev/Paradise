@@ -20,7 +20,7 @@ namespace Paradise.Realtime.Server {
 			});
 
 			var result = Peer.SendEvent(eventData, new SendParameters { Unreliable = unreliable });
-			if (result != SendResult.Ok) {
+			if (result != SendResult.Ok && result != SendResult.Disconnected) {
 				Log.Error($"Send event failed {opCode} -> {result}");
 			}
 

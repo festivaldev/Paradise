@@ -189,6 +189,8 @@ namespace Paradise.Realtime.Server.Game {
 			peer.State.SetState(PlayerStateId.Overview);
 
 			MetaData.ConnectedPlayers = Peers.Count;
+
+			Log.Info($"{peer.Actor.PlayerName}({peer.Actor.Cmid}) joined {this}({this.Id})");
 		}
 
 		public void Leave(GamePeer peer) {
@@ -209,6 +211,8 @@ namespace Paradise.Realtime.Server.Game {
 
 				MetaData.ConnectedPlayers = Peers.Count;
 			}
+
+			Log.Info($"{peer.Actor.PlayerName}({peer.Actor.Cmid}) left {this}({this.Id})");
 
 			peer.State.SetState(PlayerStateId.None);
 			peer.RemoveOperationHandler(Id);

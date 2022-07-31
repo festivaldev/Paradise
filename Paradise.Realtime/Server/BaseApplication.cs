@@ -47,12 +47,12 @@ namespace Paradise.Realtime.Server {
 					Configuration = JsonConvert.DeserializeObject<ApplicationConfiguration>(json);
 					Configuration.Validate();
 
-					Log.Info($"Loaded application config from {applicationConfigPath}:");
-					Log.Info($"\tWebServiceBaseUrl: {Configuration.WebServiceBaseUrl}");
-					Log.Info($"\tHeartbeatInterval: {Configuration.HeartbeatInterval}");
-					Log.Info($"\tHeartbeatTimeout: {Configuration.HeartbeatTimeout}");
-					Log.Info($"\tCompositeHashes: {Configuration.CompositeHashBytes.Count}");
-					Log.Info($"\tJunkHashes: {Configuration.JunkHashBytes.Count}");
+					Log.Debug($"Loaded application config from {applicationConfigPath}:");
+					Log.Debug($"\tWebServiceBaseUrl: {Configuration.WebServiceBaseUrl}");
+					Log.Debug($"\tHeartbeatInterval: {Configuration.HeartbeatInterval}");
+					Log.Debug($"\tHeartbeatTimeout: {Configuration.HeartbeatTimeout}");
+					Log.Debug($"\tCompositeHashes: {Configuration.CompositeHashBytes.Count}");
+					Log.Debug($"\tJunkHashes: {Configuration.JunkHashBytes.Count}");
 				} catch (Exception e) {
 					Log.Fatal($"Failed to load application configuration from {applicationConfigPath}: {e.Message}");
 					throw;
@@ -75,7 +75,7 @@ namespace Paradise.Realtime.Server {
 		}
 
 		protected sealed override PeerBase CreatePeer(InitRequest initRequest) {
-			Log.Info($"Accepted new connection at {initRequest.RemoteIP}:{initRequest.RemotePort}.");
+			Log.Debug($"Accepted new connection at {initRequest.RemoteIP}:{initRequest.RemotePort}.");
 
 			initRequest.UserData = PeerConfiguration;
 			return OnCreatePeer(initRequest);

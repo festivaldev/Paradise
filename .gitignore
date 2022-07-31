@@ -9,3 +9,4 @@ release-test/
 node_modules/
 *old*/
 *.lnk
+.DS_Store
