@@ -15,7 +15,11 @@ namespace Paradise.Realtime.Server.Comm {
 
 		public void Join(CommPeer peer) {
 			lock (_lock) {
-				peers.Add(peer.Actor.Cmid, peer);
+				if (peers.ContainsKey(peer.Actor.Cmid)) {
+					peers[peer.Actor.Cmid] = peer;
+				} else {
+					peers.Add(peer.Actor.Cmid, peer);
+				}
 
 				foreach (var otherPeer in Peers) {
 					if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
