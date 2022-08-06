@@ -150,19 +150,19 @@ namespace Paradise.Client {
 
 					switch (flag) {
 						case GameFlags.GAME_FLAGS.LowGravity:
-							hasFlag = GUI.Toggle(new Rect(6f, 241f, 100f, 16f), hasFlag, "Low Gravity", BlueStonez.toggle);
+							hasFlag = GUI.Toggle(new Rect(6f, 241f, GetField<float>("_sliderWidth"), 16f), hasFlag, "Low Gravity", BlueStonez.toggle);
 							break;
 						case GameFlags.GAME_FLAGS.NoArmor:
 							GUI.enabled = false;
-							hasFlag = GUI.Toggle(new Rect(170f, 241f, 100f, 16f), hasFlag, "No Armor", BlueStonez.toggle);
+							hasFlag = GUI.Toggle(new Rect(170f, 241f, GetField<float>("_sliderWidth"), 16f), hasFlag, "No Armor", BlueStonez.toggle);
 							GUI.enabled = true;
 							break;
 						case GameFlags.GAME_FLAGS.QuickSwitch:
-							hasFlag = GUI.Toggle(new Rect(6f, 261f, 100f, 16f), hasFlag, "Quick Switching", BlueStonez.toggle);
+							hasFlag = GUI.Toggle(new Rect(6f, 261f, GetField<float>("_sliderWidth"), 16f), hasFlag, "Quick Switching", BlueStonez.toggle);
 							break;
 						case GameFlags.GAME_FLAGS.MeleeOnly:
 							GUI.enabled = false;
-							hasFlag = GUI.Toggle(new Rect(170f, 261f, 100f, 16f), hasFlag, "Melee Only", BlueStonez.toggle);
+							hasFlag = GUI.Toggle(new Rect(170f, 261f, GetField<float>("_sliderWidth"), 16f), hasFlag, "Nelee Only", BlueStonez.toggle);
 							GUI.enabled = true;
 							break;
 						default: break;
