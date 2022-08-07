@@ -5,19 +5,19 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Paradise.Realtime.Server.Game {
-	public class TeamDeathMatchGameRoom : BaseGameRoom {
-		private readonly static ILog Log = LogManager.GetLogger(nameof(TeamDeathMatchGameRoom));
+	public class TeamEliminationGameRoom : BaseGameRoom {
+		private readonly static ILog Log = LogManager.GetLogger(nameof(TeamEliminationGameRoom));
 
 		private Dictionary<TeamID, int> TeamScores;
 
-		public TeamDeathMatchGameRoom(GameRoomData metaData, ILoopScheduler scheduler) : base(metaData, scheduler) {
+		public TeamEliminationGameRoom(GameRoomData metaData, ILoopScheduler scheduler) : base(metaData, scheduler) {
 			TeamScores = new Dictionary<TeamID, int> {
 				[TeamID.BLUE] = 0,
 				[TeamID.RED] = 0
 			};
 		}
 
-		public override bool CanJoinMatch => true;
+		public override bool CanJoinMatch => State.CurrentStateId != GameStateId.MatchRunning;
 		public override bool CanStartMatch => Players.Where(_ => _.Actor.Team == TeamID.BLUE).Count() >= 1 &&
 											  Players.Where(_ => _.Actor.Team == TeamID.RED).Count() >= 1;
 
@@ -35,32 +35,27 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnMatchEnded(EventArgs args) {
-			WinningTeam = TeamScores.OrderByDescending(_ => _.Value).First().Key;
-
 			base.OnMatchEnded(args);
 		}
 
 		protected override void OnPlayerKilled(PlayerKilledEventArgs args) {
-			foreach (var player in Players) {
-				if (player.Actor.Cmid != args.AttackerCmid) {
-					continue;
-				}
+			if (Players.Where(_ => _.Actor.Team == TeamID.RED && _.Actor.Info.IsAlive).Count() == 0) {
+				TeamScores[TeamID.BLUE] += 1;
+				WinningTeam = TeamID.BLUE;
 
-				if (args.AttackerCmid == args.VictimCmid) {
-					TeamScores[player.Actor.Team] -= 1;
-				} else {
-					TeamScores[player.Actor.Team] += 1;
-				}
+				HasRoundEnded = true;
+			} else if (Players.Where(_ => _.Actor.Team == TeamID.BLUE && _.Actor.Info.IsAlive).Count() == 0) {
+				TeamScores[TeamID.RED] += 1;
+				WinningTeam = TeamID.RED;
+
+				HasRoundEnded = true;
+			}
+
+			foreach (var peer in Peers) {
+				peer.GameEvents.SendUpdateRoundScore(RoundNumber, (short)TeamScores[TeamID.BLUE], (short)TeamScores[TeamID.RED]);
 			}
 
 			base.OnPlayerKilled(args);
-
-			foreach (var kvp in TeamScores) {
-				if (kvp.Value >= MetaData.KillLimit) {
-					HasRoundEnded = true;
-					break;
-				}
-			}
 		}
 	}
 }

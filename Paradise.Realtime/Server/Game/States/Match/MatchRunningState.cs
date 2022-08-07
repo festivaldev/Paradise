@@ -1,12 +1,6 @@
 ﻿using Paradise.Core.Models;
-using Paradise.Core.Models.Views;
 using Paradise.Core.Types;
-using Paradise.WebServices.Client;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class MatchRunningState : BaseMatchState {
@@ -23,7 +17,6 @@ namespace Paradise.Realtime.Server.Game {
 			Room.RoundEndTime = Room.RoundStartTime + (Room.MetaData.TimeLimit * 1000);
 
 			foreach (var player in Room.Players) {
-				player.GameEvents.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
 				player.State.SetState(PlayerStateId.Playing);
 			}
 		}
@@ -48,11 +41,18 @@ namespace Paradise.Realtime.Server.Game {
 
 		#region Handlers
 		private void OnPlayerJoined(object sender, PlayerJoinedEventArgs args) {
-			foreach (var otherPeer in Room.Peers) {
-				otherPeer.GameEvents.SendPlayerJoinedGame(args.Player.Actor.Info, args.Player.Actor.Movement);
+			if (Room.MetaData.GameMode == GameModeType.EliminationMode) {
+				args.Player.Actor.Info.PlayerState = PlayerStates.Spectator;
+			} else {
+				Room.PreparePlayer(args.Player);
+				Room.SpawnPlayer(args.Player);
+
+				foreach (var peer in Room.Peers) {
+					peer.GameEvents.SendPlayerJoinedGame(args.Player.Actor.Info, args.Player.Actor.Movement);
+				}
 			}
 
-			PrepareAndSpawnPlayer(args.Player);
+			args.Player.State.SetState(PlayerStateId.Playing);
 		}
 
 		private void OnPlayerLeft(object sender, PlayerLeftEventArgs args) {
@@ -98,91 +98,15 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void OnPlayerRespawned(object sender, PlayerRespawnedEventArgs args) {
-			var player = args.Player;
+			if (Room.MetaData.GameMode == GameModeType.EliminationMode) return;
 
-			player.Actor.Info.Health = 100;
-			player.Actor.Info.ArmorPoints = player.Actor.Info.ArmorPointCapacity;
-			player.Actor.Info.PlayerState = PlayerStates.Ready;
-
-			if (player.PreviousSpawnPoints.Count >= Room.SpawnPointManager.GetSpawnPointCount(player.Actor.Team)) {
-				player.PreviousSpawnPoints.Clear();
-			}
-
-			var spawn = Room.SpawnPointManager.Get(player.Actor.Team);
-
-			while (player.PreviousSpawnPoints.Contains(spawn)) {
-				spawn = Room.SpawnPointManager.Get(player.Actor.Team);
-			}
-
-			player.PreviousSpawnPoints.Add(spawn);
-
-			player.Actor.Movement.Position = spawn.Position;
-			player.Actor.Movement.HorizontalRotation = spawn.Rotation;
-
-			foreach (var peer in Room.Peers) {
-				peer.GameEvents.SendPlayerRespawned(player.Actor.Cmid, spawn.Position, spawn.Rotation);
-			}
-
-			player.State.SetState(PlayerStateId.Playing);
+			Room.SpawnPlayer(args.Player, false);
+			args.Player.State.SetState(PlayerStateId.Playing);
 		}
 
 		private void OnMatchEnded(object sender, EventArgs args) {
 			Room.State.SetState(GameStateId.EndOfMatch);
 		}
 		#endregion
-
-		private void PrepareAndSpawnPlayer(GamePeer player) {
-			player.State.SetState(PlayerStateId.PrepareForMatch);
-
-			player.Actor.Info.Kills = 0;
-			player.Actor.Info.Deaths = 0;
-
-			var spawn = Room.SpawnPointManager.Get(player.Actor.Team);
-
-			player.Actor.Movement.Position = spawn.Position;
-			player.Actor.Movement.HorizontalRotation = spawn.Rotation;
-
-			player.Loadout = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).GetLoadout(player.AuthToken);
-
-			player.Actor.Info.Gear[0] = (int)player.Loadout.Webbing; // Holo
-			player.Actor.Info.Gear[1] = player.Loadout.Head;
-			player.Actor.Info.Gear[2] = player.Loadout.Face;
-			player.Actor.Info.Gear[3] = player.Loadout.Gloves;
-			player.Actor.Info.Gear[4] = player.Loadout.UpperBody;
-			player.Actor.Info.Gear[5] = player.Loadout.LowerBody;
-			player.Actor.Info.Gear[6] = player.Loadout.Boots;
-
-			byte armorPointCapacity = 0;
-			foreach (var armor in player.Actor.Info.Gear) {
-				if (armor == 0) continue;
-
-				var gear = default(UberStrikeItemGearView);
-				if (Room.ShopManager.GearItems.TryGetValue(armor, out gear)) {
-					armorPointCapacity = (byte)Math.Min(200, armorPointCapacity + gear.ArmorPoints);
-				}
-			}
-
-			player.Actor.Info.ArmorPointCapacity = armorPointCapacity;
-			player.Actor.Info.ArmorPoints = player.Actor.Info.ArmorPointCapacity;
-
-			player.Actor.Info.Weapons[0] = player.Loadout.MeleeWeapon;
-			player.Actor.Info.Weapons[1] = player.Loadout.Weapon1;
-			player.Actor.Info.Weapons[2] = player.Loadout.Weapon2;
-			player.Actor.Info.Weapons[3] = player.Loadout.Weapon3;
-
-			if (player.Actor.Info.Weapons[1] > 0) {
-				player.Actor.Info.CurrentWeaponSlot = 1;
-			} else if (player.Actor.Info.Weapons[2] > 0) {
-				player.Actor.Info.CurrentWeaponSlot = 2;
-			} else if (player.Actor.Info.Weapons[3] > 0) {
-				player.Actor.Info.CurrentWeaponSlot = 3;
-			} else if (player.Actor.Info.Weapons[0] > 0) {
-				player.Actor.Info.CurrentWeaponSlot = 0;
-			}
-
-			foreach (var otherPeer in Room.Peers) {
-				otherPeer.GameEvents.SendPlayerRespawned(player.Actor.Info.Cmid, player.Actor.Movement.Position, player.Actor.Movement.HorizontalRotation);
-			}
-		}
 	}
 }

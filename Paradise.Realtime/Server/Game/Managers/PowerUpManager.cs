@@ -68,14 +68,28 @@ namespace Paradise.Realtime.Server.Game {
 
 				if (newTime.TotalMilliseconds <= 0) {
 					RespawnTimes[Respawning[i]] = TimeSpan.FromSeconds(0);
-					foreach (var otherPeer in Room.Peers) {
-						otherPeer.GameEvents.SendPowerUpPicked(Respawning[i], 0);
+
+					foreach (var peer in Room.Peers) {
+						peer.GameEvents.SendPowerUpPicked(Respawning[i], 0);
 					}
 
-					//s_log.Debug($"Respawned power-up with ID: {_respawning[i]}");
 					Respawning.RemoveAt(i);
 				} else {
 					RespawnTimes[Respawning[i]] = newTime;
+				}
+			}
+		}
+
+		public void RespawnItems() {
+			if (Respawning != null) {
+				for (int i = 0; i < Respawning.Count; i++) {
+					RespawnTimes[Respawning[i]] = TimeSpan.FromSeconds(0);
+
+					foreach (var peer in Room.Peers) {
+						peer.GameEvents.SendPowerUpPicked(Respawning[i], 0);
+					}
+
+					Respawning.RemoveAt(i);
 				}
 			}
 		}

@@ -26,6 +26,7 @@ namespace Paradise.Realtime.Server.Game {
 		private readonly System.Random Rand = new System.Random((int)DateTime.UtcNow.Ticks);
 		private readonly Dictionary<TeamID, List<SpawnPoint>> SpawnPointsByTeam = new Dictionary<TeamID, List<SpawnPoint>>();
 		private readonly List<SpawnPoint> SpawnPoints = new List<SpawnPoint>();
+		public readonly Dictionary<TeamID, List<SpawnPoint>> SpawnPointsInUse = new Dictionary<TeamID, List<SpawnPoint>>();
 
 		public bool IsLoaded(TeamID team) => SpawnPointsByTeam.ContainsKey(team);
 
@@ -71,6 +72,10 @@ namespace Paradise.Realtime.Server.Game {
 
 		public int GetSpawnPointCount(TeamID team) {
 			return SpawnPointsByTeam[team].Count;
+		}
+
+		public void Reset() {
+			SpawnPointsInUse.Clear();
 		}
 	}
 }

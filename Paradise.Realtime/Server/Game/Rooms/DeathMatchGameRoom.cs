@@ -8,6 +8,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		public DeathMatchGameRoom(GameRoomData metaData, ILoopScheduler scheduler) : base(metaData, scheduler) { }
 
+		public override bool CanJoinMatch => true;
 		public override bool CanStartMatch => Players.Count > 1;
 
 		public override void GetCurrentScore(out short killsRemaining, out short blueTeamScore, out short redTeamScore) {

@@ -1,9 +1,15 @@
-﻿namespace Paradise.Realtime.Server.Game {
+﻿using Paradise.Core.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Paradise.Realtime.Server.Game {
 	internal class PlayerPrepareState : BasePlayerState {
 		public PlayerPrepareState(GamePeer peer) : base(peer) { }
 
 		public override void OnEnter() {
-			Peer.Actor.ResetStatistics();
 			Peer.GameEvents.SendPrepareNextRound();
 		}
 

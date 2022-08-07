@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Types;
 using System;
@@ -41,9 +41,9 @@ namespace Paradise.Realtime.Server.Game {
 					case GameModeType.TeamDeathMatch:
 						room = new TeamDeathMatchGameRoom(data, LoopScheduler);
 						break;
-					//case GameModeType.EliminationMode:
-					//	room = new TeamEliminationGameRoom(data, LoopScheduler);
-					//	break;
+					case GameModeType.EliminationMode:
+						room = new TeamEliminationGameRoom(data, LoopScheduler);
+						break;
 					default:
 						throw new NotSupportedException();
 				}

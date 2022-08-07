@@ -10,6 +10,14 @@ using System.Linq;
 using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
+	public enum GAME_FLAGS {
+		None = 0,
+		LowGravity = 1,
+		NoArmor = 2,
+		QuickSwitch = 4,
+		MeleeOnly = 8
+	}
+
 	public abstract partial class BaseGameRoom : BaseGameRoomOperationsHandler, IRoom<GamePeer>, IDisposable {
 		private static readonly ILog Log = LogManager.GetLogger(typeof(BaseGameRoom));
 
@@ -36,6 +44,7 @@ namespace Paradise.Realtime.Server.Game {
 		public int RoundNumber;
 		public int RoundStartTime;
 		public int RoundEndTime;
+		public List<TimeSpan> RoundDurations = new List<TimeSpan>();
 		public bool HasRoundEnded;
 
 		private byte NextPlayerId;
@@ -101,6 +110,7 @@ namespace Paradise.Realtime.Server.Game {
 			Scheduler.Schedule(Loop);
 		}
 
+		public abstract bool CanJoinMatch { get; }
 		public abstract bool CanStartMatch { get; }
 		public abstract void GetCurrentScore(out short killsRemaining, out short blueTeamScore, out short redTeamScore);
 
@@ -110,14 +120,9 @@ namespace Paradise.Realtime.Server.Game {
 			}
 
 			peer.PreviousSpawnPoints.Clear();
-
-			peer.Loadout = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).GetLoadout(peer.AuthToken);
-
 			var actorInfo = new GameActorInfo {
 				TeamID = TeamID.NONE,
 				Health = 100,
-				Deaths = 0,
-				Kills = 0,
 				Level = XpPointsUtil.GetLevelForXp(peer.Member.UberstrikeMemberView.PlayerStatisticsView.Xp),
 				Channel = ChannelType.Steam,
 				PlayerState = PlayerStates.None,
@@ -131,42 +136,6 @@ namespace Paradise.Realtime.Server.Game {
 				AccessLevel = peer.Member.CmuneMemberView.PublicProfile.AccessLevel,
 				PlayerName = peer.Member.CmuneMemberView.PublicProfile.Name,
 			};
-
-			actorInfo.Gear[0] = (int)peer.Loadout.Webbing; // Holo
-			actorInfo.Gear[1] = peer.Loadout.Head;
-			actorInfo.Gear[2] = peer.Loadout.Face;
-			actorInfo.Gear[3] = peer.Loadout.Gloves;
-			actorInfo.Gear[4] = peer.Loadout.UpperBody;
-			actorInfo.Gear[5] = peer.Loadout.LowerBody;
-			actorInfo.Gear[6] = peer.Loadout.Boots;
-
-			byte armorPointCapacity = 0;
-			foreach (var armor in actorInfo.Gear) {
-				if (armor == 0) continue;
-
-				var gear = default(UberStrikeItemGearView);
-				if (ShopManager.GearItems.TryGetValue(armor, out gear)) {
-					armorPointCapacity = (byte)Math.Min(200, armorPointCapacity + gear.ArmorPoints);
-				}
-			}
-
-			actorInfo.ArmorPointCapacity = armorPointCapacity;
-			actorInfo.ArmorPoints = actorInfo.ArmorPointCapacity;
-
-			actorInfo.Weapons[0] = peer.Loadout.MeleeWeapon;
-			actorInfo.Weapons[1] = peer.Loadout.Weapon1;
-			actorInfo.Weapons[2] = peer.Loadout.Weapon2;
-			actorInfo.Weapons[3] = peer.Loadout.Weapon3;
-
-			if (actorInfo.Weapons[1] > 0) {
-				actorInfo.CurrentWeaponSlot = 1;
-			} else if (actorInfo.Weapons[2] > 0) {
-				actorInfo.CurrentWeaponSlot = 2;
-			} else if (actorInfo.Weapons[3] > 0) {
-				actorInfo.CurrentWeaponSlot = 3;
-			} else if (actorInfo.Weapons[0] > 0) {
-				actorInfo.CurrentWeaponSlot = 0;
-			}
 
 			var number = -1;
 
@@ -227,6 +196,12 @@ namespace Paradise.Realtime.Server.Game {
 		public virtual void Reset() {
 			_frame = 6;
 			frameTimer.Restart();
+
+			RoundNumber = 0;
+			RoundStartTime = int.MinValue;
+			RoundEndTime = int.MinValue;
+			RoundDurations.Clear();
+
 
 			NextPlayerId = 0;
 
@@ -341,6 +316,99 @@ namespace Paradise.Realtime.Server.Game {
 
 			IsDisposed = true;
 		}
+
+		#region Player Management
+		public void PreparePlayer(GamePeer player) {
+			player.Actor.Info.Kills = 0;
+			player.Actor.Info.Deaths = 0;
+
+			player.Loadout = new UserWebServiceClient(GameApplication.Instance.Configuration.WebServiceBaseUrl).GetLoadout(player.AuthToken);
+
+			if (((GAME_FLAGS)MetaData.GameFlags & GAME_FLAGS.NoArmor) == 0) {
+				player.Actor.Info.Gear[0] = (int)player.Loadout.Webbing; // Holo
+				player.Actor.Info.Gear[1] = player.Loadout.Head;
+				player.Actor.Info.Gear[2] = player.Loadout.Face;
+				player.Actor.Info.Gear[3] = player.Loadout.Gloves;
+				player.Actor.Info.Gear[4] = player.Loadout.UpperBody;
+				player.Actor.Info.Gear[5] = player.Loadout.LowerBody;
+				player.Actor.Info.Gear[6] = player.Loadout.Boots;
+			}
+
+			player.Actor.Info.Health = 100;
+
+			byte armorPointCapacity = 0;
+			foreach (var armor in player.Actor.Info.Gear) {
+				if (armor == 0) continue;
+
+				var gear = default(UberStrikeItemGearView);
+				if (ShopManager.GearItems.TryGetValue(armor, out gear)) {
+					armorPointCapacity = (byte)Math.Min(200, armorPointCapacity + gear.ArmorPoints);
+				}
+			}
+
+			player.Actor.Info.ArmorPointCapacity = armorPointCapacity;
+			player.Actor.Info.ArmorPoints = player.Actor.Info.ArmorPointCapacity;
+
+			player.Actor.Info.Weapons[0] = player.Loadout.MeleeWeapon;
+
+			if (((GAME_FLAGS)MetaData.GameFlags & GAME_FLAGS.MeleeOnly) == 0) {
+				player.Actor.Info.Weapons[1] = player.Loadout.Weapon1;
+				player.Actor.Info.Weapons[2] = player.Loadout.Weapon2;
+				player.Actor.Info.Weapons[3] = player.Loadout.Weapon3;
+			}
+
+			if (player.Actor.Info.Weapons[1] > 0) {
+				player.Actor.Info.CurrentWeaponSlot = 1;
+			} else if (player.Actor.Info.Weapons[2] > 0) {
+				player.Actor.Info.CurrentWeaponSlot = 2;
+			} else if (player.Actor.Info.Weapons[3] > 0) {
+				player.Actor.Info.CurrentWeaponSlot = 3;
+			} else if (player.Actor.Info.Weapons[0] > 0) {
+				player.Actor.Info.CurrentWeaponSlot = 0;
+			}
+		}
+
+		public void SpawnPlayer(GamePeer player, bool joined = false) {
+			var spawn = SpawnPointManager.Get(player.Actor.Team);
+
+			if (joined) {
+				if (!SpawnPointManager.SpawnPointsInUse.ContainsKey(player.Actor.Team)) {
+					SpawnPointManager.SpawnPointsInUse[player.Actor.Team] = new List<SpawnPoint> { spawn };
+				} else {
+					while (SpawnPointManager.SpawnPointsInUse[player.Actor.Team].Contains(spawn)) {
+						spawn = SpawnPointManager.Get(player.Actor.Team);
+					}
+
+					SpawnPointManager.SpawnPointsInUse[player.Actor.Team].Add(spawn);
+				}
+			} else {
+				player.Actor.Info.Health = 100;
+				player.Actor.Info.ArmorPoints = player.Actor.Info.ArmorPointCapacity;
+				player.Actor.Info.PlayerState = PlayerStates.None;
+
+				if (player.PreviousSpawnPoints.Count >= SpawnPointManager.GetSpawnPointCount(player.Actor.Team)) {
+					player.PreviousSpawnPoints.Clear();
+				}
+
+				while (player.PreviousSpawnPoints.Contains(spawn)) {
+					spawn = SpawnPointManager.Get(player.Actor.Team);
+				}
+			}
+
+			player.PreviousSpawnPoints.Add(spawn);
+
+			player.Actor.Movement.Position = spawn.Position;
+			player.Actor.Movement.HorizontalRotation = spawn.Rotation;
+
+			foreach (var peer in Peers) {
+				if (joined && !peer.Actor.Info.IsSpectator) {
+					peer.GameEvents.SendPlayerJoinedGame(player.Actor.Info, player.Actor.Movement);
+				} else {
+					peer.GameEvents.SendPlayerRespawned(player.Actor.Info.Cmid, player.Actor.Movement.Position, player.Actor.Movement.HorizontalRotation);
+				}
+			}
+		}
+		#endregion
 
 		#region Events
 		protected virtual void OnMatchEnded(EventArgs args) {

@@ -116,7 +116,6 @@
     <Compile Include="Server\Game\Rooms\GameRoomManager.cs" />
     <Compile Include="Server\Game\Rooms\TeamDeathMatchGameRoom.cs" />
     <Compile Include="Server\Game\Rooms\TeamEliminationGameRoom.cs" />
-    <Compile Include="Server\Game\Rooms\TestGameRoom.cs" />
     <Compile Include="Server\Game\States\Match\AfterRoundState.cs" />
     <Compile Include="Server\Game\States\Match\BaseMatchState.cs" />
     <Compile Include="Server\Game\States\Match\EndOfMatchState.cs" />

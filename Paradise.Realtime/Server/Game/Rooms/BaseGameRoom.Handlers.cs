@@ -36,6 +36,10 @@ namespace Paradise.Realtime.Server.Game {
 			peer.Actor.Info.Kills = 0;
 			peer.Actor.Info.Deaths = 0;
 
+			if (!CanJoinMatch) {
+				peer.Actor.Info.PlayerState = PlayerStates.Spectator;
+			}
+
 			lock (_peers) {
 				if (_players.FirstOrDefault(_ => _.Actor.Cmid == peer.Actor.Cmid) == null) {
 					_players.Add(peer);
@@ -81,6 +85,8 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnDirectHitDamage(GamePeer peer, int target, byte bodyPart, byte bullets) {
+			if (State.CurrentStateId != GameStateId.MatchRunning) return;
+
 			foreach (var player in Players) {
 				if (player.Actor.Cmid != target) continue;
 
@@ -173,6 +179,8 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnExplosionDamage(GamePeer peer, int target, byte slot, byte distance, Vector3 force) {
+			if (State.CurrentStateId != GameStateId.MatchRunning) return;
+
 			foreach (var player in Players) {
 				if (player.Actor.Cmid != target) continue;
 

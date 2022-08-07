@@ -8,6 +8,8 @@ namespace Paradise.Realtime.Server.Game {
 		public PlayerPlayingState(GamePeer peer) : base(peer) { }
 
 		public override void OnEnter() {
+			Peer.GameEvents.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
+
 			if (Peer.Room.MetaData.GameMode == GameModeType.DeathMatch) {
 				short killsRemaining = (short)Room.MetaData.KillLimit;
 

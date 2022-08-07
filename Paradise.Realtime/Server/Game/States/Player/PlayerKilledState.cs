@@ -5,11 +5,14 @@
 		public PlayerKilledState(GamePeer peer) : base(peer) { }
 
 		public override void OnEnter() {
-			RespawnCountdown = new Countdown(Room.Loop, 5, 0);
-			RespawnCountdown.Counted += OnRespawnCountdownCounted;
-			RespawnCountdown.Completed += OnRespawnCountdownCompleted;
+			// Only allow respawn when not in Team Elimination
+			if (Peer.Room.MetaData.GameMode != Core.Types.GameModeType.EliminationMode) {
+				RespawnCountdown = new Countdown(Room.Loop, 5, 0);
+				RespawnCountdown.Counted += OnRespawnCountdownCounted;
+				RespawnCountdown.Completed += OnRespawnCountdownCompleted;
 
-			RespawnCountdown.Restart();
+				RespawnCountdown.Restart();
+			}
 		}
 
 		public override void OnExit() { }

@@ -24,7 +24,14 @@ namespace Paradise.Client.Bootstrap {
 				new CreateGamePanelGUIHook(),
 
 				// Add debug camera for internal staff (Ctrl-Alt-C)
-				new TrainingRoomHook()
+				new TrainingRoomHook(),
+
+				// Change "Kills remaining" string to "Rounds remaining" in Team Elimination
+				// and add appropriate game mode hint
+				new HUDStatusPanelHook(),
+
+				// Team Elimination: After a player is killed, move them to spectator state
+				new PlayerKilledSpectatorStateHook()
 			};
 
 			foreach (var hook in hooks) {

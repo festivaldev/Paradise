@@ -1,4 +1,5 @@
 ﻿using Paradise.Core.Models;
+using Paradise.Core.Types;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class WaitingForPlayersState : BaseMatchState {
@@ -9,6 +10,21 @@ namespace Paradise.Realtime.Server.Game {
 
 			Room.WinningCmid = 0;
 			Room.WinningTeam = TeamID.NONE;
+
+			Room.SpawnPointManager.Reset();
+
+			if (Room.MetaData.GameMode == GameModeType.EliminationMode) {
+				foreach (var player in Room.Players) {
+					Room.PreparePlayer(player);
+					Room.SpawnPlayer(player, false);
+
+					player.GameEvents.SendWaitingForPlayers();
+				}
+
+				if (Room.CanStartMatch) {
+					Room.State.SetState(GameStateId.PrepareNextRound);
+				}
+			}
 		}
 
 		public override void OnExit() {
@@ -23,14 +39,8 @@ namespace Paradise.Realtime.Server.Game {
 		private void OnPlayerJoined(object sender, PlayerJoinedEventArgs args) {
 			var player = args.Player;
 
-			var spawn = Room.SpawnPointManager.Get(player.Actor.Team);
-
-			player.Actor.Movement.Position = spawn.Position;
-			player.Actor.Movement.HorizontalRotation = spawn.Rotation;
-
-			foreach (var peer in Room.Peers) {
-				peer.GameEvents.SendPlayerJoinedGame(player.Actor.Info, player.Actor.Movement);
-			}
+			Room.PreparePlayer(player);
+			Room.SpawnPlayer(player, true);
 
 			if (Room.CanStartMatch) {
 				Room.State.SetState(GameStateId.PrepareNextRound);

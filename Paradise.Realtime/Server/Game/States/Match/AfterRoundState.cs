@@ -63,8 +63,8 @@ namespace Paradise.Realtime.Server.Game {
 				MostValuablePlayers.Add(new StatsSummary {
 					Cmid = player.Actor.Cmid,
 					Achievements = achievements,
-					Deaths = player.Actor.Info.Deaths,
-					Kills = player.Actor.Info.Kills,
+					Deaths = player.Actor.MatchStatistics.Deaths,
+					Kills = player.Actor.MatchStatistics.GetKills(),
 					Level = player.Actor.Info.Level,
 					Name = player.Actor.Info.PlayerName,
 					Team = player.Actor.Info.TeamID
@@ -82,7 +82,7 @@ namespace Paradise.Realtime.Server.Game {
 					MostValuablePlayers = MostValuablePlayers.OrderByDescending(_ => _.Kills).ToList(),
 					MatchGuid = Room.MetaData.Guid,
 					HasWonMatch = Room.IsTeamGame ? player.Actor.Team == Room.WinningTeam : player.Actor.Cmid == Room.WinningCmid,
-					TimeInGameMinutes = (int)TimeSpan.FromMilliseconds(Room.RoundEndTime - Room.RoundStartTime).TotalSeconds
+					TimeInGameMinutes = (int)Room.RoundDurations.Aggregate((sum, duration) => sum.Add(duration)).TotalSeconds
 				};
 
 				CalculateXp(matchData);
@@ -99,6 +99,7 @@ namespace Paradise.Realtime.Server.Game {
 				player.Actor.SaveStatistics(matchData);
 
 				player.GameEvents.SendMatchEnd(matchData);
+				player.State.SetState(PlayerStateId.Overview);
 			}
 
 			foreach (var peer in Room.Peers) {
