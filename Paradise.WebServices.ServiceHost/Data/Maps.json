@@ -550,7 +550,7 @@
 	{
 		"DisplayName": "Spaceport Alpha",
 		"Description": "Map Description",
-		"SceneName": "SpaceportAlpha",
+		"SceneName": "SpacePortAlpha",
 		"MapId": 65,
 		"IsBlueBox": false,
 		"MaxPlayer": 20,
@@ -702,6 +702,49 @@
 		"Description": "Used by RAID Corporation for the storage of weapons and other experimental technology, the Warehouse is a fast paced arena for short range fire fights. Only for privateers who can handle the adrenaline hit.",
 		"SceneName": "TheWarehouse",
 		"MapId": 17,
+		"IsBlueBox": false,
+		"MaxPlayer": 32,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 18,
+				"PlayersCurrent": 18,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 200,
+				"KillsCurrent": 100,
+				"PlayersMin": 2,
+				"PlayersMax": 18,
+				"PlayersCurrent": 18,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 100,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 18,
+				"PlayersCurrent": 18,
+				"TimeMin": 60,
+				"TimeMax": 600,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "UberZone",
+		"Description": "Map Description",
+		"SceneName": "UberZone",
+		"MapId": 66,
 		"IsBlueBox": false,
 		"MaxPlayer": 32,
 		"Settings": {

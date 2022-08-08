@@ -9,6 +9,12 @@
 		"Name": "Spaceport Alpha",
 		"FileName": "SpaceportAlpha.unity3d",
 		"MapId": 65,
-		"SupportedGameModes": [1]
+		"SupportedGameModes": [1, 2, 3]
+	},
+	{
+		"Name": "UberZone",
+		"FileName": "UberZone.unity3d",
+		"MapId": 66,
+		"SupportedGameModes": [1, 2, 3]
 	}
 ]
