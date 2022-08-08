@@ -102,7 +102,7 @@ namespace Paradise.Client {
 
 			var path = $"file:///{Application.dataPath}/Maps/{map.FileName}";
 
-			using (WWW loader = WWW.LoadFromCacheOrDownload(path, Environment.TickCount)) {
+			using (WWW loader = WWW.LoadFromCacheOrDownload(path, 1)) {
 				while (!loader.isDone) {
 					progressPopup.Progress = loader.progress;
 					yield return null;
