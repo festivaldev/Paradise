@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HarmonyLib;
+using System;
 using System.IO;
 using System.Reflection;
 using System.Xml;
@@ -13,8 +14,6 @@ namespace Paradise.Client {
 		public static bool AutoUpdates { get; private set; } = true;
 
 		public static GameObject PluginHolder;
-
-		public Type TypeToHook => typeof(ApplicationDataManager);
 
 		public ApplicationDataManagerHook() {
 			XmlSerializer ser = new XmlSerializer(typeof(ParadiseSettings));
@@ -42,7 +41,9 @@ namespace Paradise.Client {
 			UnityEngine.Object.DontDestroyOnLoad(PluginHolder);
 		}
 
-		public void Hook() {
+		public void Hook(Harmony harmonyInstance) {
+			Debug.Log($"[{typeof(ApplicationDataManagerHook)}] hooking {typeof(ApplicationDataManager)}");
+
 			var type = typeof(ApplicationDataManager);
 
 			var WebServiceBaseUrl_field = type.GetField("WebServiceBaseUrl", BindingFlags.Public | BindingFlags.Static);

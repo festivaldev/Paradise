@@ -1,21 +1,17 @@
 ﻿using HarmonyLib;
-using System;
 using System.IO;
 using System.Reflection;
-using System.Threading;
 using UnityEngine;
 
 namespace Paradise.Client {
 	public class MenuPageManagerHook : IParadiseHook {
-		public Type TypeToHook => typeof(MenuPageManager);
-
-		public void Hook() {
-			var harmony = new Harmony("tf.festival.Paradise.MenuPageManagerHook");
+		public void Hook(Harmony harmonyInstance) {
+			Debug.Log($"[{typeof(MenuPageManagerHook)}] hooking {typeof(MenuPageManager)}");
 
 			var orig_MenuPageManager_LoadPage = typeof(MenuPageManager).GetMethod("LoadPage", BindingFlags.Instance | BindingFlags.Public);
 			var prefix_MenuPageManager_LoadPage = typeof(MenuPageManagerHook).GetMethod("LoadPage_Prefix", BindingFlags.Static | BindingFlags.Public);
 
-			harmony.Patch(orig_MenuPageManager_LoadPage, new HarmonyMethod(prefix_MenuPageManager_LoadPage), null);
+			harmonyInstance.Patch(orig_MenuPageManager_LoadPage, new HarmonyMethod(prefix_MenuPageManager_LoadPage), null);
 		}
 
 		public static bool LoadPage_Prefix(MenuPageManager __instance, PageType pageType, bool forceReload = false) {

@@ -1,26 +1,22 @@
 ﻿using HarmonyLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using UberStrike.Core.Types;
+using UnityEngine;
 
 namespace Paradise.Client {
 	public class PlayerKilledSpectatorStateHook : IParadiseHook {
-		public Type TypeToHook => typeof(ApplicationDataManager).Assembly.GetType("PlayerKilledSpectatorState");
+		public void Hook(Harmony harmonyInstance) {
+			var type = typeof(ApplicationDataManager).Assembly.GetType("PlayerKilledSpectatorState");
 
-		public void Hook() {
-			var harmony = new Harmony("tf.festival.Paradise.PlayerKilledSpectatorStateHook");
+			Debug.Log($"[{typeof(PlayerKilledSpectatorStateHook)}] hooking {type}");
 
-			var orig_PlayerKilledSpectatorState_OnEnter = TypeToHook.GetMethod("OnEnter", BindingFlags.Instance | BindingFlags.Public);
+			var orig_PlayerKilledSpectatorState_OnEnter = type.GetMethod("OnEnter", BindingFlags.Instance | BindingFlags.Public);
 			var postfix_PlayerKilledSpectatorState_OnEnter = typeof(PlayerKilledSpectatorStateHook).GetMethod("OnEnter_Postfix", BindingFlags.Static | BindingFlags.Public);
 
-			harmony.Patch(orig_PlayerKilledSpectatorState_OnEnter, null, new HarmonyMethod(postfix_PlayerKilledSpectatorState_OnEnter));
+			harmonyInstance.Patch(orig_PlayerKilledSpectatorState_OnEnter, null, new HarmonyMethod(postfix_PlayerKilledSpectatorState_OnEnter));
 		}
 
 		public static void OnEnter_Postfix() {
-			
 			System.Threading.Timer timer = null;
 			timer = new System.Threading.Timer(s => {
 				if (GameState.Current.MatchState.CurrentStateId == GameStateId.MatchRunning) {

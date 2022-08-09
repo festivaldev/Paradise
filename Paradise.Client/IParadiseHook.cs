@@ -2,7 +2,6 @@
 
 namespace Paradise.Client {
 	public interface IParadiseHook {
-		Type TypeToHook { get; }
-		void Hook();
+		void Hook(HarmonyLib.Harmony harmonyInstance);
 	}
 }

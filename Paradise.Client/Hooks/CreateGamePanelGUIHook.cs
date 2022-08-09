@@ -11,23 +11,21 @@ namespace Paradise.Client {
 	public class CreateGamePanelGUIHook : IParadiseHook {
 		private static CreateGamePanelGUI Instance;
 
-		public Type TypeToHook => typeof(CreateGamePanelGUI);
-
-		public void Hook() {
-			var harmony = new Harmony("tf.festival.Paradise.CreateGamePanelGUIHook");
+		public void Hook(Harmony harmonyInstance) {
+			Debug.Log($"[{typeof(CreateGamePanelGUIHook)}] hooking {typeof(CreateGamePanelGUI)}");
 
 			var orig_CreateGamePanelGUI_DrawGameConfiguration = typeof(CreateGamePanelGUI).GetMethod("DrawGameConfiguration", BindingFlags.Instance | BindingFlags.NonPublic);
 			var prefix_CreateGamePanelGUI_DrawGameConfiguration = typeof(CreateGamePanelGUIHook).GetMethod("DrawGameConfiguration_Prefix", BindingFlags.Static | BindingFlags.Public);
 			var postfix_CreateGamePanelGUI_DrawGameConfiguration = typeof(CreateGamePanelGUIHook).GetMethod("DrawGameConfiguration_Postfix", BindingFlags.Static | BindingFlags.Public);
 
-			harmony.Patch(orig_CreateGamePanelGUI_DrawGameConfiguration, new HarmonyMethod(prefix_CreateGamePanelGUI_DrawGameConfiguration), new HarmonyMethod(postfix_CreateGamePanelGUI_DrawGameConfiguration));
+			harmonyInstance.Patch(orig_CreateGamePanelGUI_DrawGameConfiguration, new HarmonyMethod(prefix_CreateGamePanelGUI_DrawGameConfiguration), new HarmonyMethod(postfix_CreateGamePanelGUI_DrawGameConfiguration));
 
 
 			var orig_CreateGamePanelGUI_ValidateGamePassword = typeof(CreateGamePanelGUI).GetMethod("ValidateGamePassword", BindingFlags.Instance | BindingFlags.NonPublic);
 			var prefix_CreateGamePanelGUI_ValidateGamePassword = typeof(CreateGamePanelGUIHook).GetMethod("ValidateGamePassword_Prefix", BindingFlags.Static | BindingFlags.Public);
 			var postfix_CreateGamePanelGUI_ValidateGamePassword = typeof(CreateGamePanelGUIHook).GetMethod("ValidateGamePassword_Postfix", BindingFlags.Static | BindingFlags.Public);
 
-			harmony.Patch(orig_CreateGamePanelGUI_ValidateGamePassword, new HarmonyMethod(prefix_CreateGamePanelGUI_ValidateGamePassword), new HarmonyMethod(postfix_CreateGamePanelGUI_ValidateGamePassword));
+			harmonyInstance.Patch(orig_CreateGamePanelGUI_ValidateGamePassword, new HarmonyMethod(prefix_CreateGamePanelGUI_ValidateGamePassword), new HarmonyMethod(postfix_CreateGamePanelGUI_ValidateGamePassword));
 		}
 
 		public static bool DrawGameConfiguration_Prefix(CreateGamePanelGUI __instance) {

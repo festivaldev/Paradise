@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using HarmonyLib;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Paradise.Client.Bootstrap {
 	public static class Bootstrapper {
 		public static void Initialize() {
+			var harmony = new Harmony("tf.festival.Paradise");
+
 			var hooks = new List<IParadiseHook> {
 				// Adds update logic on game start
 				new MenuPageManagerHook(),
@@ -35,8 +38,7 @@ namespace Paradise.Client.Bootstrap {
 			};
 
 			foreach (var hook in hooks) {
-				Debug.Log($"[Paradise] Hooking {hook.TypeToHook.Name} using {hook.GetType().Name}");
-				hook.Hook();
+				hook.Hook(harmony);
 			}
 		}
 	}

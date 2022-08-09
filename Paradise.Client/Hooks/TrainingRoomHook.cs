@@ -5,22 +5,20 @@ using UnityEngine;
 
 namespace Paradise.Client {
 	public class TrainingRoomHook : IParadiseHook {
-		public Type TypeToHook => typeof(TrainingRoom);
-
 		private static bool IsFreeCamera;
 
-		public void Hook() {
-			var harmony = new Harmony("tf.festival.Paradise.TrainingRoomHook");
+		public void Hook(Harmony harmonyInstance) {
+			Debug.Log($"[{typeof(TrainingRoomHook)}] hooking {typeof(TrainingRoom)}");
 
 			var orig_TrainingRoom_ctor = typeof(TrainingRoom).GetConstructors()[0];
 			var prefix_TrainingRoom_ctor = typeof(TrainingRoomHook).GetMethod("ctor_Prefix", BindingFlags.Static | BindingFlags.Public);
 
-			harmony.Patch(orig_TrainingRoom_ctor, new HarmonyMethod(prefix_TrainingRoom_ctor), null);
+			harmonyInstance.Patch(orig_TrainingRoom_ctor, new HarmonyMethod(prefix_TrainingRoom_ctor), null);
 
 			var orig_TrainingRoom_OnUpdate = typeof(TrainingRoom).GetMethod("OnUpdate", BindingFlags.Instance | BindingFlags.NonPublic);
 			var postfix_TrainingRoom_OnUpdate = typeof(TrainingRoomHook).GetMethod("OnUpdate_Postfix", BindingFlags.Static | BindingFlags.Public);
 
-			harmony.Patch(orig_TrainingRoom_OnUpdate, null, new HarmonyMethod(postfix_TrainingRoom_OnUpdate));
+			harmonyInstance.Patch(orig_TrainingRoom_OnUpdate, null, new HarmonyMethod(postfix_TrainingRoom_OnUpdate));
 		}
 
 		public static bool ctor_Prefix(TrainingRoom __instance) {
