@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using System;
 using System.IO;
 using System.Reflection;
@@ -9,6 +9,9 @@ using UnityEngine;
 namespace Paradise.Client {
 	public class ApplicationDataManagerHook : IParadiseHook {
 		public static string WebServiceBaseUrl { get; private set; } = "https://ws.uberstrike.com/2.0/";
+		public static string WebServicePrefix { get; private set; } = "UberStrike.DataCenter.WebService.CWS.";
+		public static string WebServiceSuffix { get; private set; } = "Contract.svc";
+
 		public static string ImagePath { get; private set; } = "https://static.uberstrike.com/images/";
 		public static string UpdateUrl { get; private set; } = "https://localhost:8081/updates/";
 		public static bool AutoUpdates { get; private set; } = true;
@@ -23,6 +26,9 @@ namespace Paradise.Client {
 					var settings = (ParadiseSettings)ser.Deserialize(reader);
 
 					WebServiceBaseUrl = ForceTrailingSlash(settings.WebServiceBaseUrl);
+					WebServicePrefix = settings.WebServicePrefix;
+					WebServiceSuffix = settings.WebServiceSuffix;
+
 					ImagePath = ForceTrailingSlash(settings.ImagePath);
 					UpdateUrl = ForceTrailingSlash(settings.UpdateUrl);
 					AutoUpdates = settings.AutoUpdates;

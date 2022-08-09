@@ -8,11 +8,14 @@ namespace Paradise.Client.Bootstrap {
 			var harmony = new Harmony("tf.festival.Paradise");
 
 			var hooks = new List<IParadiseHook> {
-				// Adds update logic on game start
-				new MenuPageManagerHook(),
-
 				// Redirects web services to configured URLs and allows loading custom maps
 				new ApplicationDataManagerHook(),
+
+				// Adds an option to rename web service name prefix/suffix
+				new SoapClientHook(),
+
+				// Adds update logic on game start
+				new MenuPageManagerHook(),
 
 				// Adds missing screen resolutions to settings pane
 				new ScreenResolutionManagerHook(),

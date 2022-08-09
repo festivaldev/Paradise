@@ -6,6 +6,12 @@ namespace Paradise.Client {
 		public string WebServiceBaseUrl;
 
 		[XmlElement]
+		public string WebServicePrefix;
+
+		[XmlElement]
+		public string WebServiceSuffix;
+
+		[XmlElement]
 		public string ImagePath;
 
 		[XmlElement]
