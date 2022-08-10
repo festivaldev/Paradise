@@ -111,7 +111,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="packages.config" />
-    <None Include="www\updates\updates.yaml" />
+    <None Include="www\updates\HashFiles.ps1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Paradise.WebServices\Paradise.WebServices.csproj">
@@ -873,6 +873,9 @@
     <Content Include="www\maps\Volley.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="www\updates\stable\win32\Maps\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

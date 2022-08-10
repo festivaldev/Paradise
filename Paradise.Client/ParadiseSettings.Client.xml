@@ -3,9 +3,10 @@
 	<WebServiceBaseUrl>https://localhost:8080/2.0/</WebServiceBaseUrl>
 	<WebServicePrefix>UberStrike.DataCenter.WebService.CWS.</WebServicePrefix>
 	<WebServiceSuffix>Contract.svc</WebServiceSuffix>
-	
+
 	<ImagePath>https://localhost:8081/</ImagePath>
 
 	<AutoUpdates>true</AutoUpdates>
 	<UpdateUrl>https://localhost:8081/updates</UpdateUrl>
+	<UpdateChannel>stable</UpdateChannel>
 </ParadiseSettings>

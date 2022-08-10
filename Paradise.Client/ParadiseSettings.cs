@@ -18,6 +18,9 @@ namespace Paradise.Client {
 		public bool AutoUpdates = true;
 
 		[XmlElement]
+		public string UpdateChannel;
+
+		[XmlElement]
 		public string UpdateUrl;
 	}
 }

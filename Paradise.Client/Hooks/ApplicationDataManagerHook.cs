@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using System;
 using System.IO;
 using System.Reflection;
@@ -13,7 +13,9 @@ namespace Paradise.Client {
 		public static string WebServiceSuffix { get; private set; } = "Contract.svc";
 
 		public static string ImagePath { get; private set; } = "https://static.uberstrike.com/images/";
+
 		public static string UpdateUrl { get; private set; } = "https://localhost:8081/updates/";
+		public static string UpdateChannel { get; private set; } = "stable";
 		public static bool AutoUpdates { get; private set; } = true;
 
 		public static GameObject PluginHolder;
@@ -30,7 +32,9 @@ namespace Paradise.Client {
 					WebServiceSuffix = settings.WebServiceSuffix;
 
 					ImagePath = ForceTrailingSlash(settings.ImagePath);
+
 					UpdateUrl = ForceTrailingSlash(settings.UpdateUrl);
+					UpdateChannel = (settings.UpdateChannel ?? UpdateChannel).ToLower();
 					AutoUpdates = settings.AutoUpdates;
 				} catch (Exception e) {
 					Debug.LogError($"Error while loading Paradise settings: {e}");

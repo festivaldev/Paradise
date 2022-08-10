@@ -28,16 +28,18 @@ namespace Paradise.Client {
 		}
 
 		private static void OnUpdateAvailableCallback(UpdatePlatformDefinition updateDefinition) {
-			PopupSystem.ShowMessage("Update available", $"A mandatory update is available ({updateDefinition.version}). You need to install this update in order to play.", PopupSystem.AlertType.OK, delegate {
+			PopupSystem.ShowMessage("Update available", $"A mandatory update is available ({updateDefinition.version ?? "Unknown"}, Build {updateDefinition.build ?? "Unknown"}). You need to install this update in order to play.", PopupSystem.AlertType.OKCancel, delegate {
 				UnityRuntime.StartRoutine(GameObject.Find("Plugin Holder").GetComponent<ParadiseUpdater>().InstallUpdates(
 					OnUpdateCompleteCallback,
 					OnUpdateErrorCallback
 				));
+			}, delegate {
+				Application.Quit();
 			});
 		}
 
 		private static void OnUpdateCompleteCallback() {
-			PopupSystem.ShowMessage("Update Complete", "Updates have been installed successfully. UberStrike needs to be restarted for completing the installation.", PopupSystem.AlertType.OK, delegate {
+			PopupSystem.ShowMessage("Update Complete", "Updates have been installed successfully. In order to complete the installation, UberStrike needs to be restarted.", PopupSystem.AlertType.OK, delegate {
 				System.Diagnostics.Process.Start(Path.Combine(Directory.GetCurrentDirectory(), "UberStrike.exe")).WaitForExit(1000);
 				Application.Quit();
 			});
