@@ -56,8 +56,10 @@ namespace Paradise.Client {
 		public static void GetRemainingKillString_Postfix(int remainingKills, ref string __result) {
 			var type = typeof(HUDStatusPanel);
 
-			var GetRemainingRoundsString_method = type.GetMethod("GetRemainingRoundsString", BindingFlags.Instance | BindingFlags.NonPublic);
-			__result = (string)GetRemainingRoundsString_method.Invoke(HUDStatusPanelInstance, new object[] { remainingKills });
+			if (GameState.Current.GameMode == GameModeType.EliminationMode) {
+				var GetRemainingRoundsString_method = type.GetMethod("GetRemainingRoundsString", BindingFlags.Instance | BindingFlags.NonPublic);
+				__result = (string)GetRemainingRoundsString_method.Invoke(HUDStatusPanelInstance, new object[] { remainingKills });
+			}
 		}
 
 		public static void GetGameModeHint_Postfix(ref string __result) {
