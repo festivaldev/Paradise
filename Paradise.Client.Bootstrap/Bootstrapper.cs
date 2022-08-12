@@ -37,7 +37,10 @@ namespace Paradise.Client.Bootstrap {
 				new HUDStatusPanelHook(),
 
 				// Team Elimination: After a player is killed, move them to spectator state
-				new PlayerKilledSpectatorStateHook()
+				new PlayerKilledSpectatorStateHook(),
+
+				// Restores missing announcer lines by removing the 1000 second delay (why, oh why, Cmune??)
+				new SfxManagerHook()
 			};
 
 			foreach (var hook in hooks) {

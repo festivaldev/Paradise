@@ -69,6 +69,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hooks\SfxManagerHook.cs" />
     <Compile Include="Hooks\HUDStatusPanelHook.cs" />
     <Compile Include="Hooks\PlayerKilledSpectatorStateHook.cs" />
     <Compile Include="Hooks\SoapClientHook.cs" />
