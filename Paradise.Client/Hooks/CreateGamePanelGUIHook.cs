@@ -102,10 +102,10 @@ namespace Paradise.Client {
 				GUI.Label(new Rect(130f, 83f, 33f, 15f), timeLimit.ToString(), BlueStonez.label_dropdown);
 				mapSettings.TimeCurrent = 60 * (int)GUI.HorizontalSlider(new Rect(170f, 86f, GetField<float>("_sliderWidth"), 15f), (float)timeLimit, (float)(mapSettings.TimeMin / 60), 10f);
 
-				GUI.Label(new Rect(6f, 106f, 100f, 25f), GetField<SelectionGroup<GameModeType>>("_modeSelection").Current != GameModeType.EliminationMode ? LocalizedStrings.MaxKills : "Max Rounds", BlueStonez.label_interparkbold_18pt_left);
+				GUI.Label(new Rect(6f, 106f, 100f, 25f), GetField<SelectionGroup<GameModeType>>("_modeSelection").Current != GameModeType.EliminationMode ? LocalizedStrings.MaxKills : LocalizedStrings.MaxRounds, BlueStonez.label_interparkbold_18pt_left);
 				GUI.Label(new Rect(130f, 106f, 33f, 15f), mapSettings.KillsCurrent.ToString(), BlueStonez.label_dropdown);
 
-				mapSettings.KillsCurrent = (int)GUI.HorizontalSlider(new Rect(170f, 109f, GetField<float>("_sliderWidth"), 15f), (float)mapSettings.KillsCurrent, (float)mapSettings.KillsMin, 200f);
+				mapSettings.KillsCurrent = (int)GUI.HorizontalSlider(new Rect(170f, 109f, GetField<float>("_sliderWidth"), 15f), (float)mapSettings.KillsCurrent, (float)mapSettings.KillsMin, (float)mapSettings.KillsMax);
 
 				GUI.Label(new Rect(6f, 150f, 100f, 25f), "Min Level", BlueStonez.label_interparkbold_18pt_left);
 				GUI.Label(new Rect(130f, 150f, 33f, 15f), (GetField<int>("_minLevelCurrent") != 1) ? GetField<int>("_minLevelCurrent").ToString() : "All", BlueStonez.label_dropdown);
