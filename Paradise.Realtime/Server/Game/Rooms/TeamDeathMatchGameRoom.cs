@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Paradise.Core.Models;
 using System;
 using System.Collections.Generic;
@@ -48,8 +48,10 @@ namespace Paradise.Realtime.Server.Game {
 
 				if (args.AttackerCmid == args.VictimCmid) {
 					TeamScores[player.Actor.Team] -= 1;
+					break;
 				} else {
 					TeamScores[player.Actor.Team] += 1;
+					break;
 				}
 			}
 

@@ -89,6 +89,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			foreach (var player in Players) {
 				if (player.Actor.Cmid != target) continue;
+				if (player.Actor.Info.PlayerState == PlayerStates.Dead) return;
 
 				var weapon = default(UberStrikeItemWeaponView);
 
