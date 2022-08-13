@@ -1,6 +1,7 @@
 ﻿using Cmune.DataCenter.Common.Entities;
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace Paradise.Client {
@@ -29,6 +30,7 @@ namespace Paradise.Client {
 				new DebugGameObjects(),
 				new DebugAnimation(),
 				new DebugApplication(),
+				new DebugAudio((AudioSource)typeof(SfxManager).GetField("uiAudioSource", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(AutoMonoBehaviour<SfxManager>.Instance)),
 				new DebugGames(),
 				new DebugGameServerManager(),
 				new DebugGameState(),

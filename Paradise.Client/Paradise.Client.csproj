@@ -74,6 +74,7 @@
     <Compile Include="Hooks\PlayerKilledSpectatorStateHook.cs" />
     <Compile Include="Hooks\SoapClientHook.cs" />
     <Compile Include="Hooks\TrainingRoomHook.cs" />
+    <Compile Include="Plugins\Console\DebugAudio.cs" />
     <Compile Include="Plugins\Console\DebugGameObjects.cs" />
     <Compile Include="Plugins\Custom Maps\CustomMapManager.cs" />
     <Compile Include="Plugins\Console\DebugConsoleGUI.cs" />
