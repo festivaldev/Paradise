@@ -7,22 +7,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		public PlayerPlayingState(GamePeer peer) : base(peer) { }
 
-		public override void OnEnter() {
-			Peer.GameEvents.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
-
-			if (Peer.Room.MetaData.GameMode == GameModeType.DeathMatch) {
-				short killsRemaining = (short)Room.MetaData.KillLimit;
-
-				Room.GetCurrentScore(out killsRemaining, out _, out _);
-				Peer.GameEvents.SendKillsRemaining(killsRemaining, 0);
-			} else {
-				short blueTeamScore = 0;
-				short redTeamScore = 0;
-
-				Room.GetCurrentScore(out _, out blueTeamScore, out redTeamScore);
-				Peer.GameEvents.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
-			}
-		}
+		public override void OnEnter() { }
 
 		public override void OnExit() { }
 

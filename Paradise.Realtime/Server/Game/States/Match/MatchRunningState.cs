@@ -18,6 +18,8 @@ namespace Paradise.Realtime.Server.Game {
 
 			foreach (var player in Room.Players) {
 				player.State.SetState(PlayerStateId.Playing);
+
+				player.GameEvents.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
 			}
 		}
 
@@ -53,6 +55,20 @@ namespace Paradise.Realtime.Server.Game {
 			}
 
 			args.Player.State.SetState(PlayerStateId.Playing);
+			args.Player.GameEvents.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
+
+			if (Room.MetaData.GameMode == GameModeType.DeathMatch) {
+				short killsRemaining = (short)Room.MetaData.KillLimit;
+
+				Room.GetCurrentScore(out killsRemaining, out _, out _);
+				args.Player.GameEvents.SendKillsRemaining(killsRemaining, 0);
+			} else {
+				short blueTeamScore = 0;
+				short redTeamScore = 0;
+
+				Room.GetCurrentScore(out _, out blueTeamScore, out redTeamScore);
+				args.Player.GameEvents.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
+			}
 		}
 
 		private void OnPlayerLeft(object sender, PlayerLeftEventArgs args) {

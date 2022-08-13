@@ -25,6 +25,9 @@ namespace Paradise.Realtime.Server.Game {
 			foreach (var player in Room.Players) {
 				player.State.SetState(PlayerStateId.PrepareForMatch);
 
+				player.GameEvents.SendKillsRemaining(-1, 0);
+				player.GameEvents.SendUpdateRoundScore(Room.RoundNumber, -1, -1);
+
 				player.PreviousSpawnPoints.Clear();
 
 				Room.PreparePlayer(player);

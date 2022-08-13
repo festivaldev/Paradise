@@ -51,10 +51,6 @@ namespace Paradise.Realtime.Server.Game {
 				HasRoundEnded = true;
 			}
 
-			foreach (var peer in Peers) {
-				peer.GameEvents.SendUpdateRoundScore(RoundNumber, (short)TeamScores[TeamID.BLUE], (short)TeamScores[TeamID.RED]);
-			}
-
 			base.OnPlayerKilled(args);
 		}
 	}
