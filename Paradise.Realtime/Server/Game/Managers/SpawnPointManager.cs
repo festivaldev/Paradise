@@ -46,28 +46,11 @@ namespace Paradise.Realtime.Server.Game {
 			}
 
 			SpawnPointsByTeam[team] = spawns;
-			SpawnPoints.AddRange(spawns);
-			Index = Rand.Next(SpawnPointsByTeam.Count);
 		}
 
 		public SpawnPoint Get(TeamID team) {
-			if (team == TeamID.NONE) {
-				if (SpawnCount % 5 == 0) {
-					Index = Rand.Next(SpawnPoints.Count);
-				} else {
-					Index++;
-				}
-
-				return SpawnPoints[Index];
-			} else {
-				if (SpawnCount % 5 == 0) {
-					Index = Rand.Next(SpawnPointsByTeam.Count);
-				} else {
-					Index++;
-				}
-
-				return SpawnPointsByTeam[team][Index];
-			}
+			Index = Rand.Next(SpawnPointsByTeam[team].Count);
+			return SpawnPointsByTeam[team][Index];
 		}
 
 		public int GetSpawnPointCount(TeamID team) {
