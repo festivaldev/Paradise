@@ -106,6 +106,10 @@ namespace Paradise.Realtime.Server.Game {
 
 		public void SendAllPlayerDeltas(List<GameActorInfoDelta> allDeltas) {
 			using (var bytes = new MemoryStream()) {
+				foreach (var delta in allDeltas) {
+					delta.UpdateDeltaMask();
+				}
+
 				ListProxy<GameActorInfoDelta>.Serialize(bytes, allDeltas, GameActorInfoDeltaProxy.Serialize);
 
 				SendEvent((byte)IGameRoomEventsType.AllPlayerDeltas, bytes);
@@ -123,6 +127,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		public void SendPlayerDelta(GameActorInfoDelta delta) {
 			using (var bytes = new MemoryStream()) {
+				delta.UpdateDeltaMask();
 				GameActorInfoDeltaProxy.Serialize(bytes, delta);
 
 				SendEvent((byte)IGameRoomEventsType.PlayerDelta, bytes);

@@ -161,6 +161,15 @@ namespace Paradise.Realtime.Server.Game {
 
 								peer.Actor.IncreaseWeaponKills(weapon.ItemClass, (BodyPart)bodyPart);
 								peer.Actor.IncreaseConsecutiveSnipes();
+
+								var deltas = new List<GameActorInfoDelta> {
+									player.Actor.Delta,
+									peer.Actor.Delta
+								};
+
+								foreach (var _player in Players) {
+									_player.GameEvents.SendAllPlayerDeltas(deltas);
+								}
 							} else {
 								peer.Actor.IncreaseSuicides();
 							}

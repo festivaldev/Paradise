@@ -242,7 +242,6 @@ namespace Paradise.Realtime.Server.Game {
 					var delta = actor.Delta;
 
 					if (delta.Changes.Count > 0) {
-						delta.UpdateDeltaMask();
 						deltas.Add(delta);
 					}
 
