@@ -8,5 +8,5 @@
 
 	<AutoUpdates>true</AutoUpdates>
 	<UpdateUrl>https://localhost:8081/updates</UpdateUrl>
-	<UpdateChannel>stable</UpdateChannel>
+	<UpdateChannel>Stable</UpdateChannel>
 </ParadiseSettings>

@@ -38,7 +38,7 @@ namespace Paradise.Client {
 		private UpdatePlatformDefinition CachedUpdates;
 		private List<UpdateFile> FilesToUpdate = new List<UpdateFile>();
 
-		private static string UpdateCatalog => $"updates-{ApplicationDataManagerHook.UpdateChannel}.yaml";
+		private static string UpdateCatalog => $"updates-{ApplicationDataManagerHook.UpdateChannel.ToString().ToLower()}.yaml";
 		private static string UpdatePlatform {
 			get {
 				switch (Application.platform) {

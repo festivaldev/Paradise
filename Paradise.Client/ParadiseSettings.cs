@@ -1,6 +1,13 @@
+using System.Collections.Generic;
 using System.Xml.Serialization;
+using UberStrike.DataCenter.Common.Entities;
 
 namespace Paradise.Client {
+	public enum UpdateChannel {
+		Stable,
+		Beta
+	}
+
 	public class ParadiseSettings {
 		[XmlElement]
 		public string WebServiceBaseUrl;
@@ -18,9 +25,12 @@ namespace Paradise.Client {
 		public bool AutoUpdates = true;
 
 		[XmlElement]
-		public string UpdateChannel;
+		public UpdateChannel UpdateChannel;
 
 		[XmlElement]
 		public string UpdateUrl;
+
+		[XmlElement]
+		public AuthenticateApplicationView ServerOverrides;
 	}
 }

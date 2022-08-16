@@ -13,7 +13,6 @@ namespace Paradise.Client {
 			var prefix_SoapClient_MakeRequest = typeof(SoapClientHook).GetMethod("MakeRequest_Prefix", BindingFlags.Static | BindingFlags.Public);
 
 			harmonyInstance.Patch(orig_SoapClient_MakeRequest, new HarmonyMethod(prefix_SoapClient_MakeRequest), null);
-			UnityEngine.Debug.Log(orig_SoapClient_MakeRequest);
 		}
 
 		public static bool MakeRequest_Prefix(string interfaceName, ref string serviceName, string methodName, byte[] data, Action<byte[]> requestCallback, Action<Exception> exceptionHandler) {
