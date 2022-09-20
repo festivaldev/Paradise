@@ -1,0 +1,19 @@
+﻿{
+	"CommServer": {
+		"IP": "192.168.178.60",
+		"Port": 5055,
+		"Region": 1,
+		"UsageType": 6
+	},
+	"GameServers": [
+		{
+            "IP": "192.168.178.60",
+            "Port": 5155,
+            "Name": "[UN] Paradise Dev",
+			"PhotonId": 1,
+            "MinLatency": 100,
+			"Region": 1,
+			"UsageType": 1
+		}
+	]
+}

@@ -1,12 +1,8 @@
 .vs/
-*/bin/
-*/obj/
+**/bin/
+**/obj/
 packages/
-photon/*
 AssemblyReferences/*.dll
 build/
-release-test/
 node_modules/
-*old*/
-*.lnk
 .DS_Store

@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ParadiseClientSettings>
+	<WebServiceBaseUrl>https://paradise.festival.tf:5053/2.0/</WebServiceBaseUrl>
+	<WebServicePrefix>UberStrike.DataCenter.WebService.CWS.</WebServicePrefix>
+	<WebServiceSuffix>Contract.svc</WebServiceSuffix>
+
+	<ImagePath>https://paradise.festival.tf:5054/images</ImagePath>
+
+	<AutoUpdates>true</AutoUpdates>
+	<UpdateUrl>https://paradise.festival.tf:5054/updates</UpdateUrl>
+	<UpdateChannel>Stable</UpdateChannel>
+
+	<ServerOverrides>
+		<GameServers>
+			<!--<PhotonView>
+				<IP>127.0.0.1</IP>
+				<Port>57623</Port>
+				<Name>Paradise Dev</Name>
+				<PhotonId>1337</PhotonId>
+				<Region>EuWest</Region>
+				<UsageType>All</UsageType>
+			</PhotonView>-->
+		</GameServers>
+	</ServerOverrides>
+</ParadiseClientSettings>

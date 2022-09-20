@@ -1,0 +1,121 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4481678E-F589-4D0A-8DA1-7DB8A5560A0B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Paradise.Client</RootNamespace>
+    <AssemblyName>Paradise.Client</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\build\client\Managed\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\build\client\Managed\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowedReferenceRelatedFileExtensions>
+      <!-- Prevent default XML and PDB files copied to output in RELEASE.
+           Only *.allowedextension files will be included, which doesn't exist in my case.
+      -->
+	  .allowedextension
+	</AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Lib.Harmony.2.2.2\lib\net35\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\AssemblyReferences\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\AssemblyReferences\Assembly-CSharp-firstpass.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.15\lib\net35\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\AssemblyReferences\UnityEngine.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="YamlDotNet, Version=12.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\YamlDotNet.12.0.0\lib\net35\YamlDotNet.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Components\ParadiseApplicationManager.cs" />
+    <Compile Include="Hooks\ApplicationDataManagerHook.cs" />
+    <Compile Include="Hooks\AuthenticationManagerHook.cs" />
+    <Compile Include="Hooks\BundleManagerHook.cs" />
+    <Compile Include="Hooks\ClanDataManagerHook.cs" />
+    <Compile Include="Hooks\CreateGamePanelGUIHook.cs" />
+    <Compile Include="Hooks\GameStateHook.cs" />
+    <Compile Include="Hooks\HUDStatusPanelHook.cs" />
+    <Compile Include="Hooks\MapManagerHook.cs" />
+    <Compile Include="Hooks\MenuPageManagerHook.cs" />
+    <Compile Include="Hooks\PlayerKilledSpectatorStateHook.cs" />
+    <Compile Include="Hooks\PlayerLeadAudioHook.cs" />
+    <Compile Include="Hooks\ScreenResolutionManagerHook.cs" />
+    <Compile Include="Hooks\SfxManagerHook.cs" />
+    <Compile Include="Hooks\OptionsPanelGUIHook.cs" />
+    <Compile Include="Hooks\SoapClientHook.cs" />
+    <Compile Include="Hooks\TrainingRoomHook.cs" />
+    <Compile Include="Hooks\WeaponControllerHook.cs" />
+    <Compile Include="HTTPStatusParser.cs" />
+    <Compile Include="IParadiseHook.cs" />
+    <Compile Include="ParadiseClient.cs" />
+    <Compile Include="ParadiseClientSettings.cs" />
+    <Compile Include="Plugins\Console\DebugAudio.cs" />
+    <Compile Include="Plugins\Console\DebugConsoleGUI.cs" />
+    <Compile Include="Plugins\Console\DebugGameObjects.cs" />
+    <Compile Include="Plugins\CustomMapManager.cs" />
+    <Compile Include="Plugins\Update\ParadiseUpdater.cs" />
+    <Compile Include="Plugins\Update\UberstrikeCustomMapView.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Service Clients\MonoInstance.cs" />
+    <Compile Include="Service Clients\ParadiseApplicationWebServiceClient.cs" />
+    <Compile Include="Service Clients\SoapClient.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ScreenResolutions.xml" />
+    <EmbeddedResource Include="log4net.config" />
+    <None Include="packages.config" />
+    <Content Include="Paradise.Settings.Client.xml" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>XCOPY /Y /R "$(TargetPath)" "K:\UberStrike Dev\Dev 1\UberStrike_Data\Managed\"
+XCOPY /Y /R "$(TargetPath)" "K:\UberStrike Dev\Dev 2\UberStrike_Data\Managed\"
+XCOPY /Y /R "$(TargetPath)" "K:\UberStrike Dev\Dev 3\UberStrike_Data\Managed\"
+</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>taskkill /f /im UberStrike.exe
+exit 0</PreBuildEvent>
+  </PropertyGroup>
+</Project>

@@ -1,7 +1,0 @@
-﻿{
-	"compositeHashes": [],
-	"junkHashes": [],
-	"webServiceBaseUrl": "https://localhost:8080/2.0",
-	"heartbeatInterval": 5,
-	"heartbeatTimeout": 5
-}

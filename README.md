@@ -38,6 +38,7 @@ _Used libraries_
 * _log4net_ by The Apache Software Foundation
 * _Newtonsoft.Json_ by James Newton-King
 * _YamlDotNet_ by Antoine Aubry
+* _ProfanityDetector_ by stephenhaunts
 
 _Honorable mentions_
 * [@FICTURE7](https://github.com/FICTURE7) - for initially forking Dropshot and investing a lot of time to get things working. Also, you've got us to work on UberStrok with you after we gave up on the realtime stuff, thank you very much!

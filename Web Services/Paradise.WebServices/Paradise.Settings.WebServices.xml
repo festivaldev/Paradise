@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ParadiseServerSettings>
+	<EnableSSL>true</EnableSSL>
+	<SSLCertificateName>192.168.178.60</SSLCertificateName>
+
+	<WebServiceHostName></WebServiceHostName>
+	<WebServicePort>8080</WebServicePort>
+	<WebServicePrefix>UberStrike.DataCenter.WebService.CWS.</WebServicePrefix>
+	<WebServiceSuffix>Contract.svc</WebServiceSuffix>
+
+	<FileServerHostName></FileServerHostName>
+	<FileServerPort>8081</FileServerPort>
+</ParadiseServerSettings>

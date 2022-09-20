@@ -1,0 +1,107 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8FD8FEC8-38BE-417C-9086-50E2122F4007}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Paradise.WebServices.Services</RootNamespace>
+    <AssemblyName>Paradise.WebServices.Services</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+	<AllowedReferenceRelatedFileExtensions>
+      <!-- Prevent default XML and PDB files copied to output in RELEASE.
+           Only *.allowedextension files will be included, which doesn't exist in my case.
+      -->
+	  .allowedextension
+	</AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
+  <PropertyGroup />
+  <ItemGroup>
+    <Reference Include="LiteDB, Version=5.0.12.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\LiteDB.5.0.12\lib\net45\LiteDB.dll</HintPath>
+    </Reference>
+    <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IdentityModel" />
+    <Reference Include="System.Runtime" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BaseWebService.cs" />
+    <Compile Include="Contracts\IApplicationWebServiceContract.cs" />
+    <Compile Include="Contracts\IAuthenticationWebServiceContract.cs" />
+    <Compile Include="Contracts\IClanWebServiceContract.cs" />
+    <Compile Include="Contracts\IModerationWebServiceContract.cs" />
+    <Compile Include="Contracts\IPrivateMessageWebServiceContract.cs" />
+    <Compile Include="Contracts\IRelationshipWebServiceContract.cs" />
+    <Compile Include="Contracts\IShopWebServiceContract.cs" />
+    <Compile Include="Contracts\IUserWebServiceContract.cs" />
+    <Compile Include="Contracts\IWebServiceContractBase.cs" />
+    <Compile Include="Database\DatabaseManager.cs" />
+    <Compile Include="Database\ModerationAction.cs" />
+    <Compile Include="Database\SteamMember.cs" />
+    <Compile Include="IServiceCallback.cs" />
+    <Compile Include="ProfanityFilter\AllowList.cs" />
+    <Compile Include="ProfanityFilter\Interfaces\IAllowList.cs" />
+    <Compile Include="ProfanityFilter\Interfaces\IProfanityFilter.cs" />
+    <Compile Include="ProfanityFilter\ProfanityBase.cs" />
+    <Compile Include="ProfanityFilter\ProfanityFilter.cs" />
+    <Compile Include="ProfanityFilter\ProfanityList.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\ApplicationWebService.cs" />
+    <Compile Include="Services\AuthenticationWebService.cs" />
+    <Compile Include="Services\ClanWebService.cs" />
+    <Compile Include="Services\ModerationWebService.cs" />
+    <Compile Include="Services\PrivateMessageWebService.cs" />
+    <Compile Include="Services\RelationshipWebService.cs" />
+    <Compile Include="Services\ShopWebService.cs" />
+    <Compile Include="Services\UserWebService.cs" />
+    <Compile Include="XpPointsUtil.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Properties\packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\Paradise.Core\Paradise.Core.csproj">
+      <Project>{2C90E774-49B8-4D1E-BA6D-FA9F47B647FB}</Project>
+      <Name>Paradise.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
