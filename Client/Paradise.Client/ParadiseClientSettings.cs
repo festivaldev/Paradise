@@ -32,7 +32,7 @@ namespace Paradise.Client {
 		public UpdateChannel UpdateChannel = UpdateChannel.Stable;
 
 		[XmlElement]
-		public string UpdateUrl = "https://paradise.festival.tf:5054/updates";
+		public string UpdateUrl = "https://paradise.festival.tf:5054/updates/";
 
 		[XmlElement]
 		public AuthenticateApplicationView ServerOverrides;
