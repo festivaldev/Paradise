@@ -6,8 +6,6 @@ using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GamePeer : BasePeer {
-		public Guid PeerId { get; } = Guid.NewGuid();
-
 		public GameActor Actor;
 		public BaseGameRoom Room;
 		public StateMachine<PlayerStateId> State { get; private set; }

@@ -1,4 +1,4 @@
-﻿using Paradise.Core.Models;
+using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.DataCenter.Common.Entities;
 using System;
@@ -19,42 +19,42 @@ namespace Paradise.Realtime.Server.Game {
 
 				// Most Valuable (Highest KD)
 				if (Room.Players.Where(_ => _.Actor.KillDeathRatio > 1).Count() > 0) {
-					if (Room.Players.OrderByDescending(_ => _.Actor.KillDeathRatio).First().PeerId.CompareTo(player.PeerId) == 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.KillDeathRatio).First().Actor.Cmid.CompareTo(player.Actor.Cmid) == 0) {
 						achievements.Add((byte)AchievementType.MostValuable, Convert.ToUInt16(player.Actor.KillDeathRatio * 10));
 					}
 				}
 
 				// Most Aggressive (Most Kills Total)
 				if (Room.Players.Where(_ => _.Actor.Kills > 0).Count() > 0) {
-					if (Room.Players.OrderByDescending(_ => _.Actor.Kills).First().PeerId.CompareTo(player.PeerId) == 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.Kills).First().Actor.Cmid.CompareTo(player.Actor.Cmid) == 0) {
 						achievements.Add((byte)AchievementType.MostAggressive, Convert.ToUInt16(player.Actor.Kills));
 					}
 				}
 
 				// Sharpest Shooter (Most Critical Hits)
 				if (Room.Players.Where(_ => _.Actor.MatchStatistics.Headshots + _.Actor.MatchStatistics.Nutshots > 0).Count() > 0) {
-					if (Room.Players.OrderByDescending(_ => _.Actor.MatchStatistics.Headshots + _.Actor.MatchStatistics.Nutshots).First().PeerId.CompareTo(player.PeerId) == 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.MatchStatistics.Headshots + _.Actor.MatchStatistics.Nutshots).First().Actor.Cmid.CompareTo(player.Actor.Cmid) == 0) {
 						achievements.Add((byte)AchievementType.SharpestShooter, (ushort)(player.Actor.MatchStatistics.Headshots + player.Actor.MatchStatistics.Nutshots));
 					}
 				}
 
 				// Most Trigger Happy (Highest Killstreak)
 				if (Room.Players.Where(_ => _.Actor.MatchStatistics.ConsecutiveSnipes > 1).Count() > 0) {
-					if (Room.Players.OrderByDescending(_ => _.Actor.MatchStatistics.ConsecutiveSnipes).First().PeerId.CompareTo(player.PeerId) == 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.MatchStatistics.ConsecutiveSnipes).First().Actor.Cmid.CompareTo(player.Actor.Cmid) == 0) {
 						achievements.Add((byte)AchievementType.TriggerHappy, (ushort)player.Actor.MatchStatistics.ConsecutiveSnipes);
 					}
 				}
 
 				// Hardest Hitter (Highest Damage Dealt)
 				if (Room.Players.Where(_ => _.Actor.MatchStatistics.GetDamageDealt() > 0).Count() > 0) {
-					if (Room.Players.OrderByDescending(_ => _.Actor.MatchStatistics.GetDamageDealt()).First().PeerId.CompareTo(player.PeerId) == 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.MatchStatistics.GetDamageDealt()).First().Actor.Cmid.CompareTo(player.Actor.Cmid) == 0) {
 						achievements.Add((byte)AchievementType.HardestHitter, (ushort)player.Actor.MatchStatistics.GetDamageDealt());
 					}
 				}
 
 				// Cost Effective (Highest Accuracy)
 				if (Room.Players.Where(_ => _.Actor.Accuracy > 0).Count() > 0) {
-					if (Room.Players.OrderByDescending(_ => _.Actor.Accuracy).First().PeerId.CompareTo(player.PeerId) == 0) {
+					if (Room.Players.OrderByDescending(_ => _.Actor.Accuracy).First().Actor.Cmid.CompareTo(player.Actor.Cmid) == 0) {
 						achievements.Add((byte)AchievementType.CostEffective, Convert.ToUInt16(player.Actor.Accuracy * 10));
 					}
 				}
@@ -103,7 +103,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			foreach (var peer in Room.Peers) {
 				foreach (var player in Room.Players) {
-					if (player.PeerId.CompareTo(peer.PeerId) == 0) continue;
+					if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0) continue;
 
 					player.GameEvents.SendPlayerLeftGame(peer.Actor.Cmid);
 				}

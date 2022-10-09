@@ -105,17 +105,5 @@ namespace Paradise.Realtime.Server.Game {
 
 			return null;
 		}
-
-		public GamePeer FindPeerWithPeerId(Guid peerId) {
-			foreach (var room in Rooms) {
-				foreach (var peer in room.Value.Peers) {
-					if (peer.PeerId.CompareTo(peerId) == 0) {
-						return peer;
-					}
-				}
-			}
-
-			return null;
-		}
 	}
 }

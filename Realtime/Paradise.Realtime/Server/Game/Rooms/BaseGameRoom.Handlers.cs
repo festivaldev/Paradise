@@ -43,7 +43,7 @@ namespace Paradise.Realtime.Server.Game {
 			}
 
 			lock (_players) {
-				if (_players.FirstOrDefault(_ => _.PeerId.CompareTo(peer.PeerId) == 0) == null) {
+				if (_players.FirstOrDefault(_ => _.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0) == null) {
 					_players.Add(peer);
 				}
 			}
@@ -88,7 +88,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		protected override void OnOpenDoor(GamePeer peer, int doorId) {
 			foreach (var otherPeer in Peers) {
-				if (otherPeer.PeerId.CompareTo(peer.PeerId) == 0) continue;
+				if (otherPeer.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0) continue;
 
 				otherPeer.GameEvents.SendDoorOpen(doorId);
 			}
@@ -169,7 +169,7 @@ namespace Paradise.Realtime.Server.Game {
 					player.Actor.Info.Health -= shortDamage;
 
 					if (State.CurrentStateId == GameStateId.MatchRunning) {
-						if (player.PeerId.CompareTo(peer.PeerId) != 0) {
+						if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) != 0) {
 							peer.Actor.IncreaseWeaponShotsHit(weapon.ItemClass);
 							peer.Actor.IncreaseWeaponDamageDone(weapon.ItemClass, shortDamage);
 						}
@@ -181,7 +181,7 @@ namespace Paradise.Realtime.Server.Game {
 						player.Actor.Info.PlayerState |= PlayerStates.Dead;
 
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
-							if (player.PeerId.CompareTo(peer.PeerId) != 0) {
+							if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) != 0) {
 								player.Actor.IncreaseDeaths();
 
 								peer.Actor.IncreaseWeaponKills(weapon.ItemClass, (BodyPart)bodyPart);
@@ -201,9 +201,7 @@ namespace Paradise.Realtime.Server.Game {
 						}
 
 						OnPlayerKilled(new PlayerKilledEventArgs {
-							AttackerPeerId = peer.PeerId,
 							AttackerCmid = peer.Actor.Cmid,
-							VictimPeerId = player.PeerId,
 							VictimCmid = player.Actor.Cmid,
 							ItemClass = weapon.ItemClass,
 							Damage = (ushort)shortDamage,
@@ -263,7 +261,7 @@ namespace Paradise.Realtime.Server.Game {
 
 					var byteAngle = Conversions.Angle2Byte(angle);
 
-					if (player.PeerId.CompareTo(peer.PeerId) != 0) {
+					if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) != 0) {
 						if (player.Actor.Info.ArmorPoints > 0) {
 							int originalArmor = player.Actor.Info.ArmorPoints;
 							player.Actor.Info.ArmorPoints = (byte)Math.Max(0, player.Actor.Info.ArmorPoints - shortDamage);
@@ -287,7 +285,7 @@ namespace Paradise.Realtime.Server.Game {
 					player.Actor.Info.Health -= shortDamage;
 
 					if (State.CurrentStateId == GameStateId.MatchRunning) {
-						if (player.PeerId.CompareTo(peer.PeerId) != 0) {
+						if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) != 0) {
 							peer.Actor.IncreaseWeaponShotsHit(weapon.ItemClass);
 							peer.Actor.IncreaseWeaponDamageDone(weapon.ItemClass, shortDamage);
 						}
@@ -299,7 +297,7 @@ namespace Paradise.Realtime.Server.Game {
 						player.Actor.Info.PlayerState |= PlayerStates.Dead;
 
 						if (State.CurrentStateId == GameStateId.MatchRunning) {
-							if (player.PeerId.CompareTo(peer.PeerId) != 0) {
+							if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) != 0) {
 								player.Actor.IncreaseDeaths();
 
 								peer.Actor.IncreaseWeaponKills(weapon.ItemClass, BodyPart.Body);
@@ -310,16 +308,14 @@ namespace Paradise.Realtime.Server.Game {
 						}
 
 						OnPlayerKilled(new PlayerKilledEventArgs {
-							AttackerPeerId = peer.PeerId,
 							AttackerCmid = peer.Actor.Cmid,
-							VictimPeerId = player.PeerId,
 							VictimCmid = player.Actor.Cmid,
 							ItemClass = weapon.ItemClass,
 							Damage = (ushort)shortDamage,
 							Part = BodyPart.Body,
 							Direction = -(Vector3)direction
 						});
-					} else if (player.PeerId.CompareTo(peer.PeerId) != 0) {
+					} else if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) != 0) {
 						player.GameEvents.SendPlayerHit(force * weapon.DamageKnockback);
 					}
 				}
@@ -338,9 +334,7 @@ namespace Paradise.Realtime.Server.Game {
 			}
 
 			OnPlayerKilled(new PlayerKilledEventArgs {
-				AttackerPeerId = peer.PeerId,
 				AttackerCmid = peer.Actor.Cmid,
-				VictimPeerId = peer.PeerId,
 				VictimCmid = peer.Actor.Cmid,
 				ItemClass = UberstrikeItemClass.WeaponMachinegun,
 				Part = BodyPart.Body,
@@ -350,7 +344,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		protected override void OnJump(GamePeer peer, Vector3 position) {
 			foreach (var otherPeer in Peers) {
-				if (otherPeer.PeerId.CompareTo(peer.PeerId) == 0) continue;
+				if (otherPeer.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0) continue;
 
 				otherPeer.GameEvents.SendPlayerJumped(peer.Actor.Cmid, peer.Actor.Movement.Position);
 			}
@@ -476,7 +470,7 @@ namespace Paradise.Realtime.Server.Game {
 			}
 
 			foreach (var otherPeer in Peers) {
-				if (otherPeer.PeerId.CompareTo(peer.PeerId) == 0) continue;
+				if (otherPeer.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0) continue;
 
 				otherPeer.GameEvents.SendSingleBulletFire(peer.Actor.Cmid);
 			}
@@ -506,7 +500,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		protected override void OnEmitQuickItem(GamePeer peer, Vector3 origin, Vector3 direction, int itemId, byte playerNumber, int projectileID) {
 			foreach (var otherPeer in Peers) {
-				if (otherPeer.PeerId.CompareTo(peer.PeerId) == 0) continue;
+				if (otherPeer.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0) continue;
 
 				otherPeer.GameEvents.SendEmitQuickItem(origin, direction, itemId, playerNumber, projectileID);
 			}

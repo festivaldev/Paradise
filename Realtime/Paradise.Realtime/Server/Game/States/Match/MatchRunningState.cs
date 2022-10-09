@@ -100,7 +100,7 @@ namespace Paradise.Realtime.Server.Game {
 			foreach (var peer in Room.Peers) {
 				peer.GameEvents.SendPlayerKilled(args.AttackerCmid, args.VictimCmid, (byte)args.ItemClass, args.Damage, (byte)args.Part, args.Direction);
 
-				if (peer.PeerId.CompareTo(args.VictimPeerId) == 0) {
+				if (peer.Actor.Cmid.CompareTo(args.VictimCmid) == 0) {
 					peer.State.SetState(PlayerStateId.Killed);
 				}
 			}

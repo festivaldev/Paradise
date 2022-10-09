@@ -139,17 +139,17 @@ namespace Paradise.Realtime.Server.Game {
 				PlayerName = peer.Member.CmuneMemberView.PublicProfile.Name,
 			};
 
+			peer.Actor = new GameActor(actorInfo);
+			peer.Actor.Peer = peer;
+			peer.Room = this;
+
 			lock (_peers) {
-				if (_peers.Find(_ => _.PeerId.CompareTo(peer.PeerId) == 0) != null) {
-					_peers.RemoveAll(_ => _.PeerId.CompareTo(peer.PeerId) == 0);
+				if (_peers.Find(_ => _.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0) != null) {
+					_peers.RemoveAll(_ => _.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0);
 				}
 
 				_peers.Add(peer);
 			}
-
-			peer.Actor = new GameActor(actorInfo);
-			peer.Actor.Peer = peer;
-			peer.Room = this;
 
 			peer.Actor.Delta.Changes.Clear();
 
@@ -160,7 +160,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			MetaData.ConnectedPlayers = Peers.Count;
 
-			Log.Info($"{peer.Actor.PlayerName}({peer.Actor.Cmid}, {peer.PeerId}) joined {this}({this.Id})");
+			Log.Info($"{peer.Actor.PlayerName}({peer.Actor.Cmid}) joined {this}({this.Id})");
 		}
 
 		public void Leave(GamePeer peer) {
@@ -182,7 +182,7 @@ namespace Paradise.Realtime.Server.Game {
 				MetaData.ConnectedPlayers = Peers.Count;
 			}
 
-			Log.Info($"{peer.Actor.PlayerName}({peer.Actor.Cmid}, {peer.PeerId}) left {this}({this.Id})");
+			Log.Info($"{peer.Actor.PlayerName}({peer.Actor.Cmid}) left {this}({this.Id})");
 
 			peer.State.SetState(PlayerStateId.None);
 			peer.RemoveOperationHandler(Id);
@@ -203,8 +203,7 @@ namespace Paradise.Realtime.Server.Game {
 			RoundEndTime = int.MinValue;
 			RoundDurations.Clear();
 
-
-			NextPlayerId = 0;
+			NextPlayerId = (byte)(Peers.Select(_ => _.Actor.Info.PlayerId).ToArray().Max() + 1);
 
 			foreach (var peer in Peers) {
 				foreach (var otherPeer in Peers) {
@@ -372,57 +371,6 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
-		//public void SpawnPlayer(GamePeer player, bool joined = false, bool prepare = false) {
-		//	var spawn = SpawnPointManager.Get(player.Actor.Team);
-
-		//	if (joined) {
-		//		if (!SpawnPointManager.SpawnPointsInUse.ContainsKey(player.Actor.Team)) {
-		//			SpawnPointManager.SpawnPointsInUse[player.Actor.Team] = new List<SpawnPoint> { spawn };
-		//		} else {
-		//			while (SpawnPointManager.SpawnPointsInUse[player.Actor.Team].Contains(spawn)) {
-		//				spawn = SpawnPointManager.Get(player.Actor.Team);
-		//			}
-
-		//			SpawnPointManager.SpawnPointsInUse[player.Actor.Team].Add(spawn);
-		//		}
-		//	} else {
-		//		player.Actor.Info.Health = 100;
-		//		player.Actor.Info.ArmorPoints = player.Actor.Info.ArmorPointCapacity;
-		//		player.Actor.Info.PlayerState = PlayerStates.None;
-
-		//		if (prepare) {
-		//			player.PreviousSpawnPoints.Clear();
-
-		//			while (SpawnPointManager.SpawnPointsInUse[player.Actor.Team].Contains(spawn)) {
-		//				spawn = SpawnPointManager.Get(player.Actor.Team);
-		//			}
-
-		//			SpawnPointManager.SpawnPointsInUse[player.Actor.Team].Add(spawn);
-		//		} else {
-		//			if (player.PreviousSpawnPoints.Count >= SpawnPointManager.GetSpawnPointCount(player.Actor.Team)) {
-		//				player.PreviousSpawnPoints.Clear();
-		//			}
-
-		//			while (player.PreviousSpawnPoints.Contains(spawn)) {
-		//				spawn = SpawnPointManager.Get(player.Actor.Team);
-		//			}
-		//		}
-		//	}
-
-		//	player.PreviousSpawnPoints.Add(spawn);
-
-		//	player.Actor.Movement.Position = spawn.Position;
-		//	player.Actor.Movement.HorizontalRotation = spawn.Rotation;
-
-		//	foreach (var peer in Peers) {
-		//		if (joined && !peer.Actor.Info.IsSpectator) {
-		//			peer.GameEvents.SendPlayerJoinedGame(player.Actor.Info, player.Actor.Movement);
-		//		} else {
-		//			peer.GameEvents.SendPlayerRespawned(player.Actor.Info.Cmid, player.Actor.Movement.Position, player.Actor.Movement.HorizontalRotation);
-		//		}
-		//	}
-		//}
-
 		public void SpawnPlayer(GamePeer player, bool joinGame) {
 			if (player.Actor.Info.IsSpectator) return;
 
@@ -474,18 +422,6 @@ namespace Paradise.Realtime.Server.Game {
 			lock (_lock) {
 				foreach (var peer in Peers) {
 					if (peer.Actor.Cmid == cmid) {
-						return peer;
-					}
-				}
-			}
-
-			return null;
-		}
-
-		protected GamePeer FindPeerWithPeerId(Guid peerId) {
-			lock (_lock) {
-				foreach (var peer in Peers) {
-					if (peer.PeerId.CompareTo(peerId) == 0) {
 						return peer;
 					}
 				}

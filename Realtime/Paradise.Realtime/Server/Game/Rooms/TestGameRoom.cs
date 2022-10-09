@@ -53,9 +53,7 @@ namespace Paradise.Realtime.Server.Game {
 			peer.Actor.Info.PlayerState |= PlayerStates.Dead;
 
 			OnPlayerKilled(new PlayerKilledEventArgs {
-				AttackerPeerId = peer.PeerId,
 				AttackerCmid = peer.Actor.Cmid,
-				VictimPeerId = peer.PeerId,
 				VictimCmid = peer.Actor.Cmid,
 				ItemClass = UberstrikeItemClass.WeaponMachinegun,
 				Part = BodyPart.Body,

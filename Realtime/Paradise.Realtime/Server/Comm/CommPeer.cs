@@ -3,8 +3,6 @@ using System;
 
 namespace Paradise.Realtime.Server.Comm {
 	public class CommPeer : BasePeer {
-		public Guid PeerId { get; } = Guid.NewGuid();
-
 		public CommActor Actor { get; set; }
 		public LobbyRoom Lobby { get; set; }
 

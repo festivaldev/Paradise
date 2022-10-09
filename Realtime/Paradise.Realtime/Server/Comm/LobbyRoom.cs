@@ -28,8 +28,8 @@ namespace Paradise.Realtime.Server.Comm {
 			}
 
 			lock (_peers) {
-				if (_peers.Find(_ => _.PeerId.CompareTo(peer.PeerId) == 0) != null) {
-					_peers.RemoveAll(_ => _.PeerId.CompareTo(peer.PeerId) == 0);
+				if (_peers.Find(_ => _.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0) != null) {
+					_peers.RemoveAll(_ => _.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0);
 				}
 
 				_peers.Add(peer);
@@ -40,7 +40,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 			peer.PeerEvents.SendLobbyEntered();
 
-			Log.Info($"{peer.Actor.Name}({peer.Actor.Cmid}, {peer.PeerId}) joined the lobby");
+			Log.Info($"{peer.Actor.Name}({peer.Actor.Cmid}) joined the lobby");
 		}
 
 		public void Leave(CommPeer peer) {
@@ -56,7 +56,7 @@ namespace Paradise.Realtime.Server.Comm {
 				_peers.Remove(peer);
 			}
 
-			Log.Info($"{peer.Actor.Name}({peer.Actor.Cmid}, {peer.PeerId}) left the lobby");
+			Log.Info($"{peer.Actor.Name}({peer.Actor.Cmid}) left the lobby");
 
 			peer.RemoveOperationHandler(Id);
 			peer.Actor = null;

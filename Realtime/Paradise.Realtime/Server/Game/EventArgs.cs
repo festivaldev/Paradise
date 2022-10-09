@@ -18,9 +18,7 @@ namespace Paradise.Realtime.Server.Game {
 	}
 
 	public class PlayerKilledEventArgs : EventArgs {
-		public Guid VictimPeerId { get; set; }
 		public int VictimCmid { get; set; }
-		public Guid AttackerPeerId { get; set; }
 		public int AttackerCmid { get; set; }
 		public UberstrikeItemClass ItemClass { get; set; }
 		public ushort Damage { get; set; }
