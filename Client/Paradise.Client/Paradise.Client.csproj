@@ -81,6 +81,7 @@
     <Compile Include="Hooks\PlayerKilledSpectatorStateHook.cs" />
     <Compile Include="Hooks\PlayerLeadAudioHook.cs" />
     <Compile Include="Hooks\ScreenResolutionManagerHook.cs" />
+    <Compile Include="Hooks\HUDDesktopEventStreamHook.cs" />
     <Compile Include="Hooks\SfxManagerHook.cs" />
     <Compile Include="Hooks\OptionsPanelGUIHook.cs" />
     <Compile Include="Hooks\SoapClientHook.cs" />

@@ -25,6 +25,7 @@ namespace Paradise.Client.Bootstrap {
 				new WeaponControllerHook(),
 				new CreateGamePanelGUIHook(),
 				new HUDStatusPanelHook(),
+				new HUDDesktopEventStreamHook(),
 				new PlayerKilledSpectatorStateHook(),
 				new SfxManagerHook(),
 				new GameStateHook(),
