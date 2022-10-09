@@ -1,4 +1,4 @@
-using Paradise.Core.Models;
+﻿using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.DataCenter.Common.Entities;
 using System;
@@ -62,7 +62,7 @@ namespace Paradise.Realtime.Server.Game {
 				MostValuablePlayers.Add(new StatsSummary {
 					Cmid = player.Actor.Cmid,
 					Achievements = achievements,
-					Deaths = player.Actor.MatchStatistics.Deaths,
+					Deaths = player.Actor.MatchStatistics.Deaths + player.Actor.MatchStatistics.Suicides,
 					Kills = player.Actor.MatchStatistics.GetKills(),
 					Level = player.Actor.Info.Level,
 					Name = player.Actor.Info.PlayerName,
