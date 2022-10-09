@@ -108,11 +108,12 @@ namespace Paradise.Realtime.Server.Game {
 				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, "There was an error creating the game room: Unsupported game mode.");
 				return;
 			} catch (Exception e) {
+				Log.Error($"{peer.Actor.PlayerName}({peer.Actor.Cmid}): Failed to create game room: Unsupported game mode", e);
+
 #if !DEBUG
 				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, $"Failed to create game room.");
 #else
 				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, $"Failed to create game room.\n{e.Message}");
-				Log.Error("Failed to create game room.", e);
 #endif
 				return;
 			}
@@ -120,11 +121,12 @@ namespace Paradise.Realtime.Server.Game {
 			try {
 				room.Join(peer);
 			} catch (Exception e) {
+				Log.Error($"{peer.Actor.PlayerName}({peer.Actor.Cmid}): Failed to join game room.", e);
+
 #if !DEBUG
 				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, $"Failed to join game room.");
 #else
 				peer.PeerEvents.SendRoomEnterFailed(string.Empty, -1, $"Failed to join game room.\n{e.Message}");
-				Log.Error("Failed to join game room.", e);
 #endif
 				GameApplication.Instance.RoomManager.RemoveRoom(room.RoomId);
 			}
