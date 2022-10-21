@@ -87,14 +87,19 @@ namespace Paradise.Realtime.Server {
 				throw new ArgumentNullException(nameof(handler));
 			}
 
+			if (_opHandlers.ContainsKey(handler.Id)) {
+				_opHandlers.TryRemove(handler.Id, out _);
+			}
+
 			if (!_opHandlers.TryAdd(handler.Id, handler)) {
-				throw new ArgumentException("Already contains a handler with the same handler ID.");
+				Log.Error($"Failed to add handler with ID {handler.Id}");
 			}
 		}
 
 		public void RemoveOperationHandler(int handlerId) {
-			var handler = default(BaseOperationHandler);
-			_opHandlers.TryRemove(handlerId, out handler);
+			if (!_opHandlers.TryRemove(handlerId, out _)) {
+				Log.Error($"Failed to remove handler with ID {handlerId}");
+			}
 		}
 
 		protected override void OnDisconnect(DisconnectReason reasonCode, string reasonDetail) {
