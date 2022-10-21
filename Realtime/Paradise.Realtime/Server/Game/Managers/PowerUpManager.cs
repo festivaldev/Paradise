@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	public class PowerUpManager {
-		private readonly static ILog Log = LogManager.GetLogger(nameof(PowerUpManager));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		private List<TimeSpan> RespawnTimesOriginal;
 		private List<TimeSpan> RespawnTimes;

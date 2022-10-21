@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Paradise.Realtime.Server.Game {
 	public abstract class BaseGamePeerOperationHandler : BaseOperationHandler<GamePeer> {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(BaseGamePeerOperationHandler));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		public override int Id => 1;
 

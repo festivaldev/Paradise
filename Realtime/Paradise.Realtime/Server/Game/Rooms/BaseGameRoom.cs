@@ -18,7 +18,7 @@ namespace Paradise.Realtime.Server.Game {
 	}
 
 	public abstract partial class BaseGameRoom : BaseGameRoomOperationHandler, IRoom<GamePeer>, IDisposable {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(BaseGameRoom));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		private bool IsDisposed = false;
 

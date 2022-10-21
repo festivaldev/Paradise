@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Comm {
 	public class LobbyManager {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(LobbyManager));
+		private static readonly ILog Log = LogManager.GetLogger("CommLog");
 
 		private readonly object _lock = new object();
 

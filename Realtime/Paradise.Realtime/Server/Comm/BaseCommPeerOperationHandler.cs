@@ -1,12 +1,10 @@
 ﻿using log4net;
 using Paradise.Core.Serialization;
-using System;
-using System.Diagnostics;
 using System.IO;
 
 namespace Paradise.Realtime.Server.Comm {
 	public abstract class BaseCommPeerOperationHandler : BaseOperationHandler<CommPeer> {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(CommPeerOperationHandler));
+		private static readonly ILog Log = LogManager.GetLogger("CommLog");
 
 		public override int Id => 1;
 

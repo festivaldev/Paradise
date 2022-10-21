@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Comm {
 	public partial class LobbyRoom : BaseLobbyRoomOperationHandler, IRoom<CommPeer>, IDisposable {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(LobbyRoom));
+		private static readonly ILog Log = LogManager.GetLogger("CommLog");
 
 		private bool IsDisposed = false;
 

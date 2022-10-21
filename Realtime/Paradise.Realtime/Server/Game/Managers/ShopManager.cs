@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	public class ShopManager {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(ShopManager));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		public bool IsLoaded { get; private set; }
 

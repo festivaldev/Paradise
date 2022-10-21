@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class TeamDeathMatchGameRoom : BaseGameRoom {
-		private readonly static ILog Log = LogManager.GetLogger(nameof(TeamDeathMatchGameRoom));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		private Dictionary<TeamID, int> TeamScores;
 

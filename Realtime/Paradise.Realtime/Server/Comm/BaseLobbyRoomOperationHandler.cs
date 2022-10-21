@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Paradise.Realtime.Server.Comm {
 	public abstract class BaseLobbyRoomOperationHandler : BaseOperationHandler<CommPeer> {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(BaseLobbyRoomOperationHandler));
+		private static readonly ILog Log = LogManager.GetLogger("CommLog");
 
 		protected object _lock { get; } = new object();
 

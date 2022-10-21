@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameRoomManager : IDisposable {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(GameRoomManager));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		private static ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 

@@ -20,7 +20,7 @@ namespace Paradise.Realtime.Server.Game {
 	}
 
 	public class SpawnPointManager {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(SpawnPointManager));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		private int Index;
 

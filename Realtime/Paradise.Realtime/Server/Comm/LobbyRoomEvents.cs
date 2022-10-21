@@ -9,7 +9,7 @@ using System.IO;
 
 namespace Paradise.Realtime.Server.Comm {
 	public class LobbyRoomEvents : BaseEventSender {
-		private readonly static ILog Log = LogManager.GetLogger(nameof(BaseEventSender));
+		private static readonly ILog Log = LogManager.GetLogger("CommLog");
 
 		public LobbyRoomEvents(BasePeer peer) : base(peer) { }
 

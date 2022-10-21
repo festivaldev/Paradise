@@ -5,7 +5,7 @@ using System;
 
 namespace Paradise.Realtime.Server.Comm {
 	public class CommPeerOperationHandler : BaseCommPeerOperationHandler {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(CommPeerOperationHandler));
+		private static readonly ILog Log = LogManager.GetLogger("CommLog");
 
 		private static UserWebServiceClient ServiceClient;
 

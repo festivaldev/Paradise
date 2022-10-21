@@ -1,7 +1,10 @@
-﻿using Photon.SocketServer;
+﻿using log4net;
+using Photon.SocketServer;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameApplication : BaseRealtimeApplication {
+		protected static readonly new ILog Log = LogManager.GetLogger("GameLog");
+
 		public static new GameApplication Instance => (GameApplication)ApplicationBase.Instance;
 
 		public GameRoomManager RoomManager { get; private set; } = new GameRoomManager();

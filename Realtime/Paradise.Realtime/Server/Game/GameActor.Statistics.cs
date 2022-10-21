@@ -7,8 +7,6 @@ using System.Linq;
 
 namespace Paradise.Realtime.Server.Game {
 	public partial class GameActor {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(BaseGameRoom));
-
 		public StatsCollection MatchStatistics { get; private set; } = new StatsCollection();
 		public StatsCollection CurrentLifeStatistics { get; private set; } = new StatsCollection();
 		public List<StatsCollection> PerLifeStatistics { get; private set; } = new List<StatsCollection>();

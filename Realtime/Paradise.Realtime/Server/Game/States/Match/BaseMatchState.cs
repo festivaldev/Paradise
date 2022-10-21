@@ -14,7 +14,7 @@ namespace Paradise.Realtime.Server.Game {
 	}
 
 	public abstract class BaseMatchState : IState {
-		protected static readonly ILog Log = LogManager.GetLogger(nameof(BaseMatchState));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		protected BaseGameRoom Room { get; private set; }
 

@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GamePeerEvents : BaseEventSender {
-		private readonly static ILog Log = LogManager.GetLogger(nameof(BaseEventSender));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		public GameRoomEvents GameEvents { get; private set; }
 

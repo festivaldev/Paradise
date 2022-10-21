@@ -16,7 +16,7 @@ namespace Paradise.Realtime.Server.Game {
 			MeleeOnly = 8
 		}
 
-		private static readonly ILog Log = LogManager.GetLogger(nameof(GamePeerOperationHandler));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		
 

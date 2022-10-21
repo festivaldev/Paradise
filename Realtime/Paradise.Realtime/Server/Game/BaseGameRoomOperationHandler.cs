@@ -9,7 +9,7 @@ using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
 	public abstract class BaseGameRoomOperationHandler : BaseOperationHandler<GamePeer> {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(BaseGameRoomOperationHandler));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		protected object _lock { get; } = new object();
 

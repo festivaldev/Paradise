@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameRoomEvents : BaseEventSender {
-		private readonly static ILog Log = LogManager.GetLogger(nameof(BaseEventSender));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		public GameRoomEvents(BasePeer peer) : base(peer) { }
 

@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class DeathMatchGameRoom : BaseGameRoom {
-		private readonly static ILog Log = LogManager.GetLogger(nameof(DeathMatchGameRoom));
+		private static readonly ILog Log = LogManager.GetLogger("GameLog");
 
 		public DeathMatchGameRoom(GameRoomData metaData, ILoopScheduler scheduler) : base(metaData, scheduler) { }
 
