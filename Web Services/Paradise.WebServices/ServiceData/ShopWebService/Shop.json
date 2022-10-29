@@ -1,4 +1,4 @@
-﻿{
+{
 	"FunctionalItems": [
 		{
 			"ItemClass": 21,
@@ -7644,6 +7644,9 @@
 				}
 			],
 			"ItemProperties": {},
+			"CustomProperties": {
+				"ShowReticleForSniper": "true"
+			},
 			"AccuracySpread": 0,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 50,
@@ -7690,6 +7693,9 @@
 				}
 			],
 			"ItemProperties": {},
+			"CustomProperties": {
+				"ShowReticleForSniper": "true"
+			},
 			"AccuracySpread": 0,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 50,
@@ -7736,6 +7742,9 @@
 				}
 			],
 			"ItemProperties": {},
+			"CustomProperties": {
+				"ShowReticleForSniper": "true"
+			},
 			"AccuracySpread": 0,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 50,
@@ -9668,6 +9677,9 @@
 				}
 			],
 			"ItemProperties": {},
+			"CustomProperties": {
+				"ShowReticleForSniper": "true"
+			},
 			"AccuracySpread": 0,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 50,
@@ -11416,6 +11428,9 @@
 				}
 			],
 			"ItemProperties": {},
+			"CustomProperties": {
+				"ShowReticleForSniper": "true"
+			},
 			"AccuracySpread": 0,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 50,
@@ -11462,6 +11477,9 @@
 				}
 			],
 			"ItemProperties": {},
+			"CustomProperties": {
+				"ShowReticleForSniper": "true"
+			},
 			"AccuracySpread": 0,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 50,
@@ -11508,6 +11526,9 @@
 				}
 			],
 			"ItemProperties": {},
+			"CustomProperties": {
+				"ShowReticleForSniper": "true"
+			},
 			"AccuracySpread": 0,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 50,
@@ -11968,6 +11989,9 @@
 				}
 			],
 			"ItemProperties": {},
+			"CustomProperties": {
+				"ShowReticleForSniper": "true"
+			},
 			"AccuracySpread": 0,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 50,
