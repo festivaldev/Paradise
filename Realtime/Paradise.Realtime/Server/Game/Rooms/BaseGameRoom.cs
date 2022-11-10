@@ -318,8 +318,12 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		#region Player Management
-		public void PreparePlayer(GamePeer player) {
-			player.Actor.Info.PlayerState = PlayerStates.None;
+		public void PreparePlayer(GamePeer player, bool isSpectator = false) {
+			if (isSpectator) {
+				player.Actor.Info.PlayerState = PlayerStates.Spectator;
+			} else {
+				player.Actor.Info.PlayerState = PlayerStates.None;
+			}
 
 			player.Actor.Info.Kills = 0;
 			player.Actor.Info.Deaths = 0;

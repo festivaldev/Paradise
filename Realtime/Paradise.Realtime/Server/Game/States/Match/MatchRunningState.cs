@@ -60,16 +60,16 @@ namespace Paradise.Realtime.Server.Game {
 
 			if (Room.MetaData.GameMode == GameModeType.EliminationMode) {
 				args.Player.Actor.Info.PlayerState = PlayerStates.Spectator;
-			} else {
-				Room.PreparePlayer(args.Player);
-				Room.SpawnPlayer(args.Player, true);
+			}
 
-				args.Player.GameEvents.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
-				args.Player.GameEvents.SendWaitingForPlayers();
+			Room.PreparePlayer(args.Player, args.Player.Actor.Info.IsSpectator);
+			Room.SpawnPlayer(args.Player, true);
 
-				foreach (var peer in Room.Peers) {
-					peer.GameEvents.SendPlayerRespawned(args.Player.Actor.Cmid, args.Player.Actor.Movement.Position, args.Player.Actor.Movement.HorizontalRotation);
-				}
+			args.Player.GameEvents.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
+			//args.Player.GameEvents.SendWaitingForPlayers();
+
+			foreach (var peer in Room.Peers) {
+				peer.GameEvents.SendPlayerRespawned(args.Player.Actor.Cmid, args.Player.Actor.Movement.Position, args.Player.Actor.Movement.HorizontalRotation);
 			}
 
 			args.Player.State.SetState(PlayerStateId.Playing);

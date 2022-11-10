@@ -20,8 +20,10 @@ namespace Paradise.Realtime.Server.Game {
 			foreach (var player in Room.Players) {
 				player.PreviousSpawnPoints.Clear();
 
+				bool wasSpectator = player.Actor.Info.IsSpectator;
+
 				Room.PreparePlayer(player);
-				Room.SpawnPlayer(player, false);
+				Room.SpawnPlayer(player, wasSpectator);
 
 				player.State.SetState(PlayerStateId.PrepareForMatch);
 
