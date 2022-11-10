@@ -37,12 +37,12 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnPlayerKilled(PlayerKilledEventArgs args) {
-			if (Players.Where(_ => _.Actor.Team == TeamID.RED && _.Actor.Info.IsAlive).Count() == 0) {
+			if (Players.Where(_ => _.Actor.Team == TeamID.RED && _.Actor.Info.IsAlive && !_.Actor.Info.IsSpectator).Count() == 0) {
 				TeamScores[TeamID.BLUE] += 1;
 				WinningTeam = TeamID.BLUE;
 
 				HasRoundEnded = true;
-			} else if (Players.Where(_ => _.Actor.Team == TeamID.BLUE && _.Actor.Info.IsAlive).Count() == 0) {
+			} else if (Players.Where(_ => _.Actor.Team == TeamID.BLUE && _.Actor.Info.IsAlive && !_.Actor.Info.IsSpectator).Count() == 0) {
 				TeamScores[TeamID.RED] += 1;
 				WinningTeam = TeamID.RED;
 
