@@ -1,4 +1,5 @@
 ﻿using log4net;
+using Newtonsoft.Json;
 using Photon.SocketServer;
 using PhotonHostRuntimeInterfaces;
 using System;
@@ -15,6 +16,7 @@ namespace Paradise.Realtime.Server {
 		Failed
 	}
 
+	[JsonObject(MemberSerialization.OptIn)]
 	public abstract class BasePeer : ClientPeer {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(BasePeer));
 

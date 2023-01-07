@@ -35,6 +35,7 @@
       -->
 	  .allowedextension
 	</AllowedReferenceRelatedFileExtensions>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ExitGames.Logging.Log4Net">
@@ -43,6 +44,9 @@
     </Reference>
     <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Photon.SocketServer">
       <HintPath>..\..\AssemblyReferences\Photon.SocketServer.dll</HintPath>
@@ -71,6 +75,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Web Services\Paradise.WebServices\MonitoringInterfaces.cs">
+      <Link>Interfaces\MonitoringInterfaces.cs</Link>
+    </Compile>
     <Compile Include="Interfaces\ICommPeerEventsType.cs" />
     <Compile Include="Interfaces\ICommPeerOperationsType.cs" />
     <Compile Include="Interfaces\IGamePeerEventsType.cs" />

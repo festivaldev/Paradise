@@ -1,8 +1,10 @@
 ﻿using log4net;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server {
+	[JsonObject(MemberSerialization.OptIn)]
 	public class StateMachine<T> where T : struct, IConvertible {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(StateMachine<T>));
 
@@ -18,6 +20,7 @@ namespace Paradise.Realtime.Server {
 			}
 		}
 
+		[JsonProperty]
 		public T CurrentStateId {
 			get {
 				return (stateStack.Count <= 0) ? default(T) : stateStack.Peek();

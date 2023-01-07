@@ -1,19 +1,22 @@
-﻿using Paradise.Core.ViewModel;
+﻿using Newtonsoft.Json;
+using Paradise.Core.ViewModel;
 using Paradise.DataCenter.Common.Entities;
 using Photon.SocketServer;
-using System;
 using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GamePeer : BasePeer {
+		[JsonProperty]
 		public GameActor Actor;
 		public BaseGameRoom Room;
+		[JsonProperty]
 		public StateMachine<PlayerStateId> State { get; private set; }
 
 		public List<int> KnownActors = new List<int>();
 		public List<SpawnPoint> PreviousSpawnPoints = new List<SpawnPoint>();
 
 		public UberstrikeUserViewModel Member;
+		[JsonProperty]
 		public LoadoutView Loadout;
 
 		public GamePeerEvents PeerEvents { get; private set; }

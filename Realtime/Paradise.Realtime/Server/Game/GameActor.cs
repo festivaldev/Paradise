@@ -1,9 +1,12 @@
-﻿using Paradise.Core.Models;
+﻿using Newtonsoft.Json;
+using Paradise.Core.Models;
 using Paradise.DataCenter.Common.Entities;
 using System;
 
 namespace Paradise.Realtime.Server.Game {
+	[JsonObject(MemberSerialization.OptIn)]
 	public partial class GameActor {
+		[JsonProperty]
 		public GameActorInfo Info { get; private set; }
 		public PlayerMovement Movement { get; private set; }
 		public DamageEvent Damage { get; private set; }
@@ -20,8 +23,11 @@ namespace Paradise.Realtime.Server.Game {
 		public DateTime LastRespawnTime = DateTime.UtcNow;
 		public DateTime LastTeamSwitchTime = DateTime.UtcNow;
 
+		[JsonProperty]
 		public int Cmid => Info.Cmid;
+		[JsonProperty]
 		public string PlayerName => Info.PlayerName;
+		[JsonProperty]
 		public MemberAccessLevel AccessLevel => Info.AccessLevel;
 
 		public bool UpdatePosition;
