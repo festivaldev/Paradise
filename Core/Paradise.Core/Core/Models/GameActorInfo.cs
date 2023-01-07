@@ -71,8 +71,6 @@ namespace Paradise.Core.Models {
 
 		public byte ArmorPointCapacity { get; set; }
 
-		public Color SkinColor { get; set; }
-
 		public short Kills { get; set; }
 
 		public short Deaths { get; set; }

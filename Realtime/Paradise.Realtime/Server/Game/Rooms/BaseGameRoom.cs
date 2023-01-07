@@ -130,9 +130,6 @@ namespace Paradise.Realtime.Server.Game {
 				Ping = (ushort)(peer.RoundTripTime / 2),
 				PlayerId = NextPlayerId++,
 
-				// Not trying to be racist here, that's what UberStrike wants ¯\_(ツ)_/¯
-				SkinColor = Color.white,
-
 				Cmid = peer.Member.CmuneMemberView.PublicProfile.Cmid,
 				ClanTag = peer.Member.CmuneMemberView.PublicProfile.GroupTag,
 				AccessLevel = peer.Member.CmuneMemberView.PublicProfile.AccessLevel,

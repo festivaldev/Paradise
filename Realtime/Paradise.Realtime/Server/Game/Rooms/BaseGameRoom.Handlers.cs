@@ -1,4 +1,4 @@
-﻿using Paradise.Core.Models;
+using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.Core.Types;
 using PhotonHostRuntimeInterfaces;
@@ -33,7 +33,6 @@ namespace Paradise.Realtime.Server.Game {
 			peer.Actor.Info.ArmorPoints = peer.Actor.Info.ArmorPointCapacity;
 			peer.Actor.Info.Ping = (ushort)(peer.RoundTripTime / 2);
 			peer.Actor.Info.PlayerState = PlayerStates.None;
-			peer.Actor.Info.SkinColor = Color.white;
 
 			peer.Actor.Info.Kills = 0;
 			peer.Actor.Info.Deaths = 0;

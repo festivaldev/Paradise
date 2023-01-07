@@ -47,7 +47,8 @@ namespace Paradise.Core.Serialization {
 					num |= 16;
 				}
 				ByteProxy.Serialize(memoryStream, instance.Rank);
-				ColorProxy.Serialize(memoryStream, instance.SkinColor);
+				// Not trying to be racist here, that's what UberStrike wants ¯\_(ツ)_/¯
+				ColorProxy.Serialize(memoryStream, UnityEngine.Color.white);
 				EnumProxy<SurfaceType>.Serialize(memoryStream, instance.StepSound);
 				EnumProxy<TeamID>.Serialize(memoryStream, instance.TeamID);
 				if (instance.Weapons != null) {
@@ -93,7 +94,8 @@ namespace Paradise.Core.Serialization {
 				gameActorInfo.QuickItems = ListProxy<int>.Deserialize(bytes, new ListProxy<int>.Deserializer<int>(Int32Proxy.Deserialize));
 			}
 			gameActorInfo.Rank = ByteProxy.Deserialize(bytes);
-			gameActorInfo.SkinColor = ColorProxy.Deserialize(bytes);
+			// SkinColor still needs to be deserialized because the game client send it anyways
+			ColorProxy.Deserialize(bytes);
 			gameActorInfo.StepSound = EnumProxy<SurfaceType>.Deserialize(bytes);
 			gameActorInfo.TeamID = EnumProxy<TeamID>.Deserialize(bytes);
 			if ((num & 32) != 0) {

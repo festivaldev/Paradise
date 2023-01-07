@@ -71,9 +71,6 @@ namespace Paradise.Core.Models {
 					case GameActorInfoDelta.Keys.Rank:
 						instance.Rank = (byte)keyValuePair.Value;
 						break;
-					case GameActorInfoDelta.Keys.SkinColor:
-						instance.SkinColor = (Color)keyValuePair.Value;
-						break;
 					case GameActorInfoDelta.Keys.StepSound:
 						instance.StepSound = (SurfaceType)((int)keyValuePair.Value);
 						break;

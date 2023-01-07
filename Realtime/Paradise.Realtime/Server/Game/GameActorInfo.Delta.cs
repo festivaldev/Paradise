@@ -1,4 +1,4 @@
-﻿using Paradise.Core.Models;
+using Paradise.Core.Models;
 using Paradise.DataCenter.Common.Entities;
 using System.Collections.Generic;
 using UnityEngine;
@@ -165,16 +165,6 @@ namespace Paradise.Realtime.Server.Game {
 				if (base.ArmorPointCapacity != value) {
 					base.ArmorPointCapacity = value;
 					Delta.Changes[GameActorInfoDelta.Keys.ArmorPointCapacity] = value;
-				}
-			}
-		}
-
-		public new Color SkinColor {
-			get { return base.SkinColor; }
-			set {
-				if (base.SkinColor != value) {
-					base.SkinColor = value;
-					Delta.Changes[GameActorInfoDelta.Keys.SkinColor] = value;
 				}
 			}
 		}
