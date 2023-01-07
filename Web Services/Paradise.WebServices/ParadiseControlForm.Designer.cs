@@ -27,8 +27,8 @@
 			this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
 			this.trayMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.fileServerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.startFileServerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.stopFileServerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.startHttpServerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.stopHttpServerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.serviceListMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.startServicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.stopServicesMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -39,10 +39,10 @@
 			this.databaseCloseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
 			this.openLogMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.openConsoleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.quitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.label1 = new System.Windows.Forms.Label();
-			this.openConsoleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.trayMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -65,31 +65,31 @@
             this.toolStripSeparator1,
             this.quitMenuItem});
 			this.trayMenuStrip.Name = "trayMenuStrip";
-			this.trayMenuStrip.Size = new System.Drawing.Size(181, 170);
+			this.trayMenuStrip.Size = new System.Drawing.Size(150, 148);
 			// 
 			// fileServerMenuItem
 			// 
 			this.fileServerMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.startFileServerMenuItem,
-            this.stopFileServerMenuItem});
+            this.startHttpServerMenuItem,
+            this.stopHttpServerMenuItem});
 			this.fileServerMenuItem.Name = "fileServerMenuItem";
-			this.fileServerMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.fileServerMenuItem.Text = "File Server";
+			this.fileServerMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.fileServerMenuItem.Text = "HTTP Server";
 			// 
-			// startFileServerMenuItem
+			// startHttpServerMenuItem
 			// 
-			this.startFileServerMenuItem.Name = "startFileServerMenuItem";
-			this.startFileServerMenuItem.Size = new System.Drawing.Size(154, 22);
-			this.startFileServerMenuItem.Text = "Start File Server";
-			this.startFileServerMenuItem.Click += new System.EventHandler(this.OnStartFileServerMenuItemClicked);
+			this.startHttpServerMenuItem.Name = "startHttpServerMenuItem";
+			this.startHttpServerMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.startHttpServerMenuItem.Text = "Start HTTP Server";
+			this.startHttpServerMenuItem.Click += new System.EventHandler(this.OnStartHttpServerMenuItemClicked);
 			// 
-			// stopFileServerMenuItem
+			// stopHttpServerMenuItem
 			// 
-			this.stopFileServerMenuItem.Enabled = false;
-			this.stopFileServerMenuItem.Name = "stopFileServerMenuItem";
-			this.stopFileServerMenuItem.Size = new System.Drawing.Size(154, 22);
-			this.stopFileServerMenuItem.Text = "Stop File Server";
-			this.stopFileServerMenuItem.Click += new System.EventHandler(this.OnStopFileServerMenuItemClicked);
+			this.stopHttpServerMenuItem.Enabled = false;
+			this.stopHttpServerMenuItem.Name = "stopHttpServerMenuItem";
+			this.stopHttpServerMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.stopHttpServerMenuItem.Text = "Stop HTTP Server";
+			this.stopHttpServerMenuItem.Click += new System.EventHandler(this.OnStopHttpServerMenuItemClicked);
 			// 
 			// serviceListMenuItem
 			// 
@@ -99,7 +99,7 @@
             this.restartAllServicesMenuItem,
             this.toolStripSeparator4});
 			this.serviceListMenuItem.Name = "serviceListMenuItem";
-			this.serviceListMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.serviceListMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.serviceListMenuItem.Text = "Services";
 			// 
 			// startServicesMenuItem
@@ -136,7 +136,7 @@
             this.databaseOpenMenuItem,
             this.databaseCloseMenuItem});
 			this.databaseMenuItem.Name = "databaseMenuItem";
-			this.databaseMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.databaseMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.databaseMenuItem.Text = "Database";
 			// 
 			// databaseOpenMenuItem
@@ -157,24 +157,31 @@
 			// toolStripSeparator2
 			// 
 			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(177, 6);
+			this.toolStripSeparator2.Size = new System.Drawing.Size(146, 6);
 			// 
 			// openLogMenuItem
 			// 
 			this.openLogMenuItem.Name = "openLogMenuItem";
-			this.openLogMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.openLogMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.openLogMenuItem.Text = "Open Log";
 			this.openLogMenuItem.Click += new System.EventHandler(this.OpenLogMenuItemClicked);
+			// 
+			// openConsoleMenuItem
+			// 
+			this.openConsoleMenuItem.Name = "openConsoleMenuItem";
+			this.openConsoleMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.openConsoleMenuItem.Text = "Open Console";
+			this.openConsoleMenuItem.Click += new System.EventHandler(this.OpenConsoleMenuItemClicked);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(177, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(146, 6);
 			// 
 			// quitMenuItem
 			// 
 			this.quitMenuItem.Name = "quitMenuItem";
-			this.quitMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.quitMenuItem.Size = new System.Drawing.Size(149, 22);
 			this.quitMenuItem.Text = "Quit Paradise";
 			this.quitMenuItem.Click += new System.EventHandler(this.QuitMenuItemClicked);
 			// 
@@ -188,13 +195,6 @@
 			this.label1.Text = "This should not be visible.\r\nPlease contact your friendly neighbourhood developer" +
     ".";
 			this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
-			// openConsoleMenuItem
-			// 
-			this.openConsoleMenuItem.Name = "openConsoleMenuItem";
-			this.openConsoleMenuItem.Size = new System.Drawing.Size(180, 22);
-			this.openConsoleMenuItem.Text = "Open Console";
-			this.openConsoleMenuItem.Click += new System.EventHandler(this.OpenConsoleMenuItemClicked);
 			// 
 			// ParadiseControlForm
 			// 
@@ -223,8 +223,8 @@
 		private System.Windows.Forms.ToolStripMenuItem stopServicesMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
 		private System.Windows.Forms.ToolStripMenuItem fileServerMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem startFileServerMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem stopFileServerMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem startHttpServerMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem stopHttpServerMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem restartAllServicesMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem databaseMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem databaseCloseMenuItem;

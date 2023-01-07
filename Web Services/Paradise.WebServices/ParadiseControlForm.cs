@@ -101,11 +101,11 @@ namespace Paradise.WebServices {
 			}
 
 			if (ServiceStatus.FileServerRunning) {
-				startFileServerMenuItem.Enabled = false;
-				stopFileServerMenuItem.Enabled = true;
+				startHttpServerMenuItem.Enabled = false;
+				stopHttpServerMenuItem.Enabled = true;
 			} else {
-				startFileServerMenuItem.Enabled = true;
-				stopFileServerMenuItem.Enabled = false;
+				startHttpServerMenuItem.Enabled = true;
+				stopHttpServerMenuItem.Enabled = false;
 			}
 		}
 
@@ -201,15 +201,15 @@ namespace Paradise.WebServices {
 			ServiceChannel.RestartAllServices();
 		}
 
-		private void OnStartFileServerMenuItemClicked(object sender, EventArgs args) {
-			if (!ServiceChannel.IsFileServerRunning()) {
-				ServiceChannel.StartFileServer();
+		private void OnStartHttpServerMenuItemClicked(object sender, EventArgs args) {
+			if (!ServiceChannel.IsHttpServerRunning()) {
+				ServiceChannel.StartHttpServer();
 			}
 		}
 
-		private void OnStopFileServerMenuItemClicked(object sender, EventArgs args) {
-			if (ServiceChannel.IsFileServerRunning()) {
-				ServiceChannel.StopFileServer();
+		private void OnStopHttpServerMenuItemClicked(object sender, EventArgs args) {
+			if (ServiceChannel.IsHttpServerRunning()) {
+				ServiceChannel.StopHttpServer();
 			}
 		}
 		#endregion
@@ -323,26 +323,26 @@ namespace Paradise.WebServices {
 			notifyIcon.BalloonTipClicked += OpenLogMenuItemClicked;
 		}
 
-		public void OnFileServerStarted() {
+		public void OnHttpServerStarted() {
 			trayMenuStrip.Invoke((MethodInvoker)delegate {
-				startFileServerMenuItem.Enabled = false;
-				stopFileServerMenuItem.Enabled = true;
+				startHttpServerMenuItem.Enabled = false;
+				stopHttpServerMenuItem.Enabled = true;
 			});
 		}
 
-		public void OnFileServerStopped() {
+		public void OnHttpServerStopped() {
 			trayMenuStrip.Invoke((MethodInvoker)delegate {
-				startFileServerMenuItem.Enabled = true;
-				stopFileServerMenuItem.Enabled = false;
+				startHttpServerMenuItem.Enabled = true;
+				stopHttpServerMenuItem.Enabled = false;
 			});
 		}
 
-		public void OnFileServerError(Exception e) {
-			notifyIcon.ShowBalloonTip(3000, "File Server Error", e.Message, ToolTipIcon.Error);
+		public void OnHttpServerError(Exception e) {
+			notifyIcon.ShowBalloonTip(3000, "HTTP Server Error", e.Message, ToolTipIcon.Error);
 
 			trayMenuStrip.Invoke((MethodInvoker)delegate {
-				startFileServerMenuItem.Enabled = false;
-				stopFileServerMenuItem.Enabled = true;
+				startHttpServerMenuItem.Enabled = false;
+				stopHttpServerMenuItem.Enabled = true;
 			});
 		}
 

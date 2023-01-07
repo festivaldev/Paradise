@@ -44,13 +44,13 @@ namespace Paradise.WebServices {
 		void OnServiceError(ServiceEventArgs args);
 
 		[OperationContract(IsOneWay = true)]
-		void OnFileServerStarted();
+		void OnHttpServerStarted();
 
 		[OperationContract(IsOneWay = true)]
-		void OnFileServerStopped();
+		void OnHttpServerStopped();
 
 		[OperationContract(IsOneWay = true)]
-		void OnFileServerError(Exception e);
+		void OnHttpServerError(Exception e);
 
 		[OperationContract(IsOneWay = true)]
 		void OnConsoleCommandCallback(string message);
@@ -92,13 +92,13 @@ namespace Paradise.WebServices {
 		void DisposeDatabase();
 
 		[OperationContract]
-		bool IsFileServerRunning();
+		bool IsHttpServerRunning();
 
 		[OperationContract]
-		void StartFileServer();
+		void StartHttpServer();
 
 		[OperationContract]
-		void StopFileServer();
+		void StopHttpServer();
 
 		[OperationContract]
 		void SendConsoleCommand(string command, string[] arguments);

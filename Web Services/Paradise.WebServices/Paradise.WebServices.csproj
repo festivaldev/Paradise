@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -87,6 +87,10 @@
     <Compile Include="Commands\XpCommand.cs" />
     <Compile Include="ConsoleHelper.cs" />
     <Compile Include="ConsolePrompter.cs" />
+    <Compile Include="HttpServer\HttpServer.cs" />
+    <Compile Include="HttpServer\ParadiseRouter.cs" />
+    <Compile Include="HttpServer\RouteAttribute.cs" />
+    <Compile Include="HttpServer\Router.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="MonitoringInterfaces.cs" />
     <Compile Include="ParadiseControlForm.cs">
@@ -111,7 +115,6 @@
     <Compile Include="ParadiseService.Designer.cs">
       <DependentUpon>ParadiseService.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleHTTPServer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ParadiseControlForm.resx">

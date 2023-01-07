@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime;
 using System.ServiceModel;
 using System.ServiceProcess;
 using System.Threading;
+using System.Web.UI.WebControls.WebParts;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -24,7 +26,7 @@ namespace Paradise.WebServices {
 		public Dictionary<string, BaseWebService> Services { get; private set; } = new Dictionary<string, BaseWebService>();
 
 		public static ParadiseServerSettings WebServiceSettings { get; private set; }
-		private SimpleHTTPServer HttpServer;
+		private HttpServer HttpServer;
 
 		private IParadiseServiceClient ClientCallback {
 			get {
@@ -63,14 +65,23 @@ namespace Paradise.WebServices {
 			DatabaseManager.DatabaseClosed += OnDatabaseClosed;
 			DatabaseManager.OpenDatabase();
 
-			HttpServer = new SimpleHTTPServer(Path.Combine(CurrentDirectory, WebServiceSettings.FileServerRoot), WebServiceSettings);
+			var uriBuilder = new UriBuilder {
+				Scheme = WebServiceSettings.EnableSSL ? "https" : "http",
+				Host = string.IsNullOrEmpty(WebServiceSettings.FileServerHostName) ? "*" : WebServiceSettings.FileServerHostName,
+				Port = WebServiceSettings.FileServerPort
+			};
+
+			HttpServer = new HttpServer(new string[] { uriBuilder.ToString() });
+			HttpServer.Use(new ParadiseRouter(Path.Combine(CurrentDirectory, WebServiceSettings.FileServerRoot), WebServiceSettings));
 
 			try {
 				HttpServer.Start();
 
-				ClientCallback?.OnFileServerStarted();
+				ClientCallback?.OnHttpServerStarted();
+				Log.Info($"HTTP server listening on port {WebServiceSettings.FileServerPort} (using SSL: {(WebServiceSettings.EnableSSL ? "yes" : "no")}).");
 			} catch (Exception e) {
 				Log.Error(e);
+				ClientCallback?.OnHttpServerError(e);
 			}
 
 			HttpBinding = new BasicHttpBinding();
@@ -106,7 +117,7 @@ namespace Paradise.WebServices {
 		protected override void OnShutdown() {
 			base.OnShutdown();
 
-			SimpleHTTPServer.Instance.Stop();
+			HttpServer.Stop();
 
 			foreach (var service in Services.Values) {
 				service.StopService();
@@ -119,7 +130,7 @@ namespace Paradise.WebServices {
 		protected override void OnStop() {
 			base.OnStop();
 
-			SimpleHTTPServer.Instance.Stop();
+			HttpServer.Instance?.Stop();
 
 			foreach (var service in Services.Values) {
 				service.StopService();
@@ -232,32 +243,33 @@ namespace Paradise.WebServices {
 			}
 		}
 
-		public bool IsFileServerRunning() {
-			return SimpleHTTPServer.Instance.IsRunning;
+		public bool IsHttpServerRunning() {
+			return HttpServer.Instance?.IsRunning ?? false;
 		}
 
-		public void StartFileServer() {
-			if (!SimpleHTTPServer.Instance.IsRunning) {
+		public void StartHttpServer() {
+			if (!HttpServer.Instance?.IsRunning ?? false) {
 				try {
-					SimpleHTTPServer.Instance.Start();
+					HttpServer.Instance.Start();
 
-					ClientCallback?.OnFileServerStarted();
+					ClientCallback?.OnHttpServerStarted();
+					Log.Info($"HTTP server listening on port {WebServiceSettings.FileServerPort} (using SSL: {(WebServiceSettings.EnableSSL ? "yes" : "no")}).");
 				} catch (Exception e) {
 					Log.Error(e);
-					ClientCallback?.OnFileServerError(e);
+					ClientCallback?.OnHttpServerError(e);
 				}
 			}
 		}
 
-		public void StopFileServer() {
-			if (SimpleHTTPServer.Instance.IsRunning) {
+		public void StopHttpServer() {
+			if (HttpServer.Instance?.IsRunning ?? false) {
 				try {
-					SimpleHTTPServer.Instance.Stop();
+					HttpServer.Instance.Stop();
 
-					ClientCallback?.OnFileServerStopped();
+					ClientCallback?.OnHttpServerStopped();
 				} catch (Exception e) {
 					Log.Error(e);
-					ClientCallback?.OnFileServerError(e);
+					ClientCallback?.OnHttpServerError(e);
 				}
 			}
 		}
@@ -282,7 +294,7 @@ namespace Paradise.WebServices {
 			return new ParadiseServiceStatus {
 				Services = services,
 				DatabaseOpened = DatabaseManager.IsOpen,
-				FileServerRunning = this.IsFileServerRunning()
+				FileServerRunning = this.IsHttpServerRunning()
 			};
 		}
 	}
