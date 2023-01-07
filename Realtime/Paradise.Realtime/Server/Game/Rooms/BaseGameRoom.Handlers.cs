@@ -1,4 +1,4 @@
-using Paradise.Core.Models;
+﻿using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.Core.Types;
 using PhotonHostRuntimeInterfaces;
@@ -165,7 +165,7 @@ namespace Paradise.Realtime.Server.Game {
 					}
 
 					player.Actor.Damage.AddDamage(byteAngle, shortDamage, bodyPart, 0, 0);
-					player.Actor.Info.Health -= shortDamage;
+					player.Actor.Info.Health -= Math.Min(shortDamage, player.Actor.Info.Health);
 
 					if (State.CurrentStateId == GameStateId.MatchRunning) {
 						if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) != 0) {
@@ -281,7 +281,7 @@ namespace Paradise.Realtime.Server.Game {
 						}
 					}
 
-					player.Actor.Info.Health -= shortDamage;
+					Math.Min(shortDamage, player.Actor.Info.Health);
 
 					if (State.CurrentStateId == GameStateId.MatchRunning) {
 						if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) != 0) {
