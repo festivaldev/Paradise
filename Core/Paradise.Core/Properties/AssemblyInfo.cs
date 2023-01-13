@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Paradise")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Paradise Core Assembly")]
+[assembly: AssemblyDescription("Core assembly providing UberStrike object symbols")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Paradise")]
-[assembly: AssemblyCopyright("Copyright ©  2022")]
+[assembly: AssemblyCompany("Team FESTIVAL")]
+[assembly: AssemblyProduct("Paradise.Code")]
+[assembly: AssemblyCopyright("Copyright © 2017, 2022-2023 Team FESTIVAL")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

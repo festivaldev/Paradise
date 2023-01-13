@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
 [assembly: AssemblyTitle("Paradise Web Services")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Provides XML-based server APIs and an Express.js-like web server for static assets")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team FESTIVAL")]
 [assembly: AssemblyProduct("Paradise.WebServices")]
-[assembly: AssemblyCopyright("Copyright © 2017, 2022 Team FESTIVAL")]
+[assembly: AssemblyCopyright("Copyright © 2017, 2022-2023 Team FESTIVAL")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // Sie können alle Werte angeben oder Standardwerte für die Build- und Revisionsnummern verwenden,
 // indem Sie "*" wie unten gezeigt eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("2.0.2.1")]
+[assembly: AssemblyFileVersion("2.0.2.1")]

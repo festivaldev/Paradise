@@ -94,7 +94,7 @@ namespace Paradise.WebServices {
 
 		public static void PrintConsoleHeader() {
 			Console.WriteLine($"Paradise Web Services [Version {typeof(Program).Assembly.GetName().Version}]");
-			Console.WriteLine("(c) 2017, 2022 Team FESTIVAL. All rights reserved." + Environment.NewLine);
+			Console.WriteLine("(c) 2017, 2022-2023 Team FESTIVAL. All rights reserved." + Environment.NewLine);
 		}
 
 		public static void PrintConsoleHeaderSubtitle() {

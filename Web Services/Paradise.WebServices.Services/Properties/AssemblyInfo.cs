@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // Allgemeine Informationen über eine Assembly werden über die folgenden
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
-[assembly: AssemblyTitle("Paradise.WebServices.Services")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Paradise Web Services Runtime")]
+[assembly: AssemblyDescription("Services Runtime for Paradise Web Services")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Paradise.WebServices.Services")]
-[assembly: AssemblyCopyright("Copyright ©  2022")]
+[assembly: AssemblyCopyright("Copyright © 2017, 2022-2023 Team FESTIVAL")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
