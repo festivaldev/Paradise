@@ -29,7 +29,8 @@ namespace Paradise.Client.Bootstrap {
 				new PlayerKilledSpectatorStateHook(),
 				new SfxManagerHook(),
 				new GameStateHook(),
-				new PlayerLeadAudioHook()
+				new PlayerLeadAudioHook(),
+				new GlobalUIRibbonHook()
 			};
 
 			foreach (var hook in hooks) {
