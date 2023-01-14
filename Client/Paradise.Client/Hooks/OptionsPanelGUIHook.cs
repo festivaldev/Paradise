@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class OptionsPanelGUIHook : IParadiseHook {
+	public class OptionsPanelGUIHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		private static OptionsPanelGUI Instance;
@@ -20,7 +20,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public OptionsPanelGUIHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(OptionsPanelGUIHook)}] hooking {nameof(OptionsPanelGUI)}");
 
 			var orig_OptionsPanelGUI_Awake = typeof(OptionsPanelGUI).GetMethod("Awake", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -148,15 +148,15 @@ namespace Paradise.Client {
 		}
 
 		private static T GetField<T>(string fieldName, BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic) {
-			return (T)typeof(OptionsPanelGUI).GetField(fieldName, flags).GetValue(Instance);
+			return GetField<T>(Instance, fieldName, flags);
 		}
 
 		private static void SetField(string fieldName, object value, BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic) {
-			typeof(OptionsPanelGUI).GetField(fieldName, flags).SetValue(Instance, value);
+			SetField(Instance, fieldName, value, flags);
 		}
 
 		private static object InvokeMethod(string methodName, object[] parameters, BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic) {
-			return typeof(OptionsPanelGUI).GetMethod(methodName, flags).Invoke(Instance, parameters);
+			return InvokeMethod(Instance, methodName, parameters, flags);
 		}
 	}
 }

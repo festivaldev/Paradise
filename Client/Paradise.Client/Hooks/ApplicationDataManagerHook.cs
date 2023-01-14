@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class ApplicationDataManagerHook : IParadiseHook {
+	public class ApplicationDataManagerHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		private static GameObject PluginHolder;
@@ -27,7 +27,7 @@ namespace Paradise.Client {
 			UnityEngine.Object.DontDestroyOnLoad(PluginHolder);
 		}
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(ApplicationDataManagerHook)}] hooking {nameof(ApplicationDataManager)}");
 
 			var type = typeof(ApplicationDataManager);

@@ -3,7 +3,7 @@ using log4net;
 using System.Reflection;
 
 namespace Paradise.Client {
-	public class BundleManagerHook : IParadiseHook {
+	public class BundleManagerHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		private static BundleManager Instance;
@@ -14,7 +14,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public BundleManagerHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(BundleManagerHook)}] hooking {nameof(BundleManager)}");
 
 			var orig_BundleManager_Initialize = typeof(BundleManager).GetMethod("Initialize", BindingFlags.Instance | BindingFlags.Public);
@@ -35,7 +35,7 @@ namespace Paradise.Client {
 		}
 
 		public static bool BuyBundle_m__A7_Prefix(bool success) {
-			typeof(BundleManager).GetMethod("OnMicroTxnCallback", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(Instance, new object[] {
+			InvokeMethod(Instance, "OnMicroTxnCallback", new object[] {
 				new Steamworks.MicroTxnAuthorizationResponse_t {
 					m_bAuthorized = (byte)(success ? 1 : 0)
 				}

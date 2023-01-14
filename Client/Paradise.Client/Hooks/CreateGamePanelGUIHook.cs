@@ -9,7 +9,7 @@ using UberStrike.Realtime.UnitySdk;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class CreateGamePanelGUIHook : IParadiseHook {
+	public class CreateGamePanelGUIHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		private static CreateGamePanelGUI Instance;
@@ -21,7 +21,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public CreateGamePanelGUIHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(CreateGamePanelGUIHook)}] hooking {nameof(CreateGamePanelGUI)}");
 
 			var orig_CreateGamePanelGUI_DrawGameConfiguration = typeof(CreateGamePanelGUI).GetMethod("DrawGameConfiguration", BindingFlags.Instance | BindingFlags.NonPublic);
@@ -200,19 +200,19 @@ namespace Paradise.Client {
 		}
 
 		private static T GetField<T>(string fieldName, BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic) {
-			return (T)typeof(CreateGamePanelGUI).GetField(fieldName, flags).GetValue(Instance);
+			return GetField<T>(Instance, fieldName, flags);
 		}
 
 		private static void SetField(string fieldName, object value, BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic) {
-			typeof(CreateGamePanelGUI).GetField(fieldName, flags).SetValue(Instance, value);
+			SetField(Instance, fieldName, value, flags);
 		}
 
 		private static T GetProperty<T>(string propertyName, BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic) {
-			return (T)typeof(CreateGamePanelGUI).GetProperty(propertyName, flags).GetValue(Instance, null);
+			return GetProperty<T>(Instance, propertyName, flags);
 		}
 
 		private static void SetProperty(string propertyName, object value, BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic) {
-			typeof(CreateGamePanelGUI).GetProperty(propertyName, flags).SetValue(Instance, value, null);
+			SetProperty(Instance, propertyName, value, flags);
 		}
 	}
 }

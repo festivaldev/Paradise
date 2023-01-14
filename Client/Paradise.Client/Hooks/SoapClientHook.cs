@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using UberStrike.WebService.Unity;
 
 namespace Paradise.Client {
-	public class SoapClientHook : IParadiseHook {
+	public class SoapClientHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		/// <summary>
@@ -14,7 +14,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public SoapClientHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(SoapClientHook)}] hooking {nameof(SoapClient)}");
 
 			var type = typeof(ApplicationWebServiceClient).Assembly.GetType("UberStrike.WebService.Unity.SoapClient");

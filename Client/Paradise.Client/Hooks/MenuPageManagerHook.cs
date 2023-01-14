@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class MenuPageManagerHook : IParadiseHook {
+	public class MenuPageManagerHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		private static bool HasCleanedUpdates;
@@ -18,7 +18,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public MenuPageManagerHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(MenuPageManagerHook)}] hooking {nameof(MenuPageManager)}");
 
 			var orig_MenuPageManager_LoadPage = typeof(MenuPageManager).GetMethod("LoadPage", BindingFlags.Public | BindingFlags.Instance);

@@ -8,13 +8,13 @@ using UberStrike.Core.ViewModel;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class AuthenticationManagerHook : IParadiseHook {
+	public class AuthenticationManagerHook : ParadiseHook {
 		/// <summary>
 		/// Stores a player's Steam ID in a text file inside the game's data directory for improved handling of multiple instances.
 		/// </summary>
 		public AuthenticationManagerHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			var orig_AuthenticationManager_LoginByChannel = typeof(AuthenticationManager).GetMethod("LoginByChannel", BindingFlags.Public | BindingFlags.Instance);
 			var prefix_AuthenticationManager_LoginByChannel = typeof(AuthenticationManagerHook).GetMethod("LoginByChannel_Prefix", BindingFlags.Public | BindingFlags.Static);
 

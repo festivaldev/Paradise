@@ -26,7 +26,7 @@ namespace Paradise.Client {
 		public float refreshRate { get; set; }
 	}
 
-	public class ScreenResolutionManagerHook : IParadiseHook {
+	public class ScreenResolutionManagerHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		/// <summary>
@@ -34,7 +34,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public ScreenResolutionManagerHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(ScreenResolutionManagerHook)}] hooking {nameof(ScreenResolutionManager)}");
 
 			XmlSerializer serializer = new XmlSerializer(typeof(ScreenResolutionOptions));

@@ -6,7 +6,7 @@ using System.Reflection;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class SfxManagerHook : IParadiseHook {
+	public class SfxManagerHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		/// <summary>
@@ -14,7 +14,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public SfxManagerHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(SfxManagerHook)}] hooking {nameof(SfxManager)}");
 
 			var orig_SfxManager_Play2dAudioClip = typeof(SfxManager).GetMethods().Where((p) =>

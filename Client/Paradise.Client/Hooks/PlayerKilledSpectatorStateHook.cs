@@ -4,7 +4,7 @@ using System;
 using System.Reflection;
 
 namespace Paradise.Client {
-	public class PlayerKilledSpectatorStateHook : IParadiseHook {
+	public class PlayerKilledSpectatorStateHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		/// <summary>
@@ -12,7 +12,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public PlayerKilledSpectatorStateHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			var type = typeof(ApplicationDataManager).Assembly.GetType("PlayerKilledSpectatorState");
 
 			Log.Info($"[{nameof(PlayerKilledSpectatorStateHook)}] hooking {type.Name}");

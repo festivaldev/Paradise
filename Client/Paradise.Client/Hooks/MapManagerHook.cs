@@ -4,7 +4,7 @@ using System;
 using System.Reflection;
 
 namespace Paradise.Client {
-	public class MapManagerHook : IParadiseHook {
+	public class MapManagerHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		/// <summary>
@@ -12,7 +12,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public MapManagerHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(MapManagerHook)}] hooking {nameof(MapManager)}");
 
 			var orig_MapManager_LoadMap = typeof(MapManager).GetMethod("LoadMap", BindingFlags.Public | BindingFlags.Instance);

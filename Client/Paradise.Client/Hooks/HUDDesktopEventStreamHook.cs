@@ -5,7 +5,7 @@ using UberStrike.Core.Models;
 using UberStrike.Core.Types;
 
 namespace Paradise.Client {
-	public class HUDDesktopEventStreamHook : IParadiseHook {
+	public class HUDDesktopEventStreamHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		/// <summary>
@@ -13,7 +13,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public HUDDesktopEventStreamHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(HUDDesktopEventStreamHook)}] hooking {nameof(HUDDesktopEventStream)}");
 
 			var orig_HUDDesktopEventStream_HandleKilledMessage = typeof(HUDDesktopEventStream).GetMethod("HandleKilledMessage", BindingFlags.Static | BindingFlags.Public);

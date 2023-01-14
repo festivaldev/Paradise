@@ -4,7 +4,7 @@ using System.Reflection;
 using UberStrike.Core.Types;
 
 namespace Paradise.Client {
-	public class PlayerLeadAudioHook : IParadiseHook {
+	public class PlayerLeadAudioHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		/// <summary>
@@ -12,7 +12,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public PlayerLeadAudioHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(PlayerLeadAudioHook)}] hooking {nameof(PlayerLeadAudio)}");
 
 			var orig_PlayerLeadAudio_UpdateLeadStatus = typeof(PlayerLeadAudio).GetMethod("UpdateLeadStatus", BindingFlags.Public | BindingFlags.Instance);

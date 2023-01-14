@@ -4,7 +4,7 @@ using System.Reflection;
 using UberStrike.Realtime.UnitySdk;
 
 namespace Paradise.Client {
-	public class WeaponControllerHook : IParadiseHook {
+	public class WeaponControllerHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		private static WeaponController WeaponControllerInstance;
@@ -14,7 +14,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public WeaponControllerHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(WeaponControllerHook)}] hooking {nameof(WeaponController)}");
 
 			var orig_WeaponController_Shoot = typeof(WeaponController).GetMethod("Shoot", BindingFlags.Instance | BindingFlags.Public);

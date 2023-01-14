@@ -4,7 +4,7 @@ using System.Reflection;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class GameStateHook : IParadiseHook {
+	public class GameStateHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		/// <summary>
@@ -12,7 +12,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public GameStateHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(GameStateHook)}] hooking {nameof(GameState)}");
 
 			var orig_GameState_EmitRemoteQuickItem = typeof(GameState).GetMethod("EmitRemoteQuickItem", BindingFlags.Public | BindingFlags.Instance);

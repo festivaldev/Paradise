@@ -3,7 +3,7 @@ using log4net;
 using System.Reflection;
 
 namespace Paradise.Client {
-	public class ClanDataManagerHook : IParadiseHook {
+	public class ClanDataManagerHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		/// <summary>
@@ -11,7 +11,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public ClanDataManagerHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(ClanDataManagerHook)}] hooking {nameof(ClanDataManager)}");
 
 			var orig_ClanDataManager_get_HaveFriends = typeof(ClanDataManager).GetMethod("get_HaveFriends", BindingFlags.Public | BindingFlags.Instance);

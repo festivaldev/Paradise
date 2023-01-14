@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class TrainingRoomHook : IParadiseHook {
+	public class TrainingRoomHook : ParadiseHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
 
 		private static bool IsFreeCamera;
@@ -15,7 +15,7 @@ namespace Paradise.Client {
 		/// </summary>
 		public TrainingRoomHook() { }
 
-		public void Hook(Harmony harmonyInstance) {
+		public override void Hook(Harmony harmonyInstance) {
 			Log.Info($"[{nameof(TrainingRoomHook)}] hooking {nameof(TrainingRoom)}");
 
 			var orig_TrainingRoom_ctor = typeof(TrainingRoom).GetConstructors()[0];
