@@ -1,8 +1,13 @@
 ﻿using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
+using Steamworks;
+using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Reflection;
+using UberStrike.Core.Models;
 using UnityEngine;
 
 namespace Paradise.Client {
@@ -11,6 +16,7 @@ namespace Paradise.Client {
 
 		private static bool HasCleanedUpdates;
 		private static bool HasRequestedMaps;
+		private static bool HasHandledCmdLineArgs;
 
 		/// <summary>
 		/// <br>• Adds game update logic (checked on game startup and every 60 minutes when entering the main menu) and displays a warning if updates are disabled.</br>
@@ -29,6 +35,57 @@ namespace Paradise.Client {
 
 		public static bool LoadPage_Prefix(MenuPageManager __instance, PageType pageType, bool forceReload = false) {
 			if (pageType == PageType.Home) {
+				if (!HasHandledCmdLineArgs) {
+					HasHandledCmdLineArgs = true;
+
+					var args = Environment.GetCommandLineArgs();
+
+					Debug.Log("args length: " + args.Length);
+					foreach (var arg in args) {
+						Debug.Log("arg: " + arg);
+					}
+
+					if (args.Length > 1) {
+						if (Uri.TryCreate(args[1], UriKind.Absolute, out var uri) && uri.Scheme.Equals("uberstrike")) {
+							switch (uri.Host.ToLower()) {
+								case "connect":
+									var _args = uri.AbsolutePath.Substring(1).Split('/');
+									var gameServers = GetField<Dictionary<int, PhotonServer>>(Singleton<GameServerManager>.Instance, "_gameServers", BindingFlags.NonPublic | BindingFlags.Instance);
+
+									var photonServer = gameServers.Values.ToList().Find(_ => _.ConnectionString.Equals(_args[0], StringComparison.InvariantCulture));
+
+									if (photonServer != null) {
+										Singleton<GameServerController>.Instance.SelectedServer = photonServer;
+										Singleton<GameStateController>.Instance.Client.EnterGameLobby(photonServer.ConnectionString);
+									} else {
+										PopupSystem.ShowMessage("Connection Error", "Could not connect to server.");
+										break;
+									}
+
+									System.Threading.Timer timer = null;
+									timer = new System.Threading.Timer(s => {
+										if (Singleton<GameServerController>.Instance.SelectedServer != null) {
+											var gameList = GetField<Dictionary<int, GameRoomData>>(Singleton<GameListManager>.Instance, "_gameList", BindingFlags.NonPublic | BindingFlags.Instance);
+
+											var gameServer = gameList.Values.ToList().Find(_ => _.Number == int.Parse(_args[1]));
+
+											if (gameServer != null) {
+												Singleton<GameStateController>.Instance.JoinNetworkGame(gameServer);
+											} else {
+												PopupSystem.ShowMessage("Connection Error", "Could not connect to specified room.");
+											}
+										}
+
+										timer.Dispose();
+									}, null, 200, UInt32.MaxValue - 10);
+
+									break;
+								default: break;
+							}
+						}
+					}
+				}
+
 				if (!HasCleanedUpdates) {
 					HasCleanedUpdates = true;
 					UnityRuntime.StartRoutine(ParadiseUpdater.CleanupUpdates());

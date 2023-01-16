@@ -1,5 +1,6 @@
 ﻿using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
+using log4net;
 using System;
 using System.Collections;
 using System.IO;
@@ -9,12 +10,16 @@ using UnityEngine;
 
 namespace Paradise.Client {
 	public class AuthenticationManagerHook : ParadiseHook {
+		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
+
 		/// <summary>
 		/// Stores a player's Steam ID in a text file inside the game's data directory for improved handling of multiple instances.
 		/// </summary>
 		public AuthenticationManagerHook() { }
 
 		public override void Hook(Harmony harmonyInstance) {
+			Log.Info($"[{nameof(AuthenticationManagerHook)}] hooking {nameof(AuthenticationManager)}");
+
 			var orig_AuthenticationManager_LoginByChannel = typeof(AuthenticationManager).GetMethod("LoginByChannel", BindingFlags.Public | BindingFlags.Instance);
 			var prefix_AuthenticationManager_LoginByChannel = typeof(AuthenticationManagerHook).GetMethod("LoginByChannel_Prefix", BindingFlags.Public | BindingFlags.Static);
 
@@ -24,6 +29,13 @@ namespace Paradise.Client {
 			var postfix_AuthenticationManager_CompleteAuthentication = typeof(AuthenticationManagerHook).GetMethod("CompleteAuthentication_Postfix", BindingFlags.Public | BindingFlags.Static);
 
 			harmonyInstance.Patch(orig_AuthenticationManager_CompleteAuthentication, null, new HarmonyMethod(postfix_AuthenticationManager_CompleteAuthentication));
+
+			// For some reason, executing uberdaemon while UberStrike is launched via the URI handler results in a hang, so we disable it
+			var orig_UberDaemon_GetMagicHash = typeof(UberDaemon).GetMethod("GetMagicHash", BindingFlags.Public | BindingFlags.Instance);
+			var prefix_UberDaemon_GetMagicHash = typeof(AuthenticationManagerHook).GetMethod("GetMagicHash_Prefix", BindingFlags.Public | BindingFlags.Static);
+			var post_UberDaemon_GetMagicHash = typeof(AuthenticationManagerHook).GetMethod("GetMagicHash_Postfix", BindingFlags.Public | BindingFlags.Static);
+
+			harmonyInstance.Patch(orig_UberDaemon_GetMagicHash, new HarmonyMethod(prefix_UberDaemon_GetMagicHash), new HarmonyMethod(post_UberDaemon_GetMagicHash));
 		}
 
 		public static bool LoginByChannel_Prefix(AuthenticationManager __instance) {
@@ -62,6 +74,14 @@ namespace Paradise.Client {
 			if (authView.MemberAuthenticationResult == MemberAuthenticationResult.Ok) {
 				File.WriteAllText(string.Join("/", new string[] { Application.dataPath, "PlayerSteamID" }), PlayerDataManager.SteamId.ToString());
 			}
+		}
+
+		public static bool GetMagicHash_Prefix() {
+			return false;
+		}
+
+		public static void GetMagicHash_Postfix(ref string __result) {
+			__result = "0xABAD1DEA";
 		}
 	}
 }

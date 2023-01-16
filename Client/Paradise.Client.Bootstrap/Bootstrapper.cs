@@ -1,5 +1,7 @@
 ﻿using HarmonyLib;
+using Microsoft.Win32;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace Paradise.Client.Bootstrap {
 	public static class Bootstrapper {
@@ -35,6 +37,23 @@ namespace Paradise.Client.Bootstrap {
 
 			foreach (var hook in hooks) {
 				hook.Hook(harmonyInstance);
+			}
+
+			if (Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Classes\uberstrike") == null) {
+				using (var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Classes\\uberstrike")) {
+					var appLocation = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;
+
+					key.SetValue("", "URL:UberStrike");
+					key.SetValue("URL Protocol", "");
+
+					using (var defaultIcon = key.CreateSubKey("DefaultIcon")) {
+						defaultIcon.SetValue("", appLocation + ",1");
+					}
+
+					using (var commandKey = key.CreateSubKey(@"shell\open\command")) {
+						commandKey.SetValue("", "\"" + appLocation + "\" \"%1\"");
+					}
+				}
 			}
 		}
 	}
