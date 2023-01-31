@@ -92,7 +92,6 @@
     <Compile Include="HttpServer\RouteAttribute.cs" />
     <Compile Include="HttpServer\Router.cs" />
     <Compile Include="Interfaces.cs" />
-    <Compile Include="MonitoringInterfaces.cs" />
     <Compile Include="ParadiseControlForm.cs">
       <SubType>Form</SubType>
     </Compile>

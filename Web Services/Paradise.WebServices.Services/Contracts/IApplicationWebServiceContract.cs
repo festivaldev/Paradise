@@ -18,5 +18,13 @@ namespace Paradise.WebServices.Contracts {
 
 		[OperationContract]
 		byte[] SetMatchScore(byte[] data);
+
+		// CUSTOM
+		[OperationContract]
+		byte[] PublishCommMonitoringData(byte[] data);
+
+		// CUSTOM
+		[OperationContract]
+		byte[] PublishGameMonitoringData(byte[] data);
 	}
 }

@@ -70,5 +70,31 @@ namespace Paradise.Realtime {
 				}
 			}
 		}
+
+		public bool PublishCommMonitoringData(string identifier, string monitoringData) {
+			using (var bytes = new MemoryStream()) {
+				StringProxy.Serialize(bytes, identifier);
+				StringProxy.Serialize(bytes, monitoringData);
+
+				var result = Service.PublishCommMonitoringData(bytes.ToArray());
+
+				using (var inputStream = new MemoryStream(result)) {
+					return BooleanProxy.Deserialize(inputStream);
+				}
+			}
+		}
+
+		public bool PublishGameMonitoringData(string identifier, string monitoringData) {
+			using (var bytes = new MemoryStream()) {
+				StringProxy.Serialize(bytes, identifier);
+				StringProxy.Serialize(bytes, monitoringData);
+
+				var result = Service.PublishGameMonitoringData(bytes.ToArray());
+
+				using (var inputStream = new MemoryStream(result)) {
+					return BooleanProxy.Deserialize(inputStream);
+				}
+			}
+		}
 	}
 }

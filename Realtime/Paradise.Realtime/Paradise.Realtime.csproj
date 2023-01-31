@@ -75,9 +75,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\Web Services\Paradise.WebServices\MonitoringInterfaces.cs">
-      <Link>Interfaces\MonitoringInterfaces.cs</Link>
-    </Compile>
     <Compile Include="Interfaces\ICommPeerEventsType.cs" />
     <Compile Include="Interfaces\ICommPeerOperationsType.cs" />
     <Compile Include="Interfaces\IGamePeerEventsType.cs" />

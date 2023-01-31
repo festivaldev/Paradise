@@ -4,16 +4,17 @@ using Photon.SocketServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.ServiceModel;
-using System.Threading.Tasks;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameApplication : BaseRealtimeApplication {
-		protected ServiceHost ServiceHost;
+		protected static readonly new ILog Log = LogManager.GetLogger("GameLog");
 
 		public static new GameApplication Instance => (GameApplication)ApplicationBase.Instance;
 
+		public string Identifier = Guid.NewGuid().ToString();
 		public GameRoomManager RoomManager { get; private set; } = new GameRoomManager();
+
+		protected System.Timers.Timer MonitoringTimer;
 
 		public int Peers {
 			get {
@@ -40,27 +41,20 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected override void OnSetup() {
-			Log.Info("Started GameServer.");
+			MonitoringTimer = new System.Timers.Timer(5000);
+			MonitoringTimer.Elapsed += delegate {
+				ApplicationWebServiceClient.Instance.PublishGameMonitoringData(Identifier, GetStatus());
+			};
+			MonitoringTimer.Start();
 
-			ServiceHost = new ServiceHost(typeof(GameApplicationMonitoring));
-			ServiceHost.AddServiceEndpoint(typeof(IParadiseMonitoring), new NetNamedPipeBinding(), "net.pipe://localhost/NewParadise.Monitoring.Game");
-
-			Task.Factory.StartNew(() => {
-				Task.Delay(300).Wait();
-
-				ServiceHost.Open();
-			});
+			Log.Info($"Started GameServer[{Identifier}].");
 		}
 
 		protected override void OnTearDown() {
-			Log.Info("Stopped GameServer.");
+			Log.Info($"Stopping GameServer[{Identifier}]...");
 
-			ServiceHost.Abort();
+			MonitoringTimer.Stop();
 		}
-	}
-
-	public class GameApplicationMonitoring : IParadiseMonitoring {
-		protected static readonly new ILog Log = LogManager.GetLogger("GameLog");
 
 		public string GetStatus() {
 			try {
@@ -87,10 +81,6 @@ namespace Paradise.Realtime.Server.Game {
 
 				return $"{{\"error\": \"{e.Message}\"}}";
 			}
-		}
-
-		public byte Ping() {
-			return 0x1;
 		}
 	}
 }

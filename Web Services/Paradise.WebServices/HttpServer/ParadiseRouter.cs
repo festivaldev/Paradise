@@ -1,40 +1,16 @@
 ﻿using log4net;
-using Newtonsoft.Json;
+using Paradise.WebServices.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.ServiceModel;
-using System.ServiceModel.Description;
-using System.Timers;
 
 namespace Paradise.WebServices {
-	internal class MonitoringProxy : ClientBase<IParadiseMonitoring> {
-		public MonitoringProxy(string target)
-			: base(new ServiceEndpoint(ContractDescription.GetContract(typeof(IParadiseMonitoring)),
-				new NetNamedPipeBinding(), new EndpointAddress($"net.pipe://localhost/NewParadise.Monitoring.{target}"))) {
-
-		}
-
-		public string GetStatus() {
-			return Channel.GetStatus();
-		}
-
-		public byte Ping() {
-			return Channel.Ping();
-		}
-	}
 
 	internal class ParadiseRouter : Router {
 		protected static readonly ILog Log = LogManager.GetLogger(nameof(ParadiseService));
 
 		private string WebRoot;
 		private ParadiseServerSettings Settings;
-
-		private MonitoringProxy CommMonitoringProxy = new MonitoringProxy("Comm");
-		private MonitoringProxy GameMonitoringProxy = new MonitoringProxy("Game");
-
-		private System.Timers.Timer CommPingTimer;
-		private System.Timers.Timer GamePingTimer;
 
 		private static readonly IDictionary<string, string> mimeTypes = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {
 			#region extension to MIME type list
@@ -108,38 +84,6 @@ namespace Paradise.WebServices {
 		public ParadiseRouter(string webRoot, ParadiseServerSettings settings) {
 			WebRoot = System.IO.Path.GetFullPath(webRoot);
 			Settings = settings;
-
-			CommPingTimer = new System.Timers.Timer(2000);
-			CommPingTimer.Elapsed += ((object source, ElapsedEventArgs e) => {
-				try {
-					if (CommMonitoringProxy.State == CommunicationState.Faulted) {
-						CommMonitoringProxy.Abort();
-						CommMonitoringProxy = new MonitoringProxy("Comm");
-					}
-
-					CommMonitoringProxy.Ping();
-				} catch (Exception ex) {
-					
-				}
-
-			});
-			CommPingTimer.Start();
-
-			GamePingTimer = new System.Timers.Timer(2000);
-			GamePingTimer.Elapsed += ((object source, ElapsedEventArgs e) => {
-				try {
-					if (GameMonitoringProxy.State == CommunicationState.Faulted) {
-						GameMonitoringProxy.Abort();
-						GameMonitoringProxy = new MonitoringProxy("Game");
-					}
-
-					GameMonitoringProxy.Ping();
-				} catch (Exception ex) {
-					
-				}
-
-			});
-			GamePingTimer.Start();
 		}
 
 		[Route(Path = "/status/web")]
@@ -149,60 +93,18 @@ namespace Paradise.WebServices {
 
 		[Route(Path = "/status/comm")]
 		public bool CommServerStatus() {
-			string status = null;
-
-			try {
-				status = CommMonitoringProxy.GetStatus();
-			} catch (Exception e) {
-				if (e is CommunicationException || e is EndpointNotFoundException) {
-					SetStatus(503);
-					Send($"503 Service Temporarily Unavailable");
-					Log.Error(e);
-				} else {
-					SetStatus(500);
-					Send($"500 Internal Server Error");
-					Log.Error(e);
-				}
-
-				CommMonitoringProxy.Abort();
-				CommMonitoringProxy = new MonitoringProxy("Comm");
-
-				return true;
-			}
-
 			SetStatus(200);
 			SetContentType("application/json");
-			Send(JsonConvert.DeserializeObject(status));
+			Send(ApplicationWebService.CommMonitoringData.Values);
 
 			return true;
 		}
 
 		[Route(Path = "/status/game")]
 		public bool GameServerStatus() {
-			string status = null;
-
-			try {
-				status = GameMonitoringProxy.GetStatus();
-			} catch (Exception e) {
-				if (e is CommunicationException || e is EndpointNotFoundException) {
-					SetStatus(503);
-					Send($"503 Service Temporarily Unavailable");
-					Log.Error(e);
-				} else {
-					SetStatus(500);
-					Send($"500 Internal Server Error");
-					Log.Error(e);
-				}
-
-				GameMonitoringProxy.Abort();
-				GameMonitoringProxy = new MonitoringProxy("Game");
-
-				return true;
-			}
-
 			SetStatus(200);
 			SetContentType("application/json");
-			Send(JsonConvert.DeserializeObject(status));
+			Send(ApplicationWebService.GameMonitoringData.Values);
 
 			return true;
 		}

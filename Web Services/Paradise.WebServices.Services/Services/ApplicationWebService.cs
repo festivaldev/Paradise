@@ -1,5 +1,4 @@
-﻿using log4net;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Paradise.Core.Models.Views;
 using Paradise.Core.Serialization;
 using Paradise.Core.Types;
@@ -27,6 +26,9 @@ namespace Paradise.WebServices.Services {
 
 		public ApplicationWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
 		public ApplicationWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
+
+		public static readonly Dictionary<string, object> CommMonitoringData = new Dictionary<string, object>();
+		public static Dictionary<string, object> GameMonitoringData = new Dictionary<string, object>();
 
 		protected override void Setup() {
 			try {
@@ -88,8 +90,8 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(clientVersion, channel, publicKey);
 
 					using (var outputStream = new MemoryStream()) {
-						if (channel != ChannelType.Steam && 
-							channel != ChannelType.WindowsStandalone && 
+						if (channel != ChannelType.Steam &&
+							channel != ChannelType.WindowsStandalone &&
 							channel != ChannelType.OSXStandalone) {
 							AuthenticateApplicationViewProxy.Serialize(outputStream, new AuthenticateApplicationView {
 								IsEnabled = false
@@ -212,6 +214,66 @@ namespace Paradise.WebServices.Services {
 						throw new NotImplementedException();
 
 						//return outputStream.ToArray();
+					}
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Publishes monitoring data for a CommServer
+		/// </summary>
+		public byte[] PublishCommMonitoringData(byte[] data) {
+			try {
+				using (var bytes = new MemoryStream(data)) {
+					var identifier = StringProxy.Deserialize(bytes);
+					var monitoringData = JsonConvert.DeserializeObject<Dictionary<string, object>>(StringProxy.Deserialize(bytes));
+
+					if (!CommMonitoringData.ContainsKey(identifier)) {
+						Log.Info($"Registered CommServer ({identifier}) for monitoring.");
+					}
+
+					CommMonitoringData[identifier] = monitoringData;
+
+					DebugEndpoint(monitoringData);
+
+					using (var outputStream = new MemoryStream()) {
+						BooleanProxy.Serialize(outputStream, true);
+
+						return outputStream.ToArray();
+					}
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Publishes monitoring data for a given GameServer by identifier
+		/// </summary>
+		public byte[] PublishGameMonitoringData(byte[] data) {
+			try {
+				using (var bytes = new MemoryStream(data)) {
+					var identifier = StringProxy.Deserialize(bytes);
+					var monitoringData = JsonConvert.DeserializeObject<Dictionary<string, object>>(StringProxy.Deserialize(bytes));
+
+					if (!GameMonitoringData.ContainsKey(identifier)) {
+						Log.Info($"Registered GameServer ({identifier}) for monitoring.");
+					}
+
+					GameMonitoringData[identifier] = monitoringData;
+
+					DebugEndpoint(identifier, monitoringData);
+
+					using (var outputStream = new MemoryStream()) {
+						BooleanProxy.Serialize(outputStream, true);
+
+						return outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
