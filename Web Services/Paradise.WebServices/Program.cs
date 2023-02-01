@@ -39,15 +39,6 @@ namespace Paradise.WebServices {
 
 		[STAThread]
 		public static void Main(string[] args) {
-			using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Paradise.WebServices.log4net.config")) {
-				using (StreamReader reader = new StreamReader(stream)) {
-					var logConfig = new XmlDocument();
-					logConfig.LoadXml(reader.ReadToEnd());
-
-					XmlConfigurator.Configure(logConfig.DocumentElement);
-				}
-			}
-
 			foreach (var arg in args) {
 				switch (arg) {
 					case "--install":
@@ -89,6 +80,8 @@ namespace Paradise.WebServices {
 
 			switch (RunMode) {
 				case RunMode.Console:
+					ConfigureLogging();
+
 					ConsoleHelper.CreateConsole();
 
 					SetConsoleCtrlHandler(consoleEventHandler, true);
@@ -134,6 +127,8 @@ namespace Paradise.WebServices {
 
 					break;
 				case RunMode.Service:
+					ConfigureLogging();
+
 					using (var host = new ServiceHost(typeof(ParadiseService))) {
 						host.AddServiceEndpoint(typeof(IParadiseServiceHost), new NetNamedPipeBinding(), "net.pipe://localhost/NewParadise.WebServices");
 						host.Open();
@@ -157,7 +152,16 @@ namespace Paradise.WebServices {
 			}
 		}
 
+		static void ConfigureLogging() {
+			using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Paradise.WebServices.log4net.config")) {
+				using (StreamReader reader = new StreamReader(stream)) {
+					var logConfig = new XmlDocument();
+					logConfig.LoadXml(reader.ReadToEnd());
 
+					XmlConfigurator.Configure(logConfig.DocumentElement);
+				}
+			}
+		}
 
 		static bool ConsoleEventCallback(CtrlType eventType) {
 			if (eventType == CtrlType.CTRL_CLOSE_EVENT) {
