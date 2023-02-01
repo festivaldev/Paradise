@@ -68,7 +68,7 @@ namespace Paradise.Client {
 				}
 			}
 
-			Log.Info($"Initializing Paradise (Version {Assembly.GetExecutingAssembly().GetName().Version})");
+			Log.Info($"Initializing Paradise (Version {Assembly.GetExecutingAssembly().GetName().Version}) ({Application.platform})");
 
 			XmlSerializer ser = new XmlSerializer(typeof(ParadiseClientSettings));
 
