@@ -2,6 +2,11 @@
 UberStrike Server Emulation. Reimagined.
 
 [Announcement tweet](https://twitter.com/Sniper_GER/status/1532027810792996864)
+<blockquote class="twitter-tweet" data-dnt="true"><p lang="en" dir="ltr">Paradise is here.<br><br>Play UberStrike as it was meant to be, and relive the memories of the past once again.<br><br>Only available on <a href="https://t.co/gfU4z9segq">https://t.co/gfU4z9segq</a> <a href="https://t.co/TK4iI4eEwn">pic.twitter.com/TK4iI4eEwn</a></p>&mdash; Sniper 🅶🅴🆁 (@Sniper_GER) <a href="https://twitter.com/Sniper_GER/status/1532027810792996864?ref_src=twsrc%5Etfw">June 1, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>  
+
+<br >
+
+[![Paradise UberStrike Discord Server](https://discordapp.com/api/guilds/1071142989579178116/widget.png?style=banner2)](https://discord.gg/5PSspzWTCJ)
 
 ## Background
 Back in 2017, three students of Applied Computer Sciences had the idea to bring back their favorite first-person shooter called [UberStrike](https://steamdb.info/app/291210), which was shut down on June 13, 2016.  
