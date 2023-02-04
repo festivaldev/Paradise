@@ -24,9 +24,13 @@ namespace Paradise.Client {
 		public static void InitOptionsDropdown_Postfix(GlobalUIRibbon __instance) {
 			var optionsDropdown = GetField<GuiDropDown>(__instance, "_optionsDropdown");
 
-			var holder = AutoMonoBehaviour<TextureLoader>.Instance.Load(ApplicationDataManager.ImagePath + "github.png", null);
+			// Link to Discord Server
+			optionsDropdown.Add(new GUIContent(" Discord", AutoMonoBehaviour<TextureLoader>.Instance.Load(ApplicationDataManager.ImagePath + "discord.png", null).Texture), delegate () {
+				Application.OpenURL("discord:///channels/1071142989579178116/");
+			});
 
-			optionsDropdown.Add(new GUIContent(" Report Issue", holder.Texture), delegate () {
+			// Link to GitHub Issues
+			optionsDropdown.Add(new GUIContent(" Report Issue", AutoMonoBehaviour<TextureLoader>.Instance.Load(ApplicationDataManager.ImagePath + "github.png", null).Texture), delegate () {
 				Application.OpenURL("https://github.com/festivaldev/Paradise/issues");
 			});
 		}

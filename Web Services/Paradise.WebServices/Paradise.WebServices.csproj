@@ -155,6 +155,12 @@
     </Content>
     <Content Include="Resources\RunningIcon.ico" />
     <Content Include="Resources\StoppedIcon.ico" />
+    <Content Include="wwwroot\images\discord%402x.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\discord.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\AD.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
