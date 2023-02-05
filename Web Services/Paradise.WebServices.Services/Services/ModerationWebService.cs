@@ -18,6 +18,7 @@ namespace Paradise.WebServices.Services {
 		public ModerationWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() { }
+		protected override void Teardown() { }
 
 		public byte[] OpPlayer(byte[] data) {
 			try {

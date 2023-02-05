@@ -17,6 +17,7 @@ namespace Paradise.WebServices.Services {
 		public PrivateMessageWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() { }
+		protected override void Teardown() { }
 
 		/// <summary>
 		/// Deletes a specified message thread with a different user

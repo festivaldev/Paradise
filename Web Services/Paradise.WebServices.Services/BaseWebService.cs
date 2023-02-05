@@ -131,6 +131,8 @@ namespace Paradise.WebServices {
 		public bool StopService() {
 			if (ServiceHost?.State != CommunicationState.Closing && ServiceHost?.State != CommunicationState.Closed && ServiceHost?.State != CommunicationState.Faulted) {
 				try {
+					Teardown();
+
 					ServiceHost.Close();
 
 					Log.Info($"{ServiceName} ({ServiceVersion}) successfully stopped");
@@ -162,6 +164,7 @@ namespace Paradise.WebServices {
 		public bool IsRunning => ServiceHost?.State == CommunicationState.Opened;
 
 		protected abstract void Setup();
+		protected abstract void Teardown();
 
 		protected void DebugEndpoint(params object[] data) {
 			Log.Debug($"[{DateTime.UtcNow.ToString("o")}] {ServiceName}({ServiceVersion}):{new StackTrace().GetFrame(1).GetMethod().Name} -> {string.Join(", ", data)}");

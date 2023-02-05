@@ -21,6 +21,7 @@ namespace Paradise.WebServices.Services {
 		public AuthenticationWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() { }
+		protected override void Teardown() { }
 
 		/// <summary>
 		/// Completes a just created account by setting the player's name and rewarding them the default starting items

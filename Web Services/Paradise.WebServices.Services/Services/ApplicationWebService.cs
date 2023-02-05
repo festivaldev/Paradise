@@ -30,12 +30,24 @@ namespace Paradise.WebServices.Services {
 		public static readonly Dictionary<string, object> CommMonitoringData = new Dictionary<string, object>();
 		public static Dictionary<string, object> GameMonitoringData = new Dictionary<string, object>();
 
+		private FileSystemWatcher watcher;
+
 		protected override void Setup() {
 			try {
 				applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "ApplicationConfiguration.json")));
 				photonServers = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "PhotonServers.json")));
 				mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "Maps.json")));
 				customMapData = JsonConvert.DeserializeObject<List<UberstrikeCustomMapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "CustomMaps.json")));
+
+				watcher = new FileSystemWatcher(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService"));
+				watcher.NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite;
+				watcher.Changed += delegate (object sender, FileSystemEventArgs e) {
+					applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "ApplicationConfiguration.json")));
+					photonServers = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "PhotonServers.json")));
+					mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "Maps.json")));
+					customMapData = JsonConvert.DeserializeObject<List<UberstrikeCustomMapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "CustomMaps.json")));
+				};
+				watcher.EnableRaisingEvents = true;
 
 				// Resolve them domains
 				try {
@@ -75,6 +87,11 @@ namespace Paradise.WebServices.Services {
 					Exception = e
 				});
 			}
+		}
+
+		protected override void Teardown() {
+			watcher.EnableRaisingEvents = false;
+			watcher.Dispose();
 		}
 
 		/// <summary>

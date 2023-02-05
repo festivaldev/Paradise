@@ -23,10 +23,20 @@ namespace Paradise.WebServices.Services {
 		public ShopWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
 		public ShopWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
+		private FileSystemWatcher watcher;
+
 		protected override void Setup() {
 			try {
 				shopData = JsonConvert.DeserializeObject<UberStrikeItemShopClientView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ShopWebService", "Shop.json")));
 				bundleData = JsonConvert.DeserializeObject<List<BundleView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ShopWebService", "Bundles.json")));
+
+				watcher = new FileSystemWatcher(Path.Combine(CurrentDirectory, "ServiceData", "ShopWebService"));
+				watcher.NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite;
+				watcher.Changed += delegate (object sender, FileSystemEventArgs e) {
+					shopData = JsonConvert.DeserializeObject<UberStrikeItemShopClientView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ShopWebService", "Shop.json")));
+					bundleData = JsonConvert.DeserializeObject<List<BundleView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ShopWebService", "Bundles.json")));
+				};
+				watcher.EnableRaisingEvents = true;
 			} catch (Exception e) {
 				Log.Error($"Failed to load {ServiceName} data: {e.Message}");
 				ServiceError?.Invoke(this, new ServiceEventArgs {
@@ -35,6 +45,11 @@ namespace Paradise.WebServices.Services {
 					Exception = e
 				});
 			}
+		}
+
+		protected override void Teardown() {
+			watcher.EnableRaisingEvents = false;
+			watcher.Dispose();
 		}
 
 		/// <summary>

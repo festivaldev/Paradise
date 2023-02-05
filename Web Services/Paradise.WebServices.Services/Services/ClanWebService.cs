@@ -34,6 +34,7 @@ namespace Paradise.WebServices.Services {
 		public ClanWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() { }
+		protected override void Teardown() { }
 
 		/// <summary>
 		/// Accepts a clan invitation on the invitee side

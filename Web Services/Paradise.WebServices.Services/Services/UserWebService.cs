@@ -20,6 +20,7 @@ namespace Paradise.WebServices.Services {
 		public UserWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() { }
+		protected override void Teardown() { }
 
 		/// <summary>
 		/// Adds an item transaction to a player's history
