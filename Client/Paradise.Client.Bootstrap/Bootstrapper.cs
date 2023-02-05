@@ -17,6 +17,7 @@ namespace Paradise.Client.Bootstrap {
 #endif
 
 				new AuthenticationManagerHook(),
+				new GlobalSceneLoaderHook(),
 				new ApplicationDataManagerHook(),
 				new SoapClientHook(),
 				new MenuPageManagerHook(),

@@ -74,6 +74,7 @@
     <Compile Include="Hooks\BundleManagerHook.cs" />
     <Compile Include="Hooks\ClanDataManagerHook.cs" />
     <Compile Include="Hooks\CreateGamePanelGUIHook.cs" />
+    <Compile Include="Hooks\GlobalSceneLoaderHook.cs" />
     <Compile Include="Hooks\GlobalUIRibbonHook.cs" />
     <Compile Include="Hooks\GameStateHook.cs" />
     <Compile Include="Hooks\HUDStatusPanelHook.cs" />
