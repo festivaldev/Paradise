@@ -2,7 +2,7 @@
 UberStrike Server Emulation. Reimagined.
 
 [Announcement tweet](https://twitter.com/Sniper_GER/status/1532027810792996864)
-<blockquote class="twitter-tweet" data-dnt="true"><p lang="en" dir="ltr">Paradise is here.<br><br>Play UberStrike as it was meant to be, and relive the memories of the past once again.<br><br>Only available on <a href="https://t.co/gfU4z9segq">https://t.co/gfU4z9segq</a> <a href="https://t.co/TK4iI4eEwn">pic.twitter.com/TK4iI4eEwn</a></p>&mdash; Sniper 🅶🅴🆁 (@Sniper_GER) <a href="https://twitter.com/Sniper_GER/status/1532027810792996864?ref_src=twsrc%5Etfw">June 1, 2022</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>  
+<blockquote class="twitter-tweet" data-dnt="true"><p lang="en" dir="ltr">Paradise is here.<br><br>Play UberStrike as it was meant to be, and relive the memories of the past once again.<br><br>Only available on <a href="https://t.co/gfU4z9segq">https://t.co/gfU4z9segq</a> <a href="https://t.co/TK4iI4eEwn">pic.twitter.com/TK4iI4eEwn</a></p>&mdash; Sniper 🅶🅴🆁 (@Sniper_GER) <a href="https://twitter.com/Sniper_GER/status/1532027810792996864?ref_src=twsrc%5Etfw">June 1, 2022</a></blockquote>
 
 <br >
 
