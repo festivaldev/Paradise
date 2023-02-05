@@ -42,26 +42,24 @@ namespace Paradise.Client {
 		}
 
 		public static void DoMenuBar_Postfix(GlobalUIRibbon __instance, Rect rect) {
-			if (GamePageManager.HasPage || GameState.Current.HasJoinedGame) {
-				if (GameState.Current.GameMode != UberStrike.Core.Types.GameModeType.None) {
-					var xOffset = 44f;
-					var width = 100f;
+			if (!ApplicationDataManager.IsMobile) {
+				if (GamePageManager.HasPage || GameState.Current.HasJoinedGame) {
+					if (GameState.Current.GameMode != UberStrike.Core.Types.GameModeType.None) {
+						var xOffset = 88f;
+						var width = 100f;
 
-					if (!ApplicationDataManager.IsMobile) {
-						xOffset += 44f;
-					}
+						if (GamePageManager.HasPage) {
+							xOffset = 420f;
+						}
 
-					if (GamePageManager.HasPage) {
-						xOffset = 420f;
-					}
+						if (GUITools.Button(new Rect(rect.width - (xOffset + width), rect.y + 9f, width, 26f), new GUIContent("Copy game link", "Copy this game's link to your clipboard"), BlueStonez.buttondark_medium)) {
+							var room = GameState.Current.RoomData;
 
-					if (GUITools.Button(new Rect(rect.width - (xOffset + width), rect.y + 9f, width, 26f), new GUIContent("Copy game link", "Copy this game's link to your clipboard"), BlueStonez.buttondark_medium)) {
-						var room = GameState.Current.RoomData;
-
-						TextEditor editor = new TextEditor();
-						editor.content = new GUIContent($"uberstrike://connect/{room.Server.ConnectionString}/{room.Number}");
-						editor.SelectAll();
-						editor.Copy();
+							TextEditor editor = new TextEditor();
+							editor.content = new GUIContent($"uberstrike://connect/{room.Server.ConnectionString}/{room.Number}");
+							editor.SelectAll();
+							editor.Copy();
+						}
 					}
 				}
 			}
