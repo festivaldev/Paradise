@@ -59,7 +59,15 @@ namespace Paradise.Realtime.Server.Game {
 			}
 
 			lock (Lock) {
-				room.RoomId = ++LastRoomId;
+				var random = new Random((int)DateTime.UtcNow.Ticks);
+
+				var roomId = random.Next(1, int.MaxValue);
+				while (Rooms.ContainsKey(roomId)) {
+					roomId = random.Next(1, int.MaxValue);
+				}
+
+				room.RoomId = roomId;
+				//room.RoomId = ++LastRoomId;
 				room.Password = password;
 
 				Rooms.Add(room.RoomId, room);

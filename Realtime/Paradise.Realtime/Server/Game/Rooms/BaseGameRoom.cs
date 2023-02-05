@@ -157,7 +157,7 @@ namespace Paradise.Realtime.Server.Game {
 
 			MetaData.ConnectedPlayers = Peers.Count;
 
-			Log.Info($"{peer.Actor.PlayerName}({peer.Actor.Cmid}) joined {this}({this.Id})");
+			Log.Info($"{peer.Actor.PlayerName}({peer.Actor.Cmid}) joined {this}({this.MetaData.Number})");
 		}
 
 		public void Leave(GamePeer peer) {
