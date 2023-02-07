@@ -33,7 +33,8 @@ namespace Paradise.Client.Bootstrap {
 				new SfxManagerHook(),
 				new GameStateHook(),
 				new PlayerLeadAudioHook(),
-				new GlobalUIRibbonHook()
+				new GlobalUIRibbonHook(),
+				new TeamEliminationRoomHook()
 			};
 
 			foreach (var hook in hooks) {
