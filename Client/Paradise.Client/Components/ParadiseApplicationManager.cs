@@ -8,6 +8,7 @@ namespace Paradise.Client {
 		private void OnApplicationQuit() {
 			Log.Info("Forcing UberStrike to quit");
 
+			RichPresenceClient.Dispose();
 			System.Diagnostics.Process.GetCurrentProcess().Close();
 		}
 	}

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -54,6 +54,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -70,6 +71,7 @@
   <ItemGroup>
     <Compile Include="Components\ParadiseApplicationManager.cs" />
     <Compile Include="Hooks\TeamEliminationRoomHook.cs" />
+    <Compile Include="Plugins\RichPresenceClient.cs" />
     <Compile Include="Hooks\ApplicationDataManagerHook.cs" />
     <Compile Include="Hooks\AuthenticationManagerHook.cs" />
     <Compile Include="Hooks\BundleManagerHook.cs" />
@@ -109,6 +111,18 @@
     <EmbeddedResource Include="ScreenResolutions.xml" />
     <EmbeddedResource Include="log4net.config" />
     <None Include="packages.config" />
+    <EmbeddedResource Include="..\..\AssemblyReferences\System.IdentityModel.dll">
+      <Link>lib\System.IdentityModel.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\AssemblyReferences\System.Runtime.Serialization.dll">
+      <Link>lib\System.Runtime.Serialization.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\AssemblyReferences\System.ServiceModel.dll">
+      <Link>lib\System.ServiceModel.dll</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\..\AssemblyReferences\System.Transactions.dll">
+      <Link>lib\System.Transactions.dll</Link>
+    </EmbeddedResource>
     <Content Include="Paradise.Settings.Client.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -10,6 +10,7 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.Client.Bootstrap", "Client\Paradise.Client.Bootstrap\Paradise.Client.Bootstrap.csproj", "{29414D4D-B20E-4CCB-8CCC-A738E79E4982}"
 	ProjectSection(ProjectDependencies) = postProject
 		{4481678E-F589-4D0A-8DA1-7DB8A5560A0B} = {4481678E-F589-4D0A-8DA1-7DB8A5560A0B}
+		{A808A630-81AB-4BC2-AA24-330AFCF622BD} = {A808A630-81AB-4BC2-AA24-330AFCF622BD}
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web Services", "Web Services", "{6943E532-DB3D-4288-9FCD-FD24BEB95805}"
@@ -30,6 +31,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.Realtime", "Realtime\Paradise.Realtime\Paradise.Realtime.csproj", "{770F85FC-44A9-4B07-86D6-59829D742199}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Paradise.Client.DiscordRPC", "Client\Paradise.Client.DiscordRPC\Paradise.Client.DiscordRPC.csproj", "{A808A630-81AB-4BC2-AA24-330AFCF622BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +64,10 @@ Global
 		{770F85FC-44A9-4B07-86D6-59829D742199}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{770F85FC-44A9-4B07-86D6-59829D742199}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{770F85FC-44A9-4B07-86D6-59829D742199}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A808A630-81AB-4BC2-AA24-330AFCF622BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A808A630-81AB-4BC2-AA24-330AFCF622BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A808A630-81AB-4BC2-AA24-330AFCF622BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A808A630-81AB-4BC2-AA24-330AFCF622BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -72,6 +79,7 @@ Global
 		{8FD8FEC8-38BE-417C-9086-50E2122F4007} = {6943E532-DB3D-4288-9FCD-FD24BEB95805}
 		{2C90E774-49B8-4D1E-BA6D-FA9F47B647FB} = {7B9D7897-3ECA-4B43-90A5-AC314F586EEC}
 		{770F85FC-44A9-4B07-86D6-59829D742199} = {32842218-9080-419B-864C-5FC6C32E7493}
+		{A808A630-81AB-4BC2-AA24-330AFCF622BD} = {66772FD3-922F-4BA5-AB61-62ADE7FD3AFB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6BC53E70-F9D9-41A2-A502-BD62E6D3DC46}

@@ -2,6 +2,7 @@
 using log4net.Config;
 using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
@@ -14,6 +15,11 @@ namespace Paradise.Client {
 
 		public static ParadiseClientSettings Settings { get; private set; } = new ParadiseClientSettings();
 
+		public static bool EnableDiscordRichPresence {
+			get {
+				return Settings == null || Settings.EnableDiscordRichPresence;
+			}
+		}
 		public static string WebServiceBaseUrl {
 			get {
 				return ForceTrailingSlash(Settings.WebServiceBaseUrl) ?? "https://ws.uberstrike.com/2.0/";
@@ -59,6 +65,17 @@ namespace Paradise.Client {
 		}
 
 		public static void Initialize() {
+			AppDomain.CurrentDomain.AssemblyResolve += (sender, e) => {
+				var assemblyName = new AssemblyName(e.Name).Name;
+				var resourceName = Assembly.GetExecutingAssembly().GetManifestResourceNames().FirstOrDefault(_ => _.EndsWith($"{assemblyName}.dll"));
+
+				if (string.IsNullOrEmpty(resourceName)) return null;
+
+				using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName)) {
+					return Assembly.Load(new BinaryReader(stream).ReadBytes((int)stream.Length));
+				}
+			};
+
 			using (Stream stream = Assembly.GetAssembly(typeof(ParadiseClient)).GetManifestResourceStream("Paradise.Client.log4net.config")) {
 				using (StreamReader reader = new StreamReader(stream)) {
 					var logConfig = new XmlDocument();
@@ -86,6 +103,8 @@ namespace Paradise.Client {
 					}
 				}
 			}
+
+			RichPresenceClient.Initialize();
 		}
 
 		private static string ForceTrailingSlash(string uri) {

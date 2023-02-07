@@ -1,5 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ParadiseClientSettings>
+	<EnableDiscordRichPresence>true</EnableDiscordRichPresence>
+	
 	<WebServiceBaseUrl>https://paradise.festival.tf:5053/2.0/</WebServiceBaseUrl>
 	<WebServicePrefix>UberStrike.DataCenter.WebService.CWS.</WebServicePrefix>
 	<WebServiceSuffix>Contract.svc</WebServiceSuffix>

@@ -14,6 +14,9 @@ namespace Paradise.Client {
 		public static string SettingsFilename => Path.Combine(Application.dataPath, "Paradise.Settings.Client.xml");
 
 		[XmlElement]
+		public bool EnableDiscordRichPresence = true;
+
+		[XmlElement]
 		public string WebServiceBaseUrl = "https://paradise.festival.tf:5053/2.0/";
 
 		[XmlElement]

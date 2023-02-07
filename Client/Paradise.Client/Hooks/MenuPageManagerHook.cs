@@ -1,7 +1,6 @@
 ﻿using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
-using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,11 +38,6 @@ namespace Paradise.Client {
 					HasHandledCmdLineArgs = true;
 
 					var args = Environment.GetCommandLineArgs();
-
-					Debug.Log("args length: " + args.Length);
-					foreach (var arg in args) {
-						Debug.Log("arg: " + arg);
-					}
 
 					if (args.Length > 1) {
 						if (Uri.TryCreate(args[1], UriKind.Absolute, out var uri) && uri.Scheme.Equals("uberstrike")) {
