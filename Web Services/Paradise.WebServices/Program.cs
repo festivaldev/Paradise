@@ -97,7 +97,6 @@ namespace Paradise.WebServices {
 
 						while (RunApp) {
 							var cmd = ConsolePrompter.Prompt("> ");
-
 							var cmdArgs = cmd.Split(' ').ToList();
 
 							switch (cmdArgs[0].ToLower()) {

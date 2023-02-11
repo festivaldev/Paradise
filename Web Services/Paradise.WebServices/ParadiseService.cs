@@ -5,11 +5,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime;
 using System.ServiceModel;
 using System.ServiceProcess;
 using System.Threading;
-using System.Web.UI.WebControls.WebParts;
 using System.Xml;
 using System.Xml.Serialization;
 
@@ -58,6 +56,8 @@ namespace Paradise.WebServices {
 			}
 
 			CommandHandler.CommandCallback += (sender, callbackArgs) => {
+				if (callbackArgs.DiscordMessage != null) return;
+
 				ClientCallback?.OnConsoleCommandCallback(callbackArgs.CommandOutput);
 			};
 
@@ -112,6 +112,9 @@ namespace Paradise.WebServices {
 			foreach (var service in Services.Values) {
 				service.StartService();
 			}
+
+			var discordClient = new DiscordClient();
+			discordClient.Connect();
 		}
 
 		protected override void OnShutdown() {

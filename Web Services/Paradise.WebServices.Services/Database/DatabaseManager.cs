@@ -5,6 +5,15 @@ using System;
 using System.IO;
 
 namespace Paradise.WebServices {
+	public enum DatabaseOperationResult {
+		kDatabaseResultUnknown,
+		kDatabaseResultOpenOk,
+		kDatabaseResultCloseOk,
+		kDatabaseResultNotOpened,
+		kDatabaseResultAlreadyOpened,
+		kDatabaseResultGenericError
+	}
+
 	public static class DatabaseManager {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(DatabaseManager));
 
@@ -54,10 +63,10 @@ namespace Paradise.WebServices {
 			//BsonMapper.Global.Entity<ClanView>().Id(_ => _.GroupId);
 		}
 
-		public static void DisposeDatabase() {
+		public static DatabaseOperationResult DisposeDatabase() {
 			if (databaseInstance == null) {
 				Log.Error($"Failed to save database tables: No connection to database!");
-				return;
+				return DatabaseOperationResult.kDatabaseResultNotOpened;
 			}
 
 			Log.Info($"Saving database tables... ");
@@ -92,17 +101,19 @@ namespace Paradise.WebServices {
 			} catch (Exception e) {
 				Log.Error($"Failed to save database tables: {e.Message}");
 				Log.Debug(e);
-				return;
+				return DatabaseOperationResult.kDatabaseResultGenericError;
 			}
 
 			Log.Info($"Finished saving database tables.");
 			DatabaseClosed?.Invoke(null, new EventArgs());
+
+			return DatabaseOperationResult.kDatabaseResultCloseOk;
 		}
 
-		public static void OpenDatabase() {
+		public static DatabaseOperationResult OpenDatabase() {
 			if (databaseInstance != null) {
 				Log.Error("Failed to connect to database: A database connection is already open!");
-				return;
+				return DatabaseOperationResult.kDatabaseResultAlreadyOpened;
 			}
 
 			Log.Info($"Connecting to database... ");
@@ -152,23 +163,33 @@ namespace Paradise.WebServices {
 			} catch (Exception e) {
 				Log.Error($"Failed to connect to database: {e.Message}");
 				Log.Debug(e);
-				return;
+				return DatabaseOperationResult.kDatabaseResultGenericError;
 			}
 
 			Log.Info($"Database opened.");
 			DatabaseOpened?.Invoke(null, new EventArgs());
+
+			return DatabaseOperationResult.kDatabaseResultOpenOk;
 		}
 
-		public static void ReloadDatabase() {
+		public static DatabaseOperationResult ReloadDatabase() {
+			DatabaseOperationResult result = default(DatabaseOperationResult);
+
 			if (databaseInstance != null) {
-				DisposeDatabase();
+				result = DisposeDatabase();
 			}
+
+			if (result != DatabaseOperationResult.kDatabaseResultCloseOk) return result;
 
 			if (databaseInstance == null) {
-				OpenDatabase();
+				result = OpenDatabase();
 			}
 
-			Log.Info($"Finished reloading database tables.");
+			if (result == DatabaseOperationResult.kDatabaseResultOpenOk) {
+				Log.Info($"Finished reloading database tables.");
+			}
+
+			return result;
 		}
 	}
 }

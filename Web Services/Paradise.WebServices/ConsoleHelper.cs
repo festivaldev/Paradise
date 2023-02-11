@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Discord;
+using Discord.WebSocket;
+using System;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -110,6 +112,18 @@ namespace Paradise.WebServices {
 			foreach (var cmd in CommandHandler.Commands.OrderBy(_ => _.Command).ToList()) {
 				Console.WriteLine(cmd.HelpString);
 			}
+		}
+
+		public static async void PrintDiscordHelp(SocketMessage discordMessage) {
+			var message = $"Available commands:\n\n" +
+						  $"clear\t\tClears the console, obviously.\n" +
+						  $"database\tControls the LiteDB database instance. (Alias: db)\n";
+
+			foreach (var cmd in CommandHandler.Commands.OrderBy(_ => _.Command).ToList()) {
+				message += cmd.HelpString + Environment.NewLine;
+			}
+
+			await discordMessage.Channel.SendMessageAsync($"```{message}```", false, null, null, null, new MessageReference(discordMessage.Id, discordMessage.Channel.Id, (discordMessage.Channel as SocketGuildChannel).Guild.Id));
 		}
 	}
 }

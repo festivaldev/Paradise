@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Discord.WebSocket;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,13 +10,15 @@ namespace Paradise.WebServices {
 		string Description { get; }
 		string HelpString { get; }
 
-		void PrintUsageText();
-		void Run(string[] arguments);
+		void PrintUsageTest();
+		void PrintUsageTextDiscord();
+		void Run(string[] arguments, SocketMessage discordMessage = null);
 	}
 
 	public class CommandCallbackArgs : EventArgs {
 		public string CommandOutput { get; set; }
 		public bool SingleLine { get; set; }
+		public SocketMessage DiscordMessage { get; set; }
 	}
 
 	internal class CommandHandler {
@@ -34,34 +37,40 @@ namespace Paradise.WebServices {
 			new XpCommand()
 		};
 
-		public static void HandleCommand(string command, string[] arguments) {
+		public static void HandleCommand(string command, string[] arguments, SocketMessage discordMessage = null) {
 			foreach (var cmd in Commands) {
 				if (cmd.Command.Equals(command, StringComparison.OrdinalIgnoreCase) ||
 					cmd.Alias.ToList().Contains(command, StringComparer.OrdinalIgnoreCase)) {
-					cmd.Run(arguments);
+					cmd.Run(arguments, discordMessage);
 					return;
 				}
 			}
 
 			if (!string.IsNullOrWhiteSpace(command)) {
-				WriteLine($"{command}: Unkown command.");
+				WriteLine($"{command}: Unkown command.", discordMessage);
 			}
 		}
 
-		public static void Write(string message) {
-			Console.WriteLine(message);
+		public static void Write(string message, SocketMessage discordMessage = null) {
+			if (discordMessage == null) {
+				Console.WriteLine(message);
+			}
 
 			CommandCallback.Invoke(null, new CommandCallbackArgs {
 				CommandOutput = message,
-				SingleLine = true
+				SingleLine = true,
+				DiscordMessage = discordMessage
 			});
 		}
 
-		public static void WriteLine(string message) {
-			Console.WriteLine(message);
+		public static void WriteLine(string message, SocketMessage discordMessage = null) {
+			if (discordMessage == null) {
+				Console.WriteLine(message);
+			}
 
 			CommandCallback.Invoke(null, new CommandCallbackArgs {
-				CommandOutput = message
+				CommandOutput = message,
+				DiscordMessage = discordMessage
 			});
 		}
 	}

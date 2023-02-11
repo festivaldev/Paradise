@@ -1,4 +1,5 @@
-﻿using Paradise.Core.Types;
+﻿using Discord.WebSocket;
+using Paradise.Core.Types;
 using Paradise.DataCenter.Common.Entities;
 using System;
 using System.Reflection;
@@ -11,7 +12,11 @@ namespace Paradise.WebServices {
 		public string Description => "Adds or removes items from a player's inventory.";
 		public string HelpString => $"{Command}\t{Description}";
 
-		public void Run(string[] arguments) {
+		private SocketMessage DiscordMessage;
+
+		public void Run(string[] arguments, SocketMessage discordMessage) {
+			DiscordMessage = discordMessage;
+
 			if (arguments.Length < 3) {
 				PrintUsageText();
 				return;
@@ -20,22 +25,22 @@ namespace Paradise.WebServices {
 			switch (arguments[0]) {
 				case "give": {
 					if (!int.TryParse(arguments[1], out int cmid)) {
-						CommandHandler.WriteLine("Invalid parameter: cmid");
+						CommandHandler.WriteLine("Invalid parameter: cmid", DiscordMessage);
 						return;
 					}
 
 					if (!int.TryParse(arguments[2], out int itemId)) {
-						CommandHandler.WriteLine("Invalid parameter: item");
+						CommandHandler.WriteLine("Invalid parameter: item", DiscordMessage);
 						return;
 					}
 
 					if (!(GetProfileFromCmid(cmid) is var publicProfile) || publicProfile == null) {
-						CommandHandler.WriteLine("Could not add item to inventory: Profile not found.");
+						CommandHandler.WriteLine("Could not add item to inventory: Profile not found.", DiscordMessage);
 						return;
 					}
 
 					if (HasInventoryItem(cmid, itemId)) {
-						CommandHandler.WriteLine("Could not add item to inventory: Item is already in inventory.");
+						CommandHandler.WriteLine("Could not add item to inventory: Item is already in inventory.", DiscordMessage);
 						return;
 					}
 
@@ -45,28 +50,28 @@ namespace Paradise.WebServices {
 						AmountRemaining = -1
 					});
 
-					CommandHandler.WriteLine($"{(UberstrikeInventoryItem)itemId} added to player inventory.");
+					CommandHandler.WriteLine($"{(UberstrikeInventoryItem)itemId} added to player inventory.", DiscordMessage);
 
 					break;
 				}
 				case "take": {
 					if (!int.TryParse(arguments[1], out int cmid)) {
-						CommandHandler.WriteLine("Invalid parameter: cmid");
+						CommandHandler.WriteLine("Invalid parameter: cmid", DiscordMessage);
 						return;
 					}
 
 					if (!int.TryParse(arguments[2], out int itemId)) {
-						CommandHandler.WriteLine("Invalid parameter: item");
+						CommandHandler.WriteLine("Invalid parameter: item", DiscordMessage);
 						return;
 					}
 
 					if (!(GetProfileFromCmid(cmid) is var publicProfile) || publicProfile == null) {
-						CommandHandler.WriteLine("Could not remove item from inventory: Profile not found.");
+						CommandHandler.WriteLine("Could not remove item from inventory: Profile not found.", DiscordMessage);
 						return;
 					}
 
 					if (!HasInventoryItem(cmid, itemId)) {
-						CommandHandler.WriteLine("Could not remove item from inventory: Item is not in inventory.");
+						CommandHandler.WriteLine("Could not remove item from inventory: Item is not in inventory.", DiscordMessage);
 						return;
 					}
 
@@ -136,7 +141,7 @@ namespace Paradise.WebServices {
 					DatabaseManager.PlayerLoadouts.Insert(playerLoadout);
 
 
-					CommandHandler.WriteLine($"{(UberstrikeInventoryItem)itemId} removed from player inventory.");
+					CommandHandler.WriteLine($"{(UberstrikeInventoryItem)itemId} removed from player inventory.", DiscordMessage);
 
 					break;
 				}
@@ -147,27 +152,27 @@ namespace Paradise.WebServices {
 					}
 
 					if (!int.TryParse(arguments[1], out int cmid)) {
-						CommandHandler.WriteLine("Invalid parameter: cmid");
+						CommandHandler.WriteLine("Invalid parameter: cmid", DiscordMessage);
 						return;
 					}
 
 					if (!(typeof(LoadoutView).GetProperty(arguments[2], BindingFlags.Public | BindingFlags.Instance) is PropertyInfo slotProperty)) {
-						CommandHandler.WriteLine("Invalid parameter: slot");
+						CommandHandler.WriteLine("Invalid parameter: slot", DiscordMessage);
 						return;
 					}
 
 					if (!int.TryParse(arguments[3], out int itemId)) {
-						CommandHandler.WriteLine("Invalid parameter: item");
+						CommandHandler.WriteLine("Invalid parameter: item", DiscordMessage);
 						return;
 					}
 
 					if (!(GetProfileFromCmid(cmid) is var publicProfile)) {
-						CommandHandler.WriteLine("Could not set loadout slot: Profile not found.");
+						CommandHandler.WriteLine("Could not set loadout slot: Profile not found.", DiscordMessage);
 						return;
 					}
 
 					if (itemId > 0 && !HasInventoryItem(cmid, itemId)) {
-						CommandHandler.WriteLine("Could not set loadout slot: Item is not in inventory.");
+						CommandHandler.WriteLine("Could not set loadout slot: Item is not in inventory.", DiscordMessage);
 						return;
 					}
 
@@ -178,21 +183,36 @@ namespace Paradise.WebServices {
 					DatabaseManager.PlayerLoadouts.DeleteMany(_ => _.Cmid == playerLoadout.Cmid);
 					DatabaseManager.PlayerLoadouts.Insert(playerLoadout);
 
-					CommandHandler.WriteLine($"Slot {arguments[2]} has been set to {(UberstrikeInventoryItem)itemId}.");
+					CommandHandler.WriteLine($"Slot {arguments[2]} has been set to {(UberstrikeInventoryItem)itemId}.", DiscordMessage);
 
 					break;
 				}
 				default:
-					CommandHandler.WriteLine($"{Command}: unknown command {arguments[0]}\n");
+					CommandHandler.WriteLine($"{Command}: unknown command {arguments[0]}\n", DiscordMessage);
 					break;
 			}
+
+			DiscordMessage = null;
 		}
 
 		public void PrintUsageText() {
+			if (DiscordMessage != null) {
+				PrintUsageTextDiscord();
+				return;
+			}
+
 			CommandHandler.WriteLine($"{Command}: {Description}");
 			CommandHandler.WriteLine("  give <cmid> <item>\t\tAdds the specified item to a player's inventory.");
 			CommandHandler.WriteLine("  take <cmid> <item>\t\tRemoves the specified item from a player's inventory.");
 			CommandHandler.WriteLine("  set <cmid> <slot> <item>\tSets the specified inventory slot to a specific item.");
+		}
+
+		public void PrintUsageTextDiscord() {
+			CommandHandler.WriteLine($"{Command}: {Description}\n" +
+									 $"  give <cmid> <item>\t\tAdds the specified item to a player's inventory.\n" +
+									 $"  take <cmid> <item>\t\tRemoves the specified item from a player's inventory.\n" +
+									 $"  set <cmid> <slot> <item>\tSets the specified inventory slot to a specific item.\n",
+				DiscordMessage);
 		}
 
 		private PublicProfileView GetProfileFromCmid(int cmid) {
