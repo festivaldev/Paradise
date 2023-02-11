@@ -10,7 +10,7 @@ namespace Paradise.WebServices {
 		string Description { get; }
 		string HelpString { get; }
 
-		void PrintUsageTest();
+		void PrintUsageText();
 		void PrintUsageTextDiscord();
 		void Run(string[] arguments, SocketMessage discordMessage = null);
 	}
