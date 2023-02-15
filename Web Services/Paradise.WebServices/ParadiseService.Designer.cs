@@ -23,8 +23,11 @@
 		/// Der Inhalt der Methode darf nicht mit dem Code-Editor geändert werden.
 		/// </summary>
 		private void InitializeComponent() {
-			components = new System.ComponentModel.Container();
-			this.ServiceName = "Service1";
+			// 
+			// ParadiseService
+			// 
+			this.ServiceName = "ParadiseService";
+
 		}
 
 		#endregion

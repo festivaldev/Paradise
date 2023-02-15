@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ParadiseServerSettings>
-	<EnableSSL>true</EnableSSL>
-	<SSLCertificateName>192.168.178.60</SSLCertificateName>
+	<EnableSSL>false</EnableSSL>
+	<SSLCertificateName></SSLCertificateName>
 
 	<WebServiceHostName></WebServiceHostName>
 	<WebServicePort>8080</WebServicePort>

@@ -97,7 +97,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(bundleId, steamId, authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 						var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
 
 						if (steamMember != null && publicProfile != null) {
@@ -171,7 +171,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(itemId, authToken, currencyType, durationType, itemType, marketLocation, recommendationType);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 						var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
 						var playerStatistics = DatabaseManager.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
 

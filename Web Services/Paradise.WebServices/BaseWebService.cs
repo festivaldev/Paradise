@@ -30,6 +30,7 @@ namespace Paradise.WebServices {
 		protected EventHandler<ServiceEventArgs> ServiceError;
 
 		public static string CurrentDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
+		public string ServiceDataPath => Path.Combine(CurrentDirectory, "ServiceData", ServiceName);
 
 		public CommunicationState WebServiceState => ServiceHost?.State ?? CommunicationState.Closed;
 		public string State {
@@ -180,33 +181,5 @@ namespace Paradise.WebServices {
 				Exception = e
 			});
 		}
-
-		protected SteamMember SteamMemberFromAuthToken(string authToken) {
-			using (var inputStream = new MemoryStream(Convert.FromBase64String(authToken))) {
-				var steamId = StringProxy.Deserialize(inputStream);
-				var validThru = DateTimeProxy.Deserialize(inputStream);
-
-				if (validThru >= DateTime.UtcNow) {
-					var steamMember = DatabaseManager.SteamMembers.FindOne(_ => _.SteamId == steamId);
-
-					return steamMember;
-				}
-			}
-
-			return null;
-		}
-	}
-
-	public class ServiceEventArgs : EventArgs {
-		public string ServiceName { get; set; }
-		public string ServiceVersion { get; set; }
-
-		public bool Starting { get; set; }
-		public bool HasStarted { get; set; }
-
-		public bool Stopping { get; set; }
-		public bool HasStopped { get; set; }
-
-		public Exception Exception { get; set; }
 	}
 }

@@ -3,7 +3,6 @@ using System.Configuration.Install;
 using System.IO;
 using System.Reflection;
 using System.ServiceProcess;
-using System.Windows.Forms;
 
 namespace Paradise.WebServices {
 	[RunInstaller(true)]

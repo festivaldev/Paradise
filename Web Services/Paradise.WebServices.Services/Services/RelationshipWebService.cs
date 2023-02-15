@@ -38,7 +38,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, contactRequestId);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var contactRequest = DatabaseManager.ContactRequests.FindOne(_ => _.RequestId == contactRequestId);
@@ -73,7 +73,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, contactRequestId);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var contactRequest = DatabaseManager.ContactRequests.FindOne(_ => _.RequestId == contactRequestId);
@@ -106,7 +106,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, contactCmid);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							if (DatabaseManager.ContactRequests.DeleteMany(_ => ((_.ReceiverCmid == steamMember.Cmid && _.InitiatorCmid == contactCmid) || (_.InitiatorCmid == steamMember.Cmid && _.ReceiverCmid == contactCmid)) && _.Status == ContactRequestStatus.Accepted) > 0) {
@@ -137,7 +137,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var contactRequests = DatabaseManager.ContactRequests.Find(_ => _.ReceiverCmid == steamMember.Cmid && _.Status == ContactRequestStatus.Pending).ToList();
@@ -169,7 +169,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, populateFacebookIds);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var contactRequests = DatabaseManager.ContactRequests.Find(_ => (_.ReceiverCmid == steamMember.Cmid || _.InitiatorCmid == steamMember.Cmid) && _.Status == ContactRequestStatus.Accepted).ToList();
@@ -210,7 +210,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, receiverCmid, message);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var playerProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);

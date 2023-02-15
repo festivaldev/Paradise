@@ -1,5 +1,5 @@
 ﻿using log4net;
-using Paradise.WebServices.Services;
+//using Paradise.WebServices.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -93,18 +93,20 @@ namespace Paradise.WebServices {
 
 		[Route(Path = "/status/comm")]
 		public bool CommServerStatus() {
-			SetStatus(200);
-			SetContentType("application/json");
-			Send(ApplicationWebService.CommMonitoringData.Values);
+			/// TODO: Replace with TCP communication
+			//SetStatus(200);
+			//SetContentType("application/json");
+			//Send(ApplicationWebService.CommMonitoringData.Values);
 
 			return true;
 		}
 
 		[Route(Path = "/status/game")]
 		public bool GameServerStatus() {
-			SetStatus(200);
-			SetContentType("application/json");
-			Send(ApplicationWebService.GameMonitoringData.Values);
+			/// TODO: Replace with TCP communication
+			//SetStatus(200);
+			//SetContentType("application/json");
+			//Send(ApplicationWebService.GameMonitoringData.Values);
 
 			return true;
 		}

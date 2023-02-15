@@ -30,7 +30,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, targetCmid, accessLevel);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var publicProfile = (steamMember != null) ? DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid) : null;
@@ -89,7 +89,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, targetCmid);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var publicProfile = (steamMember != null) ? DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid) : null;
@@ -143,7 +143,7 @@ namespace Paradise.WebServices.Services {
 		//			DebugEndpoint(authToken, targetCmid, reason);
 
 		//			using (var outputStream = new MemoryStream()) {
-		//				var steamMember = SteamMemberFromAuthToken(authToken);
+		//				var steamMember = SteamMember.FromAuthToken(authToken);
 
 		//				if (steamMember != null) {
 		//					var publicProfile = (steamMember != null) ? DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid) : null;
@@ -200,7 +200,7 @@ namespace Paradise.WebServices.Services {
 		//			DebugEndpoint(authToken, targetCmid);
 
 		//			using (var outputStream = new MemoryStream()) {
-		//				var steamMember = SteamMemberFromAuthToken(authToken);
+		//				var steamMember = SteamMember.FromAuthToken(authToken);
 
 		//				if (steamMember != null) {
 		//					var publicProfile = (steamMember != null) ? DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid) : null;
@@ -241,7 +241,7 @@ namespace Paradise.WebServices.Services {
 		//			DebugEndpoint(authToken, durationInMinutes, mutedCmid);
 
 		//			using (var outputStream = new MemoryStream()) {
-		//				var steamMember = SteamMemberFromAuthToken(authToken);
+		//				var steamMember = SteamMember.FromAuthToken(authToken);
 
 		//				if (steamMember != null) {
 		//					var publicProfile = (steamMember != null) ? DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid) : null;
@@ -297,7 +297,7 @@ namespace Paradise.WebServices.Services {
 		//			DebugEndpoint(authToken, mutedCmid);
 
 		//			using (var outputStream = new MemoryStream()) {
-		//				var steamMember = SteamMemberFromAuthToken(authToken);
+		//				var steamMember = SteamMember.FromAuthToken(authToken);
 
 		//				if (steamMember != null) {
 		//					var publicProfile = (steamMember != null) ? DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid) : null;
@@ -335,7 +335,7 @@ namespace Paradise.WebServices.Services {
 		//			DebugEndpoint(authToken);
 
 		//			using (var outputStream = new MemoryStream()) {
-		//				var steamMember = SteamMemberFromAuthToken(authToken);
+		//				var steamMember = SteamMember.FromAuthToken(authToken);
 
 		//				if (steamMember != null) {
 		//					var publicProfile = (steamMember != null) ? DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid) : null;
@@ -384,7 +384,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, targetCmid, moderationFlag, expireTime, reason);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var publicProfile = (steamMember != null) ? DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid) : null;
@@ -445,7 +445,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var publicProfile = (steamMember != null) ? DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid) : null;
@@ -494,7 +494,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var publicProfile = (steamMember != null) ? DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid) : null;
@@ -544,7 +544,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var publicProfile = (steamMember != null) ? DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid) : null;

@@ -31,7 +31,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, otherCmid);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var messages = DatabaseManager.PrivateMessages.Find(_ => (_.FromCmid == steamMember.Cmid && _.ToCmid == otherCmid) || (_.FromCmid == otherCmid && _.ToCmid == steamMember.Cmid));
@@ -71,7 +71,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, pageNumber);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var messages = DatabaseManager.PrivateMessages.Find(_ => _.FromCmid == steamMember.Cmid || _.ToCmid == steamMember.Cmid).GroupBy(_ => {
@@ -129,7 +129,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, messageId);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var message = DatabaseManager.PrivateMessages.FindOne(_ => _.PrivateMessageId == messageId && ((_.FromCmid == steamMember.Cmid && !_.IsDeletedBySender) || (_.ToCmid == steamMember.Cmid && !_.IsDeletedByReceiver)));
@@ -160,7 +160,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, otherCmid, pageNumber);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var messages = DatabaseManager.PrivateMessages.Find(_ => (_.FromCmid == steamMember.Cmid && _.ToCmid == otherCmid && !_.IsDeletedBySender) || (_.FromCmid == otherCmid && _.ToCmid == steamMember.Cmid && !_.IsDeletedByReceiver));
@@ -190,7 +190,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, otherCmid);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var messages = DatabaseManager.PrivateMessages.Find(_ => _.ToCmid == steamMember.Cmid && _.FromCmid == otherCmid && !_.IsRead);
@@ -226,7 +226,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, receiverCmid, content);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var sender = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);

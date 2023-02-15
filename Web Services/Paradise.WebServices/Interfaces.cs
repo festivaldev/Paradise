@@ -9,7 +9,7 @@ namespace Paradise.WebServices {
 		WinForms
 	}
 
-	public class ParadiseServiceStatus {
+	public struct ParadiseServiceStatus {
 		public bool FileServerRunning { get; set; }
 		public bool DatabaseOpened { get; set; }
 		public List<Dictionary<string, object>> Services { get; set; }
@@ -102,5 +102,24 @@ namespace Paradise.WebServices {
 
 		[OperationContract]
 		void SendConsoleCommand(string command, string[] arguments);
+	}
+
+	public class ServiceEventArgs : EventArgs {
+		public string ServiceName { get; set; }
+		public string ServiceVersion { get; set; }
+
+		public bool Starting { get; set; }
+		public bool HasStarted { get; set; }
+
+		public bool Stopping { get; set; }
+		public bool HasStopped { get; set; }
+
+		public Exception Exception { get; set; }
+	}
+
+	public interface IServiceCallback {
+		void OnServiceStarted(object sender, ServiceEventArgs args);
+		void OnServiceStopped(object sender, ServiceEventArgs args);
+		void OnServiceError(object sender, ServiceEventArgs args);
 	}
 }

@@ -2,7 +2,6 @@
 using log4net.Config;
 using System;
 using System.Configuration.Install;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,8 +16,10 @@ namespace Paradise.WebServices {
 	internal class Program {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(Program));
 
-		private static RunMode RunMode = RunMode.WinForms;
+		private static RunMode RunMode = RunMode.Console;
+		private static bool RunApp = true;
 
+		private static ParadiseService ServiceInstance;
 
 		internal delegate bool EventHandler(CtrlType sig);
 
@@ -35,10 +36,8 @@ namespace Paradise.WebServices {
 
 		internal static EventHandler consoleEventHandler = new EventHandler(ConsoleEventCallback);
 
-		private static bool RunApp = true;
-
 		[STAThread]
-		public static void Main(string[] args) {
+		static void Main(string[] args) {
 			foreach (var arg in args) {
 				switch (arg) {
 					case "--install":
@@ -66,12 +65,15 @@ namespace Paradise.WebServices {
 
 						break;
 					case "-c":
+					case "--console":
 						RunMode = RunMode.Console;
 						break;
 					case "--svc":
+					case "--service":
 						RunMode = RunMode.Service;
 						break;
-					case "--gui":
+					case "--tray":
+					case "--gui":   // Deprecated: use --tray instead
 						RunMode = RunMode.WinForms;
 						break;
 					default: break;
@@ -81,13 +83,12 @@ namespace Paradise.WebServices {
 			switch (RunMode) {
 				case RunMode.Console:
 					ConfigureLogging();
-
+					
 					ConsoleHelper.CreateConsole();
-
 					SetConsoleCtrlHandler(consoleEventHandler, true);
 
-					var serviceInstance = new ParadiseService();
-					serviceInstance.Start();
+					ServiceInstance = new ParadiseService();
+					ServiceInstance.Start();
 
 					ConsoleHelper.PrintConsoleHeaderSubtitle();
 
@@ -119,6 +120,7 @@ namespace Paradise.WebServices {
 									break;
 							}
 						}
+
 						host.Close();
 					}
 
@@ -151,7 +153,7 @@ namespace Paradise.WebServices {
 			}
 		}
 
-		static void ConfigureLogging() {
+		private static void ConfigureLogging() {
 			using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("Paradise.WebServices.log4net.config")) {
 				using (StreamReader reader = new StreamReader(stream)) {
 					var logConfig = new XmlDocument();
@@ -165,10 +167,10 @@ namespace Paradise.WebServices {
 		static bool ConsoleEventCallback(CtrlType eventType) {
 			if (eventType == CtrlType.CTRL_CLOSE_EVENT) {
 				RunApp = false;
-
-				DatabaseManager.DisposeDatabase();
-
 				Console.WriteLine("Bye.");
+
+				ServiceInstance?.Teardown();
+
 				Thread.Sleep(300);
 			}
 

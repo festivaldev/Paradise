@@ -1,19 +1,18 @@
 ﻿using log4net;
-using Paradise.WebServices.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.ServiceModel;
 using System.ServiceProcess;
-using System.Threading;
 using System.Xml;
 using System.Xml.Serialization;
 
 namespace Paradise.WebServices {
 	[ServiceBehavior(ConcurrencyMode = ConcurrencyMode.Single, InstanceContextMode = InstanceContextMode.Single, IncludeExceptionDetailInFaults = true)]
-	public partial class ParadiseService : ServiceBase, IServiceCallback, IParadiseServiceHost {
+	public partial class ParadiseService : ServiceBase, IParadiseServiceHost, IServiceCallback {
 		protected static readonly ILog Log = LogManager.GetLogger(nameof(ParadiseService));
 
 		public static ParadiseService Instance { get; private set; }
@@ -21,12 +20,13 @@ namespace Paradise.WebServices {
 		private static string CurrentDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 
 		private static BasicHttpBinding HttpBinding;
+		public List<ParadiseServicePlugin> Plugins = new List<ParadiseServicePlugin>();
 		public Dictionary<string, BaseWebService> Services { get; private set; } = new Dictionary<string, BaseWebService>();
 
 		public static ParadiseServerSettings WebServiceSettings { get; private set; }
 		private HttpServer HttpServer;
 
-		private IParadiseServiceClient ClientCallback {
+		public IParadiseServiceClient ClientCallback {
 			get {
 				return OperationContext.Current?.GetCallbackChannel<IParadiseServiceClient>();
 			}
@@ -52,18 +52,18 @@ namespace Paradise.WebServices {
 				}
 			} catch (Exception e) {
 				Log.Error("There was an error parsing the settings file.", e);
-				ClientCallback?.OnError("There was an error parsing the settings file.", e.Message);
+				//ClientCallback?.OnError("There was an error parsing the settings file.", e.Message);
 			}
 
 			CommandHandler.CommandCallback += (sender, callbackArgs) => {
-				if (callbackArgs.DiscordMessage != null) return;
+				//if (callbackArgs.DiscordMessage != null) return;
 
-				ClientCallback?.OnConsoleCommandCallback(callbackArgs.CommandOutput);
+				//ClientCallback?.OnConsoleCommandCallback(callbackArgs.CommandOutput);
 			};
 
-			DatabaseManager.DatabaseOpened += OnDatabaseOpened;
-			DatabaseManager.DatabaseClosed += OnDatabaseClosed;
-			DatabaseManager.OpenDatabase();
+			//DatabaseManager.DatabaseOpened += OnDatabaseOpened;
+			//DatabaseManager.DatabaseClosed += OnDatabaseClosed;
+			//DatabaseManager.OpenDatabase();
 
 			var uriBuilder = new UriBuilder {
 				Scheme = WebServiceSettings.EnableSSL ? "https" : "http",
@@ -77,11 +77,11 @@ namespace Paradise.WebServices {
 			try {
 				HttpServer.Start();
 
-				ClientCallback?.OnHttpServerStarted();
+				//ClientCallback?.OnHttpServerStarted();
 				Log.Info($"HTTP server listening on port {WebServiceSettings.FileServerPort} (using SSL: {(WebServiceSettings.EnableSSL ? "yes" : "no")}).");
 			} catch (Exception e) {
 				Log.Error(e);
-				ClientCallback?.OnHttpServerError(e);
+				//ClientCallback?.OnHttpServerError(e);
 			}
 
 			HttpBinding = new BasicHttpBinding();
@@ -98,39 +98,50 @@ namespace Paradise.WebServices {
 				HttpBinding.Security.Mode = BasicHttpSecurityMode.None;
 			}
 
-			Services = new Dictionary<string, BaseWebService> {
-				["Application"] = new ApplicationWebService(HttpBinding, WebServiceSettings, this),
-				["Authentication"] = new AuthenticationWebService(HttpBinding, WebServiceSettings, this),
-				["Clan"] = new ClanWebService(HttpBinding, WebServiceSettings, this),
-				["Moderation"] = new ModerationWebService(HttpBinding, WebServiceSettings, this),
-				["PrivateMessage"] = new PrivateMessageWebService(HttpBinding, WebServiceSettings, this),
-				["Relationship"] = new RelationshipWebService(HttpBinding, WebServiceSettings, this),
-				["Shop"] = new ShopWebService(HttpBinding, WebServiceSettings, this),
-				["User"] = new UserWebService(HttpBinding, WebServiceSettings, this)
-			};
+			if (Directory.Exists(Path.Combine(CurrentDirectory, "plugins"))) {
+				foreach (string file in Directory.GetFiles(Path.Combine(CurrentDirectory, "Plugins"))) {
+					if (file.EndsWith(".dll")) {
+						try {
+							Assembly assembly = Assembly.LoadFrom(file);
+
+							foreach (Type type in assembly.GetTypes()) {
+								if (typeof(ParadiseServicePlugin).IsAssignableFrom(type)) {
+									Log.Info($"Loading plugin {Path.GetFileName(file)}...");
+
+									LoadPlugin((ParadiseServicePlugin)Activator.CreateInstance(type));
+									break;
+								}
+							}
+						} catch (Exception e) {
+							Log.Error($"Error while loading service plugin {Path.GetFileName(file)}:", e);
+						}
+					}
+				}
+			}
+
+			foreach (var plugin in Plugins) {
+				plugin.OnStart();
+			}
 
 			foreach (var service in Services.Values) {
 				service.StartService();
 			}
-
-			var discordClient = new DiscordClient();
-			discordClient.Connect();
 		}
 
 		protected override void OnShutdown() {
 			base.OnShutdown();
 
-			HttpServer.Stop();
-
-			foreach (var service in Services.Values) {
-				service.StopService();
-			}
-
-			DatabaseManager.DisposeDatabase();
-			Thread.Sleep(300);
+			Teardown();
 		}
 
 		protected override void OnStop() {
+			base.OnStop();
+
+			Teardown();
+		}
+
+
+		public void Teardown() {
 			base.OnStop();
 
 			HttpServer.Instance?.Stop();
@@ -139,25 +150,29 @@ namespace Paradise.WebServices {
 				service.StopService();
 			}
 
-			DatabaseManager.DisposeDatabase();
-			Thread.Sleep(300);
+			foreach (var plugin in Plugins) {
+				plugin.OnStop();
+			}
+
+			//DatabaseManager.DisposeDatabase();
 		}
 
-		#region Database Callbacks
-		private void OnDatabaseOpened(object sender, EventArgs args) {
-			ClientCallback?.OnDatabaseOpened();
-		}
+		private void LoadPlugin(ParadiseServicePlugin plugin) {
+			Plugins.Add(plugin);
 
-		private void OnDatabaseClosed(object sender, EventArgs args) {
-			ClientCallback?.OnDatabaseClosed();
-		}
+			if (plugin.Commands != null) {
+				CommandHandler.Commands.AddRange(plugin.Commands);
+			}
 
-		//private void OnDatabaseError(object sender, ErrorEventArgs args) {
-		//	Log.Error(args.GetException());
-		//	notifyIcon.ShowBalloonTip(3000, "Database error", args.GetException().Message, ToolTipIcon.Error);
-		//	notifyIcon.BalloonTipClicked += OpenLogMenuItemClicked;
-		//}
-		#endregion
+			var services = plugin.LoadServices(HttpBinding, WebServiceSettings, this);
+			if (services != null) {
+				foreach (var service in services) {
+					Services.Add(service.Key, service.Value);
+				}
+			}
+
+			plugin.OnLoad();
+		}
 
 		#region Service Callbacks
 		public void OnServiceStarted(object sender, ServiceEventArgs args) {
@@ -231,19 +246,15 @@ namespace Paradise.WebServices {
 		}
 
 		public bool IsDatabaseOpen() {
-			return DatabaseManager.IsOpen;
+			throw new NotImplementedException();
 		}
 
 		public void OpenDatabase() {
-			if (!DatabaseManager.IsOpen) {
-				DatabaseManager.OpenDatabase();
-			}
+			throw new NotImplementedException();
 		}
 
 		public void DisposeDatabase() {
-			if (DatabaseManager.IsOpen) {
-				DatabaseManager.DisposeDatabase();
-			}
+			throw new NotImplementedException();
 		}
 
 		public bool IsHttpServerRunning() {
@@ -278,7 +289,7 @@ namespace Paradise.WebServices {
 		}
 
 		public void SendConsoleCommand(string command, string[] arguments) {
-			Console.WriteLine(string.Join(" ", command, string.Join(" ", arguments)));
+			//Console.WriteLine(string.Join(" ", command, string.Join(" ", arguments)));
 			CommandHandler.HandleCommand(command, arguments);
 		}
 		#endregion
@@ -296,7 +307,7 @@ namespace Paradise.WebServices {
 
 			return new ParadiseServiceStatus {
 				Services = services,
-				DatabaseOpened = DatabaseManager.IsOpen,
+				DatabaseOpened = false,
 				FileServerRunning = this.IsHttpServerRunning()
 			};
 		}

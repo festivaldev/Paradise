@@ -48,7 +48,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(clanInvitationId, authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
@@ -114,7 +114,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(groupInvitationId, authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var groupInvitation = DatabaseManager.GroupInvitations.FindOne(_ => _.GroupInvitationId == groupInvitationId);
@@ -172,7 +172,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(createClanData);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(createClanData.AuthToken);
+						var steamMember = SteamMember.FromAuthToken(createClanData.AuthToken);
 
 						if (steamMember != null) {
 							var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
@@ -313,7 +313,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(clanInvitationId, authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var groupInvitation = DatabaseManager.GroupInvitations.FindOne(_ => _.GroupInvitationId == clanInvitationId);
@@ -355,7 +355,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(groupId, authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var clan = DatabaseManager.Clans.FindOne(_ => _.GroupId == groupId);
@@ -389,7 +389,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var groupInvitations = DatabaseManager.GroupInvitations.Find(_ => _.InviteeCmid == steamMember.Cmid).ToList();
@@ -418,7 +418,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							if (DatabaseManager.Clans.FindAll().ToList().FirstOrDefault(_ => _.Members.Find(__ => __.Cmid.Equals(steamMember.Cmid)) != null) is ClanView clan) {
@@ -450,7 +450,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(authToken, groupId);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							if (DatabaseManager.Clans.FindAll().ToList().FirstOrDefault(_ => _.Members.Find(__ => __.Cmid.Equals(steamMember.Cmid)) != null) is ClanView clan) {
@@ -480,7 +480,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(groupId, authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var groupInvitations = DatabaseManager.GroupInvitations.Find(_ => _.GroupId == groupId && _.InviterCmid == steamMember.Cmid).ToList();
@@ -512,7 +512,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(clanId, authToken, inviteeCmid, message);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember != null) {
 							var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
@@ -566,7 +566,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(groupId, authToken, cmidToKick);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember == null) {
 							Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Error);
@@ -622,7 +622,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(groupId, authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember == null) {
 							Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Error);
@@ -674,7 +674,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(groupId, authToken, newLeaderCmid);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(authToken);
+						var steamMember = SteamMember.FromAuthToken(authToken);
 
 						if (steamMember == null) {
 							Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Error);
@@ -745,7 +745,7 @@ namespace Paradise.WebServices.Services {
 					DebugEndpoint(updateMemberPositionData);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMemberFromAuthToken(updateMemberPositionData.AuthToken);
+						var steamMember = SteamMember.FromAuthToken(updateMemberPositionData.AuthToken);
 
 						if (steamMember == null) {
 							Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Error);

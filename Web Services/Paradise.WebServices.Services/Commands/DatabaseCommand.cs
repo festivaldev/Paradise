@@ -1,6 +1,4 @@
-﻿using Discord.WebSocket;
-
-namespace Paradise.WebServices {
+﻿namespace Paradise.WebServices {
 	internal class DatabaseCommand : IParadiseCommand {
 		public string Command => "database";
 		public string[] Alias => new string[] { "db" };
@@ -8,11 +6,7 @@ namespace Paradise.WebServices {
 		public string Description => "Controls the LiteDB database instance.";
 		public string HelpString => $"{Command}\t{Description}";
 
-		private SocketMessage DiscordMessage;
-
-		public void Run(string[] arguments, SocketMessage discordMessage) {
-			DiscordMessage = discordMessage;
-
+		public void Run(string[] arguments) {
 			if (arguments.Length < 1) {
 				PrintUsageText();
 				return;
@@ -31,30 +25,28 @@ namespace Paradise.WebServices {
 					result = DatabaseManager.ReloadDatabase();
 					break;
 				default:
-					CommandHandler.WriteLine($"database: unknown command {arguments[0]}", DiscordMessage);
+					CommandHandler.WriteLine($"database: unknown command {arguments[0]}");
 					return;
 
 			}
 
 			switch (result) {
 				case DatabaseOperationResult.kDatabaseResultOpenOk:
-					CommandHandler.WriteLine("Database opened successfully.", DiscordMessage);
+					CommandHandler.WriteLine("Database opened successfully.");
 					break;
 				case DatabaseOperationResult.kDatabaseResultCloseOk:
-					CommandHandler.WriteLine("Database opened successfully.", DiscordMessage);
+					CommandHandler.WriteLine("Database opened successfully.");
 					break;
 				case DatabaseOperationResult.kDatabaseResultNotOpened:
-					CommandHandler.WriteLine("Failed to close database: Database isn't open.", DiscordMessage);
+					CommandHandler.WriteLine("Failed to close database: Database isn't open.");
 					break;
 				case DatabaseOperationResult.kDatabaseResultAlreadyOpened:
-					CommandHandler.WriteLine("Failed to open database: Database has been opened already.", DiscordMessage);
+					CommandHandler.WriteLine("Failed to open database: Database has been opened already.");
 					break;
 				case DatabaseOperationResult.kDatabaseResultGenericError:
-					CommandHandler.WriteLine("An error occured while opening/closing the database.", DiscordMessage);
+					CommandHandler.WriteLine("An error occured while opening/closing the database.");
 					break;
 			}
-
-			DiscordMessage = null;
 		}
 
 		public void PrintUsageText() {
@@ -62,14 +54,6 @@ namespace Paradise.WebServices {
 			CommandHandler.WriteLine("  close\t\tSaves the database and closes the instance.");
 			CommandHandler.WriteLine("  open\t\tOpens a new database instance.");
 			CommandHandler.WriteLine("  reload\tReloads the current database instance");
-		}
-
-		public void PrintUsageTextDiscord() {
-			CommandHandler.WriteLine($"{Command}: {Description}\n" +
-									 $"  close\t\tSaves the database and closes the instance.\n" +
-									 $"  open\t\tOpens a new database instance.\n" +
-									 $"  reload\tReloads the current database instance\n",
-				DiscordMessage);
 		}
 	}
 }

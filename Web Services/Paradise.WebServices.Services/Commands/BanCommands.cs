@@ -1,19 +1,15 @@
-﻿using Discord.WebSocket;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace Paradise.WebServices {
-	internal class BanCommands : IParadiseCommand {
+	internal class BanCommand : IParadiseCommand {
 		public string Command => "ban";
 		public string[] Alias => new string[] { };
 
 		public string Description => "Bans a player permanently.";
 		public string HelpString => $"{Command}\t\t{Description}";
 
-		private SocketMessage DiscordMessage;
-
-		public void Run(string[] arguments, SocketMessage discordMessage) {
-			DiscordMessage = discordMessage;
+		public void Run(string[] arguments) {
 
 			if (arguments.Length < 2) {
 				PrintUsageText();
@@ -21,19 +17,19 @@ namespace Paradise.WebServices {
 			}
 
 			if (!int.TryParse(arguments[0], out int cmid)) {
-				CommandHandler.WriteLine("Invalid parameter: cmid", DiscordMessage);
+				CommandHandler.WriteLine("Invalid parameter: cmid");
 				return;
 			}
 
 			if (!(DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == cmid) is var profileToBan) || profileToBan == null) {
-				CommandHandler.WriteLine("Could not ban user: Profile not found.", DiscordMessage);
+				CommandHandler.WriteLine("Could not ban user: Profile not found.");
 				return;
 			}
 
 			string reason = string.Join(" ", arguments.ToList().Skip(1).Take(arguments.Length - 1));
 
 			if (DatabaseManager.ModerationActions.FindOne(_ => _.ModerationFlag == ModerationFlag.Banned && _.TargetCmid == profileToBan.Cmid) != null) {
-				CommandHandler.WriteLine("Could not ban user: User is already permanently banned.", DiscordMessage);
+				CommandHandler.WriteLine("Could not ban user: User is already permanently banned.");
 				return;
 			}
 
@@ -48,25 +44,12 @@ namespace Paradise.WebServices {
 				Reason = reason,
 			});
 
-			CommandHandler.WriteLine($"User has been banned permanently (reason: {reason})", DiscordMessage);
-
-			DiscordMessage = null;
+			CommandHandler.WriteLine($"User has been banned permanently (reason: {reason})");
 		}
 
 		public void PrintUsageText() {
-			if (DiscordMessage != null) {
-				PrintUsageTextDiscord();
-				return;
-			}
-
 			CommandHandler.WriteLine($"{Command}: {Description}");
 			CommandHandler.WriteLine($"Usage: {Command} <cmid> <reason>");
-		}
-
-		public void PrintUsageTextDiscord() {
-			CommandHandler.WriteLine($"{Command}: {Description}\n" +
-									 $"Usage: {Command} <cmid> <reason>",
-				DiscordMessage);
 		}
 	}
 
@@ -77,10 +60,7 @@ namespace Paradise.WebServices {
 		public string Description => "Unbans a player.";
 		public string HelpString => $"{Command}\t\t{Description}";
 
-		private SocketMessage DiscordMessage;
-
-		public void Run(string[] arguments, SocketMessage discordMessage) {
-			DiscordMessage = discordMessage;
+		public void Run(string[] arguments) {
 
 			if (arguments.Length < 1) {
 				PrintUsageText();
@@ -88,34 +68,23 @@ namespace Paradise.WebServices {
 			}
 
 			if (!int.TryParse(arguments[0], out int cmid)) {
-				CommandHandler.WriteLine("Invalid parameter: cmid", DiscordMessage);
+				CommandHandler.WriteLine("Invalid parameter: cmid");
 				return;
 			}
 
 			if (!(DatabaseManager.ModerationActions.FindOne(_ => _.ModerationFlag == ModerationFlag.Banned && _.TargetCmid == cmid) is var bannedMember) || bannedMember == null) {
-				CommandHandler.WriteLine("Could not unban user: User is not currently banned.", DiscordMessage);
+				CommandHandler.WriteLine("Could not unban user: User is not currently banned.");
 				return;
 			}
 
 			DatabaseManager.ModerationActions.DeleteMany(_ => _.ModerationFlag == ModerationFlag.Banned && _.TargetCmid == cmid);
 
-			CommandHandler.WriteLine("User has been unbanned successfully.", DiscordMessage);
+			CommandHandler.WriteLine("User has been unbanned successfully.");
 		}
 
 		public void PrintUsageText() {
-			if (DiscordMessage != null) {
-				PrintUsageTextDiscord();
-				return;
-			}
-
 			CommandHandler.WriteLine($"{Command}: {Description}");
 			CommandHandler.WriteLine($"Usage: {Command} <cmid>");
-		}
-
-		public void PrintUsageTextDiscord() {
-			CommandHandler.WriteLine($"{Command}: {Description}\n" +
-									 $"Usage: {Command} <cmid>",
-				DiscordMessage);
 		}
 	}
 }
