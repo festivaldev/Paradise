@@ -1,6 +1,7 @@
 ﻿using log4net;
 using log4net.Config;
 using System;
+using System.Configuration.Assemblies;
 using System.Configuration.Install;
 using System.IO;
 using System.Linq;
@@ -80,10 +81,11 @@ namespace Paradise.WebServices {
 				}
 			}
 
+			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(ResolvePluginDependency);
 			switch (RunMode) {
 				case RunMode.Console:
 					ConfigureLogging();
-					
+
 					ConsoleHelper.CreateConsole();
 					SetConsoleCtrlHandler(consoleEventHandler, true);
 
@@ -175,6 +177,21 @@ namespace Paradise.WebServices {
 			}
 
 			return true;
+		}
+
+		static Assembly ResolvePluginDependency(object sender, ResolveEventArgs args) {
+			string folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+			string assemblyFile = $"{new AssemblyName(args.Name).Name}.dll";
+
+			if (File.Exists(Path.Combine(folderPath, "Plugins", assemblyFile))) {
+				return Assembly.LoadFrom(Path.Combine(folderPath, "Plugins", assemblyFile));
+			}
+
+			if (File.Exists(Path.Combine(folderPath, assemblyFile))) {
+				return Assembly.LoadFrom(Path.Combine(folderPath, assemblyFile));
+			}
+
+			return null;
 		}
 	}
 }

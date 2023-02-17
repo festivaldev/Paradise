@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -111,6 +111,12 @@ namespace Paradise.WebServices {
 									LoadPlugin((ParadiseServicePlugin)Activator.CreateInstance(type));
 									break;
 								}
+							}
+						} catch (ReflectionTypeLoadException e) {
+							Log.Error($"Error while loading required assemblies for service plugin {Path.GetFileName(file)}:", e);
+
+							foreach (var ex in e.LoaderExceptions) {
+								Log.Error(ex);
 							}
 						} catch (Exception e) {
 							Log.Error($"Error while loading service plugin {Path.GetFileName(file)}:", e);
