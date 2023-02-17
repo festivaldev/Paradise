@@ -61,7 +61,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\BanCommands.cs" />
+    <Compile Include="Commands\BanCommand.cs" />
     <Compile Include="Commands\CurrencyCommands.cs" />
     <Compile Include="Commands\DatabaseCommand.cs" />
     <Compile Include="Commands\InventoryCommand.cs" />
@@ -137,6 +137,5 @@
       <TargetPath>..\ServiceData\ShopWebService\Shop.json</TargetPath>
     </None>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

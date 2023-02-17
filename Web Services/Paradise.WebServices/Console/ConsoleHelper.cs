@@ -107,21 +107,10 @@ namespace Paradise.WebServices {
 			Console.WriteLine("database\tControls the LiteDB database instance. (Alias: db)");
 			Console.WriteLine("quit\t\tQuits the application (or closes the console if running in GUI mode). (Alias: q)");
 
-			foreach (var cmd in CommandHandler.Commands.OrderBy(_ => _.Command).ToList()) {
+			foreach (var type in CommandHandler.Commands.OrderBy(_ => _.Name).ToList()) {
+				var cmd = (ParadiseCommand)Activator.CreateInstance(type, new object[] { Guid.Empty });
 				Console.WriteLine(cmd.HelpString);
 			}
 		}
-
-		//public static async void PrintDiscordHelp(SocketMessage discordMessage) {
-		//	var message = $"Available commands:\n\n" +
-		//				  $"clear\t\tClears the console, obviously.\n" +
-		//				  $"database\tControls the LiteDB database instance. (Alias: db)\n";
-
-		//	foreach (var cmd in CommandHandler.Commands.OrderBy(_ => _.Command).ToList()) {
-		//		message += cmd.HelpString + Environment.NewLine;
-		//	}
-
-		//	await discordMessage.Channel.SendMessageAsync($"```{message}```", false, null, null, null, new MessageReference(discordMessage.Id, discordMessage.Channel.Id, (discordMessage.Channel as SocketGuildChannel).Guild.Id));
-		//}
 	}
 }

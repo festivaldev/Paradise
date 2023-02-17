@@ -1,14 +1,22 @@
 ﻿using System;
 
 namespace Paradise.WebServices {
-	internal class CreditsCommand : IParadiseCommand {
-		public string Command => "credits";
-		public string[] Alias => new string[] { };
+	internal class CreditsCommand : ParadiseCommand {
+		public static new string Command => "credits";
+		public static new string[] Aliases => new string[] { };
 
-		public string Description => "Adds or removes credits from a player's wallet.";
-		public string HelpString => $"{Command}\t\t{Description}";
+		public override string Description => "Adds or removes credits from a player's wallet.";
+		public override string HelpString => $"{Command}\t\t{Description}";
 
-		public void Run(string[] arguments) {
+		public override string[] UsageText => new string[] {
+			$"{Command}: {Description}",
+			"  add <cmid> <amount>\t\tAdds the specified amount of credits to a players's wallet.",
+			"  remove <cmid> <amount>\tRemoves the specified amount of credits from a players's wallet."
+		};
+
+		public CreditsCommand(Guid guid) : base(guid) { }
+
+		public override void Run(string[] arguments) {
 			if (arguments.Length < 3) {
 				PrintUsageText();
 				return;
@@ -17,77 +25,79 @@ namespace Paradise.WebServices {
 			switch (arguments[0].ToLower()) {
 				case "add": {
 					if (!int.TryParse(arguments[1], out int cmid)) {
-						CommandHandler.WriteLine("Invalid parameter: cmid");
+						WriteLine("Invalid parameter: cmid");
 						return;
 					}
 
-					if (!int.TryParse(arguments[2], out int credits)) {
-						CommandHandler.WriteLine("Invalid parameter: credits");
+					if (!int.TryParse(arguments[2], out int amount)) {
+						WriteLine("Invalid parameter: amount");
 						return;
 					}
 
 					if (!(DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == cmid) is var memberWallet) || memberWallet == null) {
-						CommandHandler.WriteLine($"Failed to add credit(s) to wallet: Could not find player wallet.");
+						WriteLine($"Failed to add credit(s) to wallet: Could not find player wallet.");
 						return;
 					}
 
-					credits = Math.Abs(credits);
-					memberWallet.Credits += credits;
+					amount = Math.Abs(amount);
+					memberWallet.Credits += amount;
 
 					DatabaseManager.MemberWallets.DeleteMany(_ => _.Cmid == memberWallet.Cmid);
 					DatabaseManager.MemberWallets.Insert(memberWallet);
 
-					CommandHandler.WriteLine($"Successfully added {credits} credit(s) to wallet");
+					WriteLine($"Successfully added {amount} credit(s) to wallet");
 
 					break;
 				}
 				case "remove": {
 					if (!int.TryParse(arguments[1], out int cmid)) {
-						CommandHandler.WriteLine("Invalid parameter: cmid");
+						WriteLine("Invalid parameter: cmid");
 						return;
 					}
 
-					if (!int.TryParse(arguments[2], out int credits)) {
-						CommandHandler.WriteLine("Invalid parameter: credits");
+					if (!int.TryParse(arguments[2], out int amount)) {
+						WriteLine("Invalid parameter: amount");
 						return;
 					}
 
 					if (!(DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == cmid) is var memberWallet) || memberWallet == null) {
-						CommandHandler.WriteLine($"Failed to remove credit(s) from wallet: Could not find player wallet.");
+						WriteLine($"Failed to remove credit(s) from wallet: Could not find player wallet.");
 						return;
 					}
 
-					credits = Math.Min(memberWallet.Credits, Math.Abs(credits));
-					memberWallet.Credits -= credits;
+					amount = Math.Min(memberWallet.Credits, Math.Abs(amount));
+					memberWallet.Credits -= amount;
 
 					DatabaseManager.MemberWallets.DeleteMany(_ => _.Cmid == memberWallet.Cmid);
 					DatabaseManager.MemberWallets.Insert(memberWallet);
 
-					CommandHandler.WriteLine($"Successfully removed {credits} credit(s) from wallet");
+					WriteLine($"Successfully removed {amount} credit(s) from wallet");
 
 					break;
 				}
 				default:
-					CommandHandler.WriteLine($"{Command}: unknown command {arguments[0]}\n");
+					WriteLine($"{Command}: unknown command {arguments[0]}\n");
 					break;
 			}
-		}
-
-		public void PrintUsageText() {
-			CommandHandler.WriteLine($"{Command}: {Description}");
-			CommandHandler.WriteLine("  add <cmid> <amount>\t\tAdds the specified amount of credits to a players's wallet.");
-			CommandHandler.WriteLine("  remove <cmid> <amount>\tRemoves the specified amount of credits from a players's wallet.");
 		}
 	}
 
-	internal class PointsCommand : IParadiseCommand {
-		public string Command => "points";
-		public string[] Alias => new string[] { };
+	internal class PointsCommand : ParadiseCommand {
+		public static new string Command => "points";
+		public static new string[] Aliases => new string[] { };
 
-		public string Description => "Adds or removes points from a player's wallet.";
-		public string HelpString => $"{Command}\t\t{Description}";
+		public override string Description => "Adds or removes points from a player's wallet.";
+		public override string HelpString => $"{Command}\t\t{Description}";
 
-		public void Run(string[] arguments) {
+		public override string[] UsageText => new string[] {
+			$"{Command}: {Description}",
+			"  add <cmid> <amount>\t\tAdds the specified amount of points to a players's wallet.",
+			"  remove <cmid> <amount>\tRemoves the specified amount of points from a players's wallet."
+		};
+
+		public PointsCommand(Guid guid) : base(guid) { }
+
+		public override void Run(string[] arguments) {
 			if (arguments.Length < 3) {
 				PrintUsageText();
 				return;
@@ -96,66 +106,60 @@ namespace Paradise.WebServices {
 			switch (arguments[0].ToLower()) {
 				case "add": {
 					if (!int.TryParse(arguments[1], out int cmid)) {
-						CommandHandler.WriteLine("Invalid parameter: cmid");
+						WriteLine("Invalid parameter: cmid");
 						return;
 					}
 
-					if (!int.TryParse(arguments[2], out int points)) {
-						CommandHandler.WriteLine("Invalid parameter: points");
+					if (!int.TryParse(arguments[2], out int amount)) {
+						WriteLine("Invalid parameter: amount");
 						return;
 					}
 
 					if (!(DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == cmid) is var memberWallet) || memberWallet == null) {
-						CommandHandler.WriteLine($"Failed to add credit(s) to wallet: Could not find player wallet.");
+						WriteLine($"Failed to add credit(s) to wallet: Could not find player wallet.");
 						return;
 					}
 
-					points = Math.Abs(points);
-					memberWallet.Points += points;
+					amount = Math.Abs(amount);
+					memberWallet.Points += amount;
 
 					DatabaseManager.MemberWallets.DeleteMany(_ => _.Cmid == memberWallet.Cmid);
 					DatabaseManager.MemberWallets.Insert(memberWallet);
 
-					CommandHandler.WriteLine($"Successfully added {points} point(s) to wallet");
+					WriteLine($"Successfully added {amount} point(s) to wallet");
 
 					break;
 				}
 				case "remove": {
 					if (!int.TryParse(arguments[1], out int cmid)) {
-						CommandHandler.WriteLine("Invalid parameter: cmid");
+						WriteLine("Invalid parameter: cmid");
 						return;
 					}
 
-					if (!int.TryParse(arguments[2], out int points)) {
-						CommandHandler.WriteLine("Invalid parameter: points");
+					if (!int.TryParse(arguments[2], out int amount)) {
+						WriteLine("Invalid parameter: amount");
 						return;
 					}
 
 					if (!(DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == cmid) is var memberWallet) || memberWallet == null) {
-						CommandHandler.WriteLine($"Failed to remove credit(s) from wallet: Could not find player wallet.");
+						WriteLine($"Failed to remove credit(s) from wallet: Could not find player wallet.");
 						return;
 					}
 
-					points = Math.Min(memberWallet.Points, Math.Abs(points));
-					memberWallet.Points -= points;
+					amount = Math.Min(memberWallet.Points, Math.Abs(amount));
+					memberWallet.Points -= amount;
 
 					DatabaseManager.MemberWallets.DeleteMany(_ => _.Cmid == memberWallet.Cmid);
 					DatabaseManager.MemberWallets.Insert(memberWallet);
 
-					CommandHandler.WriteLine($"Successfully removed {points} point(s) from wallet");
+					WriteLine($"Successfully removed {amount} point(s) from wallet");
 
 					break;
 				}
 				default:
-					CommandHandler.WriteLine($"{Command}: unknown command {arguments[0]}\n");
+					WriteLine($"{Command}: unknown command {arguments[0]}\n");
 					break;
 			}
-		}
-
-		public void PrintUsageText() {
-			CommandHandler.WriteLine($"{Command}: {Description}");
-			CommandHandler.WriteLine("  add <cmid> <amount>\t\tAdds the specified amount of points to a players's wallet.");
-			CommandHandler.WriteLine("  remove <cmid> <amount>\tRemoves the specified amount of points from a players's wallet.");
 		}
 	}
 }

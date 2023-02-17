@@ -6,12 +6,12 @@ using System.IO;
 
 namespace Paradise.WebServices {
 	public enum DatabaseOperationResult {
-		kDatabaseResultUnknown,
-		kDatabaseResultOpenOk,
-		kDatabaseResultCloseOk,
-		kDatabaseResultNotOpened,
-		kDatabaseResultAlreadyOpened,
-		kDatabaseResultGenericError
+		Unknown,
+		OpenOk,
+		CloseOk,
+		NotOpened,
+		AlreadyOpened,
+		GenericError
 	}
 
 	public static class DatabaseManager {
@@ -66,7 +66,7 @@ namespace Paradise.WebServices {
 		public static DatabaseOperationResult DisposeDatabase() {
 			if (databaseInstance == null) {
 				Log.Error($"Failed to save database tables: No connection to database!");
-				return DatabaseOperationResult.kDatabaseResultNotOpened;
+				return DatabaseOperationResult.NotOpened;
 			}
 
 			Log.Info($"Saving database tables... ");
@@ -101,19 +101,19 @@ namespace Paradise.WebServices {
 			} catch (Exception e) {
 				Log.Error($"Failed to save database tables: {e.Message}");
 				Log.Debug(e);
-				return DatabaseOperationResult.kDatabaseResultGenericError;
+				return DatabaseOperationResult.GenericError;
 			}
 
 			Log.Info($"Finished saving database tables.");
 			DatabaseClosed?.Invoke(null, new EventArgs());
 
-			return DatabaseOperationResult.kDatabaseResultCloseOk;
+			return DatabaseOperationResult.CloseOk;
 		}
 
 		public static DatabaseOperationResult OpenDatabase() {
 			if (databaseInstance != null) {
 				Log.Error("Failed to connect to database: A database connection is already open!");
-				return DatabaseOperationResult.kDatabaseResultAlreadyOpened;
+				return DatabaseOperationResult.AlreadyOpened;
 			}
 
 			Log.Info($"Connecting to database... ");
@@ -163,13 +163,13 @@ namespace Paradise.WebServices {
 			} catch (Exception e) {
 				Log.Error($"Failed to connect to database: {e.Message}");
 				Log.Debug(e);
-				return DatabaseOperationResult.kDatabaseResultGenericError;
+				return DatabaseOperationResult.GenericError;
 			}
 
 			Log.Info($"Database opened.");
 			DatabaseOpened?.Invoke(null, new EventArgs());
 
-			return DatabaseOperationResult.kDatabaseResultOpenOk;
+			return DatabaseOperationResult.OpenOk;
 		}
 
 		public static DatabaseOperationResult ReloadDatabase() {
@@ -179,13 +179,13 @@ namespace Paradise.WebServices {
 				result = DisposeDatabase();
 			}
 
-			if (result != DatabaseOperationResult.kDatabaseResultCloseOk) return result;
+			if (result != DatabaseOperationResult.CloseOk) return result;
 
 			if (databaseInstance == null) {
 				result = OpenDatabase();
 			}
 
-			if (result == DatabaseOperationResult.kDatabaseResultOpenOk) {
+			if (result == DatabaseOperationResult.OpenOk) {
 				Log.Info($"Finished reloading database tables.");
 			}
 

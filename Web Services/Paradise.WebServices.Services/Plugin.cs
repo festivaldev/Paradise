@@ -23,16 +23,17 @@ namespace Paradise.WebServices.Services {
 			DatabaseManager.DisposeDatabase();
 		}
 
-		public override List<IParadiseCommand> Commands => new List<IParadiseCommand> {
-			new BanCommand(),
-			new CreditsCommand(),
-			new DatabaseCommand(),
-			new DeopCommand(),
-			new InventoryCommand(),
-			new OpCommand(),
-			new PointsCommand(),
-			new UnbanCommand(),
-			new XpCommand()
+		public override List<Type> Commands => new List<Type> {
+			typeof(BanCommand),
+			typeof(CreditsCommand),
+			typeof(DatabaseCommand),
+			typeof(DeopCommand),
+			typeof(InventoryCommand),
+			typeof(OpCommand),
+			typeof(PointsCommand),
+			typeof(ServiceCommand),
+			typeof(UnbanCommand),
+			typeof(XpCommand)
 		};
 
 		public override Dictionary<string, BaseWebService> LoadServices(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) {

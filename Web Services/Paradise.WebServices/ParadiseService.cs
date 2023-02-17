@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -55,10 +55,10 @@ namespace Paradise.WebServices {
 				//ClientCallback?.OnError("There was an error parsing the settings file.", e.Message);
 			}
 
-			CommandHandler.CommandCallback += (sender, callbackArgs) => {
-				//if (callbackArgs.DiscordMessage != null) return;
-
-				//ClientCallback?.OnConsoleCommandCallback(callbackArgs.CommandOutput);
+			CommandHandler.CommandOutput += (sender, callbackArgs) => {
+				if (sender is ParadiseCommand) {
+					ClientCallback?.OnConsoleCommandCallback(callbackArgs.Text);
+				}
 			};
 
 			//DatabaseManager.DatabaseOpened += OnDatabaseOpened;
@@ -77,11 +77,11 @@ namespace Paradise.WebServices {
 			try {
 				HttpServer.Start();
 
-				//ClientCallback?.OnHttpServerStarted();
+				ClientCallback?.OnHttpServerStarted();
 				Log.Info($"HTTP server listening on port {WebServiceSettings.FileServerPort} (using SSL: {(WebServiceSettings.EnableSSL ? "yes" : "no")}).");
 			} catch (Exception e) {
 				Log.Error(e);
-				//ClientCallback?.OnHttpServerError(e);
+				ClientCallback?.OnHttpServerError(e);
 			}
 
 			HttpBinding = new BasicHttpBinding();
@@ -153,8 +153,6 @@ namespace Paradise.WebServices {
 			foreach (var plugin in Plugins) {
 				plugin.OnStop();
 			}
-
-			//DatabaseManager.DisposeDatabase();
 		}
 
 		private void LoadPlugin(ParadiseServicePlugin plugin) {

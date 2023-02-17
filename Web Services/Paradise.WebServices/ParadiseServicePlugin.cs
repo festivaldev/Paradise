@@ -4,7 +4,7 @@ using System.ServiceModel;
 
 namespace Paradise.WebServices {
 	public abstract class ParadiseServicePlugin {
-		public virtual List<IParadiseCommand> Commands { get; }
+		public virtual List<Type> Commands { get; }
 
 		public virtual Dictionary<string, BaseWebService> LoadServices(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) {
 			return null;

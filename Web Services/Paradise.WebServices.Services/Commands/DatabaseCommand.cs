@@ -1,12 +1,23 @@
-﻿namespace Paradise.WebServices {
-	internal class DatabaseCommand : IParadiseCommand {
-		public string Command => "database";
-		public string[] Alias => new string[] { "db" };
+﻿using System;
 
-		public string Description => "Controls the LiteDB database instance.";
-		public string HelpString => $"{Command}\t{Description}";
+namespace Paradise.WebServices {
+	internal class DatabaseCommand : ParadiseCommand {
+		public static new string Command => "database";
+		public static new string[] Aliases => new string[] { "db" };
 
-		public void Run(string[] arguments) {
+		public override string Description => "Controls the LiteDB database instance.";
+		public override string HelpString => $"{Command}\t{Description}";
+
+		public override string[] UsageText => new string[] {
+			$"{Command}: {Description}",
+			"  close\t\tSaves the database and closes the instance.",
+			"  open\t\tOpens a new database instance.",
+			"  reload\tReloads the current database instance",
+		};
+
+		public DatabaseCommand(Guid guid) : base(guid) { }
+
+		public override void Run(string[] arguments) {
 			if (arguments.Length < 1) {
 				PrintUsageText();
 				return;
@@ -25,35 +36,28 @@
 					result = DatabaseManager.ReloadDatabase();
 					break;
 				default:
-					CommandHandler.WriteLine($"database: unknown command {arguments[0]}");
+					WriteLine($"database: unknown command {arguments[0]}");
 					return;
 
 			}
 
 			switch (result) {
-				case DatabaseOperationResult.kDatabaseResultOpenOk:
-					CommandHandler.WriteLine("Database opened successfully.");
+				case DatabaseOperationResult.OpenOk:
+					WriteLine("Database opened successfully.");
 					break;
-				case DatabaseOperationResult.kDatabaseResultCloseOk:
-					CommandHandler.WriteLine("Database opened successfully.");
+				case DatabaseOperationResult.CloseOk:
+					WriteLine("Database opened successfully.");
 					break;
-				case DatabaseOperationResult.kDatabaseResultNotOpened:
-					CommandHandler.WriteLine("Failed to close database: Database isn't open.");
+				case DatabaseOperationResult.NotOpened:
+					WriteLine("Failed to close database: Database isn't open.");
 					break;
-				case DatabaseOperationResult.kDatabaseResultAlreadyOpened:
-					CommandHandler.WriteLine("Failed to open database: Database has been opened already.");
+				case DatabaseOperationResult.AlreadyOpened:
+					WriteLine("Failed to open database: Database has been opened already.");
 					break;
-				case DatabaseOperationResult.kDatabaseResultGenericError:
-					CommandHandler.WriteLine("An error occured while opening/closing the database.");
+				case DatabaseOperationResult.GenericError:
+					WriteLine("An error occured while opening/closing the database.");
 					break;
 			}
-		}
-
-		public void PrintUsageText() {
-			CommandHandler.WriteLine($"{Command}: {Description}");
-			CommandHandler.WriteLine("  close\t\tSaves the database and closes the instance.");
-			CommandHandler.WriteLine("  open\t\tOpens a new database instance.");
-			CommandHandler.WriteLine("  reload\tReloads the current database instance");
 		}
 	}
 }

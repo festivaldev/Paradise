@@ -4,14 +4,23 @@ using System;
 using System.Reflection;
 
 namespace Paradise.WebServices {
-	internal class InventoryCommand : IParadiseCommand {
-		public string Command => "inventory";
-		public string[] Alias => new string[] { "inv" };
+	internal class InventoryCommand : ParadiseCommand {
+		public static new string Command => "inventory";
+		public static new string[] Aliases => new string[] { "inv" };
 
-		public string Description => "Adds or removes items from a player's inventory.";
-		public string HelpString => $"{Command}\t{Description}";
+		public override string Description => "Adds or removes items from a player's inventory.";
+		public override string HelpString => $"{Command}\t{Description}";
 
-		public void Run(string[] arguments) {
+		public override string[] UsageText => new string[] {
+			$"{Command}: {Description}",
+			"  give <cmid> <item>\t\tAdds the specified item to a player's inventory.",
+			"  take <cmid> <item>\t\tRemoves the specified item from a player's inventory.",
+			"  set <cmid> <slot> <item>\tSets the specified inventory slot to a specific item."
+		};
+
+		public InventoryCommand(Guid guid) : base(guid) { }
+
+		public override void Run(string[] arguments) {
 			if (arguments.Length < 3) {
 				PrintUsageText();
 				return;
@@ -20,22 +29,22 @@ namespace Paradise.WebServices {
 			switch (arguments[0]) {
 				case "give": {
 					if (!int.TryParse(arguments[1], out int cmid)) {
-						CommandHandler.WriteLine("Invalid parameter: cmid");
+						WriteLine("Invalid parameter: cmid");
 						return;
 					}
 
 					if (!int.TryParse(arguments[2], out int itemId)) {
-						CommandHandler.WriteLine("Invalid parameter: item");
+						WriteLine("Invalid parameter: item");
 						return;
 					}
 
 					if (!(GetProfileFromCmid(cmid) is var publicProfile) || publicProfile == null) {
-						CommandHandler.WriteLine("Could not add item to inventory: Profile not found.");
+						WriteLine("Could not add item to inventory: Profile not found.");
 						return;
 					}
 
 					if (HasInventoryItem(cmid, itemId)) {
-						CommandHandler.WriteLine("Could not add item to inventory: Item is already in inventory.");
+						WriteLine("Could not add item to inventory: Item is already in inventory.");
 						return;
 					}
 
@@ -45,28 +54,28 @@ namespace Paradise.WebServices {
 						AmountRemaining = -1
 					});
 
-					CommandHandler.WriteLine($"{(UberstrikeInventoryItem)itemId} added to player inventory.");
+					WriteLine($"{(UberstrikeInventoryItem)itemId} added to player inventory.");
 
 					break;
 				}
 				case "take": {
 					if (!int.TryParse(arguments[1], out int cmid)) {
-						CommandHandler.WriteLine("Invalid parameter: cmid");
+						WriteLine("Invalid parameter: cmid");
 						return;
 					}
 
 					if (!int.TryParse(arguments[2], out int itemId)) {
-						CommandHandler.WriteLine("Invalid parameter: item");
+						WriteLine("Invalid parameter: item");
 						return;
 					}
 
 					if (!(GetProfileFromCmid(cmid) is var publicProfile) || publicProfile == null) {
-						CommandHandler.WriteLine("Could not remove item from inventory: Profile not found.");
+						WriteLine("Could not remove item from inventory: Profile not found.");
 						return;
 					}
 
 					if (!HasInventoryItem(cmid, itemId)) {
-						CommandHandler.WriteLine("Could not remove item from inventory: Item is not in inventory.");
+						WriteLine("Could not remove item from inventory: Item is not in inventory.");
 						return;
 					}
 
@@ -136,7 +145,7 @@ namespace Paradise.WebServices {
 					DatabaseManager.PlayerLoadouts.Insert(playerLoadout);
 
 
-					CommandHandler.WriteLine($"{(UberstrikeInventoryItem)itemId} removed from player inventory.");
+					WriteLine($"{(UberstrikeInventoryItem)itemId} removed from player inventory.");
 
 					break;
 				}
@@ -147,27 +156,27 @@ namespace Paradise.WebServices {
 					}
 
 					if (!int.TryParse(arguments[1], out int cmid)) {
-						CommandHandler.WriteLine("Invalid parameter: cmid");
+						WriteLine("Invalid parameter: cmid");
 						return;
 					}
 
 					if (!(typeof(LoadoutView).GetProperty(arguments[2], BindingFlags.Public | BindingFlags.Instance) is PropertyInfo slotProperty)) {
-						CommandHandler.WriteLine("Invalid parameter: slot");
+						WriteLine("Invalid parameter: slot");
 						return;
 					}
 
 					if (!int.TryParse(arguments[3], out int itemId)) {
-						CommandHandler.WriteLine("Invalid parameter: item");
+						WriteLine("Invalid parameter: item");
 						return;
 					}
 
 					if (!(GetProfileFromCmid(cmid) is var publicProfile)) {
-						CommandHandler.WriteLine("Could not set loadout slot: Profile not found.");
+						WriteLine("Could not set loadout slot: Profile not found.");
 						return;
 					}
 
 					if (itemId > 0 && !HasInventoryItem(cmid, itemId)) {
-						CommandHandler.WriteLine("Could not set loadout slot: Item is not in inventory.");
+						WriteLine("Could not set loadout slot: Item is not in inventory.");
 						return;
 					}
 
@@ -178,21 +187,14 @@ namespace Paradise.WebServices {
 					DatabaseManager.PlayerLoadouts.DeleteMany(_ => _.Cmid == playerLoadout.Cmid);
 					DatabaseManager.PlayerLoadouts.Insert(playerLoadout);
 
-					CommandHandler.WriteLine($"Slot {arguments[2]} has been set to {(UberstrikeInventoryItem)itemId}.");
+					WriteLine($"Slot {arguments[2]} has been set to {(UberstrikeInventoryItem)itemId}.");
 
 					break;
 				}
 				default:
-					CommandHandler.WriteLine($"{Command}: unknown command {arguments[0]}\n");
+					WriteLine($"{Command}: unknown command {arguments[0]}\n");
 					break;
 			}
-		}
-
-		public void PrintUsageText() {
-			CommandHandler.WriteLine($"{Command}: {Description}");
-			CommandHandler.WriteLine("  give <cmid> <item>\t\tAdds the specified item to a player's inventory.");
-			CommandHandler.WriteLine("  take <cmid> <item>\t\tRemoves the specified item from a player's inventory.");
-			CommandHandler.WriteLine("  set <cmid> <slot> <item>\tSets the specified inventory slot to a specific item.");
 		}
 
 		private PublicProfileView GetProfileFromCmid(int cmid) {
