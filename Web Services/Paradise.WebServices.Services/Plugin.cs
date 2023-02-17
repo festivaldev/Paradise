@@ -1,12 +1,9 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace Paradise.WebServices.Services {
 	public class Plugin : ParadiseServicePlugin {
-		protected static readonly ILog Log = LogManager.GetLogger(nameof(ParadiseServicePlugin));
-
 		public override void OnStart() {
 			base.OnStart();
 
