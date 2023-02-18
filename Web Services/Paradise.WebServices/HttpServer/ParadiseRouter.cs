@@ -92,23 +92,19 @@ namespace Paradise.WebServices {
 		}
 
 		[Route(Path = "/status/comm")]
-		public bool CommServerStatus() {
+		public void CommServerStatus() {
 			/// TODO: Replace with TCP communication
 			//SetStatus(200);
 			//SetContentType("application/json");
 			//Send(ApplicationWebService.CommMonitoringData.Values);
-
-			return true;
 		}
 
 		[Route(Path = "/status/game")]
-		public bool GameServerStatus() {
+		public void GameServerStatus() {
 			/// TODO: Replace with TCP communication
 			//SetStatus(200);
 			//SetContentType("application/json");
 			//Send(ApplicationWebService.GameMonitoringData.Values);
-
-			return true;
 		}
 
 		[Route(Path = "/", Static = true)]

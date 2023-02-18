@@ -116,7 +116,7 @@ namespace Paradise.WebServices {
 			response.OutputStream.Write(bytes, 0, bytes.Length);
 		}
 
-		protected virtual bool runHandler(RouteInfo handler, ref HttpListenerContext context, string route, NameValueCollection query, string body) {
+		protected virtual void runHandler(RouteInfo handler, ref HttpListenerContext context, string route, NameValueCollection query, string body) {
 			var methodParameterInfo = handler.Handle.GetParameters();
 			var methodParameters = new object[methodParameterInfo.Length];
 
@@ -131,7 +131,7 @@ namespace Paradise.WebServices {
 							methodParameters[i] = JsonConvert.DeserializeObject(body, methodParameterInfo[i].ParameterType);
 						} catch (Exception e) {
 							respondWithError(context.Response, (int)HttpStatusCode.InternalServerError, $"Internal Server Error\n{e}");
-							return true;
+							return;
 						}
 					} else {
 						methodParameters[i] = body;
@@ -145,13 +145,11 @@ namespace Paradise.WebServices {
 					Thread.SetData(Thread.GetNamedDataSlot("Response"), context.Response);
 					Thread.SetData(Thread.GetNamedDataSlot("RouteInfo"), handler);
 
-					return (bool)handler.Handle.Invoke(handler.Router, methodParameters);
+					handler.Handle.Invoke(handler.Router, methodParameters);
 				} catch (Exception e) {
 					respondWithError(context.Response, (int)HttpStatusCode.InternalServerError, $"Internal Server Error\n{e}");
 				}
 			}
-
-			return false;
 		}
 
 		protected virtual bool shouldAllowCORS() {
