@@ -46,6 +46,28 @@ namespace Paradise.WebServices.Services {
 			};
 		}
 
+		public override Dictionary<string, object> HandlePluginQuery(PluginQueryType queryType, Dictionary<string, object> metadata) {
+			switch (queryType) {
+				case PluginQueryType.IsDatabaseOpen:
+					return new Dictionary<string, object> { ["IsDatabaseOpen"] = DatabaseManager.IsOpen };
+				case PluginQueryType.OpenDatabase:
+					if (!DatabaseManager.IsOpen) {
+						DatabaseManager.OpenDatabase();
+					}
+
+					break;
+				case PluginQueryType.DisposeDatabase:
+					if (DatabaseManager.IsOpen) {
+						DatabaseManager.DisposeDatabase();
+					}
+
+					break;
+				default: break;
+			}
+
+			return null;
+		}
+
 		#region Database Callbacks
 		private void OnDatabaseOpened(object sender, EventArgs args) {
 			ParadiseService.Instance.ClientCallback?.OnDatabaseOpened();

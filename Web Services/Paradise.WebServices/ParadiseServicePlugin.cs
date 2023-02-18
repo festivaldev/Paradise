@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.ServiceModel;
 
 namespace Paradise.WebServices {
+	public enum PluginQueryType {
+		IsDatabaseOpen,
+		OpenDatabase,
+		DisposeDatabase
+	}
 	public abstract class ParadiseServicePlugin {
 		public virtual List<Type> Commands { get; }
 
@@ -14,7 +19,7 @@ namespace Paradise.WebServices {
 		public virtual void OnStart() { }
 		public virtual void OnStop() { }
 
-		public virtual Dictionary<string, object> HandleTrayQuery() {
+		public virtual Dictionary<string, object> HandlePluginQuery(PluginQueryType queryType, Dictionary<string, object> metadata) {
 			return null;
 		}
 	}

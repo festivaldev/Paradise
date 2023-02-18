@@ -250,15 +250,27 @@ namespace Paradise.WebServices {
 		}
 
 		public bool IsDatabaseOpen() {
-			throw new NotImplementedException();
+			foreach (var plugin in Plugins) {
+				var result = plugin.HandlePluginQuery(PluginQueryType.IsDatabaseOpen, null);
+
+				if (result != null && result.ContainsKey("IsDatabaseOpen")) {
+					return (bool)result["IsDatabaseOpen"];
+				}
+			}
+
+			return false;
 		}
 
 		public void OpenDatabase() {
-			throw new NotImplementedException();
+			foreach (var plugin in Plugins) {
+				plugin.HandlePluginQuery(PluginQueryType.OpenDatabase, null);
+			};
 		}
 
 		public void DisposeDatabase() {
-			throw new NotImplementedException();
+			foreach (var plugin in Plugins) {
+				plugin.HandlePluginQuery(PluginQueryType.DisposeDatabase, null);
+			};
 		}
 
 		public bool IsHttpServerRunning() {
@@ -311,7 +323,7 @@ namespace Paradise.WebServices {
 
 			return new ParadiseServiceStatus {
 				Services = services,
-				DatabaseOpened = false,
+				DatabaseOpened = this.IsDatabaseOpen(),
 				FileServerRunning = this.IsHttpServerRunning()
 			};
 		}

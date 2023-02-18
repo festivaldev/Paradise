@@ -94,7 +94,7 @@ namespace Paradise.WebServices {
 
 					ConsoleHelper.PrintConsoleHeaderSubtitle();
 
-					using (var host = new ServiceHost(typeof(ParadiseService))) {
+					using (var host = new ServiceHost(ServiceInstance)) {
 						host.AddServiceEndpoint(typeof(IParadiseServiceHost), new NetNamedPipeBinding(), "net.pipe://localhost/NewParadise.WebServices");
 						host.Open();
 
