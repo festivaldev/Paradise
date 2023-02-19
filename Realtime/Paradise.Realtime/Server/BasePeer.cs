@@ -35,7 +35,7 @@ namespace Paradise.Realtime.Server {
 		private HeartbeatState heartbeatState;
 
 		public BasePeer(InitRequest initRequest) : base(initRequest) {
-			if (initRequest.ApplicationId != ApiVersion.Current && initRequest.ApplicationId != ApiVersion.Legacy) {
+			if (initRequest.ApplicationId != ApiVersion.Current) {
 				Disconnect();
 			}
 
