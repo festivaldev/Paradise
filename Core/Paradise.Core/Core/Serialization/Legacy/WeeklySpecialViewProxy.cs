@@ -1,11 +1,9 @@
-﻿using System;
+﻿using Paradise.DataCenter.Common.Entities;
+using System;
 using System.IO;
-using Paradise.DataCenter.Common.Entities;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class WeeklySpecialViewProxy
-	{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class WeeklySpecialViewProxy {
 		public static void Serialize(Stream stream, WeeklySpecialView instance) {
 			int num = 0;
 			if (instance != null) {

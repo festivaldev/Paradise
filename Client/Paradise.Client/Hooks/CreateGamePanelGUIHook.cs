@@ -2,54 +2,43 @@
 using HarmonyLib;
 using log4net;
 using System;
-using System.Reflection;
 using UberStrike.Core.Models.Views;
 using UberStrike.Core.Types;
 using UberStrike.Realtime.UnitySdk;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class CreateGamePanelGUIHook : ParadiseHook {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
+	/// <summary>
+	/// <br>• Allows selecting game flags ("Mods").</br>
+	/// <br>• Increases maximum level to 100.</br>
+	/// <br>• Increases maximum password length to 16.</br>
+	/// </summary>
+	[HarmonyPatch(typeof(CreateGamePanelGUI))]
+	public class CreateGamePanelGUIHook {
+		const int MAX_PASSWORD_LENGTH = 16;
 
-		private static CreateGamePanelGUI Instance;
+		private static readonly ILog Log = LogManager.GetLogger(nameof(CreateGamePanelGUI));
+		private static Traverse traverse;
 
-		/// <summary>
-		/// <br>• Allows selecting game flags ("Mods").</br>
-		/// <br>• Increases maximum level to 100.</br>
-		/// <br>• Increases maximum password length to 16.</br>
-		/// </summary>
-		public CreateGamePanelGUIHook() { }
-
-		public override void Hook(Harmony harmonyInstance) {
+		static CreateGamePanelGUIHook() {
 			Log.Info($"[{nameof(CreateGamePanelGUIHook)}] hooking {nameof(CreateGamePanelGUI)}");
-
-			var orig_CreateGamePanelGUI_DrawGameConfiguration = typeof(CreateGamePanelGUI).GetMethod("DrawGameConfiguration", BindingFlags.Instance | BindingFlags.NonPublic);
-			var prefix_CreateGamePanelGUI_DrawGameConfiguration = typeof(CreateGamePanelGUIHook).GetMethod("DrawGameConfiguration_Prefix", BindingFlags.Static | BindingFlags.Public);
-			var postfix_CreateGamePanelGUI_DrawGameConfiguration = typeof(CreateGamePanelGUIHook).GetMethod("DrawGameConfiguration_Postfix", BindingFlags.Static | BindingFlags.Public);
-
-			harmonyInstance.Patch(orig_CreateGamePanelGUI_DrawGameConfiguration, new HarmonyMethod(prefix_CreateGamePanelGUI_DrawGameConfiguration), new HarmonyMethod(postfix_CreateGamePanelGUI_DrawGameConfiguration));
-
-
-			var orig_CreateGamePanelGUI_ValidateGamePassword = typeof(CreateGamePanelGUI).GetMethod("ValidateGamePassword", BindingFlags.Instance | BindingFlags.NonPublic);
-			var prefix_CreateGamePanelGUI_ValidateGamePassword = typeof(CreateGamePanelGUIHook).GetMethod("ValidateGamePassword_Prefix", BindingFlags.Static | BindingFlags.Public);
-			var postfix_CreateGamePanelGUI_ValidateGamePassword = typeof(CreateGamePanelGUIHook).GetMethod("ValidateGamePassword_Postfix", BindingFlags.Static | BindingFlags.Public);
-
-			harmonyInstance.Patch(orig_CreateGamePanelGUI_ValidateGamePassword, new HarmonyMethod(prefix_CreateGamePanelGUI_ValidateGamePassword), new HarmonyMethod(postfix_CreateGamePanelGUI_ValidateGamePassword));
 		}
 
-		public static bool DrawGameConfiguration_Prefix(CreateGamePanelGUI __instance) {
-			if (Instance == null) {
-				Instance = __instance;
+		[HarmonyPatch("Start"), HarmonyPostfix]
+		public static void CreateGamePanelGUI_Start_Postfix(CreateGamePanelGUI __instance) {
+			traverse = Traverse.Create(__instance);
 
-				SetField("_maxLevelCurrent", 100);
-				SetField("_gameFlags", GameFlags.GAME_FLAGS.QuickSwitch);
-			}
+			SetField("_maxLevelCurrent", 100);
+			SetField("_gameFlags", GameFlags.GAME_FLAGS.QuickSwitch);
+		}
 
+		[HarmonyPatch("DrawGameConfiguration"), HarmonyPrefix]
+		public static bool CreateGamePanelGUI_DrawGameConfiguration_Prefix(CreateGamePanelGUI __instance) {
 			return false;
 		}
 
-		public static void DrawGameConfiguration_Postfix(Rect rect) {
+		[HarmonyPatch("DrawGameConfiguration"), HarmonyPostfix]
+		public static void CreateGamePanelGUI_DrawGameConfiguration_Postfix(CreateGamePanelGUI __instance, Rect rect) {
 			if (GetProperty<bool>("IsModeSupported")) {
 				MapSettings mapSettings = GetField<UberstrikeMap>("_mapSelected").View.Settings[GetField<SelectionGroup<GameModeType>>("_modeSelection").Current];
 
@@ -82,7 +71,7 @@ namespace Paradise.Client {
 				GUI.Label(new Rect(6f, 25f, 100f, 25f), LocalizedStrings.Password, BlueStonez.label_interparkbold_18pt_left);
 				GUI.SetNextControlName("GamePasswd");
 
-				SetField("_password", GUI.PasswordField(new Rect(130f, 28f, GetField<float>("_textFieldWidth"), 19f), GetField<string>("_password"), '*', 16));
+				SetField("_password", GUI.PasswordField(new Rect(130f, 28f, GetField<float>("_textFieldWidth"), 19f), GetField<string>("_password"), '*', MAX_PASSWORD_LENGTH));
 				SetField("_password", GetField<string>("_password").Trim(new char[] {
 					'\n'
 				}));
@@ -93,11 +82,11 @@ namespace Paradise.Client {
 					GUI.color = Color.white;
 				}
 
-				if (GetField<string>("_password").Length > 16) {
-					SetField("_password", GetField<string>("_password").Remove(16));
+				if (GetField<string>("_password").Length > MAX_PASSWORD_LENGTH) {
+					SetField("_password", GetField<string>("_password").Remove(MAX_PASSWORD_LENGTH));
 				}
 
-				GUI.Label(new Rect(130f + GetField<float>("_textFieldWidth") + 16f, 28f, 100f, 19f), "(" + GetField<string>("_password").Length + "/16)", BlueStonez.label_interparkbold_11pt_left);
+				GUI.Label(new Rect(130f + GetField<float>("_textFieldWidth") + 16f, 28f, 100f, 19f), $"({GetField<string>("_password").Length}/{MAX_PASSWORD_LENGTH})", BlueStonez.label_interparkbold_11pt_left);
 
 				GUI.Label(new Rect(6f, 55f, 110f, 25f), LocalizedStrings.MaxPlayers, BlueStonez.label_interparkbold_18pt_left);
 				GUI.Label(new Rect(130f, 60f, 33f, 15f), Mathf.RoundToInt((float)mapSettings.PlayersCurrent).ToString(), BlueStonez.label_dropdown);
@@ -185,34 +174,39 @@ namespace Paradise.Client {
 			}
 		}
 
-		public static bool ValidateGamePassword_Prefix() {
+		[HarmonyPatch("ValidateGamePassword"), HarmonyPrefix]
+		public static bool CreateGamePanelGUI_ValidateGamePassword_Prefix() {
 			return false;
 		}
 
-		public static void ValidateGamePassword_Postfix(string psv, ref bool __result) {
+		[HarmonyPatch("ValidateGamePassword"), HarmonyPostfix]
+		public static void CreateGamePanelGUI_ValidateGamePassword_Postfix(string psv, ref bool __result) {
 			bool result = false;
 
-			if (!string.IsNullOrEmpty(psv) && psv.Length <= 16) {
+			if (!string.IsNullOrEmpty(psv) && psv.Length <= MAX_PASSWORD_LENGTH) {
 				result = true;
 			}
 
 			__result = result;
 		}
 
-		private static T GetField<T>(string fieldName, BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic) {
-			return GetField<T>(Instance, fieldName, flags);
+
+		#region 
+		private static T GetField<T>(string fieldName) {
+			return traverse.Field<T>(fieldName).Value;
 		}
 
-		private static void SetField(string fieldName, object value, BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic) {
-			SetField(Instance, fieldName, value, flags);
+		private static void SetField(string fieldName, object value) {
+			traverse.Field(fieldName).SetValue(value);
 		}
 
-		private static T GetProperty<T>(string propertyName, BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic) {
-			return GetProperty<T>(Instance, propertyName, flags);
+		private static T GetProperty<T>(string propertyName) {
+			return traverse.Property<T>(propertyName).Value;
 		}
 
-		private static void SetProperty(string propertyName, object value, BindingFlags flags = BindingFlags.Instance | BindingFlags.NonPublic) {
-			SetProperty(Instance, propertyName, value, flags);
+		private static void SetProperty(string propertyName, object value) {
+			traverse.Property(propertyName).SetValue(value);
 		}
+		#endregion
 	}
 }

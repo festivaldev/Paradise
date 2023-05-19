@@ -1,4 +1,5 @@
-﻿using Paradise.Core.Serialization;
+﻿using log4net;
+using Paradise.Core.Serialization;
 using Paradise.Core.ViewModel;
 using Paradise.DataCenter.Common.Entities;
 using Paradise.WebServices.Contracts;
@@ -11,52 +12,56 @@ using System.Text;
 
 namespace Paradise.WebServices.Services {
 	public class AuthenticationWebService : BaseWebService, IAuthenticationWebServiceContract {
+		protected static readonly new ILog Log = LogManager.GetLogger(nameof(AuthenticationWebService));
+
 		public override string ServiceName => "AuthenticationWebService";
 		public override string ServiceVersion => ApiVersion.Current;
 		protected override Type ServiceInterface => typeof(IAuthenticationWebServiceContract);
 
 		private static ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
-		public AuthenticationWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
 		public AuthenticationWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() { }
 		protected override void Teardown() { }
 
+		#region IAuthenticateWebServiceContract
 		/// <summary>
 		/// Completes a just created account by setting the player's name and rewarding them the default starting items
 		/// </summary>
 		public byte[] CompleteAccount(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var cmid = Int32Proxy.Deserialize(bytes);
 					var name = StringProxy.Deserialize(bytes);
 					var channel = EnumProxy<ChannelType>.Deserialize(bytes);
 					var locale = StringProxy.Deserialize(bytes);
 					var machineId = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(cmid, name, channel, locale, machineId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), cmid, name, channel, locale, machineId);
 
 					using (var outputStream = new MemoryStream()) {
-						var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == cmid);
+						var publicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == cmid);
 
 						if (publicProfile.Name != null) {
 							AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView {
 								Result = AccountCompletionResult.AlreadyCompletedAccount
 							});
-						} else if (DatabaseManager.PublicProfiles.FindOne(_ => _.Name == name) != null) {
+						} else if (DatabaseClient.PublicProfiles.FindOne(_ => _.Name == name) != null) {
 							AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView {
 								Result = AccountCompletionResult.DuplicateName
 							});
-						} else if (ProfanityFilter.ContainsProfanity(name)) {
+						} else if (ProfanityFilter.DetectAllProfanities(name).Count > 0) {
 							AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView {
 								Result = AccountCompletionResult.InvalidName
 							});
 						} else {
 							publicProfile.Name = name;
-							DatabaseManager.PublicProfiles.Update(publicProfile);
+							DatabaseClient.PublicProfiles.Update(publicProfile);
 
-							DatabaseManager.PlayerInventoryItems.InsertBulk(new List<ItemInventoryView> {
+							DatabaseClient.PlayerInventoryItems.InsertBulk(new List<ItemInventoryView> {
 								new ItemInventoryView {
 									Cmid = cmid,
 									ItemId = (int)UberstrikeInventoryItem.TheSplatbat,
@@ -69,7 +74,7 @@ namespace Paradise.WebServices.Services {
 								}
 							});
 
-							DatabaseManager.ItemTransactions.InsertBulk(new List<ItemTransactionView> {
+							DatabaseClient.ItemTransactions.InsertBulk(new List<ItemTransactionView> {
 								new ItemTransactionView {
 									Cmid = publicProfile.Cmid,
 									Credits = 0,
@@ -88,11 +93,11 @@ namespace Paradise.WebServices.Services {
 								}
 							});
 
-							var playerLoadout = DatabaseManager.PlayerLoadouts.FindOne(_ => _.Cmid == cmid);
+							var playerLoadout = DatabaseClient.PlayerLoadouts.FindOne(_ => _.Cmid == cmid);
 							playerLoadout.MeleeWeapon = (int)UberstrikeInventoryItem.TheSplatbat;
 							playerLoadout.Weapon1 = (int)UberstrikeInventoryItem.MachineGun;
 
-							DatabaseManager.PlayerLoadouts.Update(playerLoadout);
+							DatabaseClient.PlayerLoadouts.Update(playerLoadout);
 
 							AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView {
 								Result = AccountCompletionResult.Ok,
@@ -101,9 +106,13 @@ namespace Paradise.WebServices.Services {
 									[(int)UberstrikeInventoryItem.MachineGun] = 1
 								}
 							});
+
+							Log.Info($"{publicProfile.Name}({publicProfile.Cmid}) logged in.");
 						}
 
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -121,19 +130,23 @@ namespace Paradise.WebServices.Services {
 		/// </remarks>
 		public byte[] CreateUser(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var emailAddress = StringProxy.Deserialize(bytes);
 					var password = StringProxy.Deserialize(bytes);
 					var channel = EnumProxy<ChannelType>.Deserialize(bytes);
 					var locale = StringProxy.Deserialize(bytes);
 					var machineId = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(emailAddress, password, channel, locale, machineId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), emailAddress, password, channel, locale, machineId);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -148,19 +161,23 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] LinkSteamMember(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var email = StringProxy.Deserialize(bytes);
 					var password = StringProxy.Deserialize(bytes);
 					var steamId = StringProxy.Deserialize(bytes);
 					var machineId = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(email, password, steamId, machineId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), email, password, steamId, machineId);
 
 					using (var outputStream = new MemoryStream()) {
 						/// IDEA: Login using account.festival.tf?
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -175,19 +192,23 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] LoginMemberEmail(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var email = StringProxy.Deserialize(bytes);
 					var password = StringProxy.Deserialize(bytes);
 					var channel = EnumProxy<ChannelType>.Deserialize(bytes);
 					var machineId = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(email, password, channel, machineId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), email, password, channel, machineId);
 
 					using (var outputStream = new MemoryStream()) {
 						/// IDEA: Login using account.festival.tf?
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -205,17 +226,21 @@ namespace Paradise.WebServices.Services {
 		/// </remarks>
 		public byte[] LoginMemberFacebookUnitySdk(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var facebookPlayerAccessToken = StringProxy.Deserialize(bytes);
 					var channel = EnumProxy<ChannelType>.Deserialize(bytes);
 					var machineId = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(facebookPlayerAccessToken, channel, machineId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), facebookPlayerAccessToken, channel, machineId);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -233,17 +258,21 @@ namespace Paradise.WebServices.Services {
 		/// </remarks>
 		public byte[] LoginMemberPortal(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var cmid = Int32Proxy.Deserialize(bytes);
 					var hash = StringProxy.Deserialize(bytes);
 					var machineId = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(cmid, hash, machineId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), cmid, hash, machineId);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -258,25 +287,17 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] LoginSteam(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var steamId = StringProxy.Deserialize(bytes);
 					var authToken = StringProxy.Deserialize(bytes);
 					var machineId = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(steamId, authToken, machineId);
-
-					//Console.WriteLine($"[{ServiceName}] Authenticating Steam user (SteamID: {steamId}, auth token: {authToken}, machine ID: {machineId}");
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), steamId, authToken, machineId);
 
 					using (var outputStream = new MemoryStream()) {
-						string authTicket;
-						using (var authTicketStream = new MemoryStream()) {
-							StringProxy.Serialize(authTicketStream, steamId);
-							DateTimeProxy.Serialize(authTicketStream, DateTime.UtcNow.AddDays(2));
-
-							authTicket = Convert.ToBase64String(authTicketStream.ToArray());
-						}
-
-						var steamMember = DatabaseManager.SteamMembers.FindOne(_ => _.SteamId == steamId);
+						var steamMember = DatabaseClient.SteamMembers.FindOne(_ => _.SteamId == steamId);
 
 						if (steamMember == null) {
 							var r = new Random((int)DateTime.UtcNow.Ticks);
@@ -288,18 +309,16 @@ namespace Paradise.WebServices.Services {
 								MachineId = machineId
 							};
 
-							DatabaseManager.SteamMembers?.Insert(steamMember);
+							DatabaseClient.SteamMembers?.Insert(steamMember);
 
 							var publicProfile = new PublicProfileView {
 								Cmid = Cmid,
 								Name = string.Empty,
 								LastLoginDate = DateTime.UtcNow,
-								EmailAddressStatus = EmailAddressStatus.Verified,
-								GroupTag = string.Empty,
-								FacebookId = string.Empty
+								EmailAddressStatus = EmailAddressStatus.Verified
 							};
 
-							DatabaseManager.PublicProfiles.Insert(publicProfile);
+							DatabaseClient.PublicProfiles.Insert(publicProfile);
 
 							var memberWallet = new MemberWalletView {
 								Cmid = Cmid,
@@ -309,7 +328,7 @@ namespace Paradise.WebServices.Services {
 								CreditsExpiration = DateTime.MaxValue
 							};
 
-							DatabaseManager.MemberWallets.Insert(memberWallet);
+							DatabaseClient.MemberWallets.Insert(memberWallet);
 
 							var transactionKey = new byte[32];
 							new Random((int)DateTime.UtcNow.Ticks).NextBytes(transactionKey);
@@ -319,7 +338,7 @@ namespace Paradise.WebServices.Services {
 								builder.Append(transactionKey[i].ToString("x2"));
 							}
 
-							DatabaseManager.CurrencyDeposits.Insert(new CurrencyDepositView {
+							DatabaseClient.CurrencyDeposits.Insert(new CurrencyDepositView {
 								BundleName = "Signup Reward",
 								Cmid = Cmid,
 								Credits = memberWallet.Credits,
@@ -335,7 +354,9 @@ namespace Paradise.WebServices.Services {
 								WeaponStatistics = new PlayerWeaponStatisticsView()
 							};
 
-							DatabaseManager.PlayerStatistics.Insert(playerStatistics);
+							DatabaseClient.PlayerStatistics.Insert(playerStatistics);
+
+							var session = GameSessionManager.Instance.FindOrCreateSession(publicProfile, machineId, steamMember);
 
 							var memberAuth = new MemberAuthenticationResultView {
 								MemberAuthenticationResult = MemberAuthenticationResult.Ok,
@@ -346,27 +367,29 @@ namespace Paradise.WebServices.Services {
 								PlayerStatisticsView = playerStatistics,
 								ServerTime = DateTime.UtcNow,
 								IsAccountComplete = false,
-								AuthToken = authTicket
+								AuthToken = session.SessionId
 							};
 
 							MemberAuthenticationResultViewProxy.Serialize(outputStream, memberAuth);
 						} else {
-							var bannedMember = DatabaseManager.ModerationActions.FindOne(_ => _.ModerationFlag == ModerationFlag.Banned && _.TargetCmid == steamMember.Cmid);
+							var bannedMember = DatabaseClient.ModerationActions.FindOne(_ => _.ModerationFlag == ModerationFlag.Banned && _.TargetCmid == steamMember.Cmid);
 
 							if (bannedMember != null && (bannedMember.ExpireTime == null || bannedMember.ExpireTime > DateTime.UtcNow)) {
 								MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
 									MemberAuthenticationResult = MemberAuthenticationResult.IsBanned
 								});
 							} else {
-								var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
+								var publicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
 
 								if (publicProfile == null) {
 									MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
 										MemberAuthenticationResult = MemberAuthenticationResult.UnknownError
 									});
 								} else {
-									var memberWallet = DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
-									var playerStatistics = DatabaseManager.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
+									var memberWallet = DatabaseClient.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
+									var playerStatistics = DatabaseClient.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+									var session = GameSessionManager.Instance.FindOrCreateSession(publicProfile, machineId, steamMember);
 
 									MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
 										MemberAuthenticationResult = MemberAuthenticationResult.Ok,
@@ -377,22 +400,102 @@ namespace Paradise.WebServices.Services {
 										PlayerStatisticsView = playerStatistics,
 										ServerTime = DateTime.UtcNow,
 										IsAccountComplete = publicProfile.Name != null,
-										AuthToken = authTicket
+										AuthToken = session.SessionId
 									});
 
-									if (DatabaseManager.Clans.FindAll().ToList().FirstOrDefault(_ => _.Members.Find(__ => __.Cmid == steamMember.Cmid) != null) is ClanView clan) {
+									if (DatabaseClient.Clans.FindAll().ToList().FirstOrDefault(_ => _.Members.Find(__ => __.Cmid == steamMember.Cmid) != null) is ClanView clan) {
 										var clanMember = clan.Members.Find(_ => _.Cmid == steamMember.Cmid);
 
 										clanMember.Lastlogin = DateTime.UtcNow;
 
-										DatabaseManager.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
-										DatabaseManager.Clans.Insert(clan);
+										DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
+										DatabaseClient.Clans.Insert(clan);
+									}
+
+									Log.Info($"{publicProfile.Name}({publicProfile.Cmid}) logged in.");
+								}
+							}
+						}
+
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
+					}
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
+
+			return null;
+		}
+
+		public byte[] VerifyAuthToken(byte[] data) {
+			try {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
+					var authToken = StringProxy.Deserialize(bytes);
+
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authToken);
+
+					using (var outputStream = new MemoryStream()) {
+						if (!GameSessionManager.Instance.TryGetValue(authToken, out var session)) {
+							MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
+								MemberAuthenticationResult = MemberAuthenticationResult.InvalidCookie
+							});
+						} else {
+							var steamMember = session.SteamMember;
+
+							if (steamMember == null) {
+								MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
+								MemberAuthenticationResult = MemberAuthenticationResult.UnknownError
+							});
+							} else {
+								var bannedMember = DatabaseClient.ModerationActions.FindOne(_ => _.ModerationFlag == ModerationFlag.Banned && _.TargetCmid == steamMember.Cmid);
+
+								if (bannedMember != null && (bannedMember.ExpireTime == null || bannedMember.ExpireTime > DateTime.UtcNow)) {
+									MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
+										MemberAuthenticationResult = MemberAuthenticationResult.IsBanned
+									});
+								} else {
+									var publicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+									if (publicProfile == null) {
+										MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
+											MemberAuthenticationResult = MemberAuthenticationResult.UnknownError
+										});
+									} else {
+										var memberWallet = DatabaseClient.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
+										var playerStatistics = DatabaseClient.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+										MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
+											MemberAuthenticationResult = MemberAuthenticationResult.Ok,
+											MemberView = new MemberView {
+												PublicProfile = publicProfile,
+												MemberWallet = memberWallet
+											},
+											PlayerStatisticsView = playerStatistics,
+											ServerTime = DateTime.UtcNow,
+											IsAccountComplete = publicProfile.Name != null,
+											AuthToken = session.SessionId
+										});
+
+										if (DatabaseClient.Clans.FindAll().ToList().FirstOrDefault(_ => _.Members.Find(__ => __.Cmid == steamMember.Cmid) != null) is ClanView clan) {
+											var clanMember = clan.Members.Find(_ => _.Cmid == steamMember.Cmid);
+
+											clanMember.Lastlogin = DateTime.UtcNow;
+
+											DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
+											DatabaseClient.Clans.Insert(clan);
+										}
 									}
 								}
 							}
 						}
 
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -402,4 +505,5 @@ namespace Paradise.WebServices.Services {
 			return null;
 		}
 	}
+	#endregion
 }

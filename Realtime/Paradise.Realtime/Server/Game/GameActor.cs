@@ -2,48 +2,49 @@
 using Paradise.Core.Models;
 using Paradise.DataCenter.Common.Entities;
 using System;
+using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	[JsonObject(MemberSerialization.OptIn)]
 	public partial class GameActor {
 		[JsonProperty]
-		public GameActorInfo Info { get; private set; }
+		public GameActorInfo ActorInfo { get; private set; }
 		public PlayerMovement Movement { get; private set; }
 		public DamageEvent Damage { get; private set; }
 
 		public GamePeer Peer { get; set; }
 
-		public GameActorInfoDelta Delta => Info.Delta;
+		public GameActorInfoDelta Delta => ActorInfo.Delta;
 
 		public TeamID Team {
-			get { return Info.TeamID; }
-			set { Info.TeamID = value; }
+			get { return ActorInfo.TeamID; }
+			set { ActorInfo.TeamID = value; }
 		}
+
+		public SpawnPoint CurrentSpawnPoint;
+		public List<SpawnPoint> PreviousSpawnPoints = new List<SpawnPoint>();
 
 		public DateTime LastRespawnTime = DateTime.UtcNow;
 		public DateTime LastTeamSwitchTime = DateTime.UtcNow;
+		public DateTime NextRespawnTime = DateTime.MinValue;
 
 		[JsonProperty]
-		public int Cmid => Info.Cmid;
+		public int Cmid => ActorInfo.Cmid;
 		[JsonProperty]
-		public string PlayerName => Info.PlayerName;
+		public string PlayerName => ActorInfo.PlayerName;
 		[JsonProperty]
-		public MemberAccessLevel AccessLevel => Info.AccessLevel;
+		public MemberAccessLevel AccessLevel => ActorInfo.AccessLevel;
 
 		public bool UpdatePosition;
 
 		public GameActor(GameActorInfo actorInfo) {
-			if (actorInfo == null) {
-				throw new ArgumentNullException(nameof(actorInfo));
-			}
-
-			Info = actorInfo;
+			ActorInfo = actorInfo ?? throw new ArgumentNullException(nameof(actorInfo));
 			Movement = new PlayerMovement {
 				Number = actorInfo.PlayerId
 			};
 			Damage = new DamageEvent();
 
-			Info.Delta.Id = actorInfo.PlayerId;
+			ActorInfo.Delta.Id = actorInfo.PlayerId;
 		}
 	}
 }

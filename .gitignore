@@ -6,3 +6,8 @@ AssemblyReferences/*.dll
 build/
 node_modules/
 .DS_Store
+
+**.old
+**.new
+Test/
+Installer/*.exe

@@ -1,48 +1,23 @@
 ﻿using HarmonyLib;
 using Microsoft.Win32;
-using System.Collections.Generic;
+using System;
+using System.IO;
 using System.Reflection;
+using UnityEngine;
 
 namespace Paradise.Client.Bootstrap {
 	public static class Bootstrapper {
 		public static void Initialize() {
+			// Fix the current working directory if launched via URI protocol
+			Environment.CurrentDirectory = Path.GetDirectoryName(Application.dataPath);
+
 			ParadiseClient.Initialize();
 
 			var harmonyInstance = new Harmony("tf.festival.Paradise");
-
-			var hooks = new List<IParadiseHook> {
-#if DEBUG
-				new ClanDataManagerHook(),
-				new TrainingRoomHook(),
-#endif
-
-				new AuthenticationManagerHook(),
-				new GlobalSceneLoaderHook(),
-				new ApplicationDataManagerHook(),
-				new SoapClientHook(),
-				new MenuPageManagerHook(),
-				new MapManagerHook(),
-				new ScreenResolutionManagerHook(),
-				new OptionsPanelGUIHook(),
-				new BundleManagerHook(),
-				new WeaponControllerHook(),
-				new CreateGamePanelGUIHook(),
-				new HUDStatusPanelHook(),
-				new HUDDesktopEventStreamHook(),
-				new PlayerKilledSpectatorStateHook(),
-				new SfxManagerHook(),
-				new GameStateHook(),
-				new PlayerLeadAudioHook(),
-				new GlobalUIRibbonHook(),
-				new TeamEliminationRoomHook()
-			};
-
-			foreach (var hook in hooks) {
-				hook.Hook(harmonyInstance);
-			}
+			harmonyInstance.PatchAll(Assembly.GetAssembly(typeof(ParadiseClient)));
 
 			// Register URI handler
-			if (UnityEngine.Application.platform == UnityEngine.RuntimePlatform.WindowsPlayer) {
+			if (Application.platform == RuntimePlatform.WindowsPlayer) {
 				if (Registry.CurrentUser.OpenSubKey(@"SOFTWARE\Classes\uberstrike") == null) {
 					using (var key = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Classes\\uberstrike")) {
 						var appLocation = System.Diagnostics.Process.GetCurrentProcess().MainModule.FileName;

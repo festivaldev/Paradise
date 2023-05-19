@@ -1,17 +1,34 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ApplicationConfiguration>
-	<WebServiceBaseUrl>https://localhost:8080/2.0</WebServiceBaseUrl>
+	<MasterServerUrl>http://localhost</MasterServerUrl>
+
+	<WebServicePort>8080</WebServicePort>
+	<WebServiceEndpoint>2.0</WebServiceEndpoint>
 	<WebServicePrefix>UberStrike.DataCenter.WebService.CWS.</WebServicePrefix>
 	<WebServiceSuffix>Contract.svc</WebServiceSuffix>
+
+	<FileServerPort>8081</FileServerPort>
+	<TCPCommPort>8082</TCPCommPort>
+
+	<CommApplicationSettings>
+		<ApplicationIdentifier><!-- Add GUID here --></ApplicationIdentifier>
+		<EncryptionPassPhrase><!-- Add passphrase here --></EncryptionPassPhrase>
+	</CommApplicationSettings>
+
+	<GameApplicationSettings>
+		<ApplicationIdentifier><!-- Add GUID here --></ApplicationIdentifier>
+		<EncryptionPassPhrase><!-- Add passphrase here --></EncryptionPassPhrase>
+	</GameApplicationSettings>
+
+	<EnableChatLog>true</EnableChatLog>
 
 	<HeartbeatInterval>5</HeartbeatInterval>
 	<HeartbeatTimeout>5</HeartbeatTimeout>
 
-	<CompositeHashes>
-		
-	</CompositeHashes>
+	<EnableHashVerification>true</EnableHashVerification>
 
-	<JunkHashes>
-		
-	</JunkHashes>
+	<DiscordChatIntegration>true</DiscordChatIntegration>
+	<DiscordPlayerAnnouncements>true</DiscordPlayerAnnouncements>
+	<DiscordGameAnnouncements>true</DiscordGameAnnouncements>
+	<DiscordErrorLog>true</DiscordErrorLog>
 </ApplicationConfiguration>

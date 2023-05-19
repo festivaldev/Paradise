@@ -64,9 +64,9 @@ namespace Paradise.Realtime.Server.Game {
 					Achievements = achievements,
 					Deaths = player.Actor.MatchStatistics.Deaths + player.Actor.MatchStatistics.Suicides,
 					Kills = player.Actor.MatchStatistics.GetKills(),
-					Level = player.Actor.Info.Level,
-					Name = player.Actor.Info.PlayerName,
-					Team = player.Actor.Info.TeamID
+					Level = player.Actor.ActorInfo.Level,
+					Name = player.Actor.ActorInfo.PlayerName,
+					Team = player.Actor.ActorInfo.TeamID
 				});
 			}
 
@@ -97,7 +97,7 @@ namespace Paradise.Realtime.Server.Game {
 
 				player.Actor.SaveStatistics(matchData);
 
-				player.GameEvents.SendMatchEnd(matchData);
+				player.GameEventSender.SendMatchEnd(matchData);
 				player.State.SetState(PlayerStateId.Overview);
 			}
 
@@ -105,7 +105,7 @@ namespace Paradise.Realtime.Server.Game {
 				foreach (var player in Room.Players) {
 					if (player.Actor.Cmid.CompareTo(peer.Actor.Cmid) == 0) continue;
 
-					player.GameEvents.SendPlayerLeftGame(peer.Actor.Cmid);
+					player.GameEventSender.SendPlayerLeftGame(peer.Actor.Cmid);
 				}
 			}
 

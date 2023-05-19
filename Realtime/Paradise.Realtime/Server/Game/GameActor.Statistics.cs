@@ -1,5 +1,4 @@
-﻿using log4net;
-using Paradise.Core.Models;
+﻿using Paradise.Core.Models;
 using Paradise.Core.Types;
 using System;
 using System.Collections.Generic;
@@ -105,47 +104,47 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		public StatsCollection GetBestPerLifeStatistics() {
-			StatsCollection result = new StatsCollection();
+			StatsCollection result = new StatsCollection {
+				Headshots = PerLifeStatistics.Max(_ => _.Headshots),
+				Nutshots = PerLifeStatistics.Max(_ => _.Nutshots),
+				ConsecutiveSnipes = PerLifeStatistics.Max(_ => _.ConsecutiveSnipes),
+				Xp = PerLifeStatistics.Max(_ => _.Xp),
+				DamageReceived = PerLifeStatistics.Max(_ => _.DamageReceived),
+				ArmorPickedUp = PerLifeStatistics.Max(_ => _.ArmorPickedUp),
+				HealthPickedUp = PerLifeStatistics.Max(_ => _.HealthPickedUp),
+				MeleeKills = PerLifeStatistics.Max(_ => _.MeleeKills),
+				MeleeShotsFired = PerLifeStatistics.Max(_ => _.MeleeShotsFired),
+				MeleeShotsHit = PerLifeStatistics.Max(_ => _.MeleeShotsHit),
+				MeleeDamageDone = PerLifeStatistics.Max(_ => _.MeleeDamageDone),
+				MachineGunKills = PerLifeStatistics.Max(_ => _.MachineGunKills),
+				MachineGunShotsFired = PerLifeStatistics.Max(_ => _.MachineGunShotsFired),
+				MachineGunShotsHit = PerLifeStatistics.Max(_ => _.MachineGunShotsHit),
+				MachineGunDamageDone = PerLifeStatistics.Max(_ => _.MachineGunDamageDone),
+				ShotgunSplats = PerLifeStatistics.Max(_ => _.ShotgunSplats),
+				ShotgunShotsFired = PerLifeStatistics.Max(_ => _.ShotgunShotsFired),
+				ShotgunShotsHit = PerLifeStatistics.Max(_ => _.ShotgunShotsHit),
+				ShotgunDamageDone = PerLifeStatistics.Max(_ => _.ShotgunDamageDone),
+				SniperKills = PerLifeStatistics.Max(_ => _.SniperKills),
+				SniperShotsFired = PerLifeStatistics.Max(_ => _.SniperShotsFired),
+				SniperShotsHit = PerLifeStatistics.Max(_ => _.SniperShotsHit),
+				SniperDamageDone = PerLifeStatistics.Max(_ => _.SniperDamageDone),
+				SplattergunKills = PerLifeStatistics.Max(_ => _.SplattergunKills),
+				SplattergunShotsFired = PerLifeStatistics.Max(_ => _.SplattergunShotsFired),
+				SplattergunShotsHit = PerLifeStatistics.Max(_ => _.SplattergunShotsHit),
+				SplattergunDamageDone = PerLifeStatistics.Max(_ => _.SplattergunDamageDone),
+				CannonKills = PerLifeStatistics.Max(_ => _.CannonKills),
+				CannonShotsFired = PerLifeStatistics.Max(_ => _.CannonShotsFired),
+				CannonShotsHit = PerLifeStatistics.Max(_ => _.CannonShotsHit),
+				CannonDamageDone = PerLifeStatistics.Max(_ => _.CannonDamageDone),
+				LauncherKills = PerLifeStatistics.Max(_ => _.LauncherKills),
+				LauncherShotsFired = PerLifeStatistics.Max(_ => _.LauncherShotsFired),
+				LauncherShotsHit = PerLifeStatistics.Max(_ => _.LauncherShotsHit),
+				LauncherDamageDone = PerLifeStatistics.Max(_ => _.LauncherDamageDone),
 
-			result.Headshots = PerLifeStatistics.Max(_ => _.Headshots);
-			result.Nutshots = PerLifeStatistics.Max(_ => _.Nutshots);
-			result.ConsecutiveSnipes = PerLifeStatistics.Max(_ => _.ConsecutiveSnipes);
-			result.Xp = PerLifeStatistics.Max(_ => _.Xp);
-			result.DamageReceived = PerLifeStatistics.Max(_ => _.DamageReceived);
-			result.ArmorPickedUp = PerLifeStatistics.Max(_ => _.ArmorPickedUp);
-			result.HealthPickedUp = PerLifeStatistics.Max(_ => _.HealthPickedUp);
-			result.MeleeKills = PerLifeStatistics.Max(_ => _.MeleeKills);
-			result.MeleeShotsFired = PerLifeStatistics.Max(_ => _.MeleeShotsFired);
-			result.MeleeShotsHit = PerLifeStatistics.Max(_ => _.MeleeShotsHit);
-			result.MeleeDamageDone = PerLifeStatistics.Max(_ => _.MeleeDamageDone);
-			result.MachineGunKills = PerLifeStatistics.Max(_ => _.MachineGunKills);
-			result.MachineGunShotsFired = PerLifeStatistics.Max(_ => _.MachineGunShotsFired);
-			result.MachineGunShotsHit = PerLifeStatistics.Max(_ => _.MachineGunShotsHit);
-			result.MachineGunDamageDone = PerLifeStatistics.Max(_ => _.MachineGunDamageDone);
-			result.ShotgunSplats = PerLifeStatistics.Max(_ => _.ShotgunSplats);
-			result.ShotgunShotsFired = PerLifeStatistics.Max(_ => _.ShotgunShotsFired);
-			result.ShotgunShotsHit = PerLifeStatistics.Max(_ => _.ShotgunShotsHit);
-			result.ShotgunDamageDone = PerLifeStatistics.Max(_ => _.ShotgunDamageDone);
-			result.SniperKills = PerLifeStatistics.Max(_ => _.SniperKills);
-			result.SniperShotsFired = PerLifeStatistics.Max(_ => _.SniperShotsFired);
-			result.SniperShotsHit = PerLifeStatistics.Max(_ => _.SniperShotsHit);
-			result.SniperDamageDone = PerLifeStatistics.Max(_ => _.SniperDamageDone);
-			result.SplattergunKills = PerLifeStatistics.Max(_ => _.SplattergunKills);
-			result.SplattergunShotsFired = PerLifeStatistics.Max(_ => _.SplattergunShotsFired);
-			result.SplattergunShotsHit = PerLifeStatistics.Max(_ => _.SplattergunShotsHit);
-			result.SplattergunDamageDone = PerLifeStatistics.Max(_ => _.SplattergunDamageDone);
-			result.CannonKills = PerLifeStatistics.Max(_ => _.CannonKills);
-			result.CannonShotsFired = PerLifeStatistics.Max(_ => _.CannonShotsFired);
-			result.CannonShotsHit = PerLifeStatistics.Max(_ => _.CannonShotsHit);
-			result.CannonDamageDone = PerLifeStatistics.Max(_ => _.CannonDamageDone);
-			result.LauncherKills = PerLifeStatistics.Max(_ => _.LauncherKills);
-			result.LauncherShotsFired = PerLifeStatistics.Max(_ => _.LauncherShotsFired);
-			result.LauncherShotsHit = PerLifeStatistics.Max(_ => _.LauncherShotsHit);
-			result.LauncherDamageDone = PerLifeStatistics.Max(_ => _.LauncherDamageDone);
 
-
-			result.Deaths = PerLifeStatistics.Max(_ => _.Deaths);
-			result.Suicides = PerLifeStatistics.Max(_ => _.Suicides);
+				Deaths = PerLifeStatistics.Max(_ => _.Deaths),
+				Suicides = PerLifeStatistics.Max(_ => _.Suicides)
+			};
 
 			return result;
 		}
@@ -173,7 +172,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		public void IncreaseDeaths() {
-			Info.Deaths++;
+			ActorInfo.Deaths++;
 
 			MatchStatistics.ConsecutiveSnipes = 0;
 			MatchStatistics.Deaths++;
@@ -198,7 +197,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		public void IncreaseWeaponKills(UberstrikeItemClass itemClass, BodyPart bodyPart) {
-			Info.Kills++;
+			ActorInfo.Kills++;
 
 			switch (bodyPart) {
 				case BodyPart.Head:
@@ -345,7 +344,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		public void IncreaseSuicides() {
-			Info.Deaths++;
+			ActorInfo.Deaths++;
 
 			MatchStatistics.ConsecutiveSnipes = 0;
 			MatchStatistics.Suicides++;

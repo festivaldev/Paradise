@@ -7,22 +7,28 @@ using System.IO;
 
 namespace Paradise.Realtime {
 	public class RelationshipWebServiceClient : BaseWebServiceClient<IRelationshipWebServiceContract> {
-		public static readonly RelationshipWebServiceClient Instance = new RelationshipWebServiceClient(
-			endpointUrl: BaseRealtimeApplication.Instance.Configuration.WebServiceBaseUrl,
-			webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
-			webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
-		);
+		public static readonly RelationshipWebServiceClient Instance;
 
-		public RelationshipWebServiceClient(string endpointUrl, string webServicePrefix, string webServiceSuffix) : base(endpointUrl, $"{webServicePrefix}RelationshipWebService{webServiceSuffix}") { }
+		static RelationshipWebServiceClient() {
+			Instance = new RelationshipWebServiceClient(
+				masterUrl: BaseRealtimeApplication.Instance.Configuration.MasterServerUrl,
+				port: BaseRealtimeApplication.Instance.Configuration.WebServicePort,
+				serviceEndpoint: BaseRealtimeApplication.Instance.Configuration.WebServiceEndpoint,
+				webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
+				webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
+			);
+		}
+
+		public RelationshipWebServiceClient(string masterUrl, int port, string serviceEndpoint, string webServicePrefix, string webServiceSuffix) : base(masterUrl, port, serviceEndpoint, $"{webServicePrefix}RelationshipWebService{webServiceSuffix}") { }
 
 		public PublicProfileView AcceptContactRequest(string authToken, int contactRequestId) {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 				Int32Proxy.Serialize(bytes, contactRequestId);
 
-				var result = Service.AcceptContactRequest(bytes.ToArray());
+				var result = Service.AcceptContactRequest(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return PublicProfileViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -33,9 +39,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, authToken);
 				Int32Proxy.Serialize(bytes, contactRequestId);
 
-				var result = Service.DeclineContactRequest(bytes.ToArray());
+				var result = Service.DeclineContactRequest(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return BooleanProxy.Deserialize(inputStream);
 				}
 			}
@@ -46,9 +52,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, authToken);
 				Int32Proxy.Serialize(bytes, contactId);
 
-				var result = Service.DeleteContact(bytes.ToArray());
+				var result = Service.DeleteContact(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return EnumProxy<MemberOperationResult>.Deserialize(inputStream);
 				}
 			}
@@ -58,9 +64,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.GetContactRequests(bytes.ToArray());
+				var result = Service.GetContactRequests(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<ContactRequestView>.Deserialize(inputStream, ContactRequestViewProxy.Deserialize);
 				}
 			}
@@ -71,9 +77,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, authToken);
 				BooleanProxy.Serialize(bytes, populateFacebookIds);
 
-				var result = Service.GetContactsByGroups(bytes.ToArray());
+				var result = Service.GetContactsByGroups(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<ContactGroupView>.Deserialize(inputStream, ContactGroupViewProxy.Deserialize);
 				}
 			}
@@ -85,9 +91,9 @@ namespace Paradise.Realtime {
 				Int32Proxy.Serialize(bytes, receiverCmid);
 				StringProxy.Serialize(bytes, message);
 
-				var result = Service.GetContactsByGroups(bytes.ToArray());
+				var result = Service.GetContactsByGroups(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}

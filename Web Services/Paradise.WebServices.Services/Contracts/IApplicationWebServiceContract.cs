@@ -2,7 +2,7 @@
 
 namespace Paradise.WebServices.Contracts {
 	[ServiceContract]
-	public interface IApplicationWebServiceContract : IWebServiceContractBase {
+	public interface IApplicationWebServiceContract {
 		[OperationContract]
 		byte[] AuthenticateApplication(byte[] data);
 
@@ -18,13 +18,5 @@ namespace Paradise.WebServices.Contracts {
 
 		[OperationContract]
 		byte[] SetMatchScore(byte[] data);
-
-		// CUSTOM
-		[OperationContract]
-		byte[] PublishCommMonitoringData(byte[] data);
-
-		// CUSTOM
-		[OperationContract]
-		byte[] PublishGameMonitoringData(byte[] data);
 	}
 }

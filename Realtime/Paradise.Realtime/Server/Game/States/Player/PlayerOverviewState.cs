@@ -16,11 +16,11 @@ namespace Paradise.Realtime.Server.Game {
 				var allPositions = new List<PlayerMovement>(players.Count);
 
 				foreach (var player in players) {
-					allPlayers.Add(player.Actor.Info);
+					allPlayers.Add(player.Actor.ActorInfo);
 					allPositions.Add(player.Actor.Movement);
 				}
 
-				Peer.GameEvents.SendAllPlayers(allPlayers, allPositions, 0);
+				Peer.GameEventSender.SendAllPlayers(allPlayers, allPositions, 0);
 			}
 		}
 

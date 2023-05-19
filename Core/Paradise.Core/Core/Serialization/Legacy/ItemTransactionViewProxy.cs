@@ -1,18 +1,12 @@
 ﻿using Paradise.DataCenter.Common.Entities;
-using System;
 using System.IO;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class ItemTransactionViewProxy
-	{
-		public static void Serialize(Stream stream, ItemTransactionView instance)
-		{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class ItemTransactionViewProxy {
+		public static void Serialize(Stream stream, ItemTransactionView instance) {
 			int num = 0;
-			if (instance != null)
-			{
-				using (MemoryStream memoryStream = new MemoryStream())
-				{
+			if (instance != null) {
+				using (MemoryStream memoryStream = new MemoryStream()) {
 					Int32Proxy.Serialize(memoryStream, instance.Cmid);
 					Int32Proxy.Serialize(memoryStream, instance.Credits);
 					EnumProxy<BuyingDurationType>.Serialize(memoryStream, instance.Duration);
@@ -24,19 +18,15 @@ namespace Paradise.Core.Serialization.Legacy
 					Int32Proxy.Serialize(stream, ~num);
 					memoryStream.WriteTo(stream);
 				}
-			}
-			else
-			{
+			} else {
 				Int32Proxy.Serialize(stream, 0);
 			}
 		}
 
-		public static ItemTransactionView Deserialize(Stream bytes)
-		{
+		public static ItemTransactionView Deserialize(Stream bytes) {
 			int num = Int32Proxy.Deserialize(bytes);
 			ItemTransactionView itemTransactionView = null;
-			if (num != 0)
-			{
+			if (num != 0) {
 				itemTransactionView = new ItemTransactionView();
 				itemTransactionView.Cmid = Int32Proxy.Deserialize(bytes);
 				itemTransactionView.Credits = Int32Proxy.Deserialize(bytes);

@@ -4,35 +4,21 @@ namespace Paradise.WebServices.Contracts {
 	[ServiceContract]
 	public interface IModerationWebServiceContract {
 		[OperationContract]
-		byte[] OpPlayer(byte[] data);
+		byte[] BanPermanently(byte[] data);
 
-		[OperationContract]
-		byte[] DeopPlayer(byte[] data);
-
-		//[OperationContract]
-		//byte[] BanPermanently(byte[] data);
-
-		//[OperationContract]
-		//byte[] UnbanPlayer(byte[] data);
-
-		//[OperationContract]
-		//byte[] MutePlayer(byte[] data);
-
-		//[OperationContract]
-		//byte[] UnmutePlayer(byte[] data);
-
-		//[OperationContract]
-		//byte[] GetNaughtyList(byte[] data);
-
+		// CUSTOM
 		[OperationContract]
 		byte[] SetModerationFlag(byte[] data);
 
+		// CUSTOM
 		[OperationContract]
 		byte[] UnsetModerationFlag(byte[] data);
 
+		// CUSTOM
 		[OperationContract]
 		byte[] ClearModerationFlags(byte[] data);
 
+		// CUSTOM
 		[OperationContract]
 		byte[] GetNaughtyList(byte[] data);
 	}

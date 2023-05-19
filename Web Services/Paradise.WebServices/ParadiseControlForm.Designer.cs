@@ -37,9 +37,13 @@
 			this.databaseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.databaseOpenMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.databaseCloseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
 			this.openLogMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.openConsoleMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+			this.connectionMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.connectMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.disconnectMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.quitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.label1 = new System.Windows.Forms.Label();
@@ -59,27 +63,32 @@
             this.fileServerMenuItem,
             this.serviceListMenuItem,
             this.databaseMenuItem,
-            this.toolStripSeparator2,
+            this.toolStripSeparator3,
             this.openLogMenuItem,
             this.openConsoleMenuItem,
+            this.toolStripSeparator2,
+            this.connectionMenuItem,
+            this.connectMenuItem,
+            this.disconnectMenuItem,
             this.toolStripSeparator1,
             this.quitMenuItem});
 			this.trayMenuStrip.Name = "trayMenuStrip";
-			this.trayMenuStrip.Size = new System.Drawing.Size(150, 148);
+			this.trayMenuStrip.Size = new System.Drawing.Size(235, 220);
 			// 
 			// fileServerMenuItem
 			// 
 			this.fileServerMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.startHttpServerMenuItem,
             this.stopHttpServerMenuItem});
+			this.fileServerMenuItem.Enabled = false;
 			this.fileServerMenuItem.Name = "fileServerMenuItem";
-			this.fileServerMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.fileServerMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.fileServerMenuItem.Text = "HTTP Server";
 			// 
 			// startHttpServerMenuItem
 			// 
 			this.startHttpServerMenuItem.Name = "startHttpServerMenuItem";
-			this.startHttpServerMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.startHttpServerMenuItem.Size = new System.Drawing.Size(164, 22);
 			this.startHttpServerMenuItem.Text = "Start HTTP Server";
 			this.startHttpServerMenuItem.Click += new System.EventHandler(this.OnStartHttpServerMenuItemClicked);
 			// 
@@ -87,7 +96,7 @@
 			// 
 			this.stopHttpServerMenuItem.Enabled = false;
 			this.stopHttpServerMenuItem.Name = "stopHttpServerMenuItem";
-			this.stopHttpServerMenuItem.Size = new System.Drawing.Size(180, 22);
+			this.stopHttpServerMenuItem.Size = new System.Drawing.Size(164, 22);
 			this.stopHttpServerMenuItem.Text = "Stop HTTP Server";
 			this.stopHttpServerMenuItem.Click += new System.EventHandler(this.OnStopHttpServerMenuItemClicked);
 			// 
@@ -98,8 +107,9 @@
             this.stopServicesMenuItem,
             this.restartAllServicesMenuItem,
             this.toolStripSeparator4});
+			this.serviceListMenuItem.Enabled = false;
 			this.serviceListMenuItem.Name = "serviceListMenuItem";
-			this.serviceListMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.serviceListMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.serviceListMenuItem.Text = "Services";
 			// 
 			// startServicesMenuItem
@@ -135,8 +145,9 @@
 			this.databaseMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.databaseOpenMenuItem,
             this.databaseCloseMenuItem});
+			this.databaseMenuItem.Enabled = false;
 			this.databaseMenuItem.Name = "databaseMenuItem";
-			this.databaseMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.databaseMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.databaseMenuItem.Text = "Database";
 			// 
 			// databaseOpenMenuItem
@@ -154,35 +165,64 @@
 			this.databaseCloseMenuItem.Text = "Disconnect from database";
 			this.databaseCloseMenuItem.Click += new System.EventHandler(this.DatabaseCloseMenuItemClicked);
 			// 
-			// toolStripSeparator2
+			// toolStripSeparator3
 			// 
-			this.toolStripSeparator2.Name = "toolStripSeparator2";
-			this.toolStripSeparator2.Size = new System.Drawing.Size(146, 6);
+			this.toolStripSeparator3.Name = "toolStripSeparator3";
+			this.toolStripSeparator3.Size = new System.Drawing.Size(231, 6);
 			// 
 			// openLogMenuItem
 			// 
 			this.openLogMenuItem.Name = "openLogMenuItem";
-			this.openLogMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.openLogMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.openLogMenuItem.Text = "Open Log";
 			this.openLogMenuItem.Click += new System.EventHandler(this.OpenLogMenuItemClicked);
 			// 
 			// openConsoleMenuItem
 			// 
+			this.openConsoleMenuItem.Enabled = false;
 			this.openConsoleMenuItem.Name = "openConsoleMenuItem";
-			this.openConsoleMenuItem.Size = new System.Drawing.Size(149, 22);
+			this.openConsoleMenuItem.Size = new System.Drawing.Size(234, 22);
 			this.openConsoleMenuItem.Text = "Open Console";
 			this.openConsoleMenuItem.Click += new System.EventHandler(this.OpenConsoleMenuItemClicked);
+			// 
+			// toolStripSeparator2
+			// 
+			this.toolStripSeparator2.Name = "toolStripSeparator2";
+			this.toolStripSeparator2.Size = new System.Drawing.Size(231, 6);
+			// 
+			// connectionMenuItem
+			// 
+			this.connectionMenuItem.BackColor = System.Drawing.SystemColors.ButtonFace;
+			this.connectionMenuItem.Enabled = false;
+			this.connectionMenuItem.Name = "connectionMenuItem";
+			this.connectionMenuItem.Size = new System.Drawing.Size(234, 22);
+			this.connectionMenuItem.Text = "Disconnected";
+			// 
+			// connectMenuItem
+			// 
+			this.connectMenuItem.Name = "connectMenuItem";
+			this.connectMenuItem.Size = new System.Drawing.Size(234, 22);
+			this.connectMenuItem.Text = "Connect to Web Services";
+			this.connectMenuItem.Click += new System.EventHandler(this.ConnectMenuItemClicked);
+			// 
+			// disconnectMenuItem
+			// 
+			this.disconnectMenuItem.Name = "disconnectMenuItem";
+			this.disconnectMenuItem.Size = new System.Drawing.Size(234, 22);
+			this.disconnectMenuItem.Text = "Disconnect from Web Services";
+			this.disconnectMenuItem.Visible = false;
+			this.disconnectMenuItem.Click += new System.EventHandler(this.DisconnectMenuItemClicked);
 			// 
 			// toolStripSeparator1
 			// 
 			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(146, 6);
+			this.toolStripSeparator1.Size = new System.Drawing.Size(231, 6);
 			// 
 			// quitMenuItem
 			// 
 			this.quitMenuItem.Name = "quitMenuItem";
-			this.quitMenuItem.Size = new System.Drawing.Size(149, 22);
-			this.quitMenuItem.Text = "Quit Paradise";
+			this.quitMenuItem.Size = new System.Drawing.Size(234, 22);
+			this.quitMenuItem.Text = "Quit";
 			this.quitMenuItem.Click += new System.EventHandler(this.QuitMenuItemClicked);
 			// 
 			// label1
@@ -202,7 +242,9 @@
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(800, 450);
 			this.Controls.Add(this.label1);
+			this.Enabled = false;
 			this.Name = "ParadiseControlForm";
+			this.ShowInTaskbar = false;
 			this.Text = "Form1";
 			this.WindowState = System.Windows.Forms.FormWindowState.Minimized;
 			this.trayMenuStrip.ResumeLayout(false);
@@ -231,6 +273,10 @@
 		private System.Windows.Forms.ToolStripMenuItem databaseOpenMenuItem;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
 		private System.Windows.Forms.ToolStripMenuItem openConsoleMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem connectionMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem connectMenuItem;
+		private System.Windows.Forms.ToolStripMenuItem disconnectMenuItem;
+		private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
 	}
 }
 

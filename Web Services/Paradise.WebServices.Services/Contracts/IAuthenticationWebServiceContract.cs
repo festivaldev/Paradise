@@ -23,5 +23,10 @@ namespace Paradise.WebServices.Contracts {
 
 		[OperationContract]
 		byte[] LinkSteamMember(byte[] data);
+
+
+		// CUSTOM
+		[OperationContract]
+		byte[] VerifyAuthToken(byte[] data);
 	}
 }

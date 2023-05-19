@@ -2,7 +2,6 @@
 using Paradise.Core.Models;
 using Paradise.DataCenter.Common.Entities;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameActorInfo : Paradise.Core.Models.GameActorInfo {

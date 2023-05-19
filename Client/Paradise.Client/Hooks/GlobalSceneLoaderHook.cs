@@ -4,53 +4,70 @@ using HarmonyLib;
 using log4net;
 using System;
 using System.Collections;
-using System.Reflection;
 using UberStrike.DataCenter.Common.Entities;
 using UberStrike.WebService.Unity;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class GlobalSceneLoaderHook : ParadiseHook {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
+	/// <summary>
+	/// Reimplements the application authentication flow to reduce the number of potential error messages when launching the game.
+	/// </summary>
+	[HarmonyPatch(typeof(GlobalSceneLoader))]
+	public class GlobalSceneLoaderHook {
+		private static readonly ILog Log = LogManager.GetLogger(nameof(GlobalSceneLoaderHook));
 
 		private static GlobalSceneLoader Instance;
+		private static Traverse traverse;
 
 		private static string ErrorMessage {
 			get {
-				return GetProperty<string>(Instance, "ErrorMessage", BindingFlags.Static | BindingFlags.Public);
+				return GetProperty<string>("ErrorMessage");
 			}
 
 			set {
-				SetProperty(Instance, "ErrorMessage", value, BindingFlags.Static | BindingFlags.Public);
+				SetProperty("ErrorMessage", value);
 			}
 		}
 
-		/// <summary>
-		/// Reimplements the application authentication flow to reduce the number of potential error messages when launching the game.
-		/// </summary>
-		public GlobalSceneLoaderHook() { }
-
-		public override void Hook(Harmony harmonyInstance) {
+		static GlobalSceneLoaderHook() {
 			Log.Info($"[{nameof(GlobalSceneLoaderHook)}] hooking {nameof(GlobalSceneLoader)}");
-
-			var orig_GlobalSceneLoader_Start = typeof(GlobalSceneLoader).GetMethod("Start", BindingFlags.NonPublic | BindingFlags.Instance);
-			var prefix_GlobalSceneLoader_Start = typeof(GlobalSceneLoaderHook).GetMethod("Start_Prefix", BindingFlags.Public | BindingFlags.Static);
-			var postfix_GlobalSceneLoader_Start = typeof(GlobalSceneLoaderHook).GetMethod("Start_Postfix", BindingFlags.Public | BindingFlags.Static);
-
-			harmonyInstance.Patch(orig_GlobalSceneLoader_Start, new HarmonyMethod(prefix_GlobalSceneLoader_Start), new HarmonyMethod(postfix_GlobalSceneLoader_Start));
 		}
 
-		public static bool Start_Prefix() {
+		[HarmonyPatch("Start"), HarmonyPrefix]
+		public static bool GlobalSceneLoader_Start_Prefix(GlobalSceneLoader __instance) {
+			if (Instance == null) {
+				Instance = __instance;
+				traverse = Traverse.Create(__instance);
+			}
+
 			return false;
 		}
 
-		public static void Start_Postfix(GlobalSceneLoader __instance) {
-			Instance = __instance;
-
-			UnityRuntime.StartRoutine(Start());
+		[HarmonyPatch("Start"), HarmonyPostfix]
+		public static void GlobalSceneLoader_Start_Postfix(GlobalSceneLoader __instance) {
+			UnityRuntime.StartRoutine(StartWithCheckingUpdates());
 		}
 
+		private static IEnumerator StartWithCheckingUpdates() {
+			UnityRuntime.StartRoutine(ParadiseUpdater.CleanupUpdates());
 
+			UnityRuntime.StartRoutine(GameObject.Find("Plugin Holder").GetComponent<ParadiseUpdater>().CheckForUpdatesIfNecessary((updateCatalog) => {
+				if (updateCatalog != null) {
+					ParadiseUpdater.HandleUpdateAvailable(updateCatalog, () => {
+						UnityRuntime.StartRoutine(Start());
+					});
+				} else {
+					UnityRuntime.StartRoutine(Start());
+				}
+			}, (error) => {
+				Log.Error(error);
+				ParadiseUpdater.HandleUpdateError(error, () => {
+					Application.Quit();
+				});
+			}));
+
+			yield break;
+		}
 
 		private static IEnumerator Start() {
 			Application.runInBackground = true;
@@ -58,21 +75,21 @@ namespace Paradise.Client {
 
 			Configuration.WebserviceBaseUrl = ApplicationDataManager.WebServiceBaseUrl;
 
-			SetProperty(Instance, "GlobalSceneProgress", 1f, BindingFlags.Static | BindingFlags.Public);
-			SetProperty(Instance, "IsGlobalSceneLoaded", true, BindingFlags.Static | BindingFlags.Public);
-			SetProperty(Instance, "ItemAssetBundleProgress", 1f, BindingFlags.Static | BindingFlags.Public);
-			SetProperty(Instance, "IsItemAssetBundleLoaded", true, BindingFlags.Static | BindingFlags.Public);
+			SetProperty("GlobalSceneProgress", 1f);
+			SetProperty("IsGlobalSceneLoaded", true);
+			SetProperty("ItemAssetBundleProgress", 1f);
+			SetProperty("IsItemAssetBundleLoaded", true);
 
-			InvokeMethod(Instance, "InitializeGlobalScene", null);
+			InvokeMethod("InitializeGlobalScene");
 
-			yield return new WaitForSeconds(1f);
+			//yield return new WaitForSeconds(1f);
 			for (float f = 0f; f < 1f; f += Time.deltaTime) {
 				yield return new WaitForEndOfFrame();
 
-				var color = GetField<Color>(Instance, "_color");
+				var color = GetField<Color>("_color");
 				color.a = 1f - f / 1f;
 
-				SetField(Instance, "_color", color);
+				SetField("_color", color);
 			}
 
 			bool continueAuthentication = true;
@@ -87,12 +104,12 @@ namespace Paradise.Client {
 
 						Debug.Log("OnAuthenticateApplication");
 
-						if (!GetField<bool>(Instance, "UseTestPhotonServers")) {
+						if (!GetField<bool>("UseTestPhotonServers")) {
 							Singleton<GameServerManager>.Instance.CommServer = new PhotonServer(ev.CommServer);
 							Singleton<GameServerManager>.Instance.AddPhotonGameServers(ev.GameServers.FindAll((PhotonView i) => i.UsageType == PhotonUsageType.All));
 						} else {
-							Singleton<GameServerManager>.Instance.CommServer = new PhotonServer(GetField<string>(Instance, "TestCommServer"), PhotonUsageType.CommServer);
-							Singleton<GameServerManager>.Instance.AddTestPhotonGameServer(1000, new PhotonServer(GetField<string>(Instance, "TestGameServer"), PhotonUsageType.All));
+							Singleton<GameServerManager>.Instance.CommServer = new PhotonServer(GetField<string>("TestCommServer"), PhotonUsageType.CommServer);
+							Singleton<GameServerManager>.Instance.AddTestPhotonGameServer(1000, new PhotonServer(GetField<string>("TestGameServer"), PhotonUsageType.All));
 						}
 
 						if (ev.WarnPlayer) {
@@ -135,7 +152,7 @@ namespace Paradise.Client {
 				Singleton<AuthenticationManager>.Instance.LoginByChannel();
 			}
 
-			yield return new WaitForSeconds(1f);
+			// yield return new WaitForSeconds(1f);
 
 			yield break;
 		}
@@ -169,6 +186,11 @@ namespace Paradise.Client {
 		private static void HandleApplicationAuthenticationError(string message) {
 			ChannelType channel = ApplicationDataManager.Channel;
 			switch (channel) {
+				case ChannelType.Steam:
+				case ChannelType.WindowsStandalone:
+				case ChannelType.OSXStandalone:
+					PopupSystem.ShowError(LocalizedStrings.Error, message + " Failed to connect to the UberStrike Web Services.", PopupSystem.AlertType.OK, new Action(Application.Quit));
+					break;
 				case ChannelType.IPhone:
 				case ChannelType.IPad:
 				case ChannelType.Android:
@@ -187,6 +209,9 @@ namespace Paradise.Client {
 		private static void HandleVersionWarning() {
 			ChannelType channel = ApplicationDataManager.Channel;
 			switch (channel) {
+				case ChannelType.Steam:
+					PopupSystem.ShowError("Warning", "Your UberStrike client is out of date. Please update from the Steam store.", PopupSystem.AlertType.OKCancel, new Action(OpenSteamStorePage), new Action(Singleton<AuthenticationManager>.Instance.LoginByChannel));
+					break;
 				case ChannelType.IPhone:
 				case ChannelType.IPad:
 					PopupSystem.ShowError("Warning", "Your UberStrike client is out of date. Click OK to update from the App Store.", PopupSystem.AlertType.OKCancel, new Action(OpenIosAppStoreUpdatesPage), new Action(Singleton<AuthenticationManager>.Instance.LoginByChannel));
@@ -207,6 +232,9 @@ namespace Paradise.Client {
 		private static void HandleVersionError() {
 			ChannelType channel = ApplicationDataManager.Channel;
 			switch (channel) {
+				case ChannelType.Steam:
+					PopupSystem.ShowError("Warning", "Your UberStrike client is out of date. Please update from the Steam store.", PopupSystem.AlertType.OK, new Action(OpenSteamStorePage));
+					break;
 				case ChannelType.IPhone:
 				case ChannelType.IPad:
 					PopupSystem.ShowError(LocalizedStrings.Error, "Your UberStrike client is out of date. Please update from the App Store.", PopupSystem.AlertType.OK, new Action(OpenIosAppStoreUpdatesPage));
@@ -224,12 +252,41 @@ namespace Paradise.Client {
 			}
 		}
 
+		private static void OpenSteamStorePage() {
+			ApplicationDataManager.OpenUrl(string.Empty, "steam://store/291210");
+			Application.Quit();
+		}
+
 		private static void OpenIosAppStoreUpdatesPage() {
 			ApplicationDataManager.OpenUrl(string.Empty, "itms-apps://itunes.com/apps/uberstrike");
+			Application.Quit();
 		}
 
 		private static void OpenAndroidAppStoreUpdatesPage() {
 			ApplicationDataManager.OpenUrl(string.Empty, "market://details?id=com.cmune.uberstrike.android");
+			Application.Quit();
 		}
+
+		#region 
+		private static T GetField<T>(string fieldName) {
+			return traverse.Field<T>(fieldName).Value;
+		}
+
+		private static void SetField(string fieldName, object value) {
+			traverse.Field(fieldName).SetValue(value);
+		}
+
+		private static T GetProperty<T>(string propertyName) {
+			return traverse.Property<T>(propertyName).Value;
+		}
+
+		private static void SetProperty(string propertyName, object value) {
+			traverse.Property(propertyName).SetValue(value);
+		}
+
+		private static object InvokeMethod(string methodName, params object[] parameters) {
+			return AccessTools.Method(Instance.GetType(), methodName).Invoke(Instance, parameters);
+		}
+		#endregion
 	}
 }

@@ -1,10 +1,8 @@
 ﻿using System;
 
-namespace Paradise.Core.Models.Views
-{
+namespace Paradise.Core.Models.Views {
 	[Serializable]
-	public class MapSettings
-	{
+	public class MapSettings {
 		public int KillsMin { get; set; }
 
 		public int KillsMax { get; set; }

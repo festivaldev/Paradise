@@ -10,15 +10,21 @@ using System.IO;
 
 namespace Paradise.Realtime {
 	public class ApplicationWebServiceClient : BaseWebServiceClient<IApplicationWebServiceContract> {
-		public static readonly ApplicationWebServiceClient Instance = new ApplicationWebServiceClient(
-			endpointUrl: BaseRealtimeApplication.Instance.Configuration.WebServiceBaseUrl,
-			webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
-			webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
-		);
+		public static readonly ApplicationWebServiceClient Instance;
 
-		public ApplicationWebServiceClient(string endpointUrl, string webServicePrefix, string webServiceSuffix) : base(endpointUrl, $"{webServicePrefix}ApplicationWebService{webServiceSuffix}") { }
+		static ApplicationWebServiceClient() {
+			Instance = new ApplicationWebServiceClient(
+				masterUrl: BaseRealtimeApplication.Instance.Configuration.MasterServerUrl,
+				port: BaseRealtimeApplication.Instance.Configuration.WebServicePort,
+				serviceEndpoint: BaseRealtimeApplication.Instance.Configuration.WebServiceEndpoint,
+				webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
+				webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
+			);
+		}
 
-		public AccountCompletionResultView AuthenticateApplication(string clientVersion, ChannelType channel, string publicKey) {
+		public ApplicationWebServiceClient(string masterUrl, int port, string serviceEndpoint, string webServicePrefix, string webServiceSuffix) : base(masterUrl, port, serviceEndpoint, $"{webServicePrefix}ApplicationWebService{webServiceSuffix}") { }
+
+		public AuthenticateApplicationView AuthenticateApplication(string clientVersion, ChannelType channel, string publicKey) {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, clientVersion);
 				EnumProxy<ChannelType>.Serialize(bytes, channel);
@@ -27,7 +33,7 @@ namespace Paradise.Realtime {
 				var result = Service.AuthenticateApplication(bytes.ToArray());
 
 				using (var inputStream = new MemoryStream(result)) {
-					return AccountCompletionResultViewProxy.Deserialize(inputStream);
+					return AuthenticateApplicationViewProxy.Deserialize(inputStream);
 				}
 			}
 		}
@@ -36,9 +42,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, clientVersion);
 
-				var result = Service.GetConfigurationData(bytes.ToArray());
+				var result = Service.GetConfigurationData(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ApplicationConfigurationViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -49,50 +55,24 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, clientVersion);
 				EnumProxy<DefinitionType>.Serialize(bytes, clientType);
 
-				var result = Service.GetMaps(bytes.ToArray());
+				var result = Service.GetMaps(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<MapView>.Deserialize(inputStream, MapViewProxy.Deserialize);
 				}
 			}
 		}
 
-		public AccountCompletionResultView SetMatchScore(string clientVersion, MatchStats scoringView, string serverAuthentication) {
+		public int SetMatchScore(string clientVersion, MatchStats scoringView, string serverAuthentication) {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, clientVersion);
 				MatchStatsProxy.Serialize(bytes, scoringView);
 				StringProxy.Serialize(bytes, serverAuthentication);
 
-				var result = Service.SetMatchScore(bytes.ToArray());
+				var result = Service.SetMatchScore(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					throw new NotImplementedException();
-				}
-			}
-		}
-
-		public bool PublishCommMonitoringData(string identifier, string monitoringData) {
-			using (var bytes = new MemoryStream()) {
-				StringProxy.Serialize(bytes, identifier);
-				StringProxy.Serialize(bytes, monitoringData);
-
-				var result = Service.PublishCommMonitoringData(bytes.ToArray());
-
-				using (var inputStream = new MemoryStream(result)) {
-					return BooleanProxy.Deserialize(inputStream);
-				}
-			}
-		}
-
-		public bool PublishGameMonitoringData(string identifier, string monitoringData) {
-			using (var bytes = new MemoryStream()) {
-				StringProxy.Serialize(bytes, identifier);
-				StringProxy.Serialize(bytes, monitoringData);
-
-				var result = Service.PublishGameMonitoringData(bytes.ToArray());
-
-				using (var inputStream = new MemoryStream(result)) {
-					return BooleanProxy.Deserialize(inputStream);
 				}
 			}
 		}

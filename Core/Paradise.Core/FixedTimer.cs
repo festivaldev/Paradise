@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Paradise {
+﻿namespace Paradise {
 	public sealed class FixedTimer : BaseTimer {
 		private float _tickTime;
 		private float _accTime;

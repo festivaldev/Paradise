@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	public class ShopManager {
-		private static readonly ILog Log = LogManager.GetLogger("GameLog");
+		private static readonly ILog Log = LogManager.GetLogger(nameof(ShopManager));
 
 		public bool IsLoaded { get; private set; }
 
@@ -17,11 +17,11 @@ namespace Paradise.Realtime.Server.Game {
 			var shopData = ShopWebServiceClient.Instance.GetShop();
 
 			FunctionalItems = LoadShopItems(shopData.FunctionalItems);
-            GearItems = LoadShopItems(shopData.GearItems);
-            QuickItems = LoadShopItems(shopData.QuickItems);
-            WeaponItems = LoadShopItems(shopData.WeaponItems);
+			GearItems = LoadShopItems(shopData.GearItems);
+			QuickItems = LoadShopItems(shopData.QuickItems);
+			WeaponItems = LoadShopItems(shopData.WeaponItems);
 
-            IsLoaded = true;
+			IsLoaded = true;
 		}
 
 		private Dictionary<int, T> LoadShopItems<T>(List<T> items) where T : BaseUberStrikeItemView {

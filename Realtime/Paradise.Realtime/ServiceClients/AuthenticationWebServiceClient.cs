@@ -7,13 +7,19 @@ using System.IO;
 
 namespace Paradise.Realtime {
 	public class AuthenticationWebServiceClient : BaseWebServiceClient<IAuthenticationWebServiceContract> {
-		public static readonly AuthenticationWebServiceClient Instance = new AuthenticationWebServiceClient(
-			endpointUrl: BaseRealtimeApplication.Instance.Configuration.WebServiceBaseUrl,
-			webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
-			webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
-		);
+		public static readonly AuthenticationWebServiceClient Instance;
 
-		public AuthenticationWebServiceClient(string endpointUrl, string webServicePrefix, string webServiceSuffix) : base(endpointUrl, $"{webServicePrefix}AuthenticationWebService{webServiceSuffix}") { }
+		static AuthenticationWebServiceClient() {
+			Instance = new AuthenticationWebServiceClient(
+				masterUrl: BaseRealtimeApplication.Instance.Configuration.MasterServerUrl,
+				port: BaseRealtimeApplication.Instance.Configuration.WebServicePort,
+				serviceEndpoint: BaseRealtimeApplication.Instance.Configuration.WebServiceEndpoint,
+				webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
+				webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
+			);
+		}
+
+		public AuthenticationWebServiceClient(string masterUrl, int port, string serviceEndpoint, string webServicePrefix, string webServiceSuffix) : base(masterUrl, port, serviceEndpoint, $"{webServicePrefix}AuthenticationWebService{webServiceSuffix}") { }
 
 		public AccountCompletionResultView CompleteAccount(int cmid, string name, ChannelType channel, string locale, string machineId) {
 			using (var bytes = new MemoryStream()) {
@@ -23,9 +29,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, locale);
 				StringProxy.Serialize(bytes, machineId);
 
-				var result = Service.CompleteAccount(bytes.ToArray());
+				var result = Service.CompleteAccount(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return AccountCompletionResultViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -39,9 +45,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, locale);
 				StringProxy.Serialize(bytes, machineId);
 
-				var result = Service.CreateUser(bytes.ToArray());
+				var result = Service.CreateUser(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return EnumProxy<MemberRegistrationResult>.Deserialize(inputStream);
 				}
 			}
@@ -54,9 +60,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, steamId);
 				StringProxy.Serialize(bytes, machineId);
 
-				var result = Service.LinkSteamMember(bytes.ToArray());
+				var result = Service.LinkSteamMember(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return MemberAuthenticationResultViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -69,9 +75,9 @@ namespace Paradise.Realtime {
 				EnumProxy<ChannelType>.Serialize(bytes, channel);
 				StringProxy.Serialize(bytes, machineId);
 
-				var result = Service.LoginMemberEmail(bytes.ToArray());
+				var result = Service.LoginMemberEmail(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return MemberAuthenticationResultViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -83,9 +89,9 @@ namespace Paradise.Realtime {
 				EnumProxy<ChannelType>.Serialize(bytes, channel);
 				StringProxy.Serialize(bytes, machineId);
 
-				var result = Service.LoginMemberFacebookUnitySdk(bytes.ToArray());
+				var result = Service.LoginMemberFacebookUnitySdk(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return MemberAuthenticationResultViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -97,9 +103,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, hash);
 				StringProxy.Serialize(bytes, machineId);
 
-				var result = Service.LoginMemberPortal(bytes.ToArray());
+				var result = Service.LoginMemberPortal(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return MemberAuthenticationResultViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -111,9 +117,21 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, authToken);
 				StringProxy.Serialize(bytes, machineId);
 
-				var result = Service.LoginSteam(bytes.ToArray());
+				var result = Service.LoginSteam(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
+					return MemberAuthenticationResultViewProxy.Deserialize(inputStream);
+				}
+			}
+		}
+
+		public MemberAuthenticationResultView VerifyAuthToken(string authToken) {
+			using (var bytes = new MemoryStream()) {
+				StringProxy.Serialize(bytes, authToken);
+
+				var result = Service.VerifyAuthToken(Encrypt(bytes.ToArray()));
+
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return MemberAuthenticationResultViewProxy.Deserialize(inputStream);
 				}
 			}

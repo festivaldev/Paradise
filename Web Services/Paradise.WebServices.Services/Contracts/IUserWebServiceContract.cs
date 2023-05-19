@@ -47,7 +47,7 @@ namespace Paradise.WebServices.Contracts {
 
 		[OperationContract]
 		byte[] DepositCredits(byte[] data);
-		
+
 		[OperationContract]
 		byte[] DepositPoints(byte[] data);
 

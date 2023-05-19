@@ -1,31 +1,32 @@
 ﻿using Photon.SocketServer;
-using System;
 
 namespace Paradise.Realtime.Server.Comm {
-	public class CommPeer : BasePeer {
+	public partial class CommPeer : BasePeer {
 		public CommActor Actor { get; set; }
 		public LobbyRoom Lobby { get; set; }
 
-		public CommPeerEvents PeerEvents { get; private set; }
-		public LobbyRoomEvents LobbyEvents => PeerEvents.LobbyEvents;
+		public CommPeer.EventSender PeerEventSender { get; private set; }
+		public LobbyRoom.EventSender LobbyEventSender => PeerEventSender.LobbyEventSender;
+
+		private static OperationHandler OpHandler = new OperationHandler();
 
 		public CommPeer(InitRequest initRequest) : base(initRequest) {
-			PeerEvents = new CommPeerEvents(this);
+			PeerEventSender = new EventSender(this);
 
-			AddOperationHandler(new CommPeerOperationHandler());
+			AddOperationHandler(OpHandler);
 		}
 
 		public override void SendHeartbeat(string hash) {
-			PeerEvents.SendHeartbeatChallenge(hash);
+			PeerEventSender.SendHeartbeatChallenge(hash);
 		}
 
 		public override void SendError(string message = "An error occured that forced UberStrike to halt.") {
 			base.SendError(message);
-			PeerEvents.SendDisconnectAndDisablePhoton(message);
+			PeerEventSender.SendDisconnectAndDisablePhoton(message);
 		}
 
 		public override string ToString() {
-			return $"Peer[{Actor?.ActorInfo?.PlayerName}({Actor?.ActorInfo?.Cmid})]";
+			return $"CommPeer[{Actor?.ActorInfo?.PlayerName}({Actor?.ActorInfo?.Cmid})]";
 		}
 	}
 }

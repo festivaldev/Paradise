@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.ServiceModel;
 
 namespace Paradise.WebServices {
@@ -8,7 +9,10 @@ namespace Paradise.WebServices {
 		OpenDatabase,
 		DisposeDatabase
 	}
+
 	public abstract class ParadiseServicePlugin {
+		public static string ServiceDataPath => Path.Combine(ParadiseService.WorkingDirectory, "ServiceData");
+
 		public virtual List<Type> Commands { get; }
 
 		public virtual Dictionary<string, BaseWebService> LoadServices(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) {
@@ -18,9 +22,5 @@ namespace Paradise.WebServices {
 		public virtual void OnLoad() { }
 		public virtual void OnStart() { }
 		public virtual void OnStop() { }
-
-		public virtual Dictionary<string, object> HandlePluginQuery(PluginQueryType queryType, Dictionary<string, object> metadata) {
-			return null;
-		}
 	}
 }

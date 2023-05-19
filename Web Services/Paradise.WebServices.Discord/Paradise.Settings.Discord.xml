@@ -1,16 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ParadiseDiscordSettings>
 	<EnableDiscordIntegration>false</EnableDiscordIntegration>
-	<Token></Token>
+	<Token><!-- Insert Discord Application Token here --></Token>
+	<WebHookUrl><!-- Insert Discord Webhook URL here --></WebHookUrl>
+
+	<ChatIntegration>true</ChatIntegration>
+	<CommandIntegration>true</CommandIntegration>
+	<PlayerAnnouncements>false</PlayerAnnouncements>
+	<GameAnnouncements>false</GameAnnouncements>
+	<ErrorLog>false</ErrorLog>
 
 	<GuildId></GuildId>
-	<ChannelId></ChannelId>
-
-	<Roles>
-		<Admin></Admin>
-		<SeniorModerator></SeniorModerator>
-		<SeniorQA></SeniorQA>
-		<Moderator></Moderator>
-		<QA></QA>
-	</Roles>
+	<ChatChannelId></ChatChannelId>
+	<CommandChannelId></CommandChannelId>
+	<PlayerAnnouncementChannelId></PlayerAnnouncementChannelId>
+	<GameAnnouncementChannelId></GameAnnouncementChannelId>
+	<ErrorLogChannelId></ErrorLogChannelId>
 </ParadiseDiscordSettings>

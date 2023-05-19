@@ -6,7 +6,6 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B58E7341-EA4B-4CB4-80E9-5E5CEE839009}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Paradise.WebServices</RootNamespace>
     <AssemblyName>Paradise.WebServices</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -14,16 +13,17 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\build\server\Paradise.WebServices\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <Optimize>true</Optimize>
     <OutputPath>..\..\build\server\Paradise.WebServices\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -36,50 +36,64 @@
 	  .allowedextension
 	</AllowedReferenceRelatedFileExtensions>
     <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=C:\buildroot\$(MSBuildProjectName)</PathMap>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
-  </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup>
-    <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Resources\RunningIcon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CommandLine, Version=2.9.1.0, Culture=neutral, PublicKeyToken=5a870481e358d379, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CommandLineParser.2.9.1\lib\net461\CommandLine.dll</HintPath>
+    </Reference>
+    <Reference Include="LiteDB, Version=5.0.17.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\LiteDB.5.0.17\lib\net45\LiteDB.dll</HintPath>
+    </Reference>
     <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.IdentityModel" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Web" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseWebService.cs" />
+    <Compile Include="CLIOptions.cs" />
+    <Compile Include="Commands\DatabaseCommand.cs" />
+    <Compile Include="Commands\ServerCommand.cs" />
+    <Compile Include="Commands\ServiceCommand.cs" />
     <Compile Include="Console\CommandHandler.cs" />
     <Compile Include="Console\ConsoleHelper.cs" />
     <Compile Include="Console\ConsolePrompter.cs" />
+    <Compile Include="Commands\HelpCommand.cs" />
+    <Compile Include="Database\DatabaseManager.cs" />
+    <Compile Include="Database\ModerationFlag.cs" />
+    <Compile Include="HttpServer\HttpRouter.cs" />
     <Compile Include="HttpServer\HttpServer.cs" />
     <Compile Include="HttpServer\ParadiseRouter.cs" />
-    <Compile Include="HttpServer\RouteAttribute.cs" />
-    <Compile Include="HttpServer\Router.cs" />
     <Compile Include="Interfaces.cs" />
     <Compile Include="ParadiseControlForm.cs">
       <SubType>Form</SubType>
@@ -87,6 +101,8 @@
     <Compile Include="ParadiseControlForm.Designer.cs">
       <DependentUpon>ParadiseControlForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="ParadiseServerMonitoring.cs" />
+    <Compile Include="ParadiseServerSettings.cs" />
     <Compile Include="ParadiseService.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -99,24 +115,38 @@
     <Compile Include="ParadiseServicePlugin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="TcpSocket\TcpSocket.Client.cs" />
+    <Compile Include="TcpSocket\TcpSocket.cs" />
+    <Compile Include="TcpSocket\TcpSocket.EventArgs.cs" />
+    <Compile Include="TcpSocket\TcpSocket.PacketType.cs" />
+    <Compile Include="TcpSocket\TcpSocket.Payload.cs" />
+    <Compile Include="TcpSocket\TcpSocket.Server.cs" />
+    <Compile Include="TcpSocket\TcpSocket.SocketConnection.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <EmbeddedResource Include="log4net.config" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
-    <None Include="wwwroot\updates\HashFiles.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="ParadiseControlForm.resx">
+      <DependentUpon>ParadiseControlForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\RunningIcon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\StoppedIcon.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Paradise.Core\Paradise.Core.csproj">
@@ -128,8 +158,6 @@
     <Content Include="Paradise.Settings.WebServices.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="Resources\RunningIcon.ico" />
-    <Content Include="Resources\StoppedIcon.ico" />
     <Content Include="wwwroot\images\discord%402x.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -157,7 +185,13 @@
     <Content Include="wwwroot\images\flags\AM.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\images\flags\AN.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\AO.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\flags\AQ.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\AR.png">
@@ -220,9 +254,6 @@
     <Content Include="wwwroot\images\flags\BO.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="wwwroot\images\flags\BQ.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="wwwroot\images\flags\BR.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -230,6 +261,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\BT.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\flags\BV.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\BW.png">
@@ -328,6 +362,9 @@
     <Content Include="wwwroot\images\flags\EG.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\images\flags\EH.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\ER.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -370,6 +407,9 @@
     <Content Include="wwwroot\images\flags\GE.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\images\flags\GF.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\GG.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -394,6 +434,9 @@
     <Content Include="wwwroot\images\flags\GR.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\images\flags\GS.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\GT.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -403,7 +446,13 @@
     <Content Include="wwwroot\images\flags\GW.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\images\flags\GY.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\HK.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\flags\HM.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\HN.png">
@@ -538,6 +587,9 @@
     <Content Include="wwwroot\images\flags\ME.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\images\flags\MF.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\MG.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -560,9 +612,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\MP.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="wwwroot\images\flags\MQ.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\MR.png">
@@ -595,7 +644,7 @@
     <Content Include="wwwroot\images\flags\NA.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="wwwroot\images\flags\NATO.png">
+    <Content Include="wwwroot\images\flags\NC.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\NE.png">
@@ -628,9 +677,6 @@
     <Content Include="wwwroot\images\flags\NZ.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="wwwroot\images\flags\OK.png">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Content Include="wwwroot\images\flags\OM.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -649,7 +695,13 @@
     <Content Include="wwwroot\images\flags\PH.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\images\flags\PK.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\PL.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\flags\PM.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\PN.png">
@@ -703,7 +755,13 @@
     <Content Include="wwwroot\images\flags\SG.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\images\flags\SH.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\SI.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\flags\SJ.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\SK.png">
@@ -739,10 +797,16 @@
     <Content Include="wwwroot\images\flags\SY.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\images\flags\SZ.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\TC.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\TD.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\flags\TF.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\TG.png">
@@ -763,6 +827,9 @@
     <Content Include="wwwroot\images\flags\TM.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\images\flags\TN.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\TO.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -772,10 +839,13 @@
     <Content Include="wwwroot\images\flags\TT.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="wwwroot\images\flags\TU.png">
+    <Content Include="wwwroot\images\flags\TV.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\TW.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\flags\TZ.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\UA.png">
@@ -784,7 +854,7 @@
     <Content Include="wwwroot\images\flags\UG.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="wwwroot\images\flags\UN.png">
+    <Content Include="wwwroot\images\flags\UM.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\US.png">
@@ -794,6 +864,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\UZ.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\flags\VA.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\VC.png">
@@ -814,10 +887,16 @@
     <Content Include="wwwroot\images\flags\VU.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\images\flags\WF.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="wwwroot\images\flags\WS.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\YE.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wwwroot\images\flags\YT.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="wwwroot\images\flags\ZA.png">
@@ -892,6 +971,7 @@
     <Content Include="wwwroot\images\maps\Volley.jpg">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="wwwroot\updates\HashFiles.py" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

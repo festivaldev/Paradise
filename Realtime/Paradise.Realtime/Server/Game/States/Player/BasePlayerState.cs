@@ -14,7 +14,7 @@ namespace Paradise.Realtime.Server.Game {
 	}
 
 	public abstract class BasePlayerState : IState {
-		private static readonly ILog Log = LogManager.GetLogger("GameLog");
+		private static readonly ILog Log = LogManager.GetLogger(nameof(BasePlayerState));
 
 		protected GamePeer Peer { get; private set; }
 		protected BaseGameRoom Room => Peer.Room;

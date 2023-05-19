@@ -1,4 +1,5 @@
-﻿using Paradise.Core.Serialization;
+﻿using log4net;
+using Paradise.Core.Serialization;
 using Paradise.DataCenter.Common.Entities;
 using Paradise.WebServices.Contracts;
 using System;
@@ -6,52 +7,57 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
-using System.Text;
 
 namespace Paradise.WebServices.Services {
 	public class RelationshipWebService : BaseWebService, IRelationshipWebServiceContract {
+		protected static readonly new ILog Log = LogManager.GetLogger(nameof(RelationshipWebService));
+
 		public override string ServiceName => "RelationshipWebService";
 		public override string ServiceVersion => ApiVersion.Current;
 		protected override Type ServiceInterface => typeof(IRelationshipWebServiceContract);
 
-		public RelationshipWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
 		public RelationshipWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() { }
 		protected override void Teardown() { }
 
-		
 		///
 		///	Contacts = friends!
 		///
 
-
+		#region IRelationshipWebServiceContract
 		/// <summary>
 		/// Accepts a friend request
 		/// </summary>
 		public byte[] AcceptContactRequest(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var authToken = StringProxy.Deserialize(bytes);
 					var contactRequestId = Int32Proxy.Deserialize(bytes);
 
-					DebugEndpoint(authToken, contactRequestId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authToken, contactRequestId);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMember.FromAuthToken(authToken);
+						if (GameSessionManager.Instance.TryGetValue(authToken, out var session)) {
+							var steamMember = session.SteamMember;
 
-						if (steamMember != null) {
-							var contactRequest = DatabaseManager.ContactRequests.FindOne(_ => _.RequestId == contactRequestId);
-							var initiatorProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == contactRequest.InitiatorCmid);
-							var receiverProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == contactRequest.ReceiverCmid);
-								
-							contactRequest.Status = ContactRequestStatus.Accepted;
-							DatabaseManager.ContactRequests.Update(contactRequest);
+							if (steamMember != null) {
+								var contactRequest = DatabaseClient.ContactRequests.FindOne(_ => _.RequestId == contactRequestId);
+								var initiatorProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == contactRequest.InitiatorCmid);
+								var receiverProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == contactRequest.ReceiverCmid);
 
-							PublicProfileViewProxy.Serialize(outputStream, initiatorProfile);
+								contactRequest.Status = ContactRequestStatus.Accepted;
+								DatabaseClient.ContactRequests.Update(contactRequest);
+
+								PublicProfileViewProxy.Serialize(outputStream, initiatorProfile);
+							}
 						}
 
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -66,25 +72,31 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] DeclineContactRequest(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var authToken = StringProxy.Deserialize(bytes);
 					var contactRequestId = Int32Proxy.Deserialize(bytes);
 
-					DebugEndpoint(authToken, contactRequestId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authToken, contactRequestId);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMember.FromAuthToken(authToken);
+						if (GameSessionManager.Instance.TryGetValue(authToken, out var session)) {
+							var steamMember = session.SteamMember;
 
-						if (steamMember != null) {
-							var contactRequest = DatabaseManager.ContactRequests.FindOne(_ => _.RequestId == contactRequestId);
+							if (steamMember != null) {
+								var contactRequest = DatabaseClient.ContactRequests.FindOne(_ => _.RequestId == contactRequestId);
 
-							contactRequest.Status = ContactRequestStatus.Refused;
-							DatabaseManager.ContactRequests.Update(contactRequest);
+								contactRequest.Status = ContactRequestStatus.Refused;
+								DatabaseClient.ContactRequests.Update(contactRequest);
 
-							BooleanProxy.Serialize(outputStream, true);
+								BooleanProxy.Serialize(outputStream, true);
+							}
 						}
 
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -99,24 +111,30 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] DeleteContact(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var authToken = StringProxy.Deserialize(bytes);
 					var contactCmid = Int32Proxy.Deserialize(bytes);
 
-					DebugEndpoint(authToken, contactCmid);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authToken, contactCmid);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMember.FromAuthToken(authToken);
+						if (GameSessionManager.Instance.TryGetValue(authToken, out var session)) {
+							var steamMember = session.SteamMember;
 
-						if (steamMember != null) {
-							if (DatabaseManager.ContactRequests.DeleteMany(_ => ((_.ReceiverCmid == steamMember.Cmid && _.InitiatorCmid == contactCmid) || (_.InitiatorCmid == steamMember.Cmid && _.ReceiverCmid == contactCmid)) && _.Status == ContactRequestStatus.Accepted) > 0) {
-								EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.Ok);
-							} else {
-								EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.InvalidCmid);
+							if (steamMember != null) {
+								if (DatabaseClient.ContactRequests.DeleteMany(_ => ((_.ReceiverCmid == steamMember.Cmid && _.InitiatorCmid == contactCmid) || (_.InitiatorCmid == steamMember.Cmid && _.ReceiverCmid == contactCmid)) && _.Status == ContactRequestStatus.Accepted) > 0) {
+									EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.Ok);
+								} else {
+									EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.InvalidCmid);
+								}
 							}
 						}
 
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -131,20 +149,27 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] GetContactRequests(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var authToken = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(authToken);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMember.FromAuthToken(authToken);
+						if (GameSessionManager.Instance.TryGetValue(authToken, out var session)) {
+							var steamMember = session.SteamMember;
 
-						if (steamMember != null) {
-							var contactRequests = DatabaseManager.ContactRequests.Find(_ => _.ReceiverCmid == steamMember.Cmid && _.Status == ContactRequestStatus.Pending).ToList();
-							ListProxy<ContactRequestView>.Serialize(outputStream, contactRequests, ContactRequestViewProxy.Serialize);
+							if (steamMember != null) {
+								var contactRequests = DatabaseClient.ContactRequests.Find(_ => _.ReceiverCmid == steamMember.Cmid && _.Status == ContactRequestStatus.Pending).ToList();
+
+								ListProxy<ContactRequestView>.Serialize(outputStream, contactRequests, ContactRequestViewProxy.Serialize);
+							}
 						}
 
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -162,32 +187,38 @@ namespace Paradise.WebServices.Services {
 		/// </remarks>
 		public byte[] GetContactsByGroups(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var authToken = StringProxy.Deserialize(bytes);
 					var populateFacebookIds = BooleanProxy.Deserialize(bytes);
 
-					DebugEndpoint(authToken, populateFacebookIds);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authToken, populateFacebookIds);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMember.FromAuthToken(authToken);
+						if (GameSessionManager.Instance.TryGetValue(authToken, out var session)) {
+							var steamMember = session.SteamMember;
 
-						if (steamMember != null) {
-							var contactRequests = DatabaseManager.ContactRequests.Find(_ => (_.ReceiverCmid == steamMember.Cmid || _.InitiatorCmid == steamMember.Cmid) && _.Status == ContactRequestStatus.Accepted).ToList();
-							var contacts = new List<ContactGroupView>();
+							if (steamMember != null) {
+								var contactRequests = DatabaseClient.ContactRequests.Find(_ => (_.ReceiverCmid == steamMember.Cmid || _.InitiatorCmid == steamMember.Cmid) && _.Status == ContactRequestStatus.Accepted).ToList();
+								var contacts = new List<ContactGroupView>();
 
-							foreach (ContactRequestView contactRequest in contactRequests) {
-								contacts.Add(new ContactGroupView {
-									GroupId = steamMember.Cmid,
-									Contacts = new List<PublicProfileView> {
-										DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == (contactRequest.InitiatorCmid != steamMember.Cmid ? contactRequest.InitiatorCmid : contactRequest.ReceiverCmid))
+								foreach (ContactRequestView contactRequest in contactRequests) {
+									contacts.Add(new ContactGroupView {
+										GroupId = steamMember.Cmid,
+										Contacts = new List<PublicProfileView> {
+										DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == (contactRequest.InitiatorCmid != steamMember.Cmid ? contactRequest.InitiatorCmid : contactRequest.ReceiverCmid))
 									}
-								});
+									});
+								}
+
+								ListProxy<ContactGroupView>.Serialize(outputStream, contacts, ContactGroupViewProxy.Serialize);
 							}
-
-							ListProxy<ContactGroupView>.Serialize(outputStream, contacts, ContactGroupViewProxy.Serialize);
-
-							return outputStream.ToArray();
 						}
+
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -202,45 +233,51 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] SendContactRequest(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var authToken = StringProxy.Deserialize(bytes);
 					var receiverCmid = Int32Proxy.Deserialize(bytes);
 					var message = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(authToken, receiverCmid, message);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authToken, receiverCmid, message);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMember.FromAuthToken(authToken);
+						if (GameSessionManager.Instance.TryGetValue(authToken, out var session)) {
+							var steamMember = session.SteamMember;
 
-						if (steamMember != null) {
-							var playerProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
-							var contactRequest = DatabaseManager.ContactRequests.FindOne(_ => (_.InitiatorCmid == steamMember.Cmid && _.ReceiverCmid == receiverCmid) || (_.InitiatorCmid == receiverCmid && _.ReceiverCmid == steamMember.Cmid));
+							if (steamMember != null) {
+								var playerProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
+								var contactRequest = DatabaseClient.ContactRequests.FindOne(_ => (_.InitiatorCmid == steamMember.Cmid && _.ReceiverCmid == receiverCmid) || (_.InitiatorCmid == receiverCmid && _.ReceiverCmid == steamMember.Cmid));
 
-							if (contactRequest != null) {
-								contactRequest.InitiatorCmid = steamMember.Cmid;
-								contactRequest.InitiatorName = playerProfile.Name;
-								contactRequest.InitiatorMessage = message;
-								contactRequest.ReceiverCmid = receiverCmid;
-								contactRequest.SentDate = DateTime.UtcNow;
-								contactRequest.Status = ContactRequestStatus.Pending;
+								if (contactRequest != null) {
+									contactRequest.InitiatorCmid = steamMember.Cmid;
+									contactRequest.InitiatorName = playerProfile.Name;
+									contactRequest.InitiatorMessage = message;
+									contactRequest.ReceiverCmid = receiverCmid;
+									contactRequest.SentDate = DateTime.UtcNow;
+									contactRequest.Status = ContactRequestStatus.Pending;
 
-								DatabaseManager.ContactRequests.Update(contactRequest);
-							} else {
-								var r = new Random((int)DateTime.UtcNow.Ticks);
-								var requestId = r.Next(0, int.MaxValue);
+									DatabaseClient.ContactRequests.Update(contactRequest);
+								} else {
+									var r = new Random((int)DateTime.UtcNow.Ticks);
+									var requestId = r.Next(0, int.MaxValue);
 
-								DatabaseManager.ContactRequests.Insert(new ContactRequestView {
-									RequestId = requestId,
-									InitiatorCmid = steamMember.Cmid,
-									InitiatorName = playerProfile.Name,
-									InitiatorMessage = message,
-									ReceiverCmid = receiverCmid,
-									SentDate = DateTime.UtcNow
-								});
+									DatabaseClient.ContactRequests.Insert(new ContactRequestView {
+										RequestId = requestId,
+										InitiatorCmid = steamMember.Cmid,
+										InitiatorName = playerProfile.Name,
+										InitiatorMessage = message,
+										ReceiverCmid = receiverCmid,
+										SentDate = DateTime.UtcNow
+									});
+								}
 							}
 						}
 
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -249,5 +286,6 @@ namespace Paradise.WebServices.Services {
 
 			return null;
 		}
+		#endregion
 	}
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.ServiceModel;
 
 namespace Paradise.WebServices.Services {
@@ -9,7 +10,6 @@ namespace Paradise.WebServices.Services {
 
 			DatabaseManager.DatabaseOpened += OnDatabaseOpened;
 			DatabaseManager.DatabaseClosed += OnDatabaseClosed;
-			DatabaseManager.OpenDatabase();
 		}
 
 		public override void OnStop() {
@@ -17,19 +17,17 @@ namespace Paradise.WebServices.Services {
 
 			DatabaseManager.DatabaseOpened -= OnDatabaseOpened;
 			DatabaseManager.DatabaseClosed -= OnDatabaseClosed;
-			DatabaseManager.DisposeDatabase();
 		}
 
 		public override List<Type> Commands => new List<Type> {
 			typeof(BanCommand),
-			typeof(CreditsCommand),
-			typeof(DatabaseCommand),
 			typeof(DeopCommand),
 			typeof(InventoryCommand),
 			typeof(OpCommand),
-			typeof(PointsCommand),
-			typeof(ServiceCommand),
+			typeof(PlayersCommand),
+			typeof(RoomsCommand),
 			typeof(UnbanCommand),
+			typeof(WalletCommand),
 			typeof(XpCommand)
 		};
 
@@ -46,42 +44,18 @@ namespace Paradise.WebServices.Services {
 			};
 		}
 
-		public override Dictionary<string, object> HandlePluginQuery(PluginQueryType queryType, Dictionary<string, object> metadata) {
-			switch (queryType) {
-				case PluginQueryType.IsDatabaseOpen:
-					return new Dictionary<string, object> { ["IsDatabaseOpen"] = DatabaseManager.IsOpen };
-				case PluginQueryType.OpenDatabase:
-					if (!DatabaseManager.IsOpen) {
-						DatabaseManager.OpenDatabase();
-					}
-
-					break;
-				case PluginQueryType.DisposeDatabase:
-					if (DatabaseManager.IsOpen) {
-						DatabaseManager.DisposeDatabase();
-					}
-
-					break;
-				default: break;
-			}
-
-			return null;
-		}
-
 		#region Database Callbacks
 		private void OnDatabaseOpened(object sender, EventArgs args) {
-			ParadiseService.Instance.ClientCallback?.OnDatabaseOpened();
+			DatabaseClient.LoadCollections();
 		}
 
 		private void OnDatabaseClosed(object sender, EventArgs args) {
-			ParadiseService.Instance.ClientCallback?.OnDatabaseClosed();
+			DatabaseClient.UnloadCollections();
 		}
 
-		//private void OnDatabaseError(object sender, ErrorEventArgs args) {
-		//	Log.Error(args.GetException());
-		//	notifyIcon.ShowBalloonTip(3000, "Database error", args.GetException().Message, ToolTipIcon.Error);
-		//	notifyIcon.BalloonTipClicked += OpenLogMenuItemClicked;
-		//}
+		private void OnDatabaseError(object sender, ErrorEventArgs args) {
+			ParadiseService.Instance.ClientCallback?.OnDatabaseError(args.GetException());
+		}
 		#endregion
 	}
 }

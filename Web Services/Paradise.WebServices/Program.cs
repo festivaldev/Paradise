@@ -1,7 +1,7 @@
-﻿using log4net;
+using CommandLine;
+using log4net;
 using log4net.Config;
 using System;
-using System.Configuration.Assemblies;
 using System.Configuration.Install;
 using System.IO;
 using System.Linq;
@@ -39,55 +39,64 @@ namespace Paradise.WebServices {
 
 		[STAThread]
 		static void Main(string[] args) {
-			foreach (var arg in args) {
-				switch (arg) {
-					case "--install":
+			Parser.Default.ParseArguments<CLIOptions>(args)
+				.WithParsed<CLIOptions>(o => {
+					if (o.InstallService) {
 						try {
 							ManagedInstallerClass.InstallHelper(new string[] { "/InstallStateDir=", "/LogFile=", "/LogToConsole=true", Assembly.GetExecutingAssembly().Location });
 						} catch (Exception e) {
+							if (!o.Silent) {
 							MessageBox.Show($"Failed to install Paradise Web Services: {e.Message}\n{e.StackTrace}", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Error);
+							}
+
 							Environment.Exit(1);
 						}
 
+						if (!o.Silent) {
 						MessageBox.Show("Paradise Web Services have been successfully installed!", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						Environment.Exit(0);
+						}
 
-						break;
-					case "--uninstall":
+						Console.ReadLine();
+						Environment.Exit(0);
+					} else if (o.UninstallService) {
 						try {
 							ManagedInstallerClass.InstallHelper(new string[] { "/u", "/LogFile=", "/LogToConsole=true", Assembly.GetExecutingAssembly().Location });
 						} catch (Exception e) {
+							if (!o.Silent) {
 							MessageBox.Show($"Failed to remove Paradise Web Services: {e.Message}\n{e.StackTrace}", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Error);
-							Environment.Exit(0);
+							}
+
+							Environment.Exit(1);
 						}
 
+						if (!o.Silent) {
 						MessageBox.Show("Paradise Web Services have been successfully removed!", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Information);
-						Environment.Exit(0);
+						}
 
-						break;
-					case "-c":
-					case "--console":
+						Environment.Exit(0);
+					}
+
+					if (o.ConsoleMode) {
 						RunMode = RunMode.Console;
-						break;
-					case "--svc":
-					case "--service":
+					} else if (o.ServiceMode) {
 						RunMode = RunMode.Service;
-						break;
-					case "--tray":
-					case "--gui":   // Deprecated: use --tray instead
+					} else if (o.TrayMode) {
 						RunMode = RunMode.WinForms;
-						break;
-					default: break;
+					} else if (o.GUIMode) {
+						MessageBox.Show("The \"--gui\" launch parameter is deprecated, please use \"--tray\" instead.", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Information);
+						Environment.Exit(0);
 				}
-			}
+				});
 
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(ResolvePluginDependency);
+
 			switch (RunMode) {
 				case RunMode.Console:
 					ConfigureLogging();
 
 					ConsoleHelper.CreateConsole();
 					SetConsoleCtrlHandler(consoleEventHandler, true);
+					ConsoleHelper.PrintConsoleHeader();
 
 					ServiceInstance = new ParadiseService();
 					ServiceInstance.Start();
@@ -95,6 +104,7 @@ namespace Paradise.WebServices {
 					ConsoleHelper.PrintConsoleHeaderSubtitle();
 
 					using (var host = new ServiceHost(ServiceInstance)) {
+						// Add service endpoint to control Paradise via the tray app
 						host.AddServiceEndpoint(typeof(IParadiseServiceHost), new NetNamedPipeBinding(), "net.pipe://localhost/NewParadise.WebServices");
 						host.Open();
 
@@ -102,15 +112,12 @@ namespace Paradise.WebServices {
 							var cmd = ConsolePrompter.Prompt("> ");
 							var cmdArgs = cmd.Split(' ').ToList();
 
-							switch (cmdArgs[0].ToLower()) {
+							switch (cmdArgs.FirstOrDefault().ToLower()) {
 								case "clear":
 									Console.Clear();
 
 									ConsoleHelper.PrintConsoleHeader();
 									ConsoleHelper.PrintConsoleHeaderSubtitle();
-									break;
-								case "help":
-									ConsoleHelper.PrintConsoleHelp();
 									break;
 								case "q":
 								case "quit":
@@ -118,7 +125,22 @@ namespace Paradise.WebServices {
 									Environment.Exit(0);
 									break;
 								default:
-									CommandHandler.HandleCommand(cmdArgs[0], cmdArgs.Skip(1).Take(cmdArgs.Count - 1).ToArray());
+									CommandHandler.HandleCommand(cmdArgs.First(), cmdArgs.Skip(1).Take(cmdArgs.Count - 1).ToArray(), default,
+										(string output, bool inline) => {
+											if (!inline) {
+												Console.WriteLine(output);
+											} else {
+												Console.Write(output);
+											}
+										},
+										(ParadiseCommand invoker, bool success, string error) => {
+											if (success && string.IsNullOrWhiteSpace(error)) {
+												//Console.WriteLine(invoker.Output);
+											} else {
+												Console.WriteLine(error);
+											}
+										});
+
 									break;
 							}
 						}
@@ -146,9 +168,7 @@ namespace Paradise.WebServices {
 					Application.EnableVisualStyles();
 					Application.SetCompatibleTextRenderingDefault(false);
 
-					new ParadiseControlForm();
-
-					Application.Run();
+					Application.Run(new ParadiseControlForm());
 
 					break;
 				default: break;
@@ -166,22 +186,30 @@ namespace Paradise.WebServices {
 			}
 		}
 
-		static bool ConsoleEventCallback(CtrlType eventType) {
+		private static bool ConsoleEventCallback(CtrlType eventType) {
 			if (eventType == CtrlType.CTRL_CLOSE_EVENT) {
 				RunApp = false;
-				Console.WriteLine("Bye.");
-
 				ServiceInstance?.Teardown();
 
-				Thread.Sleep(300);
+				Console.WriteLine("Bye.");
+
+				Thread.Sleep((int)TimeSpan.FromSeconds(0.5).TotalMilliseconds);
 			}
 
 			return true;
 		}
 
-		static Assembly ResolvePluginDependency(object sender, ResolveEventArgs args) {
+		private static Assembly ResolvePluginDependency(object sender, ResolveEventArgs args) {
 			string folderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
 			string assemblyFile = $"{new AssemblyName(args.Name).Name}.dll";
+
+			foreach (var pluginDir in Directory.GetDirectories(Path.Combine(folderPath, "Plugins"))) {
+				if (!pluginDir.EndsWith(".plugin")) continue;
+
+				if (File.Exists(Path.Combine(folderPath, "Plugins", pluginDir, assemblyFile))) {
+					return Assembly.LoadFrom(Path.Combine(folderPath, "Plugins", pluginDir, assemblyFile));
+				}
+			}
 
 			if (File.Exists(Path.Combine(folderPath, "Plugins", assemblyFile))) {
 				return Assembly.LoadFrom(Path.Combine(folderPath, "Plugins", assemblyFile));

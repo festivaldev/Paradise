@@ -1,9 +1,11 @@
 ﻿using log4net;
 using Newtonsoft.Json;
+using Paradise.Core.ViewModel;
 using Photon.SocketServer;
 using PhotonHostRuntimeInterfaces;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -18,12 +20,14 @@ namespace Paradise.Realtime.Server {
 
 	[JsonObject(MemberSerialization.OptIn)]
 	public abstract class BasePeer : ClientPeer {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(BasePeer));
+		protected static readonly ILog Log = LogManager.GetLogger(nameof(BasePeer));
 
-		private readonly ConcurrentDictionary<int, BaseOperationHandler> _opHandlers;
+		private readonly ConcurrentDictionary<int, BaseOperationHandler> OperationHandlers;
 
 		public bool HasError { get; protected set; }
 		public string AuthToken { get; protected set; }
+
+		public UberstrikeUserViewModel Member { get; protected set; }
 
 		protected PeerConfiguration Configuration { get; }
 		public int HeartbeatInterval { get; set; }
@@ -34,12 +38,16 @@ namespace Paradise.Realtime.Server {
 		private DateTime heartbeatExpireTime;
 		private HeartbeatState heartbeatState;
 
+		public readonly Dictionary<int, long> LastOperationTime = new Dictionary<int, long>();
+		public readonly Dictionary<int, int> OperationSpamCounter = new Dictionary<int, int>();
+
 		public BasePeer(InitRequest initRequest) : base(initRequest) {
 			if (initRequest.ApplicationId != ApiVersion.Current) {
 				Disconnect();
+				return;
 			}
 
-			_opHandlers = new ConcurrentDictionary<int, BaseOperationHandler>();
+			OperationHandlers = new ConcurrentDictionary<int, BaseOperationHandler>();
 
 			if (initRequest.UserData is PeerConfiguration config) {
 				Configuration = config;
@@ -52,63 +60,73 @@ namespace Paradise.Realtime.Server {
 			}
 		}
 
-		public void Authenticate(string authToken, string magicHash) {
+		public void AddOperationHandler(BaseOperationHandler handler) {
+			if (handler == null) {
+				throw new ArgumentNullException(nameof(handler));
+			}
+
+			if (OperationHandlers.ContainsKey(handler.Id)) {
+				OperationHandlers.TryRemove(handler.Id, out _);
+			}
+
+			if (!OperationHandlers.TryAdd(handler.Id, handler)) {
+				Log.Error($"Failed to add handler with ID {handler.Id}");
+			}
+		}
+
+		public void RemoveOperationHandler(int handlerId) {
+			if (!OperationHandlers.TryRemove(handlerId, out _)) {
+				Log.Error($"Failed to remove handler with ID {handlerId}");
+			}
+		}
+
+		public bool Authenticate(string authToken, string magicHash) {
 			AuthToken = authToken ?? throw new ArgumentNullException(nameof(authToken));
+
+			var memberAuth = AuthenticationWebServiceClient.Instance.VerifyAuthToken(authToken);
+
+			if (memberAuth.MemberAuthenticationResult != DataCenter.Common.Entities.MemberAuthenticationResult.Ok) {
+				return false;
+			}
+
+			if (!Configuration.HashVerificationEnabled) return true;
 
 			if (magicHash == null) {
 				throw new ArgumentNullException(nameof(magicHash));
 			}
 
 			Log.Debug($"Received AuthenticationRequest! {authToken}:{magicHash} (at {RemoteIP}:{RemotePort})");
-		}
 
-		public void Tick() {
-			switch (heartbeatState) {
-				case HeartbeatState.Ok:
-					if (DateTime.UtcNow >= nextHeartbeatTime) {
-						Heartbeat();
+			if (Configuration.CompositeHashes.Count > 0) {
+				var bytes = Encoding.ASCII.GetBytes(authToken);
+
+				foreach (var hash in Configuration.CompositeHashes) {
+					var text = HashBytes(hash, bytes);
+
+					if (text.Equals(magicHash)) {
+						Log.Debug($"MagicHash: {text} == {magicHash}");
+						return true;
 					}
 
-					break;
-				case HeartbeatState.Waiting:
-					if (DateTime.UtcNow >= heartbeatExpireTime) {
-						Disconnect();
-					}
+					Log.Debug($"MagicHash: {text} != {magicHash}");
+				}
 
-					break;
-				case HeartbeatState.Failed:
-					SendError();
-
-					break;
-				default: break;
+				return false;
 			}
+
+			return true;
 		}
 
-		public void AddOperationHandler(BaseOperationHandler handler) {
-			if (handler == null) {
-				throw new ArgumentNullException(nameof(handler));
-			}
-
-			if (_opHandlers.ContainsKey(handler.Id)) {
-				_opHandlers.TryRemove(handler.Id, out _);
-			}
-
-			if (!_opHandlers.TryAdd(handler.Id, handler)) {
-				Log.Error($"Failed to add handler with ID {handler.Id}");
-			}
-		}
-
-		public void RemoveOperationHandler(int handlerId) {
-			if (!_opHandlers.TryRemove(handlerId, out _)) {
-				Log.Error($"Failed to remove handler with ID {handlerId}");
-			}
+		public virtual void SendError(string message = "An error occured that forced UberStrike to halt.") {
+			HasError = true;
 		}
 
 		protected override void OnDisconnect(DisconnectReason reasonCode, string reasonDetail) {
-			foreach (var opHandler in _opHandlers.Values) {
+			foreach (var opHandler in OperationHandlers.Values) {
 				try {
 					opHandler.OnDisconnect(this, reasonCode, reasonDetail);
 				} catch (Exception ex) {
+					BaseRealtimeApplication.Instance.HandleException(ex);
 					Log.Error($"Error while handling disconnection of peer -> {opHandler.GetType().Name}", ex);
 				}
 			}
@@ -129,21 +147,49 @@ namespace Paradise.Realtime.Server {
 			}
 
 			var handlerId = operationRequest.Parameters.Keys.First();
-			var handler = default(BaseOperationHandler);
-			if (_opHandlers.TryGetValue(handlerId, out handler)) {
+
+			if (OperationHandlers.TryGetValue(handlerId, out var handler)) {
 				var data = (byte[])operationRequest.Parameters[handlerId];
 				using (var bytes = new MemoryStream(data)) {
 					try {
 						handler.OnOperationRequest(this, operationRequest.OperationCode, bytes);
 					} catch (NotImplementedException ex) {
 						var stackTrace = new System.Diagnostics.StackTrace(ex);
-						Log.Warn($"Not Implemented: {handler.GetType().Name}:{stackTrace.GetFrame(0).GetMethod().Name}");
+						Log.Debug($"Not Implemented: {handler.GetType().Name}:{stackTrace.GetFrame(0).GetMethod().Name}");
+					} catch (NotSupportedException ex) {
+						var stackTrace = new System.Diagnostics.StackTrace(ex);
+						Log.Debug($"Not Supported: {handler.GetType().Name}:{stackTrace.GetFrame(0).GetMethod().Name}");
 					} catch (Exception ex) {
+						BaseRealtimeApplication.Instance.HandleException(ex);
 						Log.Error($"Error while handling request {handler.GetType().Name}:{handlerId} -> OpCode: {operationRequest.OperationCode}", ex);
 					}
 				}
 			} else {
 				Log.Warn($"Unable to handle operation request -> operation handler not implemented: {handlerId}");
+			}
+		}
+
+		public void Tick() {
+			switch (heartbeatState) {
+				case HeartbeatState.Ok:
+					if (DateTime.UtcNow >= nextHeartbeatTime) {
+						Heartbeat();
+					}
+
+					break;
+				case HeartbeatState.Waiting:
+					if (DateTime.UtcNow >= heartbeatExpireTime) {
+						Log.Debug($"Disconnecting {this} because Heartbeat time expired");
+						Disconnect();
+					}
+
+					break;
+				case HeartbeatState.Failed:
+					/// TODO: If user is admin, don't do anything
+					SendError();
+
+					break;
+				default: break;
 			}
 		}
 
@@ -154,9 +200,9 @@ namespace Paradise.Realtime.Server {
 			heartbeatExpireTime = DateTime.UtcNow.AddSeconds(HeartbeatTimeout);
 			heartbeatState = HeartbeatState.Waiting;
 
-//#if DEBUG
-//			Log.Debug($"Heartbeat({heartbeat}) with {HeartbeatTimeout}s timeout, expires at {heartbeatExpireTime}");
-//#endif
+			//#if DEBUG
+			//			Log.Debug($"Heartbeat({heartbeat}) with {HeartbeatTimeout}s timeout, expires at {heartbeatExpireTime}");
+			//#endif
 
 			SendHeartbeat(heartbeat);
 		}
@@ -169,7 +215,7 @@ namespace Paradise.Realtime.Server {
 			}
 
 //#if DEBUG
-//			Log.Info($"HeartbeatCheck({responseHash})");
+//			Log.Debug($"HeartbeatCheck({responseHash})");
 //#endif
 
 			if (heartbeat == null) {
@@ -177,7 +223,7 @@ namespace Paradise.Realtime.Server {
 				return false;
 			}
 
-			if (true) {
+			if (!Configuration.HashVerificationEnabled) {
 				// We'll just pass through the heartbeat response for now
 				// as a way to check if the peer is still connected
 				heartbeat = null;
@@ -186,10 +232,9 @@ namespace Paradise.Realtime.Server {
 				return true;
 			}
 
-			for (int i = 0; i < Configuration.JunkHashes.Count; i++) {
-				var junkBytes = Configuration.JunkHashes[i];
+			foreach (var hash in Configuration.JunkHashes) {
 				var heartbeatBytes = Encoding.ASCII.GetBytes(heartbeat);
-				var expectedHeartbeat = HashBytes(junkBytes, heartbeatBytes);
+				var expectedHeartbeat = HashBytes(hash, heartbeatBytes);
 
 				if (expectedHeartbeat == responseHash) {
 #if DEBUG
@@ -202,7 +247,9 @@ namespace Paradise.Realtime.Server {
 					return true;
 				}
 
+#if DEBUG
 				Log.Error($"Heartbeat: {expectedHeartbeat} != {responseHash}");
+#endif
 			}
 
 			heartbeat = null;
@@ -210,9 +257,8 @@ namespace Paradise.Realtime.Server {
 			return false;
 		}
 
-		public virtual void SendError(string message = "An error occured that forced UberStrike to halt.") {
-			HasError = true;
-		}
+
+
 
 		private static string HashBytes(byte[] a, byte[] b) {
 			var buffer = new byte[a.Length + b.Length];
@@ -229,6 +275,7 @@ namespace Paradise.Realtime.Server {
 
 		private static string BytesToHexString(byte[] bytes) {
 			var builder = new StringBuilder(64);
+
 			for (int i = 0; i < bytes.Length; i++) {
 				builder.Append(bytes[i].ToString("x2"));
 			}

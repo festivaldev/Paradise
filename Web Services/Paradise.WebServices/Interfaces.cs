@@ -9,6 +9,25 @@ namespace Paradise.WebServices {
 		WinForms
 	}
 
+	public interface IServiceCallback {
+		void OnServiceStarted(object sender, ServiceEventArgs args);
+		void OnServiceStopped(object sender, ServiceEventArgs args);
+		void OnServiceError(object sender, ServiceEventArgs args);
+	}
+
+	public class ServiceEventArgs : EventArgs {
+		public string ServiceName { get; set; }
+		public string ServiceVersion { get; set; }
+
+		public bool Starting { get; set; }
+		public bool HasStarted { get; set; }
+
+		public bool Stopping { get; set; }
+		public bool HasStopped { get; set; }
+
+		public Exception Exception { get; set; }
+	}
+
 	public struct ParadiseServiceStatus {
 		public bool FileServerRunning { get; set; }
 		public bool DatabaseOpened { get; set; }
@@ -32,7 +51,7 @@ namespace Paradise.WebServices {
 		void OnDatabaseClosed();
 
 		[OperationContract(IsOneWay = true)]
-		void OnDatabaseError();
+		void OnDatabaseError(Exception e);
 
 		[OperationContract(IsOneWay = true)]
 		void OnServiceStarted(ServiceEventArgs args);
@@ -53,7 +72,7 @@ namespace Paradise.WebServices {
 		void OnHttpServerError(Exception e);
 
 		[OperationContract(IsOneWay = true)]
-		void OnConsoleCommandCallback(string message);
+		void OnConsoleCommandCallback(string message, bool inline);
 	}
 
 	[ServiceContract(CallbackContract = typeof(IParadiseServiceClient))]
@@ -102,24 +121,5 @@ namespace Paradise.WebServices {
 
 		[OperationContract]
 		void SendConsoleCommand(string command, string[] arguments);
-	}
-
-	public class ServiceEventArgs : EventArgs {
-		public string ServiceName { get; set; }
-		public string ServiceVersion { get; set; }
-
-		public bool Starting { get; set; }
-		public bool HasStarted { get; set; }
-
-		public bool Stopping { get; set; }
-		public bool HasStopped { get; set; }
-
-		public Exception Exception { get; set; }
-	}
-
-	public interface IServiceCallback {
-		void OnServiceStarted(object sender, ServiceEventArgs args);
-		void OnServiceStopped(object sender, ServiceEventArgs args);
-		void OnServiceError(object sender, ServiceEventArgs args);
 	}
 }

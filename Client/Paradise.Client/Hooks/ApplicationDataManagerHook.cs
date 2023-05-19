@@ -1,42 +1,52 @@
 ﻿using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
-using System.Reflection;
+using System;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class ApplicationDataManagerHook : ParadiseHook {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
+	/// <summary>
+	///	<br>• Redirects web service/image requests to Paradise Web Services</br>
+	/// <br>• Adds updating and custom map functionality</br>
+	/// <br>• Adds a debug console (staff only)</br>
+	/// <br>• Allows adding additional custom servers to Paradise.Settings.Client.xml</br>
+	/// </summary>
+	[HarmonyPatch(typeof(ApplicationDataManager))]
+	public class ApplicationDataManagerHook {
+		private static readonly ILog Log = LogManager.GetLogger(nameof(ApplicationDataManagerHook));
+		private static bool HasPrepared { get; set; }
 
 		private static GameObject PluginHolder;
 
-		/// <summary>
-		///	<br>• Redirects web service/image requests to Paradise Web Services</br>
-		/// <br>• Adds updating and custom map functionality</br>
-		/// <br>• Adds a debug console (staff only)</br>
-		/// <br>• Allows adding additional custom servers to Paradise.Settings.Client.xml</br>
-		/// </summary>
-		public ApplicationDataManagerHook() {
-			PluginHolder = new GameObject("Plugin Holder");
-
-			PluginHolder.AddComponent<ParadiseApplicationManager>();
-			PluginHolder.AddComponent<ParadiseUpdater>();
-			PluginHolder.AddComponent<CustomMapManager>();
-			PluginHolder.AddComponent<DebugConsoleGUI>();
-
-			UnityEngine.Object.DontDestroyOnLoad(PluginHolder);
-		}
-
-		public override void Hook(Harmony harmonyInstance) {
+		static ApplicationDataManagerHook() {
 			Log.Info($"[{nameof(ApplicationDataManagerHook)}] hooking {nameof(ApplicationDataManager)}");
 
-			var type = typeof(ApplicationDataManager);
+			if (PluginHolder == null) {
+				foreach (var arg in Environment.GetCommandLineArgs()) {
+					switch (arg) {
+						case "-console":
+							DebugConsoleGUI.Show = true;
+							break;
+						default: break;
+					}
+				}
 
-			var WebServiceBaseUrl_field = type.GetField("WebServiceBaseUrl", BindingFlags.Public | BindingFlags.Static);
-			WebServiceBaseUrl_field.SetValue(null, ParadiseClient.WebServiceBaseUrl);
+				PluginHolder = new GameObject("Plugin Holder");
 
-			var ImagePath_field = type.GetField("ImagePath", BindingFlags.Public | BindingFlags.Static);
-			ImagePath_field.SetValue(null, ParadiseClient.ImagePath);
+				PluginHolder.AddComponent<ParadiseApplicationManager>();
+				PluginHolder.AddComponent<ParadiseUpdater>();
+				PluginHolder.AddComponent<CustomMapManager>();
+				PluginHolder.AddComponent<DebugConsoleGUI>();
+
+				UnityEngine.Object.DontDestroyOnLoad(PluginHolder);
+			}
+		}
+
+		[HarmonyPatch(MethodType.StaticConstructor), HarmonyPostfix]
+		public static void Prepare() {
+			var traverse = Traverse.CreateWithType("ApplicationDataManager");
+			traverse.Field("WebServiceBaseUrl").SetValue(ParadiseClient.WebServiceBaseUrl);
+			traverse.Field("ImagePath").SetValue(ParadiseClient.ImagePath);
 
 			if (ParadiseClient.ServerOverrides != null) {
 				if (ParadiseClient.ServerOverrides.CommServer != null) {

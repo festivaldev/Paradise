@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using System;
 using System.Data;
 using System.Diagnostics;
@@ -14,23 +14,175 @@ namespace Paradise.WebServices {
 	public partial class ParadiseControlForm : Form, IParadiseServiceClient {
 		protected static readonly ILog Log = LogManager.GetLogger(nameof(ParadiseControlForm));
 
+		private DuplexChannelFactory<IParadiseServiceHost> ChannelFactory;
 		private IParadiseServiceHost ServiceChannel;
 		private ParadiseServiceStatus ServiceStatus;
 
 		public ParadiseControlForm() {
-			var factory = new DuplexChannelFactory<IParadiseServiceHost>(new InstanceContext(this), new NetNamedPipeBinding(), new EndpointAddress("net.pipe://localhost/NewParadise.WebServices"));
-			ServiceChannel = factory.CreateChannel();
-
-			try {
-				ServiceStatus = ServiceChannel.UpdateClientInfo();
-			} catch (Exception e) {
-				Log.Debug(e);
-				MessageBox.Show($"Could not connect to the Paradise Web Services process.\nPlease make sure that the Paradise Web Services are running.\n\n{e.Message}", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Error);
-				Environment.Exit(1);
-			}
-
 			InitializeComponent();
 			SetTrayIconEnabled(false);
+
+			ConnectToWebServices(OnPipeOpened, OnPipeError);
+		}
+
+		protected override CreateParams CreateParams {
+			get {
+				var Params = base.CreateParams;
+				Params.ExStyle |= 0x80;
+				return Params;
+			}
+		}
+
+		#region Event Handlers
+		private void OnTrayIconClicked(object sender, MouseEventArgs args) {
+			if (ServiceChannel != null && ((IClientChannel)ServiceChannel).State == CommunicationState.Opened) {
+				ServiceStatus = ServiceChannel.UpdateClientInfo();
+			}
+
+			if (args.Button == MouseButtons.Left) {
+				MethodInfo method = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
+				method.Invoke(notifyIcon, null);
+			}
+		}
+
+		private void QuitMenuItemClicked(object sender, EventArgs args) {
+			base.Close();
+
+			Application.Exit();
+		}
+
+		private void DisconnectMenuItemClicked(object sender, EventArgs args) {
+			DisconnectFromWebServices();
+		}
+
+		private void ConnectMenuItemClicked(object sender, EventArgs args) {
+			ConnectToWebServices(OnPipeOpened, OnPipeError);
+		}
+
+		private void DatabaseOpenMenuItemClicked(object sender, EventArgs args) {
+			if (!ServiceChannel.IsDatabaseOpen()) {
+				ServiceChannel.OpenDatabase();
+				notifyIcon.ShowBalloonTip(3000, "Database connected", "Connected successfully to Paradise database.", ToolTipIcon.None);
+			}
+		}
+
+		private void DatabaseCloseMenuItemClicked(object sender, EventArgs args) {
+			if (ServiceChannel.IsDatabaseOpen()) {
+				ServiceChannel.DisposeDatabase();
+				notifyIcon.ShowBalloonTip(3000, "Database disconnected", "Disconnected from Paradise database.", ToolTipIcon.None);
+			}
+		}
+
+		private void OpenLogMenuItemClicked(object sender, EventArgs args) {
+			notifyIcon.Click -= OpenLogMenuItemClicked;
+
+			using (Process process = new Process()) {
+				process.StartInfo.FileName = "explorer.exe";
+				process.StartInfo.Arguments = string.Join(Path.DirectorySeparatorChar.ToString(), new string[] { Directory.GetCurrentDirectory(), "logs", "Paradise.WebServices.log" });
+				process.Start();
+			}
+		}
+
+		private void OpenConsoleMenuItemClicked(object sender, EventArgs args) {
+			ConsoleHelper.CreateConsole();
+
+			ConsoleHelper.PrintConsoleHeaderSubtitle();
+
+			Thread workerThread = new Thread(new ThreadStart(delegate {
+				var RunApp = true;
+
+				while (RunApp) {
+					var cmd = ConsolePrompter.Prompt("> ");
+
+					var cmdArgs = cmd.Split(' ').ToList();
+
+					switch (cmdArgs[0].ToLower()) {
+						case "clear":
+							Console.Clear();
+
+							ConsoleHelper.PrintConsoleHeader();
+							ConsoleHelper.PrintConsoleHeaderSubtitle();
+							break;
+						case "q":
+						case "quit":
+							RunApp = false;
+							break;
+						default:
+							ServiceChannel.SendConsoleCommand(cmdArgs[0], cmdArgs.Skip(1).Take(cmdArgs.Count - 1).ToArray());
+							break;
+					}
+				}
+
+				ConsoleHelper.DestroyConsole();
+			}));
+
+			workerThread.Start();
+		}
+
+		private void OnStartAllServicesMenuItemClicked(object sender, EventArgs args) {
+			ServiceChannel.StartAllServices();
+		}
+
+		private void OnStopAllServicesMenuItemClicked(object sender, EventArgs args) {
+			ServiceChannel.StopAllServices();
+		}
+
+		private void OnRestartAllServicesMenuItemClicked(object sender, EventArgs args) {
+			Log.Warn($"Restarting all services...");
+			ServiceChannel.RestartAllServices();
+		}
+
+		private void OnStartHttpServerMenuItemClicked(object sender, EventArgs args) {
+			if (!ServiceChannel.IsHttpServerRunning()) {
+				ServiceChannel.StartHttpServer();
+			}
+		}
+
+		private void OnStopHttpServerMenuItemClicked(object sender, EventArgs args) {
+			if (ServiceChannel.IsHttpServerRunning()) {
+				ServiceChannel.StopHttpServer();
+			}
+		}
+		#endregion
+
+		private bool ConnectToWebServices(Action success, Action<Exception> error) {
+			connectMenuItem.Enabled = false;
+
+			connectionMenuItem.Text = "Connecting...";
+
+			try {
+				ChannelFactory = new DuplexChannelFactory<IParadiseServiceHost>(new InstanceContext(this), new NetNamedPipeBinding(), new EndpointAddress("net.pipe://localhost/NewParadise.WebServices"));
+				ServiceChannel = ChannelFactory.CreateChannel();
+				((IClientChannel)ServiceChannel).Closed += OnPipeClosed;
+				ServiceStatus = ServiceChannel.UpdateClientInfo();
+			} catch (Exception e) {
+				error?.Invoke(e);
+
+				return false;
+			}
+
+			success?.Invoke();
+
+			return true;
+		}
+
+		private void DisconnectFromWebServices() {
+			((IClientChannel)ServiceChannel).Close();
+			ChannelFactory.Close();
+
+			ServiceChannel = null;
+			ChannelFactory = null;
+		}
+
+		private void OnPipeOpened() {
+			connectionMenuItem.Text = "Connected";
+
+			connectMenuItem.Visible = false;
+			disconnectMenuItem.Visible = true;
+
+			openConsoleMenuItem.Enabled = true;
+
+			serviceListMenuItem.Enabled = true;
 
 			if (ServiceChannel.IsAnyServiceRunning()) {
 				SetTrayIconEnabled(true);
@@ -92,6 +244,8 @@ namespace Paradise.WebServices {
 				serviceListMenuItem.DropDownItems.Add(serviceItem);
 			}
 
+			databaseMenuItem.Enabled = true;
+
 			if (ServiceStatus.DatabaseOpened) {
 				databaseOpenMenuItem.Enabled = false;
 				databaseCloseMenuItem.Enabled = true;
@@ -99,6 +253,8 @@ namespace Paradise.WebServices {
 				databaseOpenMenuItem.Enabled = true;
 				databaseCloseMenuItem.Enabled = false;
 			}
+
+			fileServerMenuItem.Enabled = true;
 
 			if (ServiceStatus.FileServerRunning) {
 				startHttpServerMenuItem.Enabled = false;
@@ -109,110 +265,48 @@ namespace Paradise.WebServices {
 			}
 		}
 
-		#region Event Handlers
-		private void OnTrayIconClicked(object sender, MouseEventArgs args) {
-			ServiceStatus = ServiceChannel.UpdateClientInfo();
+		private void OnPipeClosed(object sender, EventArgs e) {
+			SetTrayIconEnabled(false);
 
-			if (args.Button == MouseButtons.Left) {
-				MethodInfo method = typeof(NotifyIcon).GetMethod("ShowContextMenu", BindingFlags.Instance | BindingFlags.NonPublic);
-				method.Invoke(notifyIcon, null);
-			}
-		}
+			connectionMenuItem.Text = "Disconnected";
 
-		private void QuitMenuItemClicked(object sender, EventArgs args) {
-			base.Close();
+			connectMenuItem.Visible = true;
+			connectMenuItem.Enabled = true;
 
-			Application.Exit();
-		}
+			disconnectMenuItem.Visible = false;
 
-		private void DatabaseOpenMenuItemClicked(object sender, EventArgs args) {
-			if (!ServiceChannel.IsDatabaseOpen()) {
-				ServiceChannel.OpenDatabase();
-				notifyIcon.ShowBalloonTip(3000, "Database connected", "Connected successfully to Paradise database.", ToolTipIcon.None);
-			}
-		}
+			openConsoleMenuItem.Enabled = false;
 
-		private void DatabaseCloseMenuItemClicked(object sender, EventArgs args) {
-			if (ServiceChannel.IsDatabaseOpen()) {
-				ServiceChannel.DisposeDatabase();
-				notifyIcon.ShowBalloonTip(3000, "Database disconnected", "Disconnected from Paradise database.", ToolTipIcon.None);
-			}
-		}
+			serviceListMenuItem.Enabled = false;
 
-		private void OpenLogMenuItemClicked(object sender, EventArgs args) {
-			notifyIcon.Click -= OpenLogMenuItemClicked;
+			serviceListMenuItem.DropDownItems[0].Enabled = true;
+			serviceListMenuItem.DropDownItems[1].Enabled = false;
+			serviceListMenuItem.DropDownItems[2].Enabled = false;
 
-			using (Process process = new Process()) {
-				process.StartInfo.FileName = "explorer.exe";
-				process.StartInfo.Arguments = string.Join(Path.DirectorySeparatorChar.ToString(), new string[] { Directory.GetCurrentDirectory(), "logs", "Paradise.WebServices.log" });
-				process.Start();
-			}
-		}
+			var serviceItems = serviceListMenuItem.DropDownItems.Cast<ToolStripItem>().ToList();
 
-		private void OpenConsoleMenuItemClicked(object sender, EventArgs args) {
-			ConsoleHelper.CreateConsole();
-
-			ConsoleHelper.PrintConsoleHeaderSubtitle();
-
-			Thread workerThread = new Thread(new ThreadStart(delegate {
-				var RunApp = true;
-
-				while (RunApp) {
-					var cmd = ConsolePrompter.Prompt("> ");
-
-					var cmdArgs = cmd.Split(' ').ToList();
-
-					switch (cmdArgs[0].ToLower()) {
-						case "clear":
-							Console.Clear();
-
-							ConsoleHelper.PrintConsoleHeader();
-							ConsoleHelper.PrintConsoleHeaderSubtitle();
-							break;
-						case "help":
-							ConsoleHelper.PrintConsoleHelp();
-							break;
-						case "q":
-						case "quit":
-							RunApp = false;
-							break;
-						default:
-							ServiceChannel.SendConsoleCommand(cmdArgs[0], cmdArgs.Skip(1).Take(cmdArgs.Count - 1).ToArray());
-							break;
-					}
+			foreach (var service in serviceItems) {
+				if (service is ToolStripMenuItem && ((ToolStripMenuItem)service).DropDownItems.Count > 0) {
+					serviceListMenuItem.DropDownItems.Remove((ToolStripMenuItem)service);
 				}
-
-				ConsoleHelper.DestroyConsole();
-			}));
-
-			workerThread.Start();
-		}
-
-		private void OnStartAllServicesMenuItemClicked(object sender, EventArgs args) {
-			ServiceChannel.StartAllServices();
-		}
-
-		private void OnStopAllServicesMenuItemClicked(object sender, EventArgs args) {
-			ServiceChannel.StopAllServices();
-		}
-
-		private void OnRestartAllServicesMenuItemClicked(object sender, EventArgs args) {
-			Log.Warn($"Restarting all services...");
-			ServiceChannel.RestartAllServices();
-		}
-
-		private void OnStartHttpServerMenuItemClicked(object sender, EventArgs args) {
-			if (!ServiceChannel.IsHttpServerRunning()) {
-				ServiceChannel.StartHttpServer();
 			}
+
+			databaseMenuItem.Enabled = false;
+
+			databaseOpenMenuItem.Enabled = true;
+			databaseCloseMenuItem.Enabled = false;
+
+			fileServerMenuItem.Enabled = false;
+
+			startHttpServerMenuItem.Enabled = true;
+			stopHttpServerMenuItem.Enabled = false;
 		}
 
-		private void OnStopHttpServerMenuItemClicked(object sender, EventArgs args) {
-			if (ServiceChannel.IsHttpServerRunning()) {
-				ServiceChannel.StopHttpServer();
-			}
+		private void OnPipeError(Exception e) {
+			MessageBox.Show($"Could not connect to the Paradise Web Services process.\nPlease make sure that the Paradise Web Services are running.\n\n{e.Message}", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+			OnPipeClosed(null, null);
 		}
-		#endregion
 
 		#region IParadiseServiceClient
 		//public void OnError(string message, Exception e) { }
@@ -249,8 +343,8 @@ namespace Paradise.WebServices {
 			});
 		}
 
-		public void OnDatabaseError() {
-
+		public void OnDatabaseError(Exception e) {
+			notifyIcon.ShowBalloonTip(3000, "Database Error", $"A database error has occurred. Please check the logs.\n{e.Message}", ToolTipIcon.Error);
 		}
 
 		public void OnServiceStarted(ServiceEventArgs args) {
@@ -346,8 +440,12 @@ namespace Paradise.WebServices {
 			});
 		}
 
-		public void OnConsoleCommandCallback(string message) {
-			Console.WriteLine(message);
+		public void OnConsoleCommandCallback(string message, bool inline) {
+			if (!inline) {
+				Console.WriteLine(message);
+			} else {
+				Console.Write(message);
+			}
 		}
 		#endregion
 	}

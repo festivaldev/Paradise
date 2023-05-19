@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using log4net;
+using Newtonsoft.Json;
 using Paradise.Core.Models.Views;
 using Paradise.Core.Serialization;
 using Paradise.Core.Types;
@@ -10,43 +11,59 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.ServiceModel;
+using System.Threading.Tasks;
 
 namespace Paradise.WebServices.Services {
 	public class ApplicationWebService : BaseWebService, IApplicationWebServiceContract {
+		protected static readonly new ILog Log = LogManager.GetLogger(nameof(ApplicationWebService));
+
 		public override string ServiceName => "ApplicationWebService";
 		public override string ServiceVersion => ApiVersion.Current;
 		protected override Type ServiceInterface => typeof(IApplicationWebServiceContract);
 
 		private static readonly string[] supportedClientVersions = { "4.7.1" };
+		private static readonly ChannelType[] supportedClientChannels = { ChannelType.Steam };
 
 		private ApplicationConfigurationView applicationConfiguration;
 		private AuthenticateApplicationView photonServers;
 		private List<MapView> mapData;
 		private List<UberstrikeCustomMapView> customMapData;
 
-		public ApplicationWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
-		public ApplicationWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
-
-		public static readonly Dictionary<string, object> CommMonitoringData = new Dictionary<string, object>();
-		public static Dictionary<string, object> GameMonitoringData = new Dictionary<string, object>();
-
 		private FileSystemWatcher watcher;
+		private static List<string> watchedFiles = new List<string> {
+			"ApplicationConfiguration.json",
+			"PhotonServers.json",
+			"Maps.json",
+			"CustomMaps.json"
+		};
+
+		public ApplicationWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() {
 			try {
-				applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "ApplicationConfiguration.json")));
-				photonServers = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "PhotonServers.json")));
-				mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "Maps.json")));
-				customMapData = JsonConvert.DeserializeObject<List<UberstrikeCustomMapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "CustomMaps.json")));
+				applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "ApplicationConfiguration.json")));
+				photonServers = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "PhotonServers.json")));
+				mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "Maps.json")));
+				customMapData = JsonConvert.DeserializeObject<List<UberstrikeCustomMapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "CustomMaps.json")));
 
-				watcher = new FileSystemWatcher(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService"));
-				watcher.NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite;
-				watcher.Changed += delegate (object sender, FileSystemEventArgs e) {
-					applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "ApplicationConfiguration.json")));
-					photonServers = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "PhotonServers.json")));
-					mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "Maps.json")));
-					customMapData = JsonConvert.DeserializeObject<List<UberstrikeCustomMapView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "CustomMaps.json")));
+				watcher = new FileSystemWatcher(ServiceDataPath) {
+					NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite
 				};
+
+				watcher.Changed += (object sender, FileSystemEventArgs e) => {
+					if (!watchedFiles.Contains(e.Name)) return;
+
+					Task.Run(async () => {
+						await Task.Delay(500);
+						Log.Info("Reloading Application service data due to file changes.");
+
+						applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "ApplicationConfiguration.json")));
+						photonServers = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "PhotonServers.json")));
+						mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "Maps.json")));
+						customMapData = JsonConvert.DeserializeObject<List<UberstrikeCustomMapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "CustomMaps.json")));
+					});
+				};
+
 				watcher.EnableRaisingEvents = true;
 
 				// Resolve them domains
@@ -94,6 +111,7 @@ namespace Paradise.WebServices.Services {
 			watcher.Dispose();
 		}
 
+		#region IApplicationWebServiceContract
 		/// <summary>
 		/// Checks if an application is running the Steam build of v4.7.1
 		/// </summary>
@@ -104,12 +122,10 @@ namespace Paradise.WebServices.Services {
 					var channel = EnumProxy<ChannelType>.Deserialize(bytes);
 					var publicKey = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(clientVersion, channel, publicKey);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), clientVersion, channel, publicKey);
 
 					using (var outputStream = new MemoryStream()) {
-						if (channel != ChannelType.Steam &&
-							channel != ChannelType.WindowsStandalone &&
-							channel != ChannelType.OSXStandalone) {
+						if (!supportedClientChannels.Contains(channel)) {
 							AuthenticateApplicationViewProxy.Serialize(outputStream, new AuthenticateApplicationView {
 								IsEnabled = false
 							});
@@ -118,7 +134,9 @@ namespace Paradise.WebServices.Services {
 								IsEnabled = true,
 								GameServers = photonServers.GameServers,
 								CommServer = photonServers.CommServer,
-								WarnPlayer = !supportedClientVersions.Contains(clientVersion)
+								WarnPlayer = !supportedClientVersions.Contains(clientVersion),
+								EncryptionInitVector = EncryptionInitVector,
+								EncryptionPassPhrase = EncryptionPassPhrase
 							});
 						}
 
@@ -138,18 +156,21 @@ namespace Paradise.WebServices.Services {
 		/// <see cref="ApplicationConfigurationView"/>
 		public byte[] GetConfigurationData(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var clientVersion = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(clientVersion);
-
-					if (!supportedClientVersions.Contains(clientVersion))
-						return null;
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), clientVersion);
 
 					using (var outputStream = new MemoryStream()) {
-						ApplicationConfigurationViewProxy.Serialize(outputStream, applicationConfiguration);
+						if (supportedClientVersions.Contains(clientVersion)) {
+							ApplicationConfigurationViewProxy.Serialize(outputStream, applicationConfiguration);
+						}
 
-						return outputStream.ToArray();
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -165,19 +186,22 @@ namespace Paradise.WebServices.Services {
 		/// <see cref="MapView"/>
 		public byte[] GetMaps(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var clientVersion = StringProxy.Deserialize(bytes);
 					var clientType = EnumProxy<DefinitionType>.Deserialize(bytes);
 
-					DebugEndpoint(clientVersion, clientType);
-
-					if (!supportedClientVersions.Contains(clientVersion))
-						return null;
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), clientVersion, clientType);
 
 					using (var outputStream = new MemoryStream()) {
-						ListProxy<MapView>.Serialize(outputStream, mapData, MapViewProxy.Serialize);
+						if (supportedClientVersions.Contains(clientVersion)) {
+							ListProxy<MapView>.Serialize(outputStream, mapData, MapViewProxy.Serialize);
+						}
 
-						return outputStream.ToArray();
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -193,19 +217,22 @@ namespace Paradise.WebServices.Services {
 		/// <see cref="MapView"/>
 		public byte[] GetCustomMaps(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var clientVersion = StringProxy.Deserialize(bytes);
 					var clientType = EnumProxy<DefinitionType>.Deserialize(bytes);
 
-					DebugEndpoint(clientVersion, clientType);
-
-					if (!supportedClientVersions.Contains(clientVersion))
-						return null;
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), clientVersion, clientType);
 
 					using (var outputStream = new MemoryStream()) {
-						ListProxy<UberstrikeCustomMapView>.Serialize(outputStream, customMapData, UberstrikeCustomMapViewProxy.Serialize);
+						if (supportedClientVersions.Contains(clientVersion)) {
+							ListProxy<UberstrikeCustomMapView>.Serialize(outputStream, customMapData, UberstrikeCustomMapViewProxy.Serialize);
+						}
 
-						return outputStream.ToArray();
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -220,17 +247,21 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] SetMatchScore(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var clientVersion = StringProxy.Deserialize(bytes);
 					var scoringView = MatchStatsProxy.Deserialize(bytes);
 					var serverAuthentication = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(clientVersion, scoringView, serverAuthentication);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), clientVersion, scoringView, serverAuthentication);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -239,65 +270,6 @@ namespace Paradise.WebServices.Services {
 
 			return null;
 		}
-
-		/// <summary>
-		/// Publishes monitoring data for a CommServer
-		/// </summary>
-		public byte[] PublishCommMonitoringData(byte[] data) {
-			try {
-				using (var bytes = new MemoryStream(data)) {
-					var identifier = StringProxy.Deserialize(bytes);
-					var monitoringData = JsonConvert.DeserializeObject<Dictionary<string, object>>(StringProxy.Deserialize(bytes));
-
-					if (!CommMonitoringData.ContainsKey(identifier)) {
-						Log.Info($"Registered CommServer ({identifier}) for monitoring.");
-					}
-
-					CommMonitoringData[identifier] = monitoringData;
-
-					DebugEndpoint(monitoringData);
-
-					using (var outputStream = new MemoryStream()) {
-						BooleanProxy.Serialize(outputStream, true);
-
-						return outputStream.ToArray();
-					}
-				}
-			} catch (Exception e) {
-				HandleEndpointError(e);
-			}
-
-			return null;
-		}
-
-		/// <summary>
-		/// Publishes monitoring data for a given GameServer by identifier
-		/// </summary>
-		public byte[] PublishGameMonitoringData(byte[] data) {
-			try {
-				using (var bytes = new MemoryStream(data)) {
-					var identifier = StringProxy.Deserialize(bytes);
-					var monitoringData = JsonConvert.DeserializeObject<Dictionary<string, object>>(StringProxy.Deserialize(bytes));
-
-					if (!GameMonitoringData.ContainsKey(identifier)) {
-						Log.Info($"Registered GameServer ({identifier}) for monitoring.");
-					}
-
-					GameMonitoringData[identifier] = monitoringData;
-
-					DebugEndpoint(identifier, monitoringData);
-
-					using (var outputStream = new MemoryStream()) {
-						BooleanProxy.Serialize(outputStream, true);
-
-						return outputStream.ToArray();
-					}
-				}
-			} catch (Exception e) {
-				HandleEndpointError(e);
-			}
-
-			return null;
-		}
+		#endregion
 	}
 }

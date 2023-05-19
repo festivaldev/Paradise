@@ -5,9 +5,9 @@ namespace Paradise.Realtime.Server.Game {
 		public PlayerPrepareState(GamePeer peer) : base(peer) { }
 
 		public override void OnEnter() {
-			Peer.Actor.Info.PlayerState = PlayerStates.None;
+			Peer.Actor.ActorInfo.PlayerState = PlayerStates.None;
 
-			Peer.GameEvents.SendPrepareNextRound();
+			Peer.GameEventSender.SendPrepareNextRound();
 		}
 
 		public override void OnExit() { }

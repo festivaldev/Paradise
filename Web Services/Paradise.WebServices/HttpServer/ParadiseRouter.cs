@@ -1,12 +1,10 @@
 ﻿using log4net;
-//using Paradise.WebServices.Services;
 using System;
 using System.Collections.Generic;
 using System.IO;
 
 namespace Paradise.WebServices {
-
-	internal class ParadiseRouter : Router {
+	internal class ParadiseRouter : HttpRouter {
 		protected static readonly ILog Log = LogManager.GetLogger(nameof(ParadiseService));
 
 		private string WebRoot;
@@ -93,18 +91,16 @@ namespace Paradise.WebServices {
 
 		[Route(Path = "/status/comm")]
 		public void CommServerStatus() {
-			/// TODO: Replace with TCP communication
-			//SetStatus(200);
-			//SetContentType("application/json");
-			//Send(ApplicationWebService.CommMonitoringData.Values);
+			SetStatus(200);
+			SetContentType("application/json");
+			Send(ParadiseServerMonitoring.CommMonitoringData);
 		}
 
 		[Route(Path = "/status/game")]
 		public void GameServerStatus() {
-			/// TODO: Replace with TCP communication
-			//SetStatus(200);
-			//SetContentType("application/json");
-			//Send(ApplicationWebService.GameMonitoringData.Values);
+			SetStatus(200);
+			SetContentType("application/json");
+			Send(ParadiseServerMonitoring.GameMonitoringData.Values);
 		}
 
 		[Route(Path = "/", Static = true)]

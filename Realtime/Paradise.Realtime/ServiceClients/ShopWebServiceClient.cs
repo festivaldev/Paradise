@@ -9,13 +9,19 @@ using System.IO;
 
 namespace Paradise.Realtime {
 	public class ShopWebServiceClient : BaseWebServiceClient<IShopWebServiceContract> {
-		public static readonly ShopWebServiceClient Instance = new ShopWebServiceClient(
-			endpointUrl: BaseRealtimeApplication.Instance.Configuration.WebServiceBaseUrl,
-			webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
-			webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
-		);
+		public static readonly ShopWebServiceClient Instance;
 
-		public ShopWebServiceClient(string endpointUrl, string webServicePrefix, string webServiceSuffix) : base(endpointUrl, $"{webServicePrefix}ShopWebService{webServiceSuffix}") { }
+		static ShopWebServiceClient() {
+			Instance = new ShopWebServiceClient(
+				masterUrl: BaseRealtimeApplication.Instance.Configuration.MasterServerUrl,
+				port: BaseRealtimeApplication.Instance.Configuration.WebServicePort,
+				serviceEndpoint: BaseRealtimeApplication.Instance.Configuration.WebServiceEndpoint,
+				webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
+				webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
+			);
+		}
+
+		public ShopWebServiceClient(string masterUrl, int port, string serviceEndpoint, string webServicePrefix, string webServiceSuffix) : base(masterUrl, port, serviceEndpoint, $"{webServicePrefix}ShopWebService{webServiceSuffix}") { }
 
 		public bool BuyBundle(string authToken, int bundleId, ChannelType channel, string hashedReceipt) {
 			using (var bytes = new MemoryStream()) {
@@ -24,9 +30,9 @@ namespace Paradise.Realtime {
 				EnumProxy<ChannelType>.Serialize(bytes, channel);
 				StringProxy.Serialize(bytes, hashedReceipt);
 
-				var result = Service.BuyBundle(bytes.ToArray());
+				var result = Service.BuyBundle(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return BooleanProxy.Deserialize(inputStream);
 				}
 			}
@@ -38,9 +44,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, steamId);
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.BuyBundleSteam(bytes.ToArray());
+				var result = Service.BuyBundleSteam(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return BooleanProxy.Deserialize(inputStream);
 				}
 			}
@@ -56,9 +62,9 @@ namespace Paradise.Realtime {
 				EnumProxy<BuyingLocationType>.Serialize(bytes, marketLocation);
 				EnumProxy<BuyingRecommendationType>.Serialize(bytes, recommendationType);
 
-				var result = Service.BuyItem(bytes.ToArray());
+				var result = Service.BuyItem(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}
@@ -74,9 +80,9 @@ namespace Paradise.Realtime {
 				EnumProxy<BuyingLocationType>.Serialize(bytes, marketLocation);
 				EnumProxy<BuyingRecommendationType>.Serialize(bytes, recommendationType);
 
-				var result = Service.BuyPack(bytes.ToArray());
+				var result = Service.BuyPack(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}
@@ -86,9 +92,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, orderId);
 
-				var result = Service.FinishBuyBundleSteam(bytes.ToArray());
+				var result = Service.FinishBuyBundleSteam(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return BooleanProxy.Deserialize(inputStream);
 				}
 			}
@@ -96,9 +102,9 @@ namespace Paradise.Realtime {
 
 		public List<LuckyDrawUnityView> GetAllLuckyDraws() {
 			using (var bytes = new MemoryStream()) {
-				var result = Service.GetAllLuckyDraws_1(bytes.ToArray());
+				var result = Service.GetAllLuckyDraws_1(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<LuckyDrawUnityView>.Deserialize(inputStream, LuckyDrawUnityViewProxy.Deserialize);
 				}
 			}
@@ -108,9 +114,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				EnumProxy<BundleCategoryType>.Serialize(bytes, bundleCategoryType);
 
-				var result = Service.GetAllLuckyDraws_2(bytes.ToArray());
+				var result = Service.GetAllLuckyDraws_2(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<LuckyDrawUnityView>.Deserialize(inputStream, LuckyDrawUnityViewProxy.Deserialize);
 				}
 			}
@@ -118,9 +124,9 @@ namespace Paradise.Realtime {
 
 		public List<MysteryBoxUnityView> GetAllMysteryBoxs() {
 			using (var bytes = new MemoryStream()) {
-				var result = Service.GetAllMysteryBoxs_1(bytes.ToArray());
+				var result = Service.GetAllMysteryBoxs_1(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<MysteryBoxUnityView>.Deserialize(inputStream, MysteryBoxUnityViewProxy.Deserialize);
 				}
 			}
@@ -130,9 +136,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				EnumProxy<BundleCategoryType>.Serialize(bytes, bundleCategoryType);
 
-				var result = Service.GetAllMysteryBoxs_2(bytes.ToArray());
+				var result = Service.GetAllMysteryBoxs_2(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<MysteryBoxUnityView>.Deserialize(inputStream, MysteryBoxUnityViewProxy.Deserialize);
 				}
 			}
@@ -142,9 +148,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				EnumProxy<ChannelType>.Serialize(bytes, channelType);
 
-				var result = Service.GetBundles(bytes.ToArray());
+				var result = Service.GetBundles(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<BundleView>.Deserialize(inputStream, BundleViewProxy.Deserialize);
 				}
 			}
@@ -154,9 +160,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				Int32Proxy.Serialize(bytes, luckyDrawId);
 
-				var result = Service.GetLuckyDraw(bytes.ToArray());
+				var result = Service.GetLuckyDraw(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return LuckyDrawUnityViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -166,9 +172,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				Int32Proxy.Serialize(bytes, mysteryBoxId);
 
-				var result = Service.GetMysteryBox(bytes.ToArray());
+				var result = Service.GetMysteryBox(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return MysteryBoxUnityViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -176,9 +182,9 @@ namespace Paradise.Realtime {
 
 		public UberStrikeItemShopClientView GetShop() {
 			using (var bytes = new MemoryStream()) {
-				var result = Service.GetShop(bytes.ToArray());
+				var result = Service.GetShop(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return UberStrikeItemShopClientViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -190,24 +196,24 @@ namespace Paradise.Realtime {
 				Int32Proxy.Serialize(bytes, luckDrawId);
 				EnumProxy<ChannelType>.Serialize(bytes, channel);
 
-				var result = Service.RollLuckyDraw(bytes.ToArray());
+				var result = Service.RollLuckyDraw(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}
 		}
 
-		public int RollMysteryBox(string authToken, int mysteryBoxId, ChannelType channel) {
+		public List<MysteryBoxWonItemUnityView> RollMysteryBox(string authToken, int mysteryBoxId, ChannelType channel) {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 				Int32Proxy.Serialize(bytes, mysteryBoxId);
 				EnumProxy<ChannelType>.Serialize(bytes, channel);
 
-				var result = Service.RollMysteryBox(bytes.ToArray());
+				var result = Service.RollMysteryBox(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
-					return Int32Proxy.Deserialize(inputStream);
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
+					return ListProxy<MysteryBoxWonItemUnityView>.Deserialize(inputStream, MysteryBoxWonItemUnityViewProxy.Deserialize);
 				}
 			}
 		}
@@ -217,9 +223,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, authToken);
 				Int32Proxy.Serialize(bytes, itemId);
 
-				var result = Service.UseConsumableItem(bytes.ToArray());
+				var result = Service.UseConsumableItem(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return BooleanProxy.Deserialize(inputStream);
 				}
 			}
@@ -229,9 +235,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, hashedReceipt);
 
-				var result = Service.VerifyReceipt(bytes.ToArray());
+				var result = Service.VerifyReceipt(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return BooleanProxy.Deserialize(inputStream);
 				}
 			}

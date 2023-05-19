@@ -1,6 +1,7 @@
 ﻿using Paradise.Core.Types;
 using System;
 using System.Threading.Tasks;
+using static Paradise.Realtime.Server.Game.BaseGameRoom;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class EndOfMatchState : BaseMatchState {
@@ -18,30 +19,24 @@ namespace Paradise.Realtime.Server.Game {
 
 				Room.GetCurrentScore(out killsRemaining, out _, out _);
 				foreach (var peer in Room.Peers) {
-					peer.GameEvents.SendKillsRemaining(killsRemaining, 0);
+					peer.GameEventSender.SendKillsRemaining(killsRemaining, 0);
 				}
 			} else {
-				short blueTeamScore = 0;
-				short redTeamScore = 0;
-
-				Room.GetCurrentScore(out _, out blueTeamScore, out redTeamScore);
+				Room.GetCurrentScore(out _, out short blueTeamScore, out short redTeamScore);
 				foreach (var peer in Room.Peers) {
-					peer.GameEvents.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
+					peer.GameEventSender.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
 				}
 			}
 
 			foreach (var peer in Room.Peers) {
-				peer.GameEvents.SendTeamWins(Room.WinningTeam);
+				peer.GameEventSender.SendTeamWins(Room.WinningTeam);
 			}
 
 			Task t = Task.Run(async () => {
 				await Task.Delay(3000);
 
 				if (Room.MetaData.GameMode == GameModeType.EliminationMode) {
-					short blueTeamScore = 0;
-					short redTeamScore = 0;
-
-					Room.GetCurrentScore(out _, out blueTeamScore, out redTeamScore);
+					Room.GetCurrentScore(out _, out short blueTeamScore, out short redTeamScore);
 
 					// Game should end if RoundNumber >= KillLimit (aka "Max Rounds")
 					if (Math.Max(blueTeamScore, redTeamScore) >= Room.MetaData.KillLimit || !Room.CanStartMatch) {
@@ -72,7 +67,7 @@ namespace Paradise.Realtime.Server.Game {
 			Room.PreparePlayer(player);
 			Room.SpawnPlayer(player, true);
 
-			player.GameEvents.SendWaitingForPlayers();
+			player.GameEventSender.SendWaitingForPlayers();
 		}
 	}
 }

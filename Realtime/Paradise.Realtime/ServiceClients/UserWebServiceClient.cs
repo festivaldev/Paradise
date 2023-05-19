@@ -9,22 +9,28 @@ using System.IO;
 
 namespace Paradise.Realtime {
 	public class UserWebServiceClient : BaseWebServiceClient<IUserWebServiceContract> {
-		public static readonly UserWebServiceClient Instance = new UserWebServiceClient(
-			endpointUrl: BaseRealtimeApplication.Instance.Configuration.WebServiceBaseUrl,
-			webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
-			webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
-		);
+		public static readonly UserWebServiceClient Instance;
 
-		public UserWebServiceClient(string endpointUrl, string webServicePrefix, string webServiceSuffix) : base(endpointUrl, $"{webServicePrefix}UserWebService{webServiceSuffix}") { }
+		static UserWebServiceClient() {
+			Instance = new UserWebServiceClient(
+				masterUrl: BaseRealtimeApplication.Instance.Configuration.MasterServerUrl,
+				port: BaseRealtimeApplication.Instance.Configuration.WebServicePort,
+				serviceEndpoint: BaseRealtimeApplication.Instance.Configuration.WebServiceEndpoint,
+				webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
+				webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
+			);
+		}
+
+		public UserWebServiceClient(string masterUrl, int port, string serviceEndpoint, string webServicePrefix, string webServiceSuffix) : base(masterUrl, port, serviceEndpoint, $"{webServicePrefix}UserWebService{webServiceSuffix}") { }
 
 		public bool AddItemTransaction(ItemTransactionView itemTransaction, string authToken) {
 			using (var bytes = new MemoryStream()) {
 				ItemTransactionViewProxy.Serialize(bytes, itemTransaction);
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.AddItemTransaction(bytes.ToArray());
+				var result = Service.AddItemTransaction(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return BooleanProxy.Deserialize(inputStream);
 				}
 			}
@@ -37,9 +43,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, locale);
 				StringProxy.Serialize(bytes, machineId);
 
-				var result = Service.ChangeMemberName(bytes.ToArray());
+				var result = Service.ChangeMemberName(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return EnumProxy<MemberOperationResult>.Deserialize(inputStream);
 				}
 			}
@@ -50,9 +56,9 @@ namespace Paradise.Realtime {
 				CurrencyDepositViewProxy.Serialize(bytes, depositTransaction);
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.DepositCredits(bytes.ToArray());
+				var result = Service.DepositCredits(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return BooleanProxy.Deserialize(inputStream);
 				}
 			}
@@ -63,9 +69,9 @@ namespace Paradise.Realtime {
 				PointDepositViewProxy.Serialize(bytes, depositTransaction);
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.DepositPoints(bytes.ToArray());
+				var result = Service.DepositPoints(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return BooleanProxy.Deserialize(inputStream);
 				}
 			}
@@ -75,24 +81,24 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, username);
 
-				var result = Service.GenerateNonDuplicatedMemberNames(bytes.ToArray());
+				var result = Service.GenerateNonDuplicatedMemberNames(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<string>.Deserialize(inputStream, StringProxy.Deserialize);
 				}
 			}
 		}
 
-		public MemberWalletView GetCurrentDeposits(string authToken, int pageIndex, int elementPerPage) {
+		public CurrencyDepositsViewModel GetCurrentDeposits(string authToken, int pageIndex, int elementPerPage) {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 				Int32Proxy.Serialize(bytes, pageIndex);
 				Int32Proxy.Serialize(bytes, elementPerPage);
 
-				var result = Service.GetCurrencyDeposits(bytes.ToArray());
+				var result = Service.GetCurrencyDeposits(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
-					return MemberWalletViewProxy.Deserialize(inputStream);
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
+					return CurrencyDepositsViewModelProxy.Deserialize(inputStream);
 				}
 			}
 		}
@@ -101,9 +107,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.GetInventory(bytes.ToArray());
+				var result = Service.GetInventory(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<ItemInventoryView>.Deserialize(inputStream, ItemInventoryViewProxy.Deserialize);
 				}
 			}
@@ -115,9 +121,9 @@ namespace Paradise.Realtime {
 				Int32Proxy.Serialize(bytes, pageIndex);
 				Int32Proxy.Serialize(bytes, elementPerPage);
 
-				var result = Service.GetItemTransactions(bytes.ToArray());
+				var result = Service.GetItemTransactions(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ItemTransactionsViewModelProxy.Deserialize(inputStream);
 				}
 			}
@@ -127,9 +133,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.GetLoadout(bytes.ToArray());
+				var result = Service.GetLoadout(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return LoadoutViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -139,9 +145,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.GetMember(bytes.ToArray());
+				var result = Service.GetMember(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return UberstrikeUserViewModelProxy.Deserialize(inputStream);
 				}
 			}
@@ -151,9 +157,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				ListProxy<string>.Serialize(bytes, authTokens, StringProxy.Serialize);
 
-				var result = Service.GetMemberListSessionData(bytes.ToArray());
+				var result = Service.GetMemberListSessionData(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<MemberSessionDataView>.Deserialize(inputStream, MemberSessionDataViewProxy.Deserialize);
 				}
 			}
@@ -163,9 +169,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.GetMemberSessionData(bytes.ToArray());
+				var result = Service.GetMemberSessionData(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return MemberSessionDataViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -175,9 +181,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.GetMemberWallet(bytes.ToArray());
+				var result = Service.GetMemberWallet(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return MemberWalletViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -189,9 +195,9 @@ namespace Paradise.Realtime {
 				Int32Proxy.Serialize(bytes, pageIndex);
 				Int32Proxy.Serialize(bytes, elementPerPage);
 
-				var result = Service.GetPointsDeposits(bytes.ToArray());
+				var result = Service.GetPointsDeposits(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return PointDepositsViewModelProxy.Deserialize(inputStream);
 				}
 			}
@@ -201,10 +207,23 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, username);
 
-				var result = Service.IsDuplicateMemberName(bytes.ToArray());
+				var result = Service.IsDuplicateMemberName(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return BooleanProxy.Deserialize(inputStream);
+				}
+			}
+		}
+
+		public MemberOperationResult SetLoadout(string authToken, LoadoutView loadoutView) {
+			using (var bytes = new MemoryStream()) {
+				StringProxy.Serialize(bytes, authToken);
+				LoadoutViewProxy.Serialize(bytes, loadoutView);
+
+				var result = Service.SetLoadout(Encrypt(bytes.ToArray()));
+
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
+					return EnumProxy<MemberOperationResult>.Deserialize(inputStream);
 				}
 			}
 		}
@@ -214,9 +233,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, authToken);
 				PlayerStatisticsViewProxy.Serialize(bytes, playerStatistics);
 
-				var result = Service.UpdatePlayerStatistics(bytes.ToArray());
+				var result = Service.UpdatePlayerStatistics(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return EnumProxy<MemberOperationResult>.Deserialize(inputStream);
 				}
 			}

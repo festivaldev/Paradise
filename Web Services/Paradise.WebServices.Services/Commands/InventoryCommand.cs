@@ -1,9 +1,11 @@
 ﻿using Paradise.Core.Types;
 using Paradise.DataCenter.Common.Entities;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Threading.Tasks;
 
-namespace Paradise.WebServices {
+namespace Paradise.WebServices.Services {
 	internal class InventoryCommand : ParadiseCommand {
 		public static new string Command => "inventory";
 		public static new string[] Aliases => new string[] { "inv" };
@@ -13,14 +15,17 @@ namespace Paradise.WebServices {
 
 		public override string[] UsageText => new string[] {
 			$"{Command}: {Description}",
-			"  give <cmid> <item>\t\tAdds the specified item to a player's inventory.",
-			"  take <cmid> <item>\t\tRemoves the specified item from a player's inventory.",
-			"  set <cmid> <slot> <item>\tSets the specified inventory slot to a specific item."
+			"  give <name> <item>\t\tAdds the specified item to a player's inventory.",
+			"  take <name> <item>\t\tRemoves the specified item from a player's inventory.",
+			"  set <name> <slot> <item>\tSets the specified inventory slot to a specific item."
 		};
+
+		public override MemberAccessLevel MinimumAccessLevel => MemberAccessLevel.SeniorModerator;
 
 		public InventoryCommand(Guid guid) : base(guid) { }
 
-		public override void Run(string[] arguments) {
+#pragma warning disable CS1998
+		public override async Task Run(string[] arguments) {
 			if (arguments.Length < 3) {
 				PrintUsageText();
 				return;
@@ -28,8 +33,17 @@ namespace Paradise.WebServices {
 
 			switch (arguments[0]) {
 				case "give": {
-					if (!int.TryParse(arguments[1], out int cmid)) {
-						WriteLine("Invalid parameter: cmid");
+					var searchString = arguments[1];
+
+					if (searchString.Length < 3) {
+						WriteLine("Search pattern must contain at least 3 characters.");
+						return;
+					}
+
+					var publicProfile = DatabaseClient.GetProfile(searchString);
+
+					if (publicProfile == null) {
+						WriteLine($"Failed to add item to inventory: Could not find player matching {searchString}.");
 						return;
 					}
 
@@ -38,17 +52,12 @@ namespace Paradise.WebServices {
 						return;
 					}
 
-					if (!(GetProfileFromCmid(cmid) is var publicProfile) || publicProfile == null) {
-						WriteLine("Could not add item to inventory: Profile not found.");
+					if (HasInventoryItem(publicProfile.Cmid, itemId)) {
+						WriteLine("Failed to add item to inventory: Item is already in inventory.");
 						return;
 					}
 
-					if (HasInventoryItem(cmid, itemId)) {
-						WriteLine("Could not add item to inventory: Item is already in inventory.");
-						return;
-					}
-
-					DatabaseManager.PlayerInventoryItems.Insert(new ItemInventoryView {
+					DatabaseClient.PlayerInventoryItems.Insert(new ItemInventoryView {
 						Cmid = publicProfile.Cmid,
 						ItemId = itemId,
 						AmountRemaining = -1
@@ -59,8 +68,17 @@ namespace Paradise.WebServices {
 					break;
 				}
 				case "take": {
-					if (!int.TryParse(arguments[1], out int cmid)) {
-						WriteLine("Invalid parameter: cmid");
+					var searchString = arguments[1];
+
+					if (searchString.Length < 3) {
+						WriteLine("Search pattern must contain at least 3 characters.");
+						return;
+					}
+
+					var publicProfile = DatabaseClient.GetProfile(searchString);
+
+					if (publicProfile == null) {
+						WriteLine($"Failed to remove item from inventory: Could not find player matching {searchString}.");
 						return;
 					}
 
@@ -69,19 +87,14 @@ namespace Paradise.WebServices {
 						return;
 					}
 
-					if (!(GetProfileFromCmid(cmid) is var publicProfile) || publicProfile == null) {
-						WriteLine("Could not remove item from inventory: Profile not found.");
+					if (!HasInventoryItem(publicProfile.Cmid, itemId)) {
+						WriteLine("Failed to remove item from inventory: Item is not in inventory.");
 						return;
 					}
 
-					if (!HasInventoryItem(cmid, itemId)) {
-						WriteLine("Could not remove item from inventory: Item is not in inventory.");
-						return;
-					}
+					DatabaseClient.PlayerInventoryItems.DeleteMany(_ => _.Cmid == publicProfile.Cmid && _.ItemId == itemId);
 
-					DatabaseManager.PlayerInventoryItems.DeleteMany(_ => _.Cmid == publicProfile.Cmid && _.ItemId == itemId);
-
-					var playerLoadout = GetPlayerLoadout(cmid);
+					var playerLoadout = GetPlayerLoadout(publicProfile.Cmid);
 
 					foreach (var loadoutSlot in Enum.GetValues(typeof(LoadoutSlotType))) {
 						switch (loadoutSlot) {
@@ -141,8 +154,8 @@ namespace Paradise.WebServices {
 						}
 					}
 
-					DatabaseManager.PlayerLoadouts.DeleteMany(_ => _.Cmid == playerLoadout.Cmid);
-					DatabaseManager.PlayerLoadouts.Insert(playerLoadout);
+					DatabaseClient.PlayerLoadouts.DeleteMany(_ => _.Cmid == playerLoadout.Cmid);
+					DatabaseClient.PlayerLoadouts.Insert(playerLoadout);
 
 
 					WriteLine($"{(UberstrikeInventoryItem)itemId} removed from player inventory.");
@@ -155,12 +168,37 @@ namespace Paradise.WebServices {
 						return;
 					}
 
-					if (!int.TryParse(arguments[1], out int cmid)) {
-						WriteLine("Invalid parameter: cmid");
+					var searchString = arguments[1];
+
+					if (searchString.Length < 3) {
+						WriteLine("Search pattern must contain at least 3 characters.");
 						return;
 					}
 
-					if (!(typeof(LoadoutView).GetProperty(arguments[2], BindingFlags.Public | BindingFlags.Instance) is PropertyInfo slotProperty)) {
+					var publicProfile = DatabaseClient.GetProfile(searchString);
+
+					if (publicProfile == null) {
+						WriteLine($"Failed to set loadout slot: Could not find player matching {searchString}.");
+						return;
+					}
+
+					var forbiddenSlots = new List<string> {
+						"LoadoutID",
+						"Backpack",
+						"Cmid",
+						"Type",
+						"Weapon1Mod1",
+						"Weapon1Mod2",
+						"Weapon1Mod3",
+						"Weapon2Mod1",
+						"Weapon2Mod2",
+						"Weapon2Mod3",
+						"Weapon3Mod1",
+						"Weapon3Mod2",
+						"Weapon3Mod3",
+					};
+
+					if (forbiddenSlots.Contains(arguments[2]) || !(typeof(LoadoutView).GetProperty(arguments[2], BindingFlags.Public | BindingFlags.Instance) is PropertyInfo slotProperty)) {
 						WriteLine("Invalid parameter: slot");
 						return;
 					}
@@ -170,22 +208,17 @@ namespace Paradise.WebServices {
 						return;
 					}
 
-					if (!(GetProfileFromCmid(cmid) is var publicProfile)) {
-						WriteLine("Could not set loadout slot: Profile not found.");
+					if (itemId > 0 && !HasInventoryItem(publicProfile.Cmid, itemId)) {
+						WriteLine("Failed to set loadout slot: Item is not in inventory.");
 						return;
 					}
 
-					if (itemId > 0 && !HasInventoryItem(cmid, itemId)) {
-						WriteLine("Could not set loadout slot: Item is not in inventory.");
-						return;
-					}
-
-					var playerLoadout = GetPlayerLoadout(cmid);
+					var playerLoadout = GetPlayerLoadout(publicProfile.Cmid);
 
 					slotProperty.SetValue(playerLoadout, itemId);
 
-					DatabaseManager.PlayerLoadouts.DeleteMany(_ => _.Cmid == playerLoadout.Cmid);
-					DatabaseManager.PlayerLoadouts.Insert(playerLoadout);
+					DatabaseClient.PlayerLoadouts.DeleteMany(_ => _.Cmid == playerLoadout.Cmid);
+					DatabaseClient.PlayerLoadouts.Insert(playerLoadout);
 
 					WriteLine($"Slot {arguments[2]} has been set to {(UberstrikeInventoryItem)itemId}.");
 
@@ -196,17 +229,14 @@ namespace Paradise.WebServices {
 					break;
 			}
 		}
-
-		private PublicProfileView GetProfileFromCmid(int cmid) {
-			return DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == cmid);
-		}
+#pragma warning restore CS1998
 
 		private bool HasInventoryItem(int cmid, int itemId) {
-			return DatabaseManager.PlayerInventoryItems.FindOne(_ => _.Cmid == cmid && _.ItemId == itemId && (_.ExpirationDate > DateTime.UtcNow || _.ExpirationDate == null)) != null;
+			return DatabaseClient.PlayerInventoryItems.FindOne(_ => _.Cmid == cmid && _.ItemId == itemId && (_.ExpirationDate > DateTime.UtcNow || _.ExpirationDate == null)) != null;
 		}
 
 		private LoadoutView GetPlayerLoadout(int cmid) {
-			return DatabaseManager.PlayerLoadouts.FindOne(_ => _.Cmid == cmid);
+			return DatabaseClient.PlayerLoadouts.FindOne(_ => _.Cmid == cmid);
 		}
 	}
 }

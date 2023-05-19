@@ -1,12 +1,15 @@
 ﻿using log4net;
-using Paradise.Core.Serialization;
 using Paradise.Util.Ciphers;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Security;
+using System.Text;
 
 namespace Paradise.WebServices {
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, AddressFilterMode = AddressFilterMode.Any)]
@@ -23,16 +26,19 @@ namespace Paradise.WebServices {
 		public abstract string ServiceVersion { get; }
 		protected abstract Type ServiceInterface { get; }
 
-		protected CryptographyPolicy CryptoPolicy = new CryptographyPolicy();
-
 		protected EventHandler<ServiceEventArgs> ServiceStarted;
 		protected EventHandler<ServiceEventArgs> ServiceStopped;
 		protected EventHandler<ServiceEventArgs> ServiceError;
 
-		public static string CurrentDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
-		public string ServiceDataPath => Path.Combine(CurrentDirectory, "ServiceData", ServiceName);
+		public string ServiceDataPath => Path.Combine(ParadiseService.WorkingDirectory, "ServiceData", ServiceName, ServiceVersion);
 
 		public CommunicationState WebServiceState => ServiceHost?.State ?? CommunicationState.Closed;
+		public bool IsRunning => ServiceHost?.State == CommunicationState.Opened;
+
+		protected readonly ICryptographyPolicy CryptoPolicy = new CryptographyPolicy();
+		protected string EncryptionPassPhrase => ParadiseService.WebServiceSettings.EncryptionPassPhrase;
+		protected string EncryptionInitVector => ParadiseService.WebServiceSettings.EncryptionInitVector;
+
 		public string State {
 			get {
 				switch (ServiceHost?.State ?? CommunicationState.Closed) {
@@ -51,13 +57,6 @@ namespace Paradise.WebServices {
 			}
 		}
 
-		protected BaseWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) {
-			Log.Debug($"Initializing {ServiceName} ({ServiceVersion})...");
-
-			HttpBinding = binding;
-			ServiceEndpoint = new EndpointAddress($"{serviceBaseUrl.TrimEnd(new[] { '/' })}/{ServiceVersion}/{webServicePrefix}{ServiceName}{webServiceSuffix}");
-		}
-
 		protected BaseWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) {
 			Log.Debug($"Initializing {ServiceName} ({ServiceVersion})...");
 
@@ -66,9 +65,9 @@ namespace Paradise.WebServices {
 
 			var uriBuilder = new UriBuilder {
 				Scheme = Settings.EnableSSL ? "https" : "http",
-				Host = string.IsNullOrEmpty(Settings.WebServiceHostName) ? "localhost" : Settings.WebServiceHostName,
-				Port = settings.WebServicePort,
-				Path = $"{ServiceVersion}/{settings.WebServicePrefix}{ServiceName}{settings.WebServiceSuffix}"
+				Host = string.IsNullOrEmpty(Settings.Hostname) ? "localhost" : Settings.Hostname,
+				Port = Settings.WebServicePort,
+				Path = $"{ServiceVersion}/{Settings.WebServicePrefix}{ServiceName}{Settings.WebServiceSuffix}"
 			};
 
 			ServiceEndpoint = new EndpointAddress(uriBuilder.ToString());
@@ -162,24 +161,33 @@ namespace Paradise.WebServices {
 			return false;
 		}
 
-		public bool IsRunning => ServiceHost?.State == CommunicationState.Opened;
-
 		protected abstract void Setup();
 		protected abstract void Teardown();
 
-		protected void DebugEndpoint(params object[] data) {
-			Log.Debug($"[{DateTime.UtcNow.ToString("o")}] {ServiceName}({ServiceVersion}):{new StackTrace().GetFrame(1).GetMethod().Name} -> {string.Join(", ", data)}");
+		protected void DebugEndpoint(MethodBase serviceMethod, params object[] data) {
+			Log.Debug($"[{DateTime.UtcNow:o}] {ServiceName}({ServiceVersion}):{serviceMethod.Name} {{\r\n\t{string.Join("\r\n\t", data.Select(_ => $"[{_.GetType()}] {_}"))}\r\n}}");
 		}
 
 		protected void HandleEndpointError(Exception e) {
 			Log.Error($"Failed to handle {ServiceName}:{e.TargetSite.Name}: {e.Message}");
-			Log.Debug(e);
+			Log.Info(e);
 
 			ServiceError?.Invoke(this, new ServiceEventArgs {
 				ServiceName = ServiceName,
 				ServiceVersion = ServiceVersion,
 				Exception = e
 			});
+		}
+
+
+
+		protected bool IsEncrypted(byte[] data) {
+			try {
+				CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector);
+				return true;
+			} catch (CryptographicException) {
+				return false;
+			}
 		}
 	}
 }

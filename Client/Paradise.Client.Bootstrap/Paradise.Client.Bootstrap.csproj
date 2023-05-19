@@ -35,27 +35,22 @@
       -->
 	  .allowedextension
 	</AllowedReferenceRelatedFileExtensions>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
+    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=C:\buildroot\$(MSBuildProjectName)</PathMap>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Lib.Harmony.2.2.2\lib\net35\0Harmony.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.ServiceModel" />
-    <Reference Include="System.ServiceProcess" />
-    <Reference Include="System.Web" />
-    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>..\..\AssemblyReferences\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -66,6 +61,7 @@
     <ProjectReference Include="..\Paradise.Client\Paradise.Client.csproj">
       <Project>{4481678e-f589-4d0a-8da1-7db8a5560a0b}</Project>
       <Name>Paradise.Client</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

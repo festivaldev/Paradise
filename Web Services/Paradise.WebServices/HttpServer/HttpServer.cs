@@ -11,18 +11,11 @@ using System.Threading;
 using System.Web;
 
 namespace Paradise.WebServices {
-	public struct RouteInfo {
-		public Router Router;
-		public MethodInfo Handle;
-		public string Path;
-		public bool IsStatic;
-	}
-
 	public class HttpServer {
 		protected static readonly ILog Log = LogManager.GetLogger(nameof(HttpServer));
 
-		protected List<Router> m_routers = new List<Router>();
-		protected IDictionary<string, IDictionary<string, RouteInfo>> m_routerPaths;
+		protected List<HttpRouter> m_routers = new List<HttpRouter>();
+		protected IDictionary<string, IDictionary<string, HttpRouter.RouteInfo>> m_routerPaths;
 		protected HttpListener m_listener;
 		protected IEnumerable<string> m_prefixes;
 
@@ -41,28 +34,28 @@ namespace Paradise.WebServices {
 			m_prefixes = prefixes;
 		}
 
-		public void Use(Router router) {
+		public void Use(HttpRouter router) {
 			if (router == null) return;
 
 			m_routers.Add(router);
 		}
 
-		private IDictionary<string, IDictionary<string, RouteInfo>> collectRoutes() {
-			var routes = new Dictionary<string, IDictionary<string, RouteInfo>>();
+		private IDictionary<string, IDictionary<string, HttpRouter.RouteInfo>> collectRoutes() {
+			var routes = new Dictionary<string, IDictionary<string, HttpRouter.RouteInfo>>();
 
 			foreach (var router in m_routers) {
 				foreach (MethodInfo method in router.GetType().GetMethods()) {
-					var attributes = method.GetCustomAttributes(typeof(RouteAttribute), true);
+					var attributes = method.GetCustomAttributes(typeof(HttpRouter.RouteAttribute), true);
 					if (attributes.Length == 0) continue;
 
-					var routingAttribute = attributes[0] as RouteAttribute;
+					var routingAttribute = attributes[0] as HttpRouter.RouteAttribute;
 					if (!routes.ContainsKey(routingAttribute.Method)) {
-						routes[routingAttribute.Method] = new Dictionary<string, RouteInfo>();
+						routes[routingAttribute.Method] = new Dictionary<string, HttpRouter.RouteInfo>();
 					}
 
 					var route = RemoveTrailingSlash(routingAttribute.Path);
 					if (!routes[routingAttribute.Method].ContainsKey(route)) {
-						routes[routingAttribute.Method][route] = new RouteInfo {
+						routes[routingAttribute.Method][route] = new HttpRouter.RouteInfo {
 							Router = router,
 							Handle = method,
 							Path = routingAttribute.Path,
@@ -75,7 +68,7 @@ namespace Paradise.WebServices {
 			return routes;
 		}
 
-		protected virtual RouteInfo findRouteHandler(string routeName, ref HttpListenerRequest request) {
+		protected virtual HttpRouter.RouteInfo findRouteHandler(string routeName, ref HttpListenerRequest request) {
 			if (m_routerPaths.ContainsKey(request.HttpMethod)) {
 				var route = RemoveTrailingSlash(routeName);
 
@@ -86,7 +79,7 @@ namespace Paradise.WebServices {
 				}
 			}
 
-			return default(RouteInfo);
+			return default;
 		}
 
 		protected virtual void handleOptionsRequest(ref HttpListenerResponse response) {
@@ -116,7 +109,7 @@ namespace Paradise.WebServices {
 			response.OutputStream.Write(bytes, 0, bytes.Length);
 		}
 
-		protected virtual void runHandler(RouteInfo handler, ref HttpListenerContext context, string route, NameValueCollection query, string body) {
+		protected virtual void runHandler(HttpRouter.RouteInfo handler, ref HttpListenerContext context, string route, NameValueCollection query, string body) {
 			var methodParameterInfo = handler.Handle.GetParameters();
 			var methodParameters = new object[methodParameterInfo.Length];
 
@@ -164,8 +157,9 @@ namespace Paradise.WebServices {
 		}
 
 		private void Listen() {
-			m_listener = new HttpListener();
-			m_listener.IgnoreWriteExceptions = true;
+			m_listener = new HttpListener {
+				IgnoreWriteExceptions = true
+			};
 
 			foreach (var prefix in m_prefixes) {
 				m_listener.Prefixes.Add(prefix);
@@ -189,7 +183,7 @@ namespace Paradise.WebServices {
 
 				try {
 					context = m_listener.GetContext();
-				} catch (Exception e) {
+				} catch (Exception) {
 					break;
 				}
 
@@ -218,7 +212,7 @@ namespace Paradise.WebServices {
 						}
 
 						runHandler(routeHandler, ref context, route, query, body);
-					} catch (Exception e) {
+					} catch (Exception) {
 
 					} finally {
 						response.Close();
@@ -230,8 +224,14 @@ namespace Paradise.WebServices {
 		public void Stop() {
 			if (m_listener == null) return;
 
-			m_listener.Stop();
-			m_listener.Close();
+			if (IsRunning) {
+				_serverThread.Abort();
+			}
+
+			if (m_listener.IsListening) {
+				m_listener.Stop();
+				m_listener.Close();
+			}
 
 			m_listener = null;
 

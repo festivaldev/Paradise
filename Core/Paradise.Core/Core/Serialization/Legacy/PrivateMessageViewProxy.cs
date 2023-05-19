@@ -1,34 +1,22 @@
 ﻿using Paradise.DataCenter.Common.Entities;
-using System;
 using System.IO;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class PrivateMessageViewProxy
-	{
-		public static void Serialize(Stream stream, PrivateMessageView instance)
-		{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class PrivateMessageViewProxy {
+		public static void Serialize(Stream stream, PrivateMessageView instance) {
 			int num = 0;
-			if (instance != null)
-			{
-				using (MemoryStream memoryStream = new MemoryStream())
-				{
-					if (instance.ContentText != null)
-					{
+			if (instance != null) {
+				using (MemoryStream memoryStream = new MemoryStream()) {
+					if (instance.ContentText != null) {
 						StringProxy.Serialize(memoryStream, instance.ContentText);
-					}
-					else
-					{
+					} else {
 						num |= 1;
 					}
 					DateTimeProxy.Serialize(memoryStream, instance.DateSent);
 					Int32Proxy.Serialize(memoryStream, instance.FromCmid);
-					if (instance.FromName != null)
-					{
+					if (instance.FromName != null) {
 						StringProxy.Serialize(memoryStream, instance.FromName);
-					}
-					else
-					{
+					} else {
 						num |= 2;
 					}
 					BooleanProxy.Serialize(memoryStream, instance.HasAttachment);
@@ -40,28 +28,22 @@ namespace Paradise.Core.Serialization.Legacy
 					Int32Proxy.Serialize(stream, ~num);
 					memoryStream.WriteTo(stream);
 				}
-			}
-			else
-			{
+			} else {
 				Int32Proxy.Serialize(stream, 0);
 			}
 		}
 
-		public static PrivateMessageView Deserialize(Stream bytes)
-		{
+		public static PrivateMessageView Deserialize(Stream bytes) {
 			int num = Int32Proxy.Deserialize(bytes);
 			PrivateMessageView privateMessageView = null;
-			if (num != 0)
-			{
+			if (num != 0) {
 				privateMessageView = new PrivateMessageView();
-				if ((num & 1) != 0)
-				{
+				if ((num & 1) != 0) {
 					privateMessageView.ContentText = StringProxy.Deserialize(bytes);
 				}
 				privateMessageView.DateSent = DateTimeProxy.Deserialize(bytes);
 				privateMessageView.FromCmid = Int32Proxy.Deserialize(bytes);
-				if ((num & 2) != 0)
-				{
+				if ((num & 2) != 0) {
 					privateMessageView.FromName = StringProxy.Deserialize(bytes);
 				}
 				privateMessageView.HasAttachment = BooleanProxy.Deserialize(bytes);

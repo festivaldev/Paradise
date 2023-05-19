@@ -3,7 +3,6 @@ using log4net;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
-using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
 
@@ -26,17 +25,19 @@ namespace Paradise.Client {
 		public float refreshRate { get; set; }
 	}
 
-	public class ScreenResolutionManagerHook : ParadiseHook {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
+	/// <summary>
+	/// Adds all available screen resolutions to the Video settings pane if they're missing.
+	/// </summary>
+	[HarmonyPatch(typeof(ScreenResolutionManager))]
+	public class ScreenResolutionManagerHook {
+		private static readonly ILog Log = LogManager.GetLogger(nameof(ScreenResolutionManagerHook));
 
-		/// <summary>
-		/// Adds all available screen resolutions to the Video settings pane if they're missing.
-		/// </summary>
-		public ScreenResolutionManagerHook() { }
-
-		public override void Hook(Harmony harmonyInstance) {
+		static ScreenResolutionManagerHook() {
 			Log.Info($"[{nameof(ScreenResolutionManagerHook)}] hooking {nameof(ScreenResolutionManager)}");
+		}
 
+		[HarmonyPrepare]
+		public static void Prepare() {
 			XmlSerializer serializer = new XmlSerializer(typeof(ScreenResolutionOptions));
 			using (Stream stream = Assembly.GetAssembly(typeof(ParadiseClient)).GetManifestResourceStream("Paradise.Client.ScreenResolutions.xml")) {
 				using (StreamReader reader = new StreamReader(stream)) {

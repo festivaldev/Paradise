@@ -84,8 +84,6 @@ namespace Paradise.WebServices {
 				Console.Clear();
 				ShowWindow(GetConsoleWindow(), SW_SHOW);
 			}
-
-			PrintConsoleHeader();
 		}
 
 		public static void DestroyConsole() {
@@ -98,19 +96,7 @@ namespace Paradise.WebServices {
 		}
 
 		public static void PrintConsoleHeaderSubtitle() {
-			Console.WriteLine("\nType \"help\" to see available commands.");
-		}
-
-		public static void PrintConsoleHelp() {
-			Console.WriteLine("Available commands:" + Environment.NewLine);
-			Console.WriteLine("clear\t\tClears the console, obviously.");
-			Console.WriteLine("database\tControls the LiteDB database instance. (Alias: db)");
-			Console.WriteLine("quit\t\tQuits the application (or closes the console if running in GUI mode). (Alias: q)");
-
-			foreach (var type in CommandHandler.Commands.OrderBy(_ => _.Name).ToList()) {
-				var cmd = (ParadiseCommand)Activator.CreateInstance(type, new object[] { Guid.Empty });
-				Console.WriteLine(cmd.HelpString);
-			}
+			Console.WriteLine("\r\nType \"help\" (or \"h\") to see available commands.");
 		}
 	}
 }

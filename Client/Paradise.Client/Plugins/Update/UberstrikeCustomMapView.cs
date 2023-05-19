@@ -6,7 +6,7 @@ using UberStrike.Core.Serialization;
 
 namespace Paradise.Client {
 	[Serializable]
-	public class UberstrikeCustomMapView {
+	public class UberStrikeCustomMapView {
 		public string Name { get; set; }
 		public string FileName { get; set; }
 		public int MapId { get; set; }
@@ -17,8 +17,8 @@ namespace Paradise.Client {
 		}
 	}
 
-	public static class UberstrikeCustomMapViewProxy {
-		public static void Serialize(Stream stream, UberstrikeCustomMapView instance) {
+	public static class UberStrikeCustomMapViewProxy {
+		public static void Serialize(Stream stream, UberStrikeCustomMapView instance) {
 			using (MemoryStream memoryStream = new MemoryStream()) {
 				StringProxy.Serialize(memoryStream, instance.Name);
 				StringProxy.Serialize(memoryStream, instance.FileName);
@@ -29,8 +29,8 @@ namespace Paradise.Client {
 			}
 		}
 
-		public static UberstrikeCustomMapView Deserialize(Stream bytes) {
-			UberstrikeCustomMapView mapView = new UberstrikeCustomMapView();
+		public static UberStrikeCustomMapView Deserialize(Stream bytes) {
+			UberStrikeCustomMapView mapView = new UberStrikeCustomMapView();
 
 			mapView.Name = StringProxy.Deserialize(bytes);
 			mapView.FileName = StringProxy.Deserialize(bytes);

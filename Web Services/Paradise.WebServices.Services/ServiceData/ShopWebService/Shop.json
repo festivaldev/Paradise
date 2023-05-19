@@ -6958,7 +6958,7 @@
 			],
 			"ArmorPoints": 0,
 			"ArmorWeight": 0
-		},
+		}
 	],
 	"QuickItems": [
 		{
@@ -7184,7 +7184,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 18,
+			"AccuracySpread": 80,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -8021,7 +8021,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 32,
+			"AccuracySpread": 90,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -8067,7 +8067,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 32,
+			"AccuracySpread": 90,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -8113,7 +8113,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 32,
+			"AccuracySpread": 90,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -8159,7 +8159,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 32,
+			"AccuracySpread": 90,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -8205,7 +8205,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 32,
+			"AccuracySpread": 90,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -8803,7 +8803,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 35,
+			"AccuracySpread": 100,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -9217,7 +9217,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 10,
+			"AccuracySpread": 75,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 50,
 			"DamageKnockback": 0,
@@ -9263,7 +9263,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 29,
+			"AccuracySpread": 70,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 100,
 			"DamageKnockback": 0,
@@ -9309,7 +9309,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 29,
+			"AccuracySpread": 70,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 100,
 			"DamageKnockback": 0,
@@ -9355,7 +9355,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 29,
+			"AccuracySpread": 70,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 100,
 			"DamageKnockback": 0,
@@ -9539,7 +9539,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 32,
+			"AccuracySpread": 90,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -10186,7 +10186,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 91,
+			"AccuracySpread": 256,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -10232,7 +10232,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 91,
+			"AccuracySpread": 256,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -10278,7 +10278,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 30,
+			"AccuracySpread": 80,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 31,
 			"DamageKnockback": 0,
@@ -10324,7 +10324,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 30,
+			"AccuracySpread": 80,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 50,
 			"DamageKnockback": 0,
@@ -11244,7 +11244,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 51,
+			"AccuracySpread": 150,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -11336,7 +11336,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 28,
+			"AccuracySpread": 80,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -11713,7 +11713,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 14,
+			"AccuracySpread": 180,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 120,
 			"DamageKnockback": 0,
@@ -11759,7 +11759,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 14,
+			"AccuracySpread": 180,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 120,
 			"DamageKnockback": 0,
@@ -11851,7 +11851,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 18,
+			"AccuracySpread": 50,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -11897,7 +11897,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 32,
+			"AccuracySpread": 90,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -12222,7 +12222,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 18,
+			"AccuracySpread": 80,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -12498,7 +12498,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 50,
+			"AccuracySpread": 150,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -12544,7 +12544,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 50,
+			"AccuracySpread": 150,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,
@@ -12591,9 +12591,9 @@
 			],
 			"ItemProperties": {},
 			"AccuracySpread": 0,
-			"CombatRange": 500,
+			"CombatRange": 250,
 			"CriticalStrikeBonus": 0,
-			"DamageKnockback": 500,
+			"DamageKnockback": 1700,
 			"DamagePerProjectile": 20,
 			"DamagePerSecond": 0,
 			"DefaultZoomMultiplier": 0,
@@ -12610,7 +12610,7 @@
 			"RecoilKickback": 12,
 			"RecoilMovement": 32,
 			"SecondaryActionReticle": 0,
-			"SplashRadius": 500,
+			"SplashRadius": 400,
 			"StartAmmo": 10,
 			"Tier": 2,
 			"WeaponSecondaryAction": 0
@@ -13450,7 +13450,7 @@
 				}
 			],
 			"ItemProperties": {},
-			"AccuracySpread": 14,
+			"AccuracySpread": 50,
 			"CombatRange": 1,
 			"CriticalStrikeBonus": 0,
 			"DamageKnockback": 0,

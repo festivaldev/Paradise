@@ -6,6 +6,13 @@
 			Injects the Paradise client bootstrap into the game client.
 		</Description>
 
+		<FileHashes>
+			<FileHash Name="Assembly-CSharp.dll">
+				<string>9AEF3003C1891EE6AED8C5A7B46B86C7049867D98F6A75A9F26EA6ADC7A08AD1</string>
+				<string>032A22F531958B32CEC027E7B68AD534DAB85297ECB916C831EBC178CE51330F</string>
+			</FileHash>
+		</FileHashes>
+
 		<Assemblies AppliesTo="Assembly-CSharp.dll">
 
 		</Assemblies>

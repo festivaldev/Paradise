@@ -1,39 +1,34 @@
-﻿using Cmune.DataCenter.Common.Entities;
-using HarmonyLib;
+﻿using HarmonyLib;
 using log4net;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
+using System.Threading;
 using UberStrike.Core.Models;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class MenuPageManagerHook : ParadiseHook {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
+	/// <summary>
+	/// <br>• Adds game update logic (checked on game startup and every 60 minutes when entering the main menu) and displays a warning if updates are disabled.</br>
+	/// <br>• Responsible for requesting custom maps from server once on game startup.</br>
+	/// </summary>
+	[HarmonyPatch(typeof(MenuPageManager))]
+	public class MenuPageManagerHook {
+		private static readonly ILog Log = LogManager.GetLogger(nameof(MenuPageManagerHook));
 
-		private static bool HasCleanedUpdates;
-		private static bool HasRequestedMaps;
 		private static bool HasHandledCmdLineArgs;
+		private static bool HasRequestedMaps;
 
-		/// <summary>
-		/// <br>• Adds game update logic (checked on game startup and every 60 minutes when entering the main menu) and displays a warning if updates are disabled.</br>
-		/// <br>• Responsible for requesting custom maps from server once on game startup.</br>
-		/// </summary>
-		public MenuPageManagerHook() { }
-
-		public override void Hook(Harmony harmonyInstance) {
+		static MenuPageManagerHook() {
 			Log.Info($"[{nameof(MenuPageManagerHook)}] hooking {nameof(MenuPageManager)}");
-
-			var orig_MenuPageManager_LoadPage = typeof(MenuPageManager).GetMethod("LoadPage", BindingFlags.Public | BindingFlags.Instance);
-			var prefix_MenuPageManager_LoadPage = typeof(MenuPageManagerHook).GetMethod("LoadPage_Prefix", BindingFlags.Public | BindingFlags.Static);
-
-			harmonyInstance.Patch(orig_MenuPageManager_LoadPage, new HarmonyMethod(prefix_MenuPageManager_LoadPage), null);
 		}
 
-		public static bool LoadPage_Prefix(MenuPageManager __instance, PageType pageType, bool forceReload = false) {
+		[HarmonyPatch("LoadPage"), HarmonyPrefix]
+		public static bool MenuPageManager_LoadPage_Prefix(MenuPageManager __instance, PageType pageType, bool forceReload = false) {
 			if (pageType == PageType.Home) {
+				AutoMonoBehaviour<BackgroundMusicPlayer>.Instance.Stop();
+				AutoMonoBehaviour<BackgroundMusicPlayer>.Instance.Play(GameAudio.HomeSceneBackground);
+
 				if (!HasHandledCmdLineArgs) {
 					HasHandledCmdLineArgs = true;
 
@@ -41,48 +36,84 @@ namespace Paradise.Client {
 
 					if (args.Length > 1) {
 						if (Uri.TryCreate(args[1], UriKind.Absolute, out var uri) && uri.Scheme.Equals("uberstrike")) {
-							switch (uri.Host.ToLower()) {
-								case "connect":
-									var _args = uri.AbsolutePath.Substring(1).Split('/');
-									var gameServers = GetField<Dictionary<int, PhotonServer>>(Singleton<GameServerManager>.Instance, "_gameServers", BindingFlags.NonPublic | BindingFlags.Instance);
+							using (var menuTimer = new Timer(menuTimerState => {
+								switch (uri.Host.ToLower()) {
+									case "connect":
+										var _args = uri.AbsolutePath.Substring(1).Split('/');
+										var gameServers = Traverse.Create(Singleton<GameServerManager>.Instance).Field<Dictionary<int, PhotonServer>>("_gameServers").Value;
 
-									var photonServer = gameServers.Values.ToList().Find(_ => _.ConnectionString.Equals(_args[0], StringComparison.InvariantCulture));
+										var photonServer = gameServers.Values.ToList().Find(_ => _.ConnectionString.Equals(_args[0], StringComparison.InvariantCulture));
 
-									if (photonServer != null) {
-										Singleton<GameServerController>.Instance.SelectedServer = photonServer;
-										Singleton<GameStateController>.Instance.Client.EnterGameLobby(photonServer.ConnectionString);
-									} else {
-										PopupSystem.ShowMessage("Connection Error", "Could not connect to server.");
-										break;
-									}
-
-									System.Threading.Timer timer = null;
-									timer = new System.Threading.Timer(s => {
-										if (Singleton<GameServerController>.Instance.SelectedServer != null) {
-											var gameList = GetField<Dictionary<int, GameRoomData>>(Singleton<GameListManager>.Instance, "_gameList", BindingFlags.NonPublic | BindingFlags.Instance);
-
-											var gameServer = gameList.Values.ToList().Find(_ => _.Number == int.Parse(_args[1]));
-
-											if (gameServer != null) {
-												Singleton<GameStateController>.Instance.JoinNetworkGame(gameServer);
-											} else {
-												PopupSystem.ShowMessage("Connection Error", "Could not connect to specified room.");
-											}
+										if (photonServer != null) {
+											Singleton<GameServerController>.Instance.SelectedServer = photonServer;
+											Singleton<GameStateController>.Instance.Client.EnterGameLobby(photonServer.ConnectionString);
+										} else {
+											PopupSystem.ShowMessage("Connection Error", "Could not connect to server.");
+											break;
 										}
 
-										timer.Dispose();
-									}, null, 200, UInt32.MaxValue - 10);
+										using (var photonConnectTimer = new Timer(photonConnectState => {
+											if (Singleton<GameServerController>.Instance.SelectedServer != null) {
+												var gameList = Traverse.Create(Singleton<GameListManager>.Instance).Field<Dictionary<int, GameRoomData>>("_gameList").Value;
 
-									break;
-								default: break;
-							}
+												var gameServer = gameList.Values.ToList().Find(_ => _.Number == int.Parse(_args[1]));
+
+												if (gameServer != null) {
+													Singleton<GameStateController>.Instance.JoinNetworkGame(gameServer);
+												} else {
+													PopupSystem.ShowMessage("Connection Error", "Could not connect to specified room.");
+												}
+											}
+										}, null, 200, Timeout.Infinite)) { }
+
+										break;
+									case "open":
+										var page = uri.Segments[1];
+
+										switch (page) {
+											case "play":
+												GameData.Instance.MainMenu.Value = MainMenuState.None;
+												__instance.LoadPage(PageType.Play);
+
+												break;
+											case "stats":
+												GameData.Instance.MainMenu.Value = MainMenuState.None;
+												__instance.LoadPage(PageType.Stats);
+
+												break;
+											case "shop":
+												GameData.Instance.MainMenu.Value = MainMenuState.None;
+												__instance.LoadPage(PageType.Shop);
+
+												break;
+											case "inbox":
+												GameData.Instance.MainMenu.Value = MainMenuState.None;
+												__instance.LoadPage(PageType.Inbox);
+
+												break;
+											case "clans":
+												GameData.Instance.MainMenu.Value = MainMenuState.None;
+												__instance.LoadPage(PageType.Clans);
+
+												break;
+											case "training":
+												GameData.Instance.MainMenu.Value = MainMenuState.None;
+												__instance.LoadPage(PageType.Training);
+
+												break;
+											case "chat":
+												GameData.Instance.MainMenu.Value = MainMenuState.None;
+												__instance.LoadPage(PageType.Chat);
+
+												break;
+										}
+
+										break;
+									default: break;
+								}
+							}, null, 0, Timeout.Infinite)) { }
 						}
 					}
-				}
-
-				if (!HasCleanedUpdates) {
-					HasCleanedUpdates = true;
-					UnityRuntime.StartRoutine(ParadiseUpdater.CleanupUpdates());
 				}
 
 				if (!HasRequestedMaps) {
@@ -91,37 +122,12 @@ namespace Paradise.Client {
 				}
 
 				UnityRuntime.StartRoutine(GameObject.Find("Plugin Holder").GetComponent<ParadiseUpdater>().CheckForUpdatesIfNecessary(
-					OnUpdateAvailableCallback,
-					OnUpdateErrorCallback
+					ParadiseUpdater.HandleUpdateAvailable,
+					ParadiseUpdater.HandleUpdateError
 				));
 			}
 
 			return true;
-		}
-
-		private static void OnUpdateAvailableCallback(UpdatePlatformDefinition updateDefinition) {
-			PopupSystem.ShowMessage("Update available", $"A mandatory update is available ({updateDefinition.version ?? "Unknown"}, Build {updateDefinition.build ?? "Unknown"}). You need to install this update in order to play.", PopupSystem.AlertType.OKCancel, delegate {
-				UnityRuntime.StartRoutine(GameObject.Find("Plugin Holder").GetComponent<ParadiseUpdater>().InstallUpdates(
-					OnUpdateCompleteCallback,
-					OnUpdateErrorCallback
-				));
-			}, "Update", delegate {
-				if (PlayerDataManager.AccessLevel < MemberAccessLevel.SeniorQA) {
-					Application.Quit();
-				}
-			}, PlayerDataManager.AccessLevel < MemberAccessLevel.SeniorQA ? "Quit" : "Ignore");
-		}
-
-		private static void OnUpdateCompleteCallback() {
-			PopupSystem.ShowMessage("Update Complete", "Updates have been installed successfully. In order to complete the installation, UberStrike needs to be restarted.", PopupSystem.AlertType.OK, delegate {
-				System.Diagnostics.Process.Start(Path.Combine(Directory.GetCurrentDirectory(), "UberStrike.exe")).WaitForExit(1000);
-				Application.Quit();
-			});
-		}
-
-		private static void OnUpdateErrorCallback(string message) {
-			Log.Error(message);
-			PopupSystem.ShowMessage("Error", message, PopupSystem.AlertType.OK);
 		}
 	}
 }

@@ -484,11 +484,12 @@
     <Compile Include="Loop.cs" />
     <Compile Include="LoopScheduler.cs" />
     <Compile Include="MapId.cs" />
-    <Compile Include="ParadiseServerSettings.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Timer.cs" />
     <Compile Include="UberstrikeInventoryItem.cs" />
     <Compile Include="Util\Ciphers\CryptographyPolicy.cs" />
+    <Compile Include="Util\Ciphers\ICryptographyPolicy.cs" />
+    <Compile Include="Util\Ciphers\NullCryptographyPolicy.cs" />
     <Compile Include="Util\Ciphers\RijndaelCipher.cs" />
   </ItemGroup>
   <ItemGroup />

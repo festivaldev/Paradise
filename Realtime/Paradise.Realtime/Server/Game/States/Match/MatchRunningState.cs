@@ -1,6 +1,7 @@
 ﻿using Paradise.Core.Models;
 using Paradise.Core.Types;
 using System;
+using static Paradise.Realtime.Server.Game.BaseGameRoom;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class MatchRunningState : BaseMatchState {
@@ -17,17 +18,14 @@ namespace Paradise.Realtime.Server.Game {
 			Room.RoundEndTime = Room.RoundStartTime + (Room.MetaData.TimeLimit * 1000);
 
 			foreach (var player in Room.Players) {
-				player.GameEvents.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
+				player.GameEventSender.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
 				player.State.SetState(PlayerStateId.Playing);
 			}
 
 			if (Room.MetaData.GameMode == GameModeType.EliminationMode) {
-				short blueTeamScore = 0;
-				short redTeamScore = 0;
-
-				Room.GetCurrentScore(out _, out blueTeamScore, out redTeamScore);
+				Room.GetCurrentScore(out _, out short blueTeamScore, out short redTeamScore);
 				foreach (var peer in Room.Peers) {
-					peer.GameEvents.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
+					peer.GameEventSender.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
 				}
 			}
 		}
@@ -56,20 +54,20 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void OnPlayerJoined(object sender, PlayerJoinedEventArgs args) {
-			args.Player.PreviousSpawnPoints.Clear();
+			args.Player.Actor.PreviousSpawnPoints.Clear();
 
 			if (Room.MetaData.GameMode == GameModeType.EliminationMode) {
-				args.Player.Actor.Info.PlayerState = PlayerStates.Spectator;
+				args.Player.Actor.ActorInfo.PlayerState = PlayerStates.Spectator;
 			}
 
-			Room.PreparePlayer(args.Player, args.Player.Actor.Info.IsSpectator);
+			Room.PreparePlayer(args.Player, args.Player.Actor.ActorInfo.IsSpectator);
 			Room.SpawnPlayer(args.Player, true);
 
-			args.Player.GameEvents.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
+			args.Player.GameEventSender.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
 			//args.Player.GameEvents.SendWaitingForPlayers();
 
 			foreach (var peer in Room.Peers) {
-				peer.GameEvents.SendPlayerRespawned(args.Player.Actor.Cmid, args.Player.Actor.Movement.Position, args.Player.Actor.Movement.HorizontalRotation);
+				peer.GameEventSender.SendPlayerRespawned(args.Player.Actor.Cmid, args.Player.Actor.Movement.Position, args.Player.Actor.Movement.HorizontalRotation);
 			}
 
 			args.Player.State.SetState(PlayerStateId.Playing);
@@ -79,14 +77,11 @@ namespace Paradise.Realtime.Server.Game {
 
 				Room.GetCurrentScore(out killsRemaining, out _, out _);
 
-				args.Player.GameEvents.SendKillsRemaining(killsRemaining, 0);
+				args.Player.GameEventSender.SendKillsRemaining(killsRemaining, 0);
 			} else {
-				short blueTeamScore = 0;
-				short redTeamScore = 0;
+				Room.GetCurrentScore(out _, out short blueTeamScore, out short redTeamScore);
 
-				Room.GetCurrentScore(out _, out blueTeamScore, out redTeamScore);
-
-				args.Player.GameEvents.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
+				args.Player.GameEventSender.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
 			}
 		}
 
@@ -98,7 +93,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		private void OnPlayerKilled(object sender, PlayerKilledEventArgs args) {
 			foreach (var peer in Room.Peers) {
-				peer.GameEvents.SendPlayerKilled(args.AttackerCmid, args.VictimCmid, (byte)args.ItemClass, args.Damage, (byte)args.Part, args.Direction);
+				peer.GameEventSender.SendPlayerKilled(args.AttackerCmid, args.VictimCmid, (byte)args.ItemClass, args.Damage, (byte)args.Part, args.Direction);
 
 				if (peer.Actor.Cmid.CompareTo(args.VictimCmid) == 0) {
 					peer.State.SetState(PlayerStateId.Killed);
@@ -110,15 +105,12 @@ namespace Paradise.Realtime.Server.Game {
 
 				Room.GetCurrentScore(out killsRemaining, out _, out _);
 				foreach (var peer in Room.Peers) {
-					peer.GameEvents.SendKillsRemaining(killsRemaining, 0);
+					peer.GameEventSender.SendKillsRemaining(killsRemaining, 0);
 				}
 			} else {
-				short blueTeamScore = 0;
-				short redTeamScore = 0;
-
-				Room.GetCurrentScore(out _, out blueTeamScore, out redTeamScore);
+				Room.GetCurrentScore(out _, out short blueTeamScore, out short redTeamScore);
 				foreach (var peer in Room.Peers) {
-					peer.GameEvents.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
+					peer.GameEventSender.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
 				}
 			}
 		}

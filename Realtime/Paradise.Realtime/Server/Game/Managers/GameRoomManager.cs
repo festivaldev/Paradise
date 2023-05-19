@@ -6,11 +6,10 @@ using System.Collections.Generic;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameRoomManager : IDisposable {
-		private static readonly ILog Log = LogManager.GetLogger("GameLog");
+		private static readonly ILog Log = LogManager.GetLogger(nameof(GameRoomManager));
 
 		private static ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
-		private int LastRoomId;
 		private bool IsDisposed;
 
 		private readonly BalancingLoopScheduler LoopScheduler = new BalancingLoopScheduler(64);
@@ -42,13 +41,13 @@ namespace Paradise.Realtime.Server.Game {
 			try {
 				switch (data.GameMode) {
 					case GameModeType.DeathMatch:
-						room = new DeathMatchGameRoom(data, LoopScheduler);
+						room = new DeathMatchRoom(data, LoopScheduler);
 						break;
 					case GameModeType.TeamDeathMatch:
-						room = new TeamDeathMatchGameRoom(data, LoopScheduler);
+						room = new TeamDeathMatchRoom(data, LoopScheduler);
 						break;
 					case GameModeType.EliminationMode:
-						room = new TeamEliminationGameRoom(data, LoopScheduler);
+						room = new TeamEliminationRoom(data, LoopScheduler);
 						break;
 					default:
 						throw new NotSupportedException();
@@ -67,27 +66,32 @@ namespace Paradise.Realtime.Server.Game {
 				}
 
 				room.RoomId = roomId;
-				//room.RoomId = ++LastRoomId;
 				room.Password = password;
 
 				Rooms.Add(room.RoomId, room);
 				UpdatedRooms.Add(room.MetaData);
 
 				Log.Info($"Created {room}({room.RoomId})");
+
+				if (GameServerApplication.Instance.Configuration.DiscordGameAnnouncements) {
+					GameServerApplication.Instance.Socket?.SendSync(TcpSocket.PacketType.RoomOpened, room.MetaData);
+				}
 			}
 
 			return room;
 		}
 
-		public BaseGameRoom GetRoom(int roomId) {
-			var room = default(BaseGameRoom);
-			Rooms.TryGetValue(roomId, out room);
-			return room;
+		public bool TryGetRoom(int roomId, out BaseGameRoom room) {
+			return Rooms.TryGetValue(roomId, out room);
 		}
 
 		public void RemoveRoom(int roomId) {
-			if (Rooms.ContainsKey(roomId)) {
+			if (Rooms.TryGetValue(roomId, out var room)) {
 				Log.Info($"Destroyed {Rooms[roomId]}({Rooms[roomId].RoomId})");
+
+				if (GameServerApplication.Instance.Configuration.DiscordGameAnnouncements) {
+					GameServerApplication.Instance.Socket?.SendSync(TcpSocket.PacketType.RoomClosed, room.MetaData);
+				}
 
 				Rooms[roomId].Dispose();
 				Rooms.Remove(roomId);

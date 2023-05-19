@@ -1,5 +1,6 @@
 ﻿using Paradise.Core.Types;
 using System.Threading.Tasks;
+using static Paradise.Realtime.Server.Game.BaseGameRoom;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class PrepareNextRoundState : BaseMatchState {
@@ -18,9 +19,9 @@ namespace Paradise.Realtime.Server.Game {
 			Room.SpawnPointManager.Reset();
 
 			foreach (var player in Room.Players) {
-				player.PreviousSpawnPoints.Clear();
+				player.Actor.PreviousSpawnPoints.Clear();
 
-				bool wasSpectator = player.Actor.Info.IsSpectator;
+				bool wasSpectator = player.Actor.ActorInfo.IsSpectator;
 
 				Room.PreparePlayer(player);
 				Room.SpawnPlayer(player, wasSpectator);
@@ -32,14 +33,11 @@ namespace Paradise.Realtime.Server.Game {
 
 					Room.GetCurrentScore(out killsRemaining, out _, out _);
 
-					player.GameEvents.SendKillsRemaining(killsRemaining, 0);
+					player.GameEventSender.SendKillsRemaining(killsRemaining, 0);
 				} else {
-					short blueTeamScore = 0;
-					short redTeamScore = 0;
+					Room.GetCurrentScore(out _, out short blueTeamScore, out short redTeamScore);
 
-					Room.GetCurrentScore(out _, out blueTeamScore, out redTeamScore);
-
-					player.GameEvents.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
+					player.GameEventSender.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
 				}
 			}
 
@@ -70,7 +68,7 @@ namespace Paradise.Realtime.Server.Game {
 		#region Handlers
 		private void OnCountdownCounted(int count) {
 			foreach (var peer in Room.Players) {
-				peer.GameEvents.SendMatchStartCountdown((byte)count);
+				peer.GameEventSender.SendMatchStartCountdown((byte)count);
 			}
 		}
 
@@ -79,13 +77,13 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void OnPlayerJoined(object sender, PlayerJoinedEventArgs args) {
-			args.Player.PreviousSpawnPoints.Clear();
+			args.Player.Actor.PreviousSpawnPoints.Clear();
 
 
 			Room.PreparePlayer(args.Player);
 			Room.SpawnPlayer(args.Player, true);
 
-			args.Player.GameEvents.SendWaitingForPlayers();
+			args.Player.GameEventSender.SendWaitingForPlayers();
 			args.Player.State.SetState(PlayerStateId.PrepareForMatch);
 		}
 

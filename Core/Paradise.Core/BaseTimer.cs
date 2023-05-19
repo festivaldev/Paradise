@@ -1,66 +1,62 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paradise {
-    public abstract class BaseTimer : ITimer {
-        private float _interval;
+	public abstract class BaseTimer : ITimer {
+		private float _interval;
 
-        protected ILoop Loop { get; }
+		protected ILoop Loop { get; }
 
-        public bool IsEnabled { get; set; }
-        public float Interval {
-            get => _interval;
-            set {
-                ThrowInterval(value, nameof(value));
-                Reset();
+		public bool IsEnabled { get; set; }
+		public float Interval {
+			get => _interval;
+			set {
+				ThrowInterval(value, nameof(value));
+				Reset();
 
-                _interval = value;
-            }
-        }
+				_interval = value;
+			}
+		}
 
-        public event Action Elapsed;
+		public event Action Elapsed;
 
-        public BaseTimer(ILoop loop, TimeSpan interval)
-            : this(loop, (float)interval.TotalMilliseconds) {
-            /* Space. */
-        }
+		public BaseTimer(ILoop loop, TimeSpan interval)
+			: this(loop, (float)interval.TotalMilliseconds) {
+			/* Space. */
+		}
 
-        protected BaseTimer(ILoop loop, float interval) {
-            ThrowInterval(interval, nameof(interval));
+		protected BaseTimer(ILoop loop, float interval) {
+			ThrowInterval(interval, nameof(interval));
 
-            Loop = loop ?? throw new ArgumentNullException(nameof(loop));
-            _interval = interval;
+			Loop = loop ?? throw new ArgumentNullException(nameof(loop));
+			_interval = interval;
 
-            Reset();
-        }
+			Reset();
+		}
 
-        public void Start()
-            => IsEnabled = true;
+		public void Start()
+			=> IsEnabled = true;
 
-        public void Stop()
-            => IsEnabled = false;
+		public void Stop()
+			=> IsEnabled = false;
 
-        public void Restart() {
-            Reset();
-            Start();
-        }
+		public void Restart() {
+			Reset();
+			Start();
+		}
 
-        public abstract void Reset();
+		public abstract void Reset();
 
-        public abstract bool Tick();
+		public abstract bool Tick();
 
-        protected void OnElapsed() {
-            Elapsed?.Invoke();
-        }
+		protected void OnElapsed() {
+			Elapsed?.Invoke();
+		}
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        private static void ThrowInterval(float value, string paramName) {
-            if (value <= 0)
-                throw new ArgumentOutOfRangeException(paramName, "Interval cannot be less or equal to 0.");
-        }
-    }
+		[MethodImpl(MethodImplOptions.NoInlining)]
+		private static void ThrowInterval(float value, string paramName) {
+			if (value <= 0)
+				throw new ArgumentOutOfRangeException(paramName, "Interval cannot be less or equal to 0.");
+		}
+	}
 }

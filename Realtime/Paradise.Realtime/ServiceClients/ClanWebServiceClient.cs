@@ -7,22 +7,28 @@ using System.IO;
 
 namespace Paradise.Realtime {
 	class ClanWebServiceClient : BaseWebServiceClient<IClanWebServiceContract> {
-		public static readonly ClanWebServiceClient Instance = new ClanWebServiceClient(
-			endpointUrl: BaseRealtimeApplication.Instance.Configuration.WebServiceBaseUrl,
-			webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
-			webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
-		);
+		public static readonly ClanWebServiceClient Instance;
 
-		public ClanWebServiceClient(string endpointUrl, string webServicePrefix, string webServiceSuffix) : base(endpointUrl, $"{webServicePrefix}ClanWebService{webServiceSuffix}") { }
+		static ClanWebServiceClient() {
+			Instance = new ClanWebServiceClient(
+				masterUrl: BaseRealtimeApplication.Instance.Configuration.MasterServerUrl,
+				port: BaseRealtimeApplication.Instance.Configuration.WebServicePort,
+				serviceEndpoint: BaseRealtimeApplication.Instance.Configuration.WebServiceEndpoint,
+				webServicePrefix: BaseRealtimeApplication.Instance.Configuration.WebServicePrefix,
+				webServiceSuffix: BaseRealtimeApplication.Instance.Configuration.WebServiceSuffix
+			);
+		}
+
+		public ClanWebServiceClient(string masterUrl, int port, string serviceEndpoint, string webServicePrefix, string webServiceSuffix) : base(masterUrl, port, serviceEndpoint, $"{webServicePrefix}ClanWebService{webServiceSuffix}") { }
 
 		public ClanRequestAcceptView AcceptClanInvitation(int clanInvitationId, string authToken) {
 			using (var bytes = new MemoryStream()) {
 				Int32Proxy.Serialize(bytes, clanInvitationId);
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.AcceptClanInvitation(bytes.ToArray());
+				var result = Service.AcceptClanInvitation(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ClanRequestAcceptViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -33,9 +39,9 @@ namespace Paradise.Realtime {
 				Int32Proxy.Serialize(bytes, groupInvitationId);
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.CancelInvitation(bytes.ToArray());
+				var result = Service.CancelInvitation(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}
@@ -45,9 +51,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.CanOwnAClan(bytes.ToArray());
+				var result = Service.CanOwnAClan(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}
@@ -57,9 +63,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				GroupCreationViewProxy.Serialize(bytes, createClanData);
 
-				var result = Service.CreateClan(bytes.ToArray());
+				var result = Service.CreateClan(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ClanCreationReturnViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -70,9 +76,9 @@ namespace Paradise.Realtime {
 				Int32Proxy.Serialize(bytes, clanInvitationId);
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.DeclineClanInvitation(bytes.ToArray());
+				var result = Service.DeclineClanInvitation(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ClanRequestDeclineViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -83,9 +89,9 @@ namespace Paradise.Realtime {
 				Int32Proxy.Serialize(bytes, groupId);
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.DisbandGroup(bytes.ToArray());
+				var result = Service.DisbandGroup(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}
@@ -95,9 +101,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.GetAllGroupInvitations(bytes.ToArray());
+				var result = Service.GetAllGroupInvitations(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<GroupInvitationView>.Deserialize(inputStream, GroupInvitationViewProxy.Deserialize);
 				}
 			}
@@ -107,9 +113,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.GetMyClanId(bytes.ToArray());
+				var result = Service.GetMyClanId(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}
@@ -120,9 +126,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, authToken);
 				Int32Proxy.Serialize(bytes, groupId);
 
-				var result = Service.GetOwnClan(bytes.ToArray());
+				var result = Service.GetOwnClan(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ClanViewProxy.Deserialize(inputStream);
 				}
 			}
@@ -133,9 +139,9 @@ namespace Paradise.Realtime {
 				Int32Proxy.Serialize(bytes, groupId);
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.GetPendingGroupInvitations(bytes.ToArray());
+				var result = Service.GetPendingGroupInvitations(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return ListProxy<GroupInvitationView>.Deserialize(inputStream, GroupInvitationViewProxy.Deserialize);
 				}
 			}
@@ -148,9 +154,9 @@ namespace Paradise.Realtime {
 				Int32Proxy.Serialize(bytes, inviteeCmid);
 				StringProxy.Serialize(bytes, message);
 
-				var result = Service.InviteMemberToJoinAGroup(bytes.ToArray());
+				var result = Service.InviteMemberToJoinAGroup(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}
@@ -162,9 +168,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, authToken);
 				Int32Proxy.Serialize(bytes, cmidToKick);
 
-				var result = Service.KickMemberFromClan(bytes.ToArray());
+				var result = Service.KickMemberFromClan(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}
@@ -175,9 +181,9 @@ namespace Paradise.Realtime {
 				Int32Proxy.Serialize(bytes, groupId);
 				StringProxy.Serialize(bytes, authToken);
 
-				var result = Service.LeaveAClan(bytes.ToArray());
+				var result = Service.LeaveAClan(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}
@@ -189,9 +195,9 @@ namespace Paradise.Realtime {
 				StringProxy.Serialize(bytes, authToken);
 				Int32Proxy.Serialize(bytes, newLeaderCmid);
 
-				var result = Service.TransferOwnership(bytes.ToArray());
+				var result = Service.TransferOwnership(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}
@@ -201,9 +207,9 @@ namespace Paradise.Realtime {
 			using (var bytes = new MemoryStream()) {
 				MemberPositionUpdateViewProxy.Serialize(bytes, updateMemberPositionData);
 
-				var result = Service.UpdateMemberPosition(bytes.ToArray());
+				var result = Service.UpdateMemberPosition(Encrypt(bytes.ToArray()));
 
-				using (var inputStream = new MemoryStream(result)) {
+				using (var inputStream = new MemoryStream(Decrypt(result))) {
 					return Int32Proxy.Deserialize(inputStream);
 				}
 			}

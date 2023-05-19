@@ -1,18 +1,12 @@
-﻿using System;
+﻿using Paradise.DataCenter.Common.Entities;
 using System.IO;
-using Paradise.DataCenter.Common.Entities;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class PlayerWeaponStatisticsViewProxy
-	{
-		public static void Serialize(Stream stream, PlayerWeaponStatisticsView instance)
-		{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class PlayerWeaponStatisticsViewProxy {
+		public static void Serialize(Stream stream, PlayerWeaponStatisticsView instance) {
 			int num = 0;
-			if (instance != null)
-			{
-				using (MemoryStream memoryStream = new MemoryStream())
-				{
+			if (instance != null) {
+				using (MemoryStream memoryStream = new MemoryStream()) {
 					Int32Proxy.Serialize(memoryStream, instance.CannonTotalDamageDone);
 					Int32Proxy.Serialize(memoryStream, instance.CannonTotalShotsFired);
 					Int32Proxy.Serialize(memoryStream, instance.CannonTotalShotsHit);
@@ -48,19 +42,15 @@ namespace Paradise.Core.Serialization.Legacy
 					Int32Proxy.Serialize(stream, ~num);
 					memoryStream.WriteTo(stream);
 				}
-			}
-			else
-			{
+			} else {
 				Int32Proxy.Serialize(stream, 0);
 			}
 		}
 
-		public static PlayerWeaponStatisticsView Deserialize(Stream bytes)
-		{
+		public static PlayerWeaponStatisticsView Deserialize(Stream bytes) {
 			int num = Int32Proxy.Deserialize(bytes);
 			PlayerWeaponStatisticsView playerWeaponStatisticsView = null;
-			if (num != 0)
-			{
+			if (num != 0) {
 				playerWeaponStatisticsView = new PlayerWeaponStatisticsView();
 				playerWeaponStatisticsView.CannonTotalDamageDone = Int32Proxy.Deserialize(bytes);
 				playerWeaponStatisticsView.CannonTotalShotsFired = Int32Proxy.Deserialize(bytes);

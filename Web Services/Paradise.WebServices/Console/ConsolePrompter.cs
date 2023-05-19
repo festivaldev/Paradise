@@ -53,8 +53,9 @@ namespace Paradise.WebServices {
 			int inputPosition = 0;
 			int inputHistoryPosition = InputHistory.Count;
 
-			var key = new ConsoleKeyInfo();
 			Console.Write(promptText);
+
+			ConsoleKeyInfo key;
 
 			do {
 				key = Console.ReadKey(true);

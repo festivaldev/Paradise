@@ -1,18 +1,12 @@
-﻿using System;
+﻿using Paradise.DataCenter.Common.Entities;
 using System.IO;
-using Paradise.DataCenter.Common.Entities;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class PlayerPersonalRecordStatisticsViewProxy
-	{
-		public static void Serialize(Stream stream, PlayerPersonalRecordStatisticsView instance)
-		{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class PlayerPersonalRecordStatisticsViewProxy {
+		public static void Serialize(Stream stream, PlayerPersonalRecordStatisticsView instance) {
 			int num = 0;
-			if (instance != null)
-			{
-				using (MemoryStream memoryStream = new MemoryStream())
-				{
+			if (instance != null) {
+				using (MemoryStream memoryStream = new MemoryStream()) {
 					Int32Proxy.Serialize(memoryStream, instance.MostArmorPickedUp);
 					Int32Proxy.Serialize(memoryStream, instance.MostCannonSplats);
 					Int32Proxy.Serialize(memoryStream, instance.MostConsecutiveSnipes);
@@ -33,19 +27,15 @@ namespace Paradise.Core.Serialization.Legacy
 					Int32Proxy.Serialize(stream, ~num);
 					memoryStream.WriteTo(stream);
 				}
-			}
-			else
-			{
+			} else {
 				Int32Proxy.Serialize(stream, 0);
 			}
 		}
 
-		public static PlayerPersonalRecordStatisticsView Deserialize(Stream bytes)
-		{
+		public static PlayerPersonalRecordStatisticsView Deserialize(Stream bytes) {
 			int num = Int32Proxy.Deserialize(bytes);
 			PlayerPersonalRecordStatisticsView playerPersonalRecordStatisticsView = null;
-			if (num != 0)
-			{
+			if (num != 0) {
 				playerPersonalRecordStatisticsView = new PlayerPersonalRecordStatisticsView();
 				playerPersonalRecordStatisticsView.MostArmorPickedUp = Int32Proxy.Deserialize(bytes);
 				playerPersonalRecordStatisticsView.MostCannonSplats = Int32Proxy.Deserialize(bytes);

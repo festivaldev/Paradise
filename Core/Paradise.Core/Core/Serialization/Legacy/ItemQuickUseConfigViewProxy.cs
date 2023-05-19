@@ -1,19 +1,13 @@
-﻿using System;
-using System.IO;
-using Paradise.Core.Types;
+﻿using Paradise.Core.Types;
 using Paradise.DataCenter.Common.Entities;
+using System.IO;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class ItemQuickUseConfigViewProxy
-	{
-		public static void Serialize(Stream stream, ItemQuickUseConfigView instance)
-		{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class ItemQuickUseConfigViewProxy {
+		public static void Serialize(Stream stream, ItemQuickUseConfigView instance) {
 			int num = 0;
-			if (instance != null)
-			{
-				using (MemoryStream memoryStream = new MemoryStream())
-				{
+			if (instance != null) {
+				using (MemoryStream memoryStream = new MemoryStream()) {
 					EnumProxy<QuickItemLogic>.Serialize(memoryStream, instance.BehaviourType);
 					Int32Proxy.Serialize(memoryStream, instance.CoolDownTime);
 					Int32Proxy.Serialize(memoryStream, instance.ItemId);
@@ -25,19 +19,15 @@ namespace Paradise.Core.Serialization.Legacy
 					Int32Proxy.Serialize(stream, ~num);
 					memoryStream.WriteTo(stream);
 				}
-			}
-			else
-			{
+			} else {
 				Int32Proxy.Serialize(stream, 0);
 			}
 		}
 
-		public static ItemQuickUseConfigView Deserialize(Stream bytes)
-		{
+		public static ItemQuickUseConfigView Deserialize(Stream bytes) {
 			int num = Int32Proxy.Deserialize(bytes);
 			ItemQuickUseConfigView itemQuickUseConfigView = null;
-			if (num != 0)
-			{
+			if (num != 0) {
 				itemQuickUseConfigView = new ItemQuickUseConfigView();
 				itemQuickUseConfigView.BehaviourType = EnumProxy<QuickItemLogic>.Deserialize(bytes);
 				itemQuickUseConfigView.CoolDownTime = Int32Proxy.Deserialize(bytes);

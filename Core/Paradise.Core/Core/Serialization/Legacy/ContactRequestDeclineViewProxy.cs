@@ -1,11 +1,5 @@
-﻿using Paradise.DataCenter.Common.Entities;
-using System;
-using System.IO;
-
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class ContactRequestDeclineViewProxy
-	{
+﻿namespace Paradise.Core.Serialization.Legacy {
+	public static class ContactRequestDeclineViewProxy {
 		//public static void Serialize(Stream stream, ContactRequestDeclineView instance)
 		//{
 		//	int num = 0;

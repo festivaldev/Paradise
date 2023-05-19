@@ -1,6 +1,8 @@
-﻿using System;
+﻿using Paradise.DataCenter.Common.Entities;
+using System;
+using System.Threading.Tasks;
 
-namespace Paradise.WebServices {
+namespace Paradise.WebServices.Services {
 	internal class XpCommand : ParadiseCommand {
 		public static new string Command => "xp";
 		public static new string[] Aliases => new string[] { };
@@ -14,9 +16,12 @@ namespace Paradise.WebServices {
 			"  take <cmid> <amount>\t\tRemoves the specified amount of experience to decrease a player's level."
 		};
 
+		public override MemberAccessLevel MinimumAccessLevel => MemberAccessLevel.Moderator;
+
 		public XpCommand(Guid guid) : base(guid) { }
 
-		public override void Run(string[] arguments) {
+#pragma warning disable CS1998
+		public override async Task Run(string[] arguments) {
 			if (arguments.Length < 3) {
 				PrintUsageText();
 				return;
@@ -24,8 +29,17 @@ namespace Paradise.WebServices {
 
 			switch (arguments[0]) {
 				case "give": {
-					if (!int.TryParse(arguments[1], out int cmid)) {
-						WriteLine("Invalid parameter: cmid");
+					var searchString = arguments[0];
+
+					if (searchString.Length < 3) {
+						WriteLine("Search pattern must contain at least 3 characters.");
+						return;
+					}
+
+					var publicProfile = DatabaseClient.GetProfile(searchString);
+
+					if (publicProfile == null) {
+						WriteLine($"Failed to increase player experience: Could not find player matching {searchString}.");
 						return;
 					}
 
@@ -34,13 +48,8 @@ namespace Paradise.WebServices {
 						return;
 					}
 
-					if (!(DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == cmid) is var publicProfile) || publicProfile == null) {
-						WriteLine("Could not increase player experience: Profile not found.");
-						return;
-					}
-
-					if (!(DatabaseManager.PlayerStatistics.FindOne(_ => _.Cmid == publicProfile.Cmid) is var playerStatistics) || playerStatistics == null) {
-						WriteLine("Could not increase player experience: Player statistics not found.");
+					if (!(DatabaseClient.PlayerStatistics.FindOne(_ => _.Cmid == publicProfile.Cmid) is var playerStatistics) || playerStatistics == null) {
+						WriteLine("Failed to increase player experience: Player statistics not found.");
 						return;
 					}
 
@@ -48,16 +57,25 @@ namespace Paradise.WebServices {
 					playerStatistics.Xp += xpAmount;
 					playerStatistics.Level = XpPointsUtil.GetLevelForXp(playerStatistics.Xp);
 
-					DatabaseManager.PlayerStatistics.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
-					DatabaseManager.PlayerStatistics.Insert(playerStatistics);
+					DatabaseClient.PlayerStatistics.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
+					DatabaseClient.PlayerStatistics.Insert(playerStatistics);
 
 					WriteLine($"Successfully added {xpAmount} XP to player (total: {playerStatistics.Xp}, level: {playerStatistics.Level})");
 
 					break;
 				}
 				case "take": {
-					if (!int.TryParse(arguments[1], out int cmid)) {
-						WriteLine("Invalid parameter: cmid");
+					var searchString = arguments[0];
+
+					if (searchString.Length < 3) {
+						WriteLine("Search pattern must contain at least 3 characters.");
+						return;
+					}
+
+					var publicProfile = DatabaseClient.GetProfile(searchString);
+
+					if (publicProfile == null) {
+						WriteLine($"Failed to decrease player experience: Could not find player matching {searchString}.");
 						return;
 					}
 
@@ -66,13 +84,8 @@ namespace Paradise.WebServices {
 						return;
 					}
 
-					if (!(DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == cmid) is var publicProfile) || publicProfile == null) {
-						WriteLine("Could not decrease player experience: Profile not found.");
-						return;
-					}
-
-					if (!(DatabaseManager.PlayerStatistics.FindOne(_ => _.Cmid == publicProfile.Cmid) is var playerStatistics) || publicProfile == null) {
-						WriteLine("Could not decrease player experience: Player statistics not found.");
+					if (!(DatabaseClient.PlayerStatistics.FindOne(_ => _.Cmid == publicProfile.Cmid) is var playerStatistics) || publicProfile == null) {
+						WriteLine("Failed to decrease player experience: Player statistics not found.");
 						return;
 					}
 
@@ -80,8 +93,8 @@ namespace Paradise.WebServices {
 					playerStatistics.Xp -= xpAmount;
 					playerStatistics.Level = XpPointsUtil.GetLevelForXp(playerStatistics.Xp);
 
-					DatabaseManager.PlayerStatistics.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
-					DatabaseManager.PlayerStatistics.Insert(playerStatistics);
+					DatabaseClient.PlayerStatistics.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
+					DatabaseClient.PlayerStatistics.Insert(playerStatistics);
 
 					WriteLine($"Successfully removed {xpAmount} XP from player (total: {playerStatistics.Xp}, level: {playerStatistics.Level})");
 
@@ -92,5 +105,6 @@ namespace Paradise.WebServices {
 					break;
 			}
 		}
+#pragma warning restore CS1998
 	}
 }

@@ -25,7 +25,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\build\server\Paradise.WebServices\Plugins\</OutputPath>
+    <OutputPath>..\..\build\server\Paradise.WebServices\Plugins\WebServices.plugin\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -33,19 +33,22 @@
       <!-- Prevent default XML and PDB files copied to output in RELEASE.
 			 Only *.allowedextension files will be included, which doesn't exist in my case.
 		-->
-		.allowedextension
-	  </AllowedReferenceRelatedFileExtensions>
+	  .allowedextension
+	</AllowedReferenceRelatedFileExtensions>
+    <DebugSymbols>false</DebugSymbols>
+    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=C:\buildroot\$(MSBuildProjectName)</PathMap>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="LiteDB, Version=5.0.15.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\LiteDB.5.0.15\lib\net45\LiteDB.dll</HintPath>
+    <Reference Include="LiteDB, Version=5.0.17.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\LiteDB.5.0.17\lib\net45\LiteDB.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\build\client\Plugins\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
@@ -61,12 +64,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\BanCommand.cs" />
-    <Compile Include="Commands\CurrencyCommands.cs" />
-    <Compile Include="Commands\DatabaseCommand.cs" />
+    <Compile Include="Commands\BanCommands.cs" />
     <Compile Include="Commands\InventoryCommand.cs" />
     <Compile Include="Commands\OpCommands.cs" />
-    <Compile Include="Commands\ServiceCommand.cs" />
+    <Compile Include="Commands\PlayersCommand.cs" />
+    <Compile Include="Commands\RoomsCommand.cs" />
+    <Compile Include="Commands\WalletCommand.cs" />
     <Compile Include="Commands\XpCommand.cs" />
     <Compile Include="Contracts\IApplicationWebServiceContract.cs" />
     <Compile Include="Contracts\IAuthenticationWebServiceContract.cs" />
@@ -76,10 +79,11 @@
     <Compile Include="Contracts\IRelationshipWebServiceContract.cs" />
     <Compile Include="Contracts\IShopWebServiceContract.cs" />
     <Compile Include="Contracts\IUserWebServiceContract.cs" />
-    <Compile Include="Contracts\IWebServiceContractBase.cs" />
-    <Compile Include="Database\DatabaseManager.cs" />
+    <Compile Include="Database\DatabaseClient.cs" />
+    <Compile Include="Database\GameSession.cs" />
     <Compile Include="Database\ModerationAction.cs" />
     <Compile Include="Database\SteamMember.cs" />
+    <Compile Include="GameSessionManager.cs" />
     <Compile Include="Plugin.cs" />
     <Compile Include="ProfanityFilter\AllowList.cs" />
     <Compile Include="ProfanityFilter\Interfaces\IAllowList.cs" />
@@ -114,27 +118,27 @@
     <None Include="packages.config" />
     <None Include="ServiceData\ApplicationWebService\ApplicationConfiguration.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>..\ServiceData\ApplicationWebService\ApplicationConfiguration.json</TargetPath>
+      <TargetPath>..\..\ServiceData\ApplicationWebService\2.0\ApplicationConfiguration.json</TargetPath>
     </None>
     <None Include="ServiceData\ApplicationWebService\CustomMaps.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>..\ServiceData\ApplicationWebService\CustomMaps.json</TargetPath>
+      <TargetPath>..\..\ServiceData\ApplicationWebService\2.0\CustomMaps.json</TargetPath>
     </None>
     <None Include="ServiceData\ApplicationWebService\Maps.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>..\ServiceData\ApplicationWebService\Maps.json</TargetPath>
+      <TargetPath>..\..\ServiceData\ApplicationWebService\2.0\Maps.json</TargetPath>
     </None>
     <None Include="ServiceData\ApplicationWebService\PhotonServers.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>..\ServiceData\ApplicationWebService\PhotonServers.json</TargetPath>
+      <TargetPath>..\..\ServiceData\ApplicationWebService\2.0\PhotonServers.json</TargetPath>
     </None>
     <None Include="ServiceData\ShopWebService\Bundles.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>..\ServiceData\ShopWebService\Bundles.json</TargetPath>
+      <TargetPath>..\..\ServiceData\ShopWebService\2.0\Bundles.json</TargetPath>
     </None>
     <None Include="ServiceData\ShopWebService\Shop.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <TargetPath>..\ServiceData\ShopWebService\Shop.json</TargetPath>
+      <TargetPath>..\..\ServiceData\ShopWebService\2.0\Shop.json</TargetPath>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

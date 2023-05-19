@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using log4net;
+using Newtonsoft.Json;
 using Paradise.Core.Models.Views;
 using Paradise.Core.Serialization;
 using Paradise.Core.Types;
@@ -10,9 +11,12 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Paradise.WebServices.Services {
 	public class ShopWebService : BaseWebService, IShopWebServiceContract {
+		protected static readonly new ILog Log = LogManager.GetLogger(nameof(ShopWebService));
+
 		public override string ServiceName => "ShopWebService";
 		public override string ServiceVersion => ApiVersion.Current;
 		protected override Type ServiceInterface => typeof(IShopWebServiceContract);
@@ -20,25 +24,44 @@ namespace Paradise.WebServices.Services {
 		private UberStrikeItemShopClientView shopData;
 		private List<BundleView> bundleData;
 
-		public ShopWebService(BasicHttpBinding binding, string serviceBaseUrl, string webServicePrefix, string webServiceSuffix) : base(binding, serviceBaseUrl, webServicePrefix, webServiceSuffix) { }
-		public ShopWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
-
 		private FileSystemWatcher watcher;
+		private static List<string> watchedFiles = new List<string> {
+			"Shop.json",
+			"Bundles.json",
+		};
+
+		public ShopWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() {
 			try {
-				shopData = JsonConvert.DeserializeObject<UberStrikeItemShopClientView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ShopWebService", "Shop.json")));
-				bundleData = JsonConvert.DeserializeObject<List<BundleView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ShopWebService", "Bundles.json")));
+				shopData = JsonConvert.DeserializeObject<UberStrikeItemShopClientView>(File.ReadAllText(Path.Combine(ServiceDataPath, "Shop.json")));
+				bundleData = JsonConvert.DeserializeObject<List<BundleView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "Bundles.json")));
 
-				watcher = new FileSystemWatcher(Path.Combine(CurrentDirectory, "ServiceData", "ShopWebService"));
-				watcher.NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite;
-				watcher.Changed += delegate (object sender, FileSystemEventArgs e) {
-					shopData = JsonConvert.DeserializeObject<UberStrikeItemShopClientView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ShopWebService", "Shop.json")));
-					bundleData = JsonConvert.DeserializeObject<List<BundleView>>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ShopWebService", "Bundles.json")));
+				watcher = new FileSystemWatcher(ServiceDataPath) {
+					NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite
 				};
+
+				watcher.Changed += (object sender, FileSystemEventArgs e) => {
+					try {
+						if (!watchedFiles.Contains(e.Name)) return;
+
+						Task.Run(async () => {
+							await Task.Delay(500);
+							Log.Info("Reloading Shop service data due to file changes.");
+
+							shopData = JsonConvert.DeserializeObject<UberStrikeItemShopClientView>(File.ReadAllText(Path.Combine(ServiceDataPath, "Shop.json")));
+							bundleData = JsonConvert.DeserializeObject<List<BundleView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "Bundles.json")));
+						});
+					} catch (Exception ex) {
+						Log.Error(ex);
+					}
+				};
+
 				watcher.EnableRaisingEvents = true;
 			} catch (Exception e) {
 				Log.Error($"Failed to load {ServiceName} data: {e.Message}");
+				Log.Debug(e);
+
 				ServiceError?.Invoke(this, new ServiceEventArgs {
 					ServiceName = ServiceName,
 					ServiceVersion = ServiceVersion,
@@ -52,6 +75,7 @@ namespace Paradise.WebServices.Services {
 			watcher.Dispose();
 		}
 
+		#region IShopWebServiceContract
 		/// <summary>
 		/// Attempts to buy a credits bundle
 		/// </summary>
@@ -60,18 +84,22 @@ namespace Paradise.WebServices.Services {
 		/// </remarks>
 		public byte[] BuyBundle(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var authToken = StringProxy.Deserialize(bytes);
 					var bundleId = Int32Proxy.Deserialize(bytes);
 					var channel = EnumProxy<ChannelType>.Deserialize(bytes);
 					var hashedReceipt = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(authToken, bundleId, channel, hashedReceipt);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authToken, bundleId, channel, hashedReceipt);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -89,62 +117,71 @@ namespace Paradise.WebServices.Services {
 		/// </remarks>
 		public byte[] BuyBundleSteam(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var bundleId = Int32Proxy.Deserialize(bytes);
 					var steamId = StringProxy.Deserialize(bytes);
 					var authToken = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(bundleId, steamId, authToken);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), bundleId, steamId, authToken);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMember.FromAuthToken(authToken);
-						var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
+						if (GameSessionManager.Instance.TryGetValue(authToken, out var session)) {
+							var steamMember = session.SteamMember;
 
-						if (steamMember != null && publicProfile != null) {
-							var bundle = bundleData.Find(_ => _.Id == bundleId);
+							if (steamMember != null) {
+								var publicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
 
-							if (bundle != null) {
-								var memberWallet = DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
+								if (steamMember != null && publicProfile != null) {
+									var bundle = bundleData.Find(_ => _.Id == bundleId);
 
-								if (memberWallet != null) {
-									var transactionKey = new byte[32];
-									new Random((int)DateTime.UtcNow.Ticks).NextBytes(transactionKey);
+									if (bundle != null) {
+										var memberWallet = DatabaseClient.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
 
-									var builder = new StringBuilder(64);
-									for (int i = 0; i < transactionKey.Length; i++) {
-										builder.Append(transactionKey[i].ToString("x2"));
+										if (memberWallet != null) {
+											var transactionKey = new byte[32];
+											new Random((int)DateTime.UtcNow.Ticks).NextBytes(transactionKey);
+
+											var builder = new StringBuilder(64);
+											for (int i = 0; i < transactionKey.Length; i++) {
+												builder.Append(transactionKey[i].ToString("x2"));
+											}
+
+											DatabaseClient.CurrencyDeposits.Insert(new CurrencyDepositView {
+												BundleId = bundle.Id,
+												BundleName = bundle.Name,
+												ChannelId = ChannelType.Steam,
+												Cmid = publicProfile.Cmid,
+												Credits = bundle.Credits,
+												CreditsDepositId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue),
+												CurrencyLabel = "$",
+												DepositDate = DateTime.UtcNow,
+												PaymentProviderId = PaymentProviderType.Cmune,
+												Points = bundle.Points,
+												TransactionKey = builder.ToString(),
+												UsdAmount = bundle.USDPrice
+											});
+
+											memberWallet.Credits += bundle.Credits;
+											memberWallet.Points += bundle.Points;
+
+											DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+											DatabaseClient.MemberWallets.Insert(memberWallet);
+
+											BooleanProxy.Serialize(outputStream, true);
+											return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
+										}
 									}
-
-									DatabaseManager.CurrencyDeposits.Insert(new CurrencyDepositView {
-										BundleId = bundle.Id,
-										BundleName = bundle.Name,
-										ChannelId = ChannelType.Steam,
-										Cmid = publicProfile.Cmid,
-										Credits = bundle.Credits,
-										CreditsDepositId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue),
-										CurrencyLabel = "$",
-										DepositDate = DateTime.UtcNow,
-										PaymentProviderId = PaymentProviderType.Cmune,
-										Points = bundle.Points,
-										TransactionKey = builder.ToString(),
-										UsdAmount = bundle.USDPrice
-									});
-
-									memberWallet.Credits += bundle.Credits;
-									memberWallet.Points += bundle.Points;
-
-									DatabaseManager.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
-									DatabaseManager.MemberWallets.Insert(memberWallet);
-
-									BooleanProxy.Serialize(outputStream, true);
-									return outputStream.ToArray();
 								}
 							}
 						}
+
 						BooleanProxy.Serialize(outputStream, false);
 
-
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -159,7 +196,9 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] BuyItem(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var itemId = Int32Proxy.Deserialize(bytes);
 					var authToken = StringProxy.Deserialize(bytes);
 					var currencyType = EnumProxy<UberStrikeCurrencyType>.Deserialize(bytes);
@@ -168,109 +207,134 @@ namespace Paradise.WebServices.Services {
 					var marketLocation = EnumProxy<BuyingLocationType>.Deserialize(bytes);
 					var recommendationType = EnumProxy<BuyingRecommendationType>.Deserialize(bytes);
 
-					DebugEndpoint(itemId, authToken, currencyType, durationType, itemType, marketLocation, recommendationType);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), itemId, authToken, currencyType, durationType, itemType, marketLocation, recommendationType);
 
 					using (var outputStream = new MemoryStream()) {
-						var steamMember = SteamMember.FromAuthToken(authToken);
-						var publicProfile = DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
-						var playerStatistics = DatabaseManager.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
+						if (GameSessionManager.Instance.TryGetValue(authToken, out var session)) {
+							var steamMember = session.SteamMember;
 
-						if (steamMember == null || publicProfile == null) {
-							Int32Proxy.Serialize(outputStream, (int)BuyItemResult.InvalidMember);
-							return outputStream.ToArray();
-						}
+							if (steamMember != null) {
+								var publicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
+								var playerStatistics = DatabaseClient.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
 
-						var memberWallet = DatabaseManager.MemberWallets.FindOne(_ => _.Cmid == publicProfile.Cmid);
-						BaseUberStrikeItemView item = null;
-
-						switch (itemType) {
-							case UberstrikeItemType.Weapon:
-								item = shopData.WeaponItems.Find(_ => _.ID == itemId);
-								break;
-							case UberstrikeItemType.Gear:
-								item = shopData.GearItems.Find(_ => _.ID == itemId);
-								break;
-							case UberstrikeItemType.QuickUse:
-								item = shopData.QuickItems.Find(_ => _.ID == itemId);
-								break;
-							case UberstrikeItemType.Functional:
-								item = shopData.FunctionalItems.Find(_ => _.ID == itemId);
-								break;
-							default: break;
-						}
-
-						if (item == null) {
-							Int32Proxy.Serialize(outputStream, (int)BuyItemResult.ItemNotFound);
-							return outputStream.ToArray();
-						}
-
-						if (!item.IsForSale) {
-							Int32Proxy.Serialize(outputStream, (int)BuyItemResult.IsNotForSale);
-							return outputStream.ToArray();
-						}
-
-						if (DatabaseManager.PlayerInventoryItems.FindOne(_ => _.Cmid == steamMember.Cmid && _.ItemId == itemId && (_.ExpirationDate > DateTime.UtcNow || _.ExpirationDate == null)) != null) {
-							Int32Proxy.Serialize(outputStream, (int)BuyItemResult.AlreadyInInventory);
-							return outputStream.ToArray();
-						}
-
-						if (XpPointsUtil.GetLevelForXp(playerStatistics.Xp) < item.LevelLock) {
-							Int32Proxy.Serialize(outputStream, (int)BuyItemResult.InvalidLevel);
-							return outputStream.ToArray();
-						}
-
-						if (currencyType == UberStrikeCurrencyType.Credits) {
-							var price = item.Prices.ToList().Find(_ => _.Currency == UberStrikeCurrencyType.Credits);
-							if (price != null) {
-								if (memberWallet.Credits < price.Price) {
-									Int32Proxy.Serialize(outputStream, (int)BuyItemResult.NotEnoughCurrency);
-									return outputStream.ToArray();
-								} else {
-									memberWallet.Credits -= price.Price;
-
-									DatabaseManager.ItemTransactions.Insert(new ItemTransactionView {
-										Cmid = publicProfile.Cmid,
-										Duration = durationType,
-										ItemId = itemId,
-										Points = price.Price,
-										WithdrawalDate = DateTime.UtcNow,
-										WithdrawalId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue)
-									});
+								if (steamMember == null || publicProfile == null) {
+									Int32Proxy.Serialize(outputStream, (int)BuyItemResult.InvalidMember);
+									return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
 								}
-							}
-						} else if (currencyType == UberStrikeCurrencyType.Points) {
-							var price = item.Prices.ToList().Find(_ => _.Currency == UberStrikeCurrencyType.Points);
-							if (price != null) {
-								if (memberWallet.Points < price.Price) {
-									Int32Proxy.Serialize(outputStream, (int)BuyItemResult.NotEnoughCurrency);
-									return outputStream.ToArray();
-								} else {
-									memberWallet.Points -= price.Price;
 
-									DatabaseManager.ItemTransactions.Insert(new ItemTransactionView {
-										Cmid = publicProfile.Cmid,
-										Credits = price.Price,
-										Duration = durationType,
-										ItemId = itemId,
-										WithdrawalDate = DateTime.UtcNow,
-										WithdrawalId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue)
-									});
+								var memberWallet = DatabaseClient.MemberWallets.FindOne(_ => _.Cmid == publicProfile.Cmid);
+								BaseUberStrikeItemView item = null;
+
+								switch (itemType) {
+									case UberstrikeItemType.Weapon:
+										item = shopData.WeaponItems.Find(_ => _.ID == itemId);
+										break;
+									case UberstrikeItemType.Gear:
+										item = shopData.GearItems.Find(_ => _.ID == itemId);
+										break;
+									case UberstrikeItemType.QuickUse:
+										item = shopData.QuickItems.Find(_ => _.ID == itemId);
+										break;
+									case UberstrikeItemType.Functional:
+										item = shopData.FunctionalItems.Find(_ => _.ID == itemId);
+										break;
+									default: break;
 								}
+
+								if (item == null) {
+									Int32Proxy.Serialize(outputStream, (int)BuyItemResult.ItemNotFound);
+									return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
+								}
+
+								if (!item.IsForSale) {
+									Int32Proxy.Serialize(outputStream, (int)BuyItemResult.IsNotForSale);
+									return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
+								}
+
+								if (DatabaseClient.PlayerInventoryItems.FindOne(_ => _.Cmid == steamMember.Cmid && _.ItemId == itemId && (_.ExpirationDate > DateTime.UtcNow || _.ExpirationDate == null)) != null) {
+									Int32Proxy.Serialize(outputStream, (int)BuyItemResult.AlreadyInInventory);
+									return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
+								}
+
+								if (XpPointsUtil.GetLevelForXp(playerStatistics.Xp) < item.LevelLock) {
+									Int32Proxy.Serialize(outputStream, (int)BuyItemResult.InvalidLevel);
+									return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
+								}
+
+								if (currencyType == UberStrikeCurrencyType.Credits) {
+									var price = item.Prices.ToList().Find(_ => _.Currency == UberStrikeCurrencyType.Credits);
+									if (price != null) {
+										if (memberWallet.Credits < price.Price) {
+											Int32Proxy.Serialize(outputStream, (int)BuyItemResult.NotEnoughCurrency);
+											return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
+										} else {
+											memberWallet.Credits -= price.Price;
+
+											DatabaseClient.ItemTransactions.Insert(new ItemTransactionView {
+												Cmid = publicProfile.Cmid,
+												Duration = durationType,
+												ItemId = itemId,
+												Points = price.Price,
+												WithdrawalDate = DateTime.UtcNow,
+												WithdrawalId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue)
+											});
+										}
+									}
+								} else if (currencyType == UberStrikeCurrencyType.Points) {
+									var price = item.Prices.ToList().Find(_ => _.Currency == UberStrikeCurrencyType.Points);
+									if (price != null) {
+										if (memberWallet.Points < price.Price) {
+											Int32Proxy.Serialize(outputStream, (int)BuyItemResult.NotEnoughCurrency);
+											return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
+										} else {
+											memberWallet.Points -= price.Price;
+
+											DatabaseClient.ItemTransactions.Insert(new ItemTransactionView {
+												Cmid = publicProfile.Cmid,
+												Credits = price.Price,
+												Duration = durationType,
+												ItemId = itemId,
+												WithdrawalDate = DateTime.UtcNow,
+												WithdrawalId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue)
+											});
+										}
+									}
+								}
+
+								DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+								DatabaseClient.MemberWallets.Insert(memberWallet);
+
+								DateTime? expirationDate = null;
+
+								switch (durationType) {
+									case BuyingDurationType.OneDay:
+										expirationDate = DateTime.UtcNow.AddDays(1);
+										break;
+									case BuyingDurationType.SevenDays:
+										expirationDate = DateTime.UtcNow.AddDays(7);
+										break;
+									case BuyingDurationType.ThirtyDays:
+										expirationDate = DateTime.UtcNow.AddDays(30);
+										break;
+									case BuyingDurationType.NinetyDays:
+										expirationDate = DateTime.UtcNow.AddDays(90);
+										break;
+								}
+
+								DatabaseClient.PlayerInventoryItems.Insert(new ItemInventoryView {
+									Cmid = publicProfile.Cmid,
+									ItemId = itemId,
+									AmountRemaining = -1,
+									ExpirationDate = expirationDate
+								});
+
+								Int32Proxy.Serialize(outputStream, (int)BuyItemResult.OK);
 							}
 						}
 
-						DatabaseManager.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
-						DatabaseManager.MemberWallets.Insert(memberWallet);
-
-						DatabaseManager.PlayerInventoryItems.Insert(new ItemInventoryView {
-							Cmid = publicProfile.Cmid,
-							ItemId = itemId,
-							AmountRemaining = -1
-						});
-
-						Int32Proxy.Serialize(outputStream, (int)BuyItemResult.OK);
-
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -285,7 +349,9 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] BuyPack(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var itemId = Int32Proxy.Deserialize(bytes);
 					var authToken = StringProxy.Deserialize(bytes);
 					var packType = EnumProxy<PackType>.Deserialize(bytes);
@@ -294,12 +360,14 @@ namespace Paradise.WebServices.Services {
 					var marketLocation = EnumProxy<BuyingLocationType>.Deserialize(bytes);
 					var recommendationType = EnumProxy<BuyingRecommendationType>.Deserialize(bytes);
 
-					DebugEndpoint(itemId, authToken, packType, currencyType, itemType, marketLocation, recommendationType);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), itemId, authToken, packType, currencyType, itemType, marketLocation, recommendationType);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -314,15 +382,19 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] FinishBuyBundleSteam(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var orderId = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(orderId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), orderId);
 
 					using (var outputStream = new MemoryStream()) {
 						BooleanProxy.Serialize(outputStream, true);
 
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -337,12 +409,18 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] GetAllLuckyDraws_1(byte[] data) {
 			try {
-				DebugEndpoint();
+				var isEncrypted = IsEncrypted(data);
 
-				using (var outputStream = new MemoryStream()) {
-					throw new NotImplementedException();
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
 
-					//return outputStream.ToArray();
+					using (var outputStream = new MemoryStream()) {
+						throw new NotImplementedException();
+
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
+					}
 				}
 			} catch (Exception e) {
 				HandleEndpointError(e);
@@ -356,15 +434,19 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] GetAllLuckyDraws_2(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var bundleCategoryType = EnumProxy<BundleCategoryType>.Deserialize(bytes);
 
-					DebugEndpoint(bundleCategoryType);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), bundleCategoryType);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -379,11 +461,18 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] GetAllMysteryBoxs_1(byte[] data) {
 			try {
-				using (var outputStream = new MemoryStream()) {
-					DebugEndpoint();
-					throw new NotImplementedException();
+				var isEncrypted = IsEncrypted(data);
 
-					//return outputStream.ToArray();
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
+
+					using (var outputStream = new MemoryStream()) {
+						throw new NotImplementedException();
+
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
+					}
 				}
 			} catch (Exception e) {
 				HandleEndpointError(e);
@@ -397,15 +486,19 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] GetAllMysteryBoxs_2(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var bundleCategoryType = EnumProxy<BundleCategoryType>.Deserialize(bytes);
 
-					DebugEndpoint(bundleCategoryType);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), bundleCategoryType);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -420,15 +513,19 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] GetBundles(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var channelType = EnumProxy<ChannelType>.Deserialize(bytes);
 
-					DebugEndpoint(channelType);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), channelType);
 
 					using (var outputStream = new MemoryStream()) {
 						ListProxy<BundleView>.Serialize(outputStream, bundleData, BundleViewProxy.Serialize);
 
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -443,15 +540,19 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] GetLuckyDraw(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var luckyDrawId = Int32Proxy.Deserialize(bytes);
 
-					DebugEndpoint(luckyDrawId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), luckyDrawId);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -466,15 +567,19 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] GetMysteryBox(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var mysteryBoxId = Int32Proxy.Deserialize(bytes);
 
-					DebugEndpoint(mysteryBoxId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), mysteryBoxId);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -489,13 +594,17 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] GetShop(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
-					DebugEndpoint();
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
 
 					using (var outputStream = new MemoryStream()) {
 						UberStrikeItemShopClientViewProxy.Serialize(outputStream, shopData);
 
-						return outputStream.ToArray();
+						return isEncrypted 
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -510,17 +619,21 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] RollLuckyDraw(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var authToken = StringProxy.Deserialize(bytes);
 					var luckDrawId = Int32Proxy.Deserialize(bytes);
 					var channel = EnumProxy<ChannelType>.Deserialize(bytes);
 
-					DebugEndpoint(authToken, luckDrawId, channel);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authToken, luckDrawId, channel);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -535,17 +648,21 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] RollMysteryBox(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var authToken = StringProxy.Deserialize(bytes);
 					var mysteryBoxId = Int32Proxy.Deserialize(bytes);
 					var channel = EnumProxy<ChannelType>.Deserialize(bytes);
 
-					DebugEndpoint(authToken, mysteryBoxId, channel);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authToken, mysteryBoxId, channel);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -560,16 +677,20 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] UseConsumableItem(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var authToken = StringProxy.Deserialize(bytes);
 					var itemId = Int32Proxy.Deserialize(bytes);
 
-					DebugEndpoint(authToken, itemId);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authToken, itemId);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -584,15 +705,19 @@ namespace Paradise.WebServices.Services {
 		/// </summary>
 		public byte[] VerifyReceipt(byte[] data) {
 			try {
-				using (var bytes = new MemoryStream(data)) {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
 					var hashedReceipt = StringProxy.Deserialize(bytes);
 
-					DebugEndpoint(hashedReceipt);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), hashedReceipt);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return outputStream.ToArray();
+						//return isEncrypted 
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//	: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -601,5 +726,6 @@ namespace Paradise.WebServices.Services {
 
 			return null;
 		}
+		#endregion
 	}
 }

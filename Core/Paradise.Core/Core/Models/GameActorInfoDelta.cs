@@ -1,6 +1,5 @@
 ﻿using Paradise.DataCenter.Common.Entities;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Paradise.Core.Models {
 	public class GameActorInfoDelta {
@@ -87,12 +86,14 @@ namespace Paradise.Core.Models {
 		public readonly Dictionary<GameActorInfoDelta.Keys, object> Changes = new Dictionary<GameActorInfoDelta.Keys, object>();
 
 		public void UpdateDeltaMask() {
-			var mask = 0;
-			foreach (var key in Changes.Keys) {
-				mask |= 1 << (int)key;
-			}
+			lock (Changes) {
+				var mask = 0;
+				foreach (var key in Changes.Keys) {
+					mask |= 1 << (int)key;
+				}
 
-			DeltaMask = mask;
+				DeltaMask = mask;
+			}
 		}
 
 		public void Reset() {

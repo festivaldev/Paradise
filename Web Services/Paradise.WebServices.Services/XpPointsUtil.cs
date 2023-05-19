@@ -1,22 +1,38 @@
 ﻿using Newtonsoft.Json;
 using Paradise.Core.Models.Views;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
-namespace Paradise.WebServices {
+namespace Paradise.WebServices.Services {
 	public static class XpPointsUtil {
 		public static string CurrentDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 
 		public static ApplicationConfigurationView Config { get; set; }
 
+		private static FileSystemWatcher watcher;
+		private static List<string> watchedFiles = new List<string> {
+			"ApplicationConfiguration.json"
+		};
+
 		static XpPointsUtil() {
-			Config = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(CurrentDirectory, "ServiceData", "ApplicationWebService", "ApplicationConfiguration.json")));
+			Config = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(Plugin.ServiceDataPath, "ApplicationWebService", "2.0", "ApplicationConfiguration.json")));
+
+			watcher = new FileSystemWatcher(Path.Combine(Plugin.ServiceDataPath, "ApplicationWebService")) {
+				NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite
+			};
+
+			watcher.Changed += (object sender, FileSystemEventArgs e) => {
+				if (!watchedFiles.Contains(e.Name)) return;
+
+				Config = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(Plugin.ServiceDataPath, "ApplicationWebService", "2.0", "ApplicationConfiguration.json")));
+			};
+
+			watcher.EnableRaisingEvents = true;
 		}
 
 		public static void GetXpRangeForLevel(int level, out int minXp, out int maxXp) {
 			level = Math.Min(Math.Max(level, 1), XpPointsUtil.MaxPlayerLevel);
-			minXp = 0;
-			maxXp = 0;
 
 			if (level < MaxPlayerLevel) {
 				Config.XpRequiredPerLevel.TryGetValue(level, out minXp);
@@ -29,8 +45,7 @@ namespace Paradise.WebServices {
 
 		public static int GetLevelForXp(int xp) {
 			for (int i = MaxPlayerLevel; i > 0; i--) {
-				int num;
-				if (Config.XpRequiredPerLevel.TryGetValue(i, out num) && xp >= num) {
+				if (Config.XpRequiredPerLevel.TryGetValue(i, out var num) && xp >= num) {
 					return i;
 				}
 			}

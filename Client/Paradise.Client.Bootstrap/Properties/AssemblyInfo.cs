@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
 [assembly: AssemblyTitle("Paradise Bootstrap")]
-[assembly: AssemblyDescription("Injects the Paradise Client Runtime into UberStrike 4.7.5")]
+[assembly: AssemblyDescription("Injects the Paradise Client Runtime into UberStrike 4.7.1")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Team FESTIVAL")]
 [assembly: AssemblyProduct("Paradise.Client.Bootstrap")]
-[assembly: AssemblyCopyright("Copyright ©  2017, 2022-2023 Team FESTIVAL")]
+[assembly: AssemblyCopyright("Copyright © 2017, 2022-2023 Team FESTIVAL")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +31,5 @@ using System.Runtime.InteropServices;
 // Sie können alle Werte angeben oder Standardwerte für die Build- und Revisionsnummern verwenden,
 // indem Sie "*" wie unten gezeigt eingeben:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.0.2.1")]
-[assembly: AssemblyFileVersion("2.0.2.1")]
+[assembly: AssemblyVersion("2.1.0.1")]
+[assembly: AssemblyFileVersion("2.1.0.1")]

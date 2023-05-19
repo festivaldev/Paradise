@@ -1,41 +1,21 @@
 ﻿using HarmonyLib;
 using log4net;
-using System.Reflection;
 
 namespace Paradise.Client {
-	public class BundleManagerHook : ParadiseHook {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
+	/// <summary>
+	/// Allows purchasing ingame bundles for free without Steam microtransactions.
+	/// </summary>
+	[HarmonyPatch(typeof(BundleManager))]
+	public class BundleManagerHook {
+		private static readonly ILog Log = LogManager.GetLogger(nameof(BundleManagerHook));
 
-		private static BundleManager Instance;
-
-
-		/// <summary>
-		/// Allows purchasing ingame bundles without Steam.
-		/// </summary>
-		public BundleManagerHook() { }
-
-		public override void Hook(Harmony harmonyInstance) {
+		static BundleManagerHook() {
 			Log.Info($"[{nameof(BundleManagerHook)}] hooking {nameof(BundleManager)}");
-
-			var orig_BundleManager_Initialize = typeof(BundleManager).GetMethod("Initialize", BindingFlags.Instance | BindingFlags.Public);
-			var prefix_BundleManager_Initialize = typeof(BundleManagerHook).GetMethod("Initialize_Prefix", BindingFlags.Static | BindingFlags.Public);
-
-			harmonyInstance.Patch(orig_BundleManager_Initialize, new HarmonyMethod(prefix_BundleManager_Initialize), null);
-
-			var orig_BundleManager_BuyBundle_m__A7 = typeof(BundleManager).GetMethod("<BuyBundle>m__A7", BindingFlags.Static | BindingFlags.NonPublic);
-			var prefix_BundleManager_BuyBundle_m__A7 = typeof(BundleManagerHook).GetMethod("BuyBundle_m__A7_Prefix", BindingFlags.Static | BindingFlags.Public);
-
-			harmonyInstance.Patch(orig_BundleManager_BuyBundle_m__A7, new HarmonyMethod(prefix_BundleManager_BuyBundle_m__A7), null);
 		}
 
-		public static bool Initialize_Prefix(BundleManager __instance) {
-			Instance = __instance;
-
-			return true;
-		}
-
-		public static bool BuyBundle_m__A7_Prefix(bool success) {
-			InvokeMethod(Instance, "OnMicroTxnCallback", new object[] {
+		[HarmonyPatch("<BuyBundle>m__A7"), HarmonyPrefix]
+		public static bool BundleManager_BuyBundle_m__A7_Prefix(BundleManager __instance, bool success) {
+			AccessTools.Method(typeof(BundleManager), "OnMicroTxnCallback").Invoke(__instance, new object[] {
 				new Steamworks.MicroTxnAuthorizationResponse_t {
 					m_bAuthorized = (byte)(success ? 1 : 0)
 				}

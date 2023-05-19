@@ -1,11 +1,5 @@
-﻿using Paradise.DataCenter.Common.Entities;
-using System;
-using System.IO;
-
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class ContactRequestAcceptViewProxy
-	{
+﻿namespace Paradise.Core.Serialization.Legacy {
+	public static class ContactRequestAcceptViewProxy {
 		//public static void Serialize(Stream stream, ContactRequestAcceptView instance)
 		//{
 		//	int num = 0;

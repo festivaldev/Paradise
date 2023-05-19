@@ -1,40 +1,24 @@
 ﻿using HarmonyLib;
 using log4net;
-using System.Reflection;
 using UberStrike.Realtime.UnitySdk;
 
 namespace Paradise.Client {
-	public class WeaponControllerHook : ParadiseHook {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(IParadiseHook));
+	/// <summary>
+	/// Enables weapon quick switching if the game's flag is set or the player is exploring maps.
+	/// </summary>
+	[HarmonyPatch(typeof(WeaponController))]
+	public class WeaponControllerHook {
+		private static readonly ILog Log = LogManager.GetLogger(nameof(WeaponControllerHook));
 
-		private static WeaponController WeaponControllerInstance;
-
-		/// <summary>
-		/// Enables weapon quick switching if the game's flag is set.
-		/// </summary>
-		public WeaponControllerHook() { }
-
-		public override void Hook(Harmony harmonyInstance) {
+		static WeaponControllerHook() {
 			Log.Info($"[{nameof(WeaponControllerHook)}] hooking {nameof(WeaponController)}");
-
-			var orig_WeaponController_Shoot = typeof(WeaponController).GetMethod("Shoot", BindingFlags.Instance | BindingFlags.Public);
-			var prefix_WeaponController_Shoot = typeof(WeaponControllerHook).GetMethod("Shoot_Prefix", BindingFlags.Static | BindingFlags.Public);
-			var postfix_WeaponController_Shoot = typeof(WeaponControllerHook).GetMethod("Shoot_Postfix", BindingFlags.Static | BindingFlags.Public);
-
-			harmonyInstance.Patch(orig_WeaponController_Shoot, new HarmonyMethod(prefix_WeaponController_Shoot), new HarmonyMethod(postfix_WeaponController_Shoot));
 		}
 
-		public static bool Shoot_Prefix(WeaponController __instance) {
-			if (WeaponControllerInstance == null) {
-				WeaponControllerInstance = __instance;
-			}
-
-			return true;
-		}
-
-		public static void Shoot_Postfix(ref bool __result) {
-			if (GameFlags.IsFlagSet(GameFlags.GAME_FLAGS.QuickSwitch, GameState.Current.RoomData.GameFlags)) {
-				typeof(WeaponController).GetField("_holsterTime", BindingFlags.Instance | BindingFlags.NonPublic).SetValue(WeaponControllerInstance, 0);
+		[HarmonyPatch("Shoot"), HarmonyPostfix]
+		public static void WeaponController_Shoot_Postfix(WeaponController __instance, ref bool __result) {
+			if (GameFlags.IsFlagSet(GameFlags.GAME_FLAGS.QuickSwitch, GameState.Current.RoomData.GameFlags) ||
+				GameState.Current.GameMode == UberStrike.Core.Types.GameModeType.None) {
+				Traverse.Create(__instance).Field("_holsterTime").SetValue(0);
 			}
 		}
 	}

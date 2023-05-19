@@ -1,24 +1,15 @@
-﻿using System;
+﻿using Paradise.DataCenter.Common.Entities;
 using System.IO;
-using Paradise.DataCenter.Common.Entities;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class PlayerXPEventViewProxy
-	{
-		public static void Serialize(Stream stream, PlayerXPEventView instance)
-		{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class PlayerXPEventViewProxy {
+		public static void Serialize(Stream stream, PlayerXPEventView instance) {
 			int num = 0;
-			if (instance != null)
-			{
-				using (MemoryStream memoryStream = new MemoryStream())
-				{
-					if (instance.Name != null)
-					{
+			if (instance != null) {
+				using (MemoryStream memoryStream = new MemoryStream()) {
+					if (instance.Name != null) {
 						StringProxy.Serialize(memoryStream, instance.Name);
-					}
-					else
-					{
+					} else {
 						num |= 1;
 					}
 					Int32Proxy.Serialize(memoryStream, instance.PlayerXPEventId);
@@ -26,22 +17,17 @@ namespace Paradise.Core.Serialization.Legacy
 					Int32Proxy.Serialize(stream, ~num);
 					memoryStream.WriteTo(stream);
 				}
-			}
-			else
-			{
+			} else {
 				Int32Proxy.Serialize(stream, 0);
 			}
 		}
 
-		public static PlayerXPEventView Deserialize(Stream bytes)
-		{
+		public static PlayerXPEventView Deserialize(Stream bytes) {
 			int num = Int32Proxy.Deserialize(bytes);
 			PlayerXPEventView playerXPEventView = null;
-			if (num != 0)
-			{
+			if (num != 0) {
 				playerXPEventView = new PlayerXPEventView();
-				if ((num & 1) != 0)
-				{
+				if ((num & 1) != 0) {
 					playerXPEventView.Name = StringProxy.Deserialize(bytes);
 				}
 				playerXPEventView.PlayerXPEventId = Int32Proxy.Deserialize(bytes);

@@ -64,7 +64,7 @@ namespace Paradise.Client {
 			}
 		}
 
-		public static void Initialize() {
+		static ParadiseClient() {
 			AppDomain.CurrentDomain.AssemblyResolve += (sender, e) => {
 				var assemblyName = new AssemblyName(e.Name).Name;
 				var resourceName = Assembly.GetExecutingAssembly().GetManifestResourceNames().FirstOrDefault(_ => _.EndsWith($"{assemblyName}.dll"));
@@ -75,7 +75,9 @@ namespace Paradise.Client {
 					return Assembly.Load(new BinaryReader(stream).ReadBytes((int)stream.Length));
 				}
 			};
+		}
 
+		public static void Initialize() {
 			using (Stream stream = Assembly.GetAssembly(typeof(ParadiseClient)).GetManifestResourceStream("Paradise.Client.log4net.config")) {
 				using (StreamReader reader = new StreamReader(stream)) {
 					var logConfig = new XmlDocument();
@@ -94,7 +96,7 @@ namespace Paradise.Client {
 					ser.Serialize(writer, Settings);
 				}
 			} else {
-				using (XmlReader reader = XmlReader.Create(Path.Combine(Application.dataPath, "Paradise.Settings.Client.xml"))) {
+				using (XmlReader reader = XmlReader.Create(Path.Combine(Application.dataPath, "Paradise.Settings.Client.xml"), new XmlReaderSettings { IgnoreComments = true })) {
 					try {
 						Settings = (ParadiseClientSettings)ser.Deserialize(reader);
 					} catch (Exception e) {

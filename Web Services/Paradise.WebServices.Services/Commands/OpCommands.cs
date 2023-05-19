@@ -1,8 +1,9 @@
 ﻿using Paradise.DataCenter.Common.Entities;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace Paradise.WebServices {
+namespace Paradise.WebServices.Services {
 	internal class DeopCommand : ParadiseCommand {
 		public static new string Command => "deop";
 		public static new string[] Aliases => new string[] { };
@@ -12,38 +13,45 @@ namespace Paradise.WebServices {
 
 		public override string[] UsageText => new string[] {
 			$"{Command}: {Description}",
-			$"Usage: {Command} <cmid>"
+			$"Usage: {Command} <name>"
 		};
 
 		public DeopCommand(Guid guid) : base(guid) { }
 
-		public override void Run(string[] arguments) {
+#pragma warning disable CS1998
+		public override async Task Run(string[] arguments) {
 			if (arguments.Length < 1) {
 				PrintUsageText();
 				return;
 			}
 
-			if (!int.TryParse(arguments[0], out int cmid)) {
-				WriteLine("Invalid parameter: cmid");
+			var searchString = arguments[0];
+
+			if (searchString.Length < 3) {
+				WriteLine("Search pattern must contain at least 3 characters.");
 				return;
 			}
 
-			if (!(DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == cmid) is var targetProfile) || targetProfile == null) {
-				WriteLine("Could not reset user permission level: Profile not found.");
+			var targetProfile = DatabaseClient.GetProfile(searchString);
+
+			if (targetProfile == null) {
+				WriteLine($"Failed to reset user permission level: Could not find player matching {searchString}.");
+				return;
 			}
 
 			if (targetProfile.AccessLevel == MemberAccessLevel.Default) {
-				WriteLine("Could not reset user permission level: Invalid data.");
+				WriteLine("Failed to reset user permission level: Invalid data.");
 				return;
 			}
 
 			targetProfile.AccessLevel = MemberAccessLevel.Default;
 
-			DatabaseManager.PublicProfiles.DeleteMany(_ => _.Cmid == targetProfile.Cmid);
-			DatabaseManager.PublicProfiles.Insert(targetProfile);
+			DatabaseClient.PublicProfiles.DeleteMany(_ => _.Cmid == targetProfile.Cmid);
+			DatabaseClient.PublicProfiles.Insert(targetProfile);
 
 			WriteLine("User permission level has been reset successfully.");
 		}
+#pragma warning restore CS1998
 	}
 
 	internal class OpCommand : ParadiseCommand {
@@ -57,7 +65,7 @@ namespace Paradise.WebServices {
 			get {
 				var lines = new List<string> {
 					$"{Command}: {Description}",
-					$"Usage: {Command} <cmid> <level>"
+					$"Usage: {Command} <name> <level>"
 				};
 
 				var values = new List<string>();
@@ -73,14 +81,24 @@ namespace Paradise.WebServices {
 
 		public OpCommand(Guid guid) : base(guid) { }
 
-		public override void Run(string[] arguments) {
+#pragma warning disable CS1998
+		public override async Task Run(string[] arguments) {
 			if (arguments.Length < 2) {
 				PrintUsageText();
 				return;
 			}
 
-			if (!int.TryParse(arguments[0], out int cmid)) {
-				WriteLine("Invalid parameter: cmid");
+			var searchString = arguments[0];
+
+			if (searchString.Length < 3) {
+				WriteLine("Search pattern must contain at least 3 characters.");
+				return;
+			}
+
+			var targetProfile = DatabaseClient.GetProfile(searchString);
+
+			if (targetProfile == null) {
+				WriteLine($"Failed to set user permission level: Could not find player matching {searchString}.");
 				return;
 			}
 
@@ -89,22 +107,18 @@ namespace Paradise.WebServices {
 				return;
 			}
 
-			if (!(DatabaseManager.PublicProfiles.FindOne(_ => _.Cmid == cmid) is var targetProfile) || targetProfile == null) {
-				WriteLine("Could not set user permission level: Profile not found.");
-				return;
-			}
-
 			if (level == MemberAccessLevel.Default || targetProfile.AccessLevel == level) {
-				WriteLine("Could not set user permission level: Invalid data.");
+				WriteLine("Failed to set user permission level: Invalid data.");
 				return;
 			}
 
 			targetProfile.AccessLevel = level;
 
-			DatabaseManager.PublicProfiles.DeleteMany(_ => _.Cmid == targetProfile.Cmid);
-			DatabaseManager.PublicProfiles.Insert(targetProfile);
+			DatabaseClient.PublicProfiles.DeleteMany(_ => _.Cmid == targetProfile.Cmid);
+			DatabaseClient.PublicProfiles.Insert(targetProfile);
 
 			WriteLine("User permission level has been set successfully.");
 		}
+#pragma warning restore CS1998
 	}
 }

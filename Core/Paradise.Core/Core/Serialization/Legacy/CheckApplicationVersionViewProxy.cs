@@ -1,57 +1,39 @@
 ﻿using Paradise.DataCenter.Common.Entities;
-using System;
 using System.IO;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class CheckApplicationVersionViewProxy
-	{
-		public static void Serialize(Stream stream, CheckApplicationVersionView instance)
-		{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class CheckApplicationVersionViewProxy {
+		public static void Serialize(Stream stream, CheckApplicationVersionView instance) {
 			int num = 0;
-			if (instance != null)
-			{
-				using (MemoryStream memoryStream = new MemoryStream())
-				{
-					if (instance.ClientVersion != null)
-					{
+			if (instance != null) {
+				using (MemoryStream memoryStream = new MemoryStream()) {
+					if (instance.ClientVersion != null) {
 						ApplicationViewProxy.Serialize(memoryStream, instance.ClientVersion);
-					}
-					else
-					{
+					} else {
 						num |= 1;
 					}
-					if (instance.CurrentVersion != null)
-					{
+					if (instance.CurrentVersion != null) {
 						ApplicationViewProxy.Serialize(memoryStream, instance.CurrentVersion);
-					}
-					else
-					{
+					} else {
 						num |= 2;
 					}
 					Int32Proxy.Serialize(stream, ~num);
 					memoryStream.WriteTo(stream);
 				}
-			}
-			else
-			{
+			} else {
 				Int32Proxy.Serialize(stream, 0);
 			}
 		}
 
-		public static CheckApplicationVersionView Deserialize(Stream bytes)
-		{
+		public static CheckApplicationVersionView Deserialize(Stream bytes) {
 			int num = Int32Proxy.Deserialize(bytes);
 			CheckApplicationVersionView checkApplicationVersionView = null;
-			if (num != 0)
-			{
+			if (num != 0) {
 				checkApplicationVersionView = new CheckApplicationVersionView();
-				if ((num & 1) != 0)
-				{
+				if ((num & 1) != 0) {
 					checkApplicationVersionView.ClientVersion = ApplicationViewProxy.Deserialize(bytes);
 				}
-				if ((num & 2) != 0)
-				{
+				if ((num & 2) != 0) {
 					checkApplicationVersionView.CurrentVersion = ApplicationViewProxy.Deserialize(bytes);
 				}
 			}

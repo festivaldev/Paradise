@@ -4,10 +4,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
-using System.Text;
+using System.Threading;
 using UnityEngine;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -15,27 +14,60 @@ using YamlDotNet.Serialization.NamingConventions;
 namespace Paradise.Client {
 #pragma warning disable IDE1006
 	internal class UpdateCatalog {
-		public List<UpdatePlatformDefinition> platforms { get; set; }
+		[YamlMember(Alias = "version")]
+		public string Version { get; set; }
+
+		[YamlMember(Alias = "build")]
+		public string Build { get; set; }
+
+		[YamlMember(Alias = "channel")]
+		public UpdateChannel Channel { get; set; }
+
+		[YamlMember(Alias = "platforms")]
+		public Dictionary<string, UpdatePlatformDefinition> Platforms { get; set; }
 	}
 
 	internal class UpdatePlatformDefinition {
-		public string platform { get; set; }
-		public string version { get; set; }
-		public string build { get; set; }
-		public List<UpdateFile> files { get; set; }
-		public List<UpdateFile> removedFiles { get; set; }
+		[YamlMember(Alias = "platform")]
+		public string Platform { get; set; }
+
+		[YamlMember(Alias = "files")]
+		public List<UpdateFile> Files { get; set; }
+
+		[YamlMember(Alias = "removedFiles")]
+		public List<UpdateFile> RemovedFiles { get; set; }
 	}
 
 	internal class UpdateFile {
-		public string filename { get; set; }
-		public string description { get; set; }
-		public string localPath { get; set; }
-		public string remoteURL { get; set; }
-		public string remotePath { get; set; }
-		public uint filesize { get; set; }
-		public string md5sum { get; set; }
-		public string sha256 { get; set; }
-		public string sha512 { get; set; }
+		[YamlMember(Alias = "filename")]
+		public string FileName { get; set; }
+
+		[YamlMember(Alias = "description")]
+		public string Description { get; set; }
+
+		[YamlMember(Alias = "localPath")]
+		public string LocalPath { get; set; }
+
+		[YamlMember(Alias = "remoteURL")]
+		public string RemoteURL { get; set; }
+
+		[YamlMember(Alias = "remotePath")]
+		public string RemotePath { get; set; }
+
+		[YamlMember(Alias = "filesize")]
+		public long FileSize { get; set; }
+
+		[YamlMember(Alias = "optional")]
+		public bool IsOptional { get; set; }
+
+		[YamlMember(Alias = "md5sum")]
+		public string MD5 { get; set; }
+
+		[YamlMember(Alias = "sha256")]
+		public string SHA256 { get; set; }
+
+		[YamlMember(Alias = "sha512")]
+		public string SHA512 { get; set; }
 	}
 #pragma warning restore IDE1006
 
@@ -44,22 +76,23 @@ namespace Paradise.Client {
 
 		private DateTime LastUpdateCheckTimeStamp = DateTime.MinValue;
 
-		private UpdatePlatformDefinition CachedUpdates;
+		private UpdateCatalog CachedUpdates;
 		private readonly List<UpdateFile> FilesToUpdate = new List<UpdateFile>();
 		private readonly List<UpdateFile> FilesToRemove = new List<UpdateFile>();
 
-		private static string UpdateCatalog => $"updates-{ParadiseClient.UpdateChannel.ToString().ToLower()}.yaml";
+		private static string UpdateCatalogUrl => $"{ParadiseClient.UpdateUrl}/v2/";
+		private static string UpdateCatalog => $"{ParadiseClient.UpdateChannel.ToString().ToLower()}/updates.yml";
 		private static string UpdatePlatform {
 			get {
 				switch (Application.platform) {
 					case RuntimePlatform.WindowsPlayer:
 					case RuntimePlatform.WindowsEditor:
 					case RuntimePlatform.WindowsWebPlayer:
-						return "win32";
+						return "win";
 					case RuntimePlatform.OSXPlayer:
 					case RuntimePlatform.OSXEditor:
 					case RuntimePlatform.OSXWebPlayer:
-						return "darwin32";
+						return "darwin";
 					default: break;
 				}
 
@@ -67,9 +100,11 @@ namespace Paradise.Client {
 			}
 		}
 
+		private static bool CanIgnoreUpdates => !PlayerDataManager.IsPlayerLoggedIn || PlayerDataManager.AccessLevel >= MemberAccessLevel.SeniorQA;
+
 		private ProgressPopupDialog _progressPopup;
 
-		public IEnumerator CheckForUpdatesIfNecessary(Action<UpdatePlatformDefinition> updateAvailableCallback, Action<string> errorCallback) {
+		public IEnumerator CheckForUpdatesIfNecessary(Action<UpdateCatalog> catalogDownloadedCallback, Action<string> errorCallback) {
 			if (Math.Abs((LastUpdateCheckTimeStamp - DateTime.Now).TotalHours) < 1) {
 				yield break;
 			}
@@ -79,54 +114,81 @@ namespace Paradise.Client {
 			if (!ParadiseClient.AutoUpdates) {
 				Log.Info("Automatic updates disabled");
 
-				if (PlayerDataManager.AccessLevel < MemberAccessLevel.Admin) {
-					PopupSystem.ShowMessage("Automatic Updates disabled", "You have disabled automatic updates. If you want to play UberStrike, you may need to update the Paradise runtime.\n\nPlease enable automatic updates in order to receive updates.", PopupSystem.AlertType.OK);
+				if (!CanIgnoreUpdates) {
+					PopupSystem.ShowMessage("Automatic Updates disabled", "You have disabled automatic updates. If you want to play UberStrike, you may need to update the Paradise runtime.\n\nPlease enable automatic updates in order to receive updates.", PopupSystem.AlertType.OK, () => {
+						catalogDownloadedCallback?.Invoke(null);
+					});
+				} else {
+					catalogDownloadedCallback?.Invoke(null);
 				}
 
 				yield break;
 			}
 
 			FilesToUpdate.Clear();
+			FilesToRemove.Clear();
 
 			if (string.IsNullOrEmpty(ParadiseClient.UpdateUrl)) yield break;
 
-			var updateUri = string.Join("", new string[] { ParadiseClient.UpdateUrl, UpdateCatalog });
+			var updateUri = string.Join("", new string[] { UpdateCatalogUrl, UpdateCatalog });
 
 			_progressPopup = PopupSystem.ShowProgress(LocalizedStrings.SettingUp, "Checking for updates...");
 
 			UnityRuntime.StartRoutine(DownloadUpdateCatalog(updateUri, delegate (UpdateCatalog updateCatalog) {
-				OnUpdateCatalogDownloadComplete(updateCatalog, updateAvailableCallback, errorCallback);
+				UnityRuntime.StartRoutine(OnUpdateCatalogDownloadComplete(updateCatalog, catalogDownloadedCallback, errorCallback));
 			}, delegate (HttpResponse responseHeader) {
-				switch (responseHeader.StatusCode) {
-					case HttpStatusCode.NotFound:
-						Log.Info("Downloading update catalog resulted in 404, retrying using fallback URI");
-						updateUri = string.Join("", new string[] { ParadiseClient.UpdateUrl, "updates.yaml" });
-
-						UnityRuntime.StartRoutine(DownloadUpdateCatalog(updateUri, delegate (UpdateCatalog updateCatalog) {
-							OnUpdateCatalogDownloadComplete(updateCatalog, updateAvailableCallback, errorCallback);
-						}, delegate (HttpResponse _responseHeader) {
-							PopupSystem.HideMessage(_progressPopup);
-
-							errorCallback?.Invoke($"Failed to download update catalog.\n{responseHeader.StatusText}");
-						}));
-
-						break;
-				}
+				errorCallback?.Invoke($"Failed to download update catalog.\n{responseHeader.StatusText}");
 			}));
 
 			yield break;
 		}
+
+		public static void HandleUpdateAvailable(UpdateCatalog updateCatalog) {
+			HandleUpdateAvailable(updateCatalog, null);
+		}
+
+		public static void HandleUpdateAvailable(UpdateCatalog updateCatalog, Action ignoreCallback) {
+			PopupSystem.ShowMessage("Update available", $"A mandatory update is available. You need to install this update in order to play.\n\nVersion:{updateCatalog.Version ?? "Unknown"} ({updateCatalog.Build ?? "Unknown"})\nChannel: {updateCatalog.Channel.ToString() ?? "Unknown"}\n\nIf you choose to ignore this update, you will be asked again the next time you launch UberStrike.", PopupSystem.AlertType.OKCancel, delegate {
+				UnityRuntime.StartRoutine(GameObject.Find("Plugin Holder").GetComponent<ParadiseUpdater>().InstallUpdates(
+					HandleUpdateComplete,
+					HandleUpdateError
+				));
+			}, "Update", delegate {
+				if (!CanIgnoreUpdates) {
+					Application.Quit();
+				} else {
+					ignoreCallback?.Invoke();
+				}
+			}, CanIgnoreUpdates ? "Ignore" : "Quit");
+		}
+
+		public static void HandleUpdateComplete() {
+			PopupSystem.ShowMessage("Update Complete", "Updates have been installed successfully. In order to complete the installation, UberStrike needs to be restarted.", PopupSystem.AlertType.OK, delegate {
+				System.Diagnostics.Process.Start(Path.Combine(Directory.GetCurrentDirectory(), "UberStrike.exe")).WaitForExit(1000);
+				Application.Quit();
+			});
+		}
+
+		public static void HandleUpdateError(string message) {
+			HandleUpdateError(message, null);
+		}
+
+		public static void HandleUpdateError(string message, Action callback = null) {
+			Log.Error(message);
+			PopupSystem.ShowMessage("Error", message, PopupSystem.AlertType.OK, () => {
+				callback?.Invoke();
+			});
+		}
+
+
 
 		private IEnumerator DownloadUpdateCatalog(string updateUri, Action<UpdateCatalog> successCallback, Action<HttpResponse> errorCallback) {
 			Log.Info($"Attempting to download update catalog from {updateUri}");
 
 			using (WWW loader = new WWW(updateUri)) {
 				while (!loader.isDone) {
-					_progressPopup.Progress = loader.progress;
 					yield return null;
 				}
-
-				PopupSystem.HideMessage(_progressPopup);
 
 				var responseHeader = HTTPStatusParser.ParseHeader(loader.responseHeaders["STATUS"]);
 
@@ -135,12 +197,20 @@ namespace Paradise.Client {
 					yield break;
 				}
 
+				_progressPopup.Progress = 0.3f;
+				Log.Info("Successfully downloaded update catalog");
+
+				yield return new WaitForSeconds(0.5f);
+
 				try {
 					var deserializer = new DeserializerBuilder()
 						.WithNamingConvention(CamelCaseNamingConvention.Instance)
 						.Build();
 
 					var updateCatalog = deserializer.Deserialize<UpdateCatalog>(loader.text);
+
+					Log.Info("Successfully parsed update catalog");
+					_progressPopup.Progress = 0.6f;
 
 					successCallback?.Invoke(updateCatalog);
 				} catch (Exception e) {
@@ -154,100 +224,127 @@ namespace Paradise.Client {
 			yield break;
 		}
 
-		private void OnUpdateCatalogDownloadComplete(UpdateCatalog updateCatalog, Action<UpdatePlatformDefinition> updateAvailableCallback, Action<string> errorCallback) {
-			var universalUpdates = updateCatalog.platforms.Find(_ => _.platform == "universal");
+		private IEnumerator OnUpdateCatalogDownloadComplete(UpdateCatalog updateCatalog, Action<UpdateCatalog> updateAvailableCallback, Action<string> errorCallback) {
+			yield return new WaitForSeconds(1f);
 
-			if (universalUpdates == null) {
-				Log.Error("Update catalog does not contain universal platform.");
-			} else {
-				if (universalUpdates.files != null) {
-					CheckUpdatedFiles(universalUpdates, errorCallback);
+			CachedUpdates = updateCatalog;
+
+			var universalUpdates = updateCatalog.Platforms["universal"];
+			var platformUpdates = updateCatalog.Platforms[UpdatePlatform];
+
+			var totalFiles = (universalUpdates?.Files.Count ?? 0) + (platformUpdates?.Files.Count ?? 0);
+
+			new Thread(new ThreadStart(() => {
+				_progressPopup.Text = "Checking files for updates...";
+
+				if (universalUpdates == null) {
+					Log.Error("Update catalog does not contain universal platform.");
+				} else {
+					if (universalUpdates.Files != null) {
+						CheckUpdatedFiles(universalUpdates, 0, totalFiles, errorCallback);
+					}
+
+					if (universalUpdates.RemovedFiles != null) {
+						CheckRemovedFiles(universalUpdates);
+					}
 				}
 
-				if (universalUpdates.removedFiles != null) {
-					CheckRemovedFiles(universalUpdates);
-				}
-			}
+				if (platformUpdates == null) {
+					Log.Error($"Update catalog does not contain platform \"{UpdatePlatform}\".");
+				} else {
+					if (platformUpdates.Files != null) {
+						CheckUpdatedFiles(platformUpdates, universalUpdates?.Files.Count ?? 0, totalFiles, errorCallback);
+					}
 
-			var platformUpdates = updateCatalog.platforms.Find(_ => _.platform == UpdatePlatform);
-
-			if (platformUpdates == null) {
-				Log.Error($"Update catalog does not contain platform \"{UpdatePlatform}\".");
-			} else {
-				if (platformUpdates.files != null) {
-					CheckUpdatedFiles(platformUpdates, errorCallback);
+					if (platformUpdates.RemovedFiles != null) {
+						CheckRemovedFiles(platformUpdates);
+					}
 				}
 
-				if (platformUpdates.removedFiles != null) {
-					CheckRemovedFiles(platformUpdates);
+				PopupSystem.HideMessage(_progressPopup);
+
+				if (FilesToUpdate.Count > 0) {
+					Log.Info($"Update available: {CachedUpdates.Version} (Build {CachedUpdates.Build}), files to update: {FilesToUpdate.Count}; files to remove: {FilesToRemove.Count}");
+					updateAvailableCallback?.Invoke(CachedUpdates);
+				} else {
+					Log.Info("No update available.");
+
+					if (FilesToRemove.Count > 0) {
+						DeleteRemovedFiles();
+					}
+
+					updateAvailableCallback?.Invoke(null);
 				}
-			}
+			})).Start();
 
-			CachedUpdates = universalUpdates ?? platformUpdates;
-
-			if (FilesToUpdate.Count > 0 || FilesToRemove.Count > 0) {
-				Log.Info($"Update available: {CachedUpdates.version} (Build {CachedUpdates.build}), files to update: {FilesToUpdate.Count}; files to remove: {FilesToRemove.Count}");
-				updateAvailableCallback?.Invoke(CachedUpdates);
-			} else {
-				Log.Info("No update available.");
-			}
+			yield break;
 		}
 
-		private void CheckUpdatedFiles(UpdatePlatformDefinition updateDef, Action<string> errorCallback) {
-			if (updateDef.files.Count == 0) {
-				Log.Info($"Update catalog doesn't contain any files for platform \"{updateDef.platform}\", aborting...");
+		private void CheckUpdatedFiles(UpdatePlatformDefinition updateDef, int startIndex, int totalFiles, Action<string> errorCallback) {
+			if (updateDef.Files.Count == 0) {
+				Log.Info($"Update catalog doesn't contain any files for platform \"{updateDef.Platform}\", aborting...");
 				return;
 			}
 
-			foreach (var file in updateDef.files) {
-				string path = $"{Application.dataPath}\\{file.localPath}\\{file.filename}";
+			foreach (var file in updateDef.Files) {
+				_progressPopup.Text = $"Checking files for updates...\n{file.FileName}";
+				_progressPopup.Progress = 0.6f + (((float)startIndex + (float)updateDef.Files.IndexOf(file)) / (float)totalFiles) * 0.4f;
+
+				string path = $"{Path.GetDirectoryName(Application.dataPath)}\\{file.LocalPath}\\{file.FileName}";
 
 				if (!File.Exists(path)) {
-					Log.Info($"Local file {file.filename} doesn't exist");
-					FilesToUpdate.Add(file);
+					if (!file.IsOptional) {
+						Log.Info($"Local file {file.FileName} doesn't exist");
+
+						FilesToUpdate.Add(file);
+					}
+
 					continue;
 				} else {
 					try {
-						if (!string.IsNullOrEmpty(file.md5sum)) {
+						var fileNeedsUpdate = false;
+
+						if (!string.IsNullOrEmpty(file.MD5)) {
 							using (FileStream fileStream = File.OpenRead(path)) {
 								using (var md5 = MD5.Create()) {
 									var md5sum = BitConverter.ToString(md5.ComputeHash(fileStream)).Replace("-", "").ToLowerInvariant();
 
-									if (!md5sum.Equals(file.md5sum)) {
-										Log.Info($"Local file {file.filename}: MD5 doesn't match (expected {file.md5sum}, got {md5sum})");
-										FilesToUpdate.Add(file);
-										continue;
+									if (!md5sum.Equals(file.MD5)) {
+										Log.Info($"Local file {file.FileName}: MD5 doesn't match (expected {file.MD5}, got {md5sum})");
+										fileNeedsUpdate = true;
 									}
 								}
 							}
 						}
 
-						if (!string.IsNullOrEmpty(file.sha256)) {
+						if (!string.IsNullOrEmpty(file.SHA256)) {
 							using (FileStream fileStream = File.OpenRead(path)) {
 								using (var sha256 = SHA256.Create()) {
 									var sha256sum = BitConverter.ToString(sha256.ComputeHash(fileStream)).Replace("-", "").ToLowerInvariant();
 
-									if (!sha256sum.Equals(file.sha256)) {
-										Log.Info($"Local file {file.filename}: SHA256 doesn't match (expected {file.sha256}, got {sha256sum})");
-										FilesToUpdate.Add(file);
-										continue;
+									if (!sha256sum.Equals(file.SHA256)) {
+										Log.Info($"Local file {file.FileName}: SHA256 doesn't match (expected {file.SHA256}, got {sha256sum})");
+										fileNeedsUpdate = true;
 									}
 								}
 							}
 						}
 
-						if (!string.IsNullOrEmpty(file.sha512)) {
+						if (!string.IsNullOrEmpty(file.SHA512)) {
 							using (FileStream fileStream = File.OpenRead(path)) {
 								using (var sha512 = SHA512.Create()) {
 									var sha512sum = BitConverter.ToString(sha512.ComputeHash(fileStream)).Replace("-", "").ToLowerInvariant();
 
-									if (!sha512sum.Equals(file.sha512)) {
-										Log.Info($"Local file {file.filename}: SHA512 doesn't match (expected {file.sha512}, got {sha512sum})");
-										FilesToUpdate.Add(file);
-										continue;
+									if (!sha512sum.Equals(file.SHA512)) {
+										Log.Info($"Local file {file.FileName}: SHA512 doesn't match (expected {file.SHA512}, got {sha512sum})");
+										fileNeedsUpdate = true;
 									}
 								}
 							}
+						}
+
+						if (fileNeedsUpdate) {
+							FilesToUpdate.Add(file);
 						}
 					} catch (Exception e) {
 						errorCallback?.Invoke($"An error occured while checking for updates:\n{e.Message}");
@@ -259,27 +356,62 @@ namespace Paradise.Client {
 		}
 
 		private void CheckRemovedFiles(UpdatePlatformDefinition updateDef) {
-			foreach (var file in updateDef.removedFiles) {
-				string path = $"{Application.dataPath}\\{file.localPath}\\{file.filename}";
+			foreach (var file in updateDef.RemovedFiles) {
+				string path = $"{Path.GetDirectoryName(Application.dataPath)}\\{file.LocalPath}\\{file.FileName}";
 
 				if (File.Exists(path)) {
-					Log.Info($"Local file {file.filename} exists, marked for removal");
+					Log.Info($"Local file {file.FileName} exists, marked for removal");
 					FilesToRemove.Add(file);
 				}
 			}
 		}
 
-		public IEnumerator InstallUpdates(Action updateCompleteCallback, Action<string> errorCallback) {
-			if (FilesToUpdate.Count == 0) {
-				errorCallback?.Invoke("Failed to download updates:\nNo files to update.");
+		private void DeleteRemovedFiles() {
+			if (FilesToRemove.Count == 0) return;
 
-				yield break;
+			var backupPath = $"{Application.dataPath}\\Updates\\bak";
+
+			if (!Directory.Exists(backupPath)) {
+				Directory.CreateDirectory(backupPath);
+			}
+
+			foreach (var file in FilesToRemove) {
+				try {
+					if (!Directory.Exists($"{Path.GetDirectoryName(Application.dataPath)}\\{file.LocalPath}")) {
+						continue;
+					}
+
+					var filename = $"{Path.GetDirectoryName(Application.dataPath)}\\{file.LocalPath}\\{file.FileName}";
+
+					if (File.Exists(filename)) {
+						// File will be removed on game restart
+						var fileBackupPath = Path.Combine(backupPath, Path.GetFileName(filename) + ".bak");
+
+						if (File.Exists(fileBackupPath)) {
+							File.Delete(fileBackupPath);
+						}
+
+						File.Move(filename, fileBackupPath);
+					}
+				} catch (Exception e) {
+					Log.Error(e);
+				}
+			}
+		}
+
+		public IEnumerator InstallUpdates(Action updateCompleteCallback, Action<string> errorCallback) {
+			if (FilesToUpdate.Count == 0) yield break;
+
+			var backupPath = $"{Application.dataPath}\\Updates\\bak";
+
+			if (!Directory.Exists(backupPath)) {
+				Directory.CreateDirectory(backupPath);
 			}
 
 			foreach (var file in FilesToUpdate) {
-				_progressPopup = PopupSystem.ShowProgress($"Downloading updates... ({FilesToUpdate.IndexOf(file) + 1}/{FilesToUpdate.Count})", $"{file.filename} ({FormatBytes(file.filesize)})");
+				_progressPopup = PopupSystem.ShowProgress($"Downloading updates... ({FilesToUpdate.IndexOf(file) + 1}/{FilesToUpdate.Count})", $"{file.FileName} ({FormatBytes(file.FileSize)})");
 
-				using (WWW loader = new WWW(string.Join("/", new string[] { file.remoteURL ?? ParadiseClient.UpdateUrl, file.remotePath, file.filename }))) {
+				using (WWW loader = new WWW(string.Join("/", new string[] { file.RemoteURL ?? UpdateCatalogUrl, file.RemotePath, file.FileName }))) {
 					Log.Info($"Downloading remote file: {loader.url}");
 
 					while (!loader.isDone) {
@@ -292,7 +424,7 @@ namespace Paradise.Client {
 					var responseHeader = HTTPStatusParser.ParseHeader(loader.responseHeaders["STATUS"]);
 
 					if (responseHeader.StatusCode != HttpStatusCode.OK) {
-						errorCallback?.Invoke($"Failed to download {loader.url} {file.filename}:\n{responseHeader.StatusText}");
+						errorCallback?.Invoke($"Failed to download {loader.url} {file.FileName}:\n{responseHeader.StatusText}");
 						yield break;
 					}
 
@@ -301,37 +433,37 @@ namespace Paradise.Client {
 							Directory.CreateDirectory($"{Application.dataPath}\\Updates");
 						}
 
-						if (!string.IsNullOrEmpty(file.md5sum)) {
+						if (!string.IsNullOrEmpty(file.MD5)) {
 							using (var md5 = MD5.Create()) {
 								var md5sum = BitConverter.ToString(md5.ComputeHash(loader.bytes)).Replace("-", "").ToLowerInvariant();
 
-								if (!md5sum.Equals(file.md5sum)) {
-									errorCallback?.Invoke($"{file.filename}: Hash sum mismatch. Please contact your server administrator.");
-									Log.Error($"Downloaded file {file.filename}: MD5 doesn't match (expected {file.md5sum}, got {md5sum})");
+								if (!md5sum.Equals(file.MD5)) {
+									errorCallback?.Invoke($"{file.FileName}: Hash sum mismatch. Please contact your server administrator.");
+									Log.Error($"Downloaded file {file.FileName}: MD5 doesn't match (expected {file.MD5}, got {md5sum})");
 									continue;
 								}
 							}
 						}
 
-						if (!string.IsNullOrEmpty(file.sha256)) {
+						if (!string.IsNullOrEmpty(file.SHA256)) {
 							using (var sha256 = SHA256.Create()) {
 								var sha256sum = BitConverter.ToString(sha256.ComputeHash(loader.bytes)).Replace("-", "").ToLowerInvariant();
 
-								if (!sha256sum.Equals(file.sha256)) {
-									errorCallback?.Invoke($"{file.filename}: Hash sum mismatch. Please contact your server administrator.");
-									Debug.LogError($"Downloaded file {file.filename}: SHA256 doesn't match (expected {file.sha256}, got {sha256sum})");
+								if (!sha256sum.Equals(file.SHA256)) {
+									errorCallback?.Invoke($"{file.FileName}: Hash sum mismatch. Please contact your server administrator.");
+									Log.Error($"Downloaded file {file.FileName}: SHA256 doesn't match (expected {file.SHA256}, got {sha256sum})");
 									continue;
 								}
 							}
 						}
 
-						if (!string.IsNullOrEmpty(file.sha512)) {
+						if (!string.IsNullOrEmpty(file.SHA512)) {
 							using (var sha512 = SHA512.Create()) {
 								var sha512sum = BitConverter.ToString(sha512.ComputeHash(loader.bytes)).Replace("-", "").ToLowerInvariant();
 
-								if (!sha512sum.Equals(file.sha512)) {
-									errorCallback?.Invoke($"{file.filename}: Hash sum mismatch. Please contact your server administrator.");
-									Debug.LogError($"Downloaded file {file.filename}: SHA512 doesn't match (expected {file.sha512}, got {sha512sum})");
+								if (!sha512sum.Equals(file.SHA512)) {
+									errorCallback?.Invoke($"{file.FileName}: Hash sum mismatch. Please contact your server administrator.");
+									Log.Error($"Downloaded file {file.FileName}: SHA512 doesn't match (expected {file.SHA512}, got {sha512sum})");
 									continue;
 								}
 							}
@@ -340,61 +472,45 @@ namespace Paradise.Client {
 						PopupSystem.HideMessage(_progressPopup);
 
 						errorCallback?.Invoke($"An error occured while downloading updates: {e.Message}");
-						Log.Debug(e);
+						Log.Error(e);
 
 						yield break;
 					}
 
 					try {
-						var tempFilename = $"{Application.dataPath}\\Updates\\{file.filename}";
+						var tempFilename = $"{Application.dataPath}\\Updates\\{file.FileName}";
 						File.WriteAllBytes(tempFilename, loader.bytes);
 
-						if (!Directory.Exists($"{Application.dataPath}\\{file.localPath}")) {
-							Directory.CreateDirectory($"{Application.dataPath}\\{file.localPath}");
+						if (!Directory.Exists($"{Path.GetDirectoryName(Application.dataPath)}\\{file.LocalPath}")) {
+							Directory.CreateDirectory($"{Path.GetDirectoryName(Application.dataPath)}\\{file.LocalPath}");
 						}
 
-						var filename = $"{Application.dataPath}\\{file.localPath}\\{file.filename}";
+						var filename = $"{Path.GetDirectoryName(Application.dataPath)}\\{file.LocalPath}\\{file.FileName}";
+
 						if (File.Exists(filename)) {
 							// File will be removed on game restart
+							var fileBackupPath = Path.Combine(backupPath, Path.GetFileName(filename) + ".bak");
 
-							File.Move(filename, filename + ".bak");
+							if (File.Exists(fileBackupPath)) {
+								File.Delete(fileBackupPath);
+							}
+
+							File.Move(filename, fileBackupPath);
 						}
 
-						// Disabled for testing
 						File.Move(tempFilename, filename);
 					} catch (Exception e) {
 						PopupSystem.HideMessage(_progressPopup);
 
 						errorCallback?.Invoke($"An error occured while installing updates: {e.Message}");
-						Log.Debug(e);
+						Log.Error(e);
 
 						yield break;
 					}
 				}
 			}
 
-			foreach (var file in FilesToRemove) {
-				try {
-					if (!Directory.Exists($"{Application.dataPath}\\{file.localPath}")) {
-						continue;
-					}
-
-					var filename = $"{Application.dataPath}\\{file.localPath}\\{file.filename}";
-
-					if (File.Exists(filename)) {
-						// File will be removed on game restart
-
-						File.Move(filename, filename + ".bak");
-					}
-				} catch (Exception e) {
-					PopupSystem.HideMessage(_progressPopup);
-
-					errorCallback?.Invoke($"An error occured while installing updates: {e.Message}");
-					Log.Debug(e);
-
-					yield break;
-				}
-			}
+			DeleteRemovedFiles();
 
 			updateCompleteCallback?.Invoke();
 		}
@@ -402,31 +518,18 @@ namespace Paradise.Client {
 		public static IEnumerator CleanupUpdates() {
 			Log.Info("Cleaning cached update files");
 
-			// Delete backup files in UberStrike_Data\Managed
-			if (Directory.Exists(string.Join("/", new string[] { Application.dataPath, "Managed" }))) {
-				var files = Directory.GetFiles(string.Join("/", new string[] { Application.dataPath, "Managed" }), "*.bak");
-
-				foreach (var file in files) {
-					File.Delete(file);
-				}
-			}
-
-			// Delete backup files in UberStrike_Data\Maps
-			if (Directory.Exists(string.Join("/", new string[] { Application.dataPath, "Maps" }))) {
-				var files = Directory.GetFiles(string.Join("/", new string[] { Application.dataPath, "Maps" }), "*.bak");
-
-				foreach (var file in files) {
-					File.Delete(file);
-				}
-			}
-
-			// Delete files UberStrike_Data\Updates
+			// Delete downloaded update files
 			if (Directory.Exists(string.Join("/", new string[] { Application.dataPath, "Updates" }))) {
 				var files = Directory.GetFiles(string.Join("/", new string[] { Application.dataPath, "Updates" }), "*");
 
 				foreach (var file in files) {
 					File.Delete(file);
 				}
+			}
+
+			// Delete backup files
+			if (Directory.Exists(string.Join("/", new string[] { Application.dataPath, "Updates", "bak" }))) {
+				Directory.Delete(string.Join("/", new string[] { Application.dataPath, "Updates", "bak" }), true);
 			}
 
 			yield break;
@@ -443,7 +546,7 @@ namespace Paradise.Client {
 			// mag is 0 for bytes, 1 for KB, 2, for MB, etc.
 			int mag = (int)Math.Log(value, 1024);
 
-			// 1L << (mag * 10) == 2 ^ (10 * mag) 
+			// 1L << (mag * 10) == 2 ^ (10 * mag)
 			// [i.e. the number of bytes in the unit corresponding to mag]
 			decimal adjustedSize = (decimal)value / (1L << (mag * 10));
 

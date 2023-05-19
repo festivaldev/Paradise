@@ -1,18 +1,12 @@
 ﻿using Paradise.DataCenter.Common.Entities;
-using System;
 using System.IO;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class PointDepositViewProxy
-	{
-		public static void Serialize(Stream stream, PointDepositView instance)
-		{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class PointDepositViewProxy {
+		public static void Serialize(Stream stream, PointDepositView instance) {
 			int num = 0;
-			if (instance != null)
-			{
-				using (MemoryStream memoryStream = new MemoryStream())
-				{
+			if (instance != null) {
+				using (MemoryStream memoryStream = new MemoryStream()) {
 					Int32Proxy.Serialize(memoryStream, instance.Cmid);
 					DateTimeProxy.Serialize(memoryStream, instance.DepositDate);
 					EnumProxy<PointsDepositType>.Serialize(memoryStream, instance.DepositType);
@@ -22,19 +16,15 @@ namespace Paradise.Core.Serialization.Legacy
 					Int32Proxy.Serialize(stream, ~num);
 					memoryStream.WriteTo(stream);
 				}
-			}
-			else
-			{
+			} else {
 				Int32Proxy.Serialize(stream, 0);
 			}
 		}
 
-		public static PointDepositView Deserialize(Stream bytes)
-		{
+		public static PointDepositView Deserialize(Stream bytes) {
 			int num = Int32Proxy.Deserialize(bytes);
 			PointDepositView pointDepositView = null;
-			if (num != 0)
-			{
+			if (num != 0) {
 				pointDepositView = new PointDepositView();
 				pointDepositView.Cmid = Int32Proxy.Deserialize(bytes);
 				pointDepositView.DepositDate = DateTimeProxy.Deserialize(bytes);

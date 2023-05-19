@@ -36,26 +36,30 @@
 	  .allowedextension
 	</AllowedReferenceRelatedFileExtensions>
     <DebugSymbols>false</DebugSymbols>
+    <PathMap>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))=C:\buildroot\$(MSBuildProjectName)</PathMap>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ExitGames.Logging.Log4Net">
       <HintPath>..\..\AssemblyReferences\ExitGames.Logging.Log4Net.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="ExitGamesLibs">
+      <HintPath>..\..\AssemblyReferences\ExitGamesLibs.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.15\lib\net45\log4net.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.13.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Photon.SocketServer">
       <HintPath>..\..\AssemblyReferences\Photon.SocketServer.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="PhotonHostRuntimeInterfaces, Version=3.58.0.0, Culture=neutral, PublicKeyToken=6cb1467adaa73020, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
+    <Reference Include="PhotonHostRuntimeInterfaces">
       <HintPath>..\..\AssemblyReferences\PhotonHostRuntimeInterfaces.dll</HintPath>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -68,57 +72,122 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="UnityEngine">
       <HintPath>..\..\AssemblyReferences\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Interfaces\ICommPeerEventsType.cs" />
-    <Compile Include="Interfaces\ICommPeerOperationsType.cs" />
-    <Compile Include="Interfaces\IGamePeerEventsType.cs" />
-    <Compile Include="Interfaces\IGamePeerOperationsType.cs" />
-    <Compile Include="Interfaces\IGameRoomEventsType.cs" />
-    <Compile Include="Interfaces\IGameRoomOperationsType.cs" />
-    <Compile Include="Interfaces\ILobbyRoomEventsType.cs" />
-    <Compile Include="Interfaces\ILobbyRoomOperationsType.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Server\ApplicationConfiguration.cs" />
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\Contracts\IApplicationWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IApplicationWebServiceContract.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\Contracts\IAuthenticationWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IAuthenticationWebServiceContract.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\Contracts\IClanWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IClanWebServiceContract.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\Contracts\IModerationWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IModerationWebServiceContract.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\Contracts\IPrivateMessageWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IPrivateMessageWebServiceContract.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\Contracts\IRelationshipWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IRelationshipWebServiceContract.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\Contracts\IShopWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IShopWebServiceContract.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\Contracts\IUserWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IUserWebServiceContract.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\Database\ModerationAction.cs">
+      <Link>ModerationAction.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\ProfanityFilter\AllowList.cs">
+      <Link>ProfanityFilter\AllowList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\ProfanityFilter\Interfaces\IAllowList.cs">
+      <Link>ProfanityFilter\Interfaces\IAllowList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\ProfanityFilter\Interfaces\IProfanityFilter.cs">
+      <Link>ProfanityFilter\Interfaces\IProfanityFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\ProfanityFilter\ProfanityBase.cs">
+      <Link>ProfanityFilter\ProfanityBase.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\ProfanityFilter\ProfanityFilter.cs">
+      <Link>ProfanityFilter\ProfanityFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices.Services\ProfanityFilter\ProfanityList.cs">
+      <Link>ProfanityFilter\ProfanityList.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices\Database\ModerationFlag.cs">
+      <Link>ModerationFlag.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices\TcpSocket\TcpSocket.Client.cs">
+      <Link>TcpSocket\TcpSocket.Client.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices\TcpSocket\TcpSocket.cs">
+      <Link>TcpSocket\TcpSocket.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices\TcpSocket\TcpSocket.EventArgs.cs">
+      <Link>TcpSocket\TcpSocket.EventArgs.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices\TcpSocket\TcpSocket.PacketType.cs">
+      <Link>TcpSocket\TcpSocket.PacketType.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices\TcpSocket\TcpSocket.Payload.cs">
+      <Link>TcpSocket\TcpSocket.Payload.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Paradise.WebServices\TcpSocket\TcpSocket.SocketConnection.cs">
+      <Link>TcpSocket\TcpSocket.SocketConnection.cs</Link>
+    </Compile>
     <Compile Include="Server\BaseEventSender.cs" />
     <Compile Include="Server\BaseOperationHandler.cs" />
     <Compile Include="Server\BasePeer.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Server\BaseRealtimeApplication.cs" />
-    <Compile Include="Server\Comm\BaseCommPeerOperationHandler.cs" />
-    <Compile Include="Server\Comm\BaseLobbyRoomOperationHandler.cs" />
     <Compile Include="Server\Comm\CommActor.cs" />
-    <Compile Include="Server\Comm\CommApplication.cs" />
     <Compile Include="Server\Comm\CommPeer.cs" />
-    <Compile Include="Server\Comm\CommPeerEvents.cs" />
-    <Compile Include="Server\Comm\CommPeerOperationHandler.cs" />
-    <Compile Include="Server\Comm\LobbyManager.cs" />
-    <Compile Include="Server\Comm\LobbyRoom.cs" />
-    <Compile Include="Server\Comm\LobbyRoomEvents.cs" />
-    <Compile Include="Server\Comm\LobbyRoom.Handlers.cs" />
-    <Compile Include="Server\Game\BaseGamePeerOperationHandler.cs" />
-    <Compile Include="Server\Game\BaseGameRoomOperationHandler.cs" />
+    <Compile Include="Server\Comm\CommPeer.EventSender.cs" />
+    <Compile Include="Server\Comm\CommServerApplication.cs" />
+    <Compile Include="Server\Comm\Interfaces\ICommPeerEventsType.cs" />
+    <Compile Include="Server\Comm\Interfaces\ICommPeerOperationsType.cs" />
+    <Compile Include="Server\Comm\Interfaces\ILobbyRoomEventsType.cs" />
+    <Compile Include="Server\Comm\Interfaces\ILobbyRoomOperationsType.cs" />
+    <Compile Include="Server\Comm\Lobby\LobbyManager.cs" />
+    <Compile Include="Server\Comm\Lobby\LobbyRoom.cs" />
+    <Compile Include="Server\Comm\Lobby\LobbyRoom.EventSender.cs" />
+    <Compile Include="Server\Comm\Lobby\LobbyRoom.OperationHandler.cs" />
+    <Compile Include="Server\Config\ApplicationConfiguration.cs" />
+    <Compile Include="Server\Config\PeerConfiguration.cs" />
     <Compile Include="Server\Game\GameActor.cs" />
-    <Compile Include="Server\Game\GameApplication.cs" />
+    <Compile Include="Server\Game\GameActor.Statistics.cs" />
     <Compile Include="Server\Game\GamePeer.cs" />
-    <Compile Include="Server\Game\GamePeerEvents.cs" />
-    <Compile Include="Server\Game\GamePeerOperationHandler.cs" />
-    <Compile Include="Server\Game\GameRoomEvents.cs" />
+    <Compile Include="Server\Game\GamePeer.EventSender.cs" />
+    <Compile Include="Server\Game\GamePeer.OperationHandler.cs" />
+    <Compile Include="Server\Game\GameServerApplication.cs" />
+    <Compile Include="Server\Game\GameActorInfo.Delta.cs" />
+    <Compile Include="Server\Game\Interfaces\GameFlags.cs" />
+    <Compile Include="Server\Game\Interfaces\IGamePeerOperationsType.cs" />
+    <Compile Include="Server\Game\Interfaces\IGamePeerEventsType.cs" />
+    <Compile Include="Server\Game\Interfaces\IGameRoomEventsType.cs" />
+    <Compile Include="Server\Game\Interfaces\IGameRoomOperationsType.cs" />
     <Compile Include="Server\Game\Managers\GameRoomManager.cs" />
     <Compile Include="Server\Game\Managers\PowerUpManager.cs" />
     <Compile Include="Server\Game\Managers\ShopManager.cs" />
     <Compile Include="Server\Game\Managers\SpawnPointManager.cs" />
     <Compile Include="Server\Game\Rooms\BaseGameRoom.cs" />
-    <Compile Include="Server\Game\EventArgs.cs" />
-    <Compile Include="Server\Game\Rooms\BaseGameRoom.Handlers.cs" />
-    <Compile Include="Server\Game\Rooms\DeathMatchGameRoom.cs" />
-    <Compile Include="Server\Game\Rooms\TeamEliminationGameRoom.cs" />
-    <Compile Include="Server\Game\Rooms\TeamDeathMatchGameRoom.cs" />
-    <Compile Include="Server\Game\Rooms\TestGameRoom.cs" />
+    <Compile Include="Server\Game\Rooms\BaseGameRoom.EventArgs.cs" />
+    <Compile Include="Server\Game\Rooms\BaseGameRoom.EventSender.cs" />
+    <Compile Include="Server\Game\Rooms\BaseGameRoom.OperationHandler.cs" />
+    <Compile Include="Server\Game\Rooms\DeathMatchRoom.cs" />
+    <Compile Include="Server\Game\Rooms\TeamDeatchMatchRoom.cs" />
+    <Compile Include="Server\Game\Rooms\TeamEliminationRoom.cs" />
+    <Compile Include="Server\Game\Rooms\TestRoom.cs" />
+    <Compile Include="Server\Game\StateMachine.cs" />
     <Compile Include="Server\Game\States\Match\AfterRoundState.cs" />
     <Compile Include="Server\Game\States\Match\BaseMatchState.cs" />
     <Compile Include="Server\Game\States\Match\EndOfMatchState.cs" />
@@ -130,11 +199,10 @@
     <Compile Include="Server\Game\States\Player\PlayerOverviewState.cs" />
     <Compile Include="Server\Game\States\Player\PlayerPlayingState.cs" />
     <Compile Include="Server\Game\States\Player\PlayerPrepareState.cs" />
+    <Compile Include="Server\Game\States\Player\PlayerSpectatingState.cs" />
     <Compile Include="Server\Game\XpPointsUtil.cs" />
     <Compile Include="Server\Interfaces\IRoom.cs" />
     <Compile Include="Server\Interfaces\IState.cs" />
-    <Compile Include="Server\PeerConfiguration.cs" />
-    <Compile Include="Server\StateMachine.cs" />
     <Compile Include="ServiceClients\ApplicationWebServiceClient.cs" />
     <Compile Include="ServiceClients\AuthenticationWebServiceClient.cs" />
     <Compile Include="ServiceClients\BaseWebServiceClient.cs" />
@@ -146,27 +214,32 @@
     <Compile Include="ServiceClients\UserWebServiceClient.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="CompositeHashes.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="JunkHashes.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Paradise.Realtime.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <EmbeddedResource Include="log4net.config" />
     <None Include="App.config" />
     <None Include="packages.config" />
-    <Compile Include="Server\Game\GameActorInfo.Delta.cs" />
-    <Compile Include="Server\Game\GameActor.Statistics.cs" />
+    <Compile Include="Server\Comm\CommPeer.OperationHandler.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Paradise.Core\Paradise.Core.csproj">
       <Project>{2c90e774-49b8-4d1e-ba6d-fa9f47b647fb}</Project>
       <Name>Paradise.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Web Services\Paradise.WebServices.Services\Paradise.WebServices.Services.csproj">
-      <Project>{8fd8fec8-38be-417c-9086-50e2122f4007}</Project>
-      <Name>Paradise.WebServices.Services</Name>
-    </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Paradise.Realtime.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>taskkill /f /im PhotonSocketServer.exe
+exit 0</PreBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -1,21 +1,17 @@
-﻿using System;
+﻿using Paradise.DataCenter.Common.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using static System.Net.Mime.MediaTypeNames;
+using System.Threading.Tasks;
 
 namespace Paradise.WebServices {
-	public interface IParadiseCommand {
-		string Command { get; }
-		string[] Alias { get; }
-		string Description { get; }
-		string HelpString { get; }
-
-		void PrintUsageText();
-		void Run(string[] arguments);
-	}
-
 	public abstract class ParadiseCommand {
+		public class CommandOutputArgs : EventArgs {
+			public Guid InvocationId { get; set; }
+			public string Text { get; set; }
+			public bool Inline { get; set; }
+		}
+
 		public static string Command { get; }
 		public static string[] Aliases { get; }
 
@@ -23,19 +19,48 @@ namespace Paradise.WebServices {
 		public abstract string HelpString { get; }
 		public abstract string[] UsageText { get; }
 
-		public Guid CommandGuid { get; private set; }
+		public virtual MemberAccessLevel MinimumAccessLevel { get; } = MemberAccessLevel.Admin;
 
-		public ParadiseCommand(Guid guid) {
-			this.CommandGuid = guid;
+		public Guid InvocationId { get; private set; }
+
+		public ParadiseCommand(Guid invocationId) {
+			this.InvocationId = invocationId;
 		}
 
-		public abstract void Run(string[] arguments);
+		public abstract Task Run(string[] arguments);
+
+		public EventHandler<CommandOutputArgs> CommandOutput;
+		private List<string> OutputBuffer = new List<string>();
+		public string Output {
+			get {
+				return string.Join(Environment.NewLine, OutputBuffer);
+			}
+		}
+
+		public void ClearOutputBuffer() {
+			OutputBuffer.Clear();
+		}
 
 		protected void WriteLine(string text) {
-			Console.WriteLine(text);
+			OutputBuffer.Add(text);
 
-			CommandHandler.CommandOutput?.Invoke(this, new CommandOutputArgs {
+			CommandOutput?.Invoke(this, new CommandOutputArgs {
+				InvocationId = this.InvocationId,
 				Text = text
+			});
+		}
+
+		protected void Write(string text) {
+			if (OutputBuffer.Count > 0) {
+				OutputBuffer[OutputBuffer.Count - 1] = string.Concat(OutputBuffer.Last(), text);
+			} else {
+				OutputBuffer.Add(text);
+			}
+
+			CommandOutput?.Invoke(this, new CommandOutputArgs {
+				InvocationId = this.InvocationId,
+				Text = text,
+				Inline = true
 			});
 		}
 
@@ -46,48 +71,77 @@ namespace Paradise.WebServices {
 		}
 	}
 
-	public class CommandOutputArgs : EventArgs {
-		public string Text { get; set; }
-		public bool Inline { get; set; }
-	}
+	public static class CommandHandler {
+		public static List<Type> Commands { get; private set; } = new List<Type>();
 
-	public class CommandCompletedArgs : EventArgs {
-		public Guid Guid { get; set; }
-	}
-
-	public class CommandHandler {
-		public static EventHandler<CommandCompletedArgs> CommandCompleted;
-		public static EventHandler<CommandOutputArgs> CommandOutput;
-
-		public static List<Type> Commands = new List<Type>();
-
-		public static void HandleCommand(string command, string[] arguments, Guid? guid = null) {
-			if (guid == null) {
-				guid = Guid.NewGuid();
+		public static Guid HandleCommand(string command, string[] args, Guid invocationId = default, Action<string, bool> outputCallback = null, Action<ParadiseCommand, bool, string> completedCallback = null) {
+			if (invocationId == null || invocationId.Equals(Guid.Empty)) {
+				invocationId = Guid.NewGuid();
 			}
 
-			foreach (var type in Commands) {
-				if (((string)type.GetProperty("Command").GetValue(null)).Equals(command, StringComparison.OrdinalIgnoreCase) ||
-					((string[])type.GetProperty("Aliases").GetValue(null)).Contains(command, StringComparer.OrdinalIgnoreCase)) {
+			return Task.Run(async () => {
+				foreach (var type in Commands) {
+					if ((type.GetProperty("Command").GetValue(null) as string).Equals(command, StringComparison.OrdinalIgnoreCase) ||
+						(type.GetProperty("Aliases").GetValue(null) as string[]).Contains(command, StringComparer.OrdinalIgnoreCase)) {
+						var invoker = (ParadiseCommand)Activator.CreateInstance(type, new object[] { invocationId });
 
+						invoker.CommandOutput += (sender, e) => {
+							outputCallback?.Invoke(e.Text, e.Inline);
+						};
 
-					var invoker = (ParadiseCommand)Activator.CreateInstance(type, new object[] { guid });
+						await invoker.Run(args);
 
-					invoker.Run(arguments);
+						completedCallback?.Invoke(invoker, true, null);
+						invoker.ClearOutputBuffer();
 
-					CommandCompleted?.Invoke(invoker, new CommandCompletedArgs {
-						Guid = invoker.CommandGuid
-					});
-
-					return;
+						return invocationId;
+					}
 				}
+
+				if (!string.IsNullOrWhiteSpace(command)) {
+					completedCallback?.Invoke(null, false, $"{command}: Unknown command.");
+				}
+
+				return invocationId;
+			}).Result;
+		}
+
+		public static Guid HandleUserCommand(string command, string[] args, PublicProfileView user, Guid invocationId = default, Action<string, bool> outputCallback = null, Action<ParadiseCommand, bool, string> completedCallback = null) {
+			if (invocationId == null || invocationId.Equals(Guid.Empty)) {
+				invocationId = Guid.NewGuid();
 			}
 
-			if (!string.IsNullOrWhiteSpace(command)) {
-				CommandOutput?.Invoke(null, new CommandOutputArgs {
-					Text = $"{command}: Unkown command."
-				});
-			}
+			return Task.Run(async () => {
+				foreach (var type in Commands) {
+					if ((type.GetProperty("Command").GetValue(null) as string).Equals(command, StringComparison.OrdinalIgnoreCase) ||
+						(type.GetProperty("Aliases").GetValue(null) as string[]).Contains(command, StringComparer.OrdinalIgnoreCase)) {
+						var invoker = (ParadiseCommand)Activator.CreateInstance(type, new object[] { invocationId });
+
+						if (user.AccessLevel < invoker.MinimumAccessLevel) {
+							completedCallback?.Invoke(null, false, $"{command}: Insufficient rights to execute command.");
+
+							return invocationId;
+						}
+
+						invoker.CommandOutput += (sender, e) => {
+							outputCallback?.Invoke(e.Text, e.Inline);
+						};
+
+						await invoker.Run(args);
+
+						completedCallback?.Invoke(invoker, true, null);
+						invoker.ClearOutputBuffer();
+
+						return invocationId;
+					}
+				}
+
+				if (!string.IsNullOrWhiteSpace(command)) {
+					completedCallback?.Invoke(null, false, $"{command}: Unknown command.");
+				}
+
+				return invocationId;
+			}).Result;
 		}
 	}
 }

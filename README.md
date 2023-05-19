@@ -37,15 +37,16 @@ Donations are optional and will be used to cover server and license costs.
 If you wish, your name will be listed as a supporter.  
 
 _Used libraries_
-* _Photon SDK_ by Exit Games GmbH
-* _Lib.Harmony_ by Andreas Pardeike
-* _LiteDB_ by Mauricio David
-* _log4net_ by The Apache Software Foundation
-* _Newtonsoft.Json_ by James Newton-King
-* _YamlDotNet_ by Antoine Aubry
-* _ProfanityDetector_ by stephenhaunts
-* _discord-rcp-csharp_ by Lachee
-* _Discord.NET_ by Discord.Net Contributors
+* _[Photon Server SDK](https://www.photonengine.com/sdks#server-sdkserverserver)_ by Exit Games GmbH
+* _[Lib.Harmony](https://github.com/pardeike/Harmony)_ by Andreas Pardeike
+* _[LiteDB](https://github.com/mbdavid/LiteDB)_ by Mauricio David
+* _[log4net](https://github.com/apache/logging-log4net/)_ by The Apache Software Foundation
+* _[Newtonsoft.Json](https://github.com/JamesNK/Newtonsoft.Json)_ by James Newton-King
+* _[YamlDotNet](https://github.com/aaubry/YamlDotNet)_ by Antoine Aubry
+* _[ProfanityDetector](https://github.com/stephenhaunts/ProfanityDetector)_ by stephenhaunts
+* _[discord-rcp-csharp](https://github.com/Lachee/discord-rpc-csharp)_ by Lachee
+* _[Discord.NET](https://github.com/discord-net/Discord.Net)_ by Discord.Net Contributors
+* _[CommandLineParser](https://github.com/commandlineparser/commandline)_ by gsscoder,nemec,ericnewton76,moh-hassan
 
 _Honorable mentions_
 * [@FICTURE7](https://github.com/FICTURE7) - for initially forking Dropshot and investing a lot of time to get things working. Also, you've got us to work on UberStrok with you after we gave up on the realtime stuff, thank you very much!

@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Paradise.Util.Ciphers {
-	public class CryptographyPolicy {
+	public class CryptographyPolicy : ICryptographyPolicy {
 		public string SHA256Encrypt(string inputString) {
 			UTF8Encoding utf8Encoding = new UTF8Encoding();
 			byte[] bytes = utf8Encoding.GetBytes(inputString);

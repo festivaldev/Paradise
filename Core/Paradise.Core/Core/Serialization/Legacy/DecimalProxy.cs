@@ -1,12 +1,8 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class DecimalProxy
-	{
-		public static void Serialize(Stream bytes, decimal instance)
-		{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class DecimalProxy {
+		public static void Serialize(Stream bytes, decimal instance) {
 			int[] bits = decimal.GetBits(instance);
 			Int32Proxy.Serialize(bytes, bits[0]);
 			Int32Proxy.Serialize(bytes, bits[1]);
@@ -14,8 +10,7 @@ namespace Paradise.Core.Serialization.Legacy
 			Int32Proxy.Serialize(bytes, bits[3]);
 		}
 
-		public static decimal Deserialize(Stream bytes)
-		{
+		public static decimal Deserialize(Stream bytes) {
 			int[] bits = new int[]
 			{
 				Int32Proxy.Deserialize(bytes),

@@ -1,19 +1,13 @@
-﻿using System;
-using System.IO;
-using Paradise.Core.Types;
+﻿using Paradise.Core.Types;
 using Paradise.DataCenter.Common.Entities;
+using System.IO;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class LoadoutViewProxy
-	{
-		public static void Serialize(Stream stream, LoadoutView instance)
-		{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class LoadoutViewProxy {
+		public static void Serialize(Stream stream, LoadoutView instance) {
 			int num = 0;
-			if (instance != null)
-			{
-				using (MemoryStream memoryStream = new MemoryStream())
-				{
+			if (instance != null) {
+				using (MemoryStream memoryStream = new MemoryStream()) {
 					Int32Proxy.Serialize(memoryStream, instance.Backpack);
 					Int32Proxy.Serialize(memoryStream, instance.Boots);
 					Int32Proxy.Serialize(memoryStream, instance.Cmid);
@@ -29,12 +23,9 @@ namespace Paradise.Core.Serialization.Legacy
 					Int32Proxy.Serialize(memoryStream, instance.QuickItem1);
 					Int32Proxy.Serialize(memoryStream, instance.QuickItem2);
 					Int32Proxy.Serialize(memoryStream, instance.QuickItem3);
-					if (instance.SkinColor != null)
-					{
+					if (instance.SkinColor != null) {
 						StringProxy.Serialize(memoryStream, instance.SkinColor);
-					}
-					else
-					{
+					} else {
 						num |= 1;
 					}
 					EnumProxy<AvatarType>.Serialize(memoryStream, instance.Type);
@@ -55,19 +46,15 @@ namespace Paradise.Core.Serialization.Legacy
 					Int32Proxy.Serialize(stream, ~num);
 					memoryStream.WriteTo(stream);
 				}
-			}
-			else
-			{
+			} else {
 				Int32Proxy.Serialize(stream, 0);
 			}
 		}
 
-		public static LoadoutView Deserialize(Stream bytes)
-		{
+		public static LoadoutView Deserialize(Stream bytes) {
 			int num = Int32Proxy.Deserialize(bytes);
 			LoadoutView loadoutView = null;
-			if (num != 0)
-			{
+			if (num != 0) {
 				loadoutView = new LoadoutView();
 				loadoutView.Backpack = Int32Proxy.Deserialize(bytes);
 				loadoutView.Boots = Int32Proxy.Deserialize(bytes);
@@ -84,8 +71,7 @@ namespace Paradise.Core.Serialization.Legacy
 				loadoutView.QuickItem1 = Int32Proxy.Deserialize(bytes);
 				loadoutView.QuickItem2 = Int32Proxy.Deserialize(bytes);
 				loadoutView.QuickItem3 = Int32Proxy.Deserialize(bytes);
-				if ((num & 1) != 0)
-				{
+				if ((num & 1) != 0) {
 					loadoutView.SkinColor = StringProxy.Deserialize(bytes);
 				}
 				loadoutView.Type = EnumProxy<AvatarType>.Deserialize(bytes);

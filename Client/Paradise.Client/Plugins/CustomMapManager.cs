@@ -9,14 +9,14 @@ namespace Paradise.Client {
 	public class CustomMapManager : MonoBehaviour {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(CustomMapManager));
 
-		public static List<UberstrikeCustomMapView> Maps { get; private set; } = new List<UberstrikeCustomMapView>();
+		public static List<UberStrikeCustomMapView> Maps { get; private set; } = new List<UberStrikeCustomMapView>();
 
 		private static AssetBundle Bundle;
 		private static bool IsLoading = false;
 
 		public static IEnumerator GetCustomMaps() {
 			Log.Info("Getting custom maps from server");
-			yield return ParadiseApplicationWebServiceClient.GetCustomMaps(ApplicationDataManager.Version, DefinitionType.StandardDefinition, delegate (List<UberstrikeCustomMapView> callback) {
+			yield return ParadiseApplicationWebServiceClient.GetCustomMaps(ApplicationDataManager.Version, DefinitionType.StandardDefinition, delegate (List<UberStrikeCustomMapView> callback) {
 				Maps = callback;
 			}, delegate (Exception e) {
 				PopupSystem.ShowMessage("Error", $"There was an error loading the maps.", PopupSystem.AlertType.OK);
@@ -25,8 +25,8 @@ namespace Paradise.Client {
 			});
 		}
 
-		private static UberstrikeCustomMapView GetMap(int mapId) {
-			foreach (UberstrikeCustomMapView map in Maps) {
+		private static UberStrikeCustomMapView GetMap(int mapId) {
+			foreach (UberStrikeCustomMapView map in Maps) {
 				if (map.MapId.Equals(mapId)) {
 					return map;
 				}

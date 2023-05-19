@@ -20,31 +20,29 @@ SOFTWARE.
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace ProfanityFilter.Interfaces
-{
-    public interface IProfanityFilter
-    {
-        bool IsProfanity(string word);
-        ReadOnlyCollection<string> DetectAllProfanities(string sentence);
-        ReadOnlyCollection<string> DetectAllProfanities(string sentence, bool removePartialMatches);
-        bool ContainsProfanity(string term);
-        
-        IAllowList AllowList { get; }
-        string CensorString(string sentence);
-        string CensorString(string sentence, char censorCharacter);
-        string CensorString(string sentence, char censorCharacter, bool ignoreNumbers);
-        (int, int, string)? GetCompleteWord(string toCheck, string profanity);
+namespace ProfanityFilter.Interfaces {
+	public interface IProfanityFilter {
+		bool IsProfanity(string word);
+		ReadOnlyCollection<string> DetectAllProfanities(string sentence);
+		ReadOnlyCollection<string> DetectAllProfanities(string sentence, bool removePartialMatches);
+		bool ContainsProfanity(string term);
 
-        void AddProfanity(string profanity);
-        void AddProfanity(string[] profanityList);
-        void AddProfanity(List<string> profanityList);
+		IAllowList AllowList { get; }
+		string CensorString(string sentence);
+		string CensorString(string sentence, char censorCharacter);
+		string CensorString(string sentence, char censorCharacter, bool ignoreNumbers);
+		(int, int, string)? GetCompleteWord(string toCheck, string profanity);
 
-        bool RemoveProfanity(string profanity);
-        bool RemoveProfanity(List<string> profanities);
-        bool RemoveProfanity(string [] profanities);
+		void AddProfanity(string profanity);
+		void AddProfanity(string[] profanityList);
+		void AddProfanity(List<string> profanityList);
 
-        void Clear();
+		bool RemoveProfanity(string profanity);
+		bool RemoveProfanity(List<string> profanities);
+		bool RemoveProfanity(string[] profanities);
 
-        int Count { get; }
-    }
+		void Clear();
+
+		int Count { get; }
+	}
 }

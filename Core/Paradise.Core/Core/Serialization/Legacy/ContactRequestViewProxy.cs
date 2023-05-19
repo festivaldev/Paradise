@@ -1,33 +1,21 @@
 ﻿using Paradise.DataCenter.Common.Entities;
-using System;
 using System.IO;
 
-namespace Paradise.Core.Serialization.Legacy
-{
-	public static class ContactRequestViewProxy
-	{
-		public static void Serialize(Stream stream, ContactRequestView instance)
-		{
+namespace Paradise.Core.Serialization.Legacy {
+	public static class ContactRequestViewProxy {
+		public static void Serialize(Stream stream, ContactRequestView instance) {
 			int num = 0;
-			if (instance != null)
-			{
-				using (MemoryStream memoryStream = new MemoryStream())
-				{
+			if (instance != null) {
+				using (MemoryStream memoryStream = new MemoryStream()) {
 					Int32Proxy.Serialize(memoryStream, instance.InitiatorCmid);
-					if (instance.InitiatorMessage != null)
-					{
+					if (instance.InitiatorMessage != null) {
 						StringProxy.Serialize(memoryStream, instance.InitiatorMessage);
-					}
-					else
-					{
+					} else {
 						num |= 1;
 					}
-					if (instance.InitiatorName != null)
-					{
+					if (instance.InitiatorName != null) {
 						StringProxy.Serialize(memoryStream, instance.InitiatorName);
-					}
-					else
-					{
+					} else {
 						num |= 2;
 					}
 					Int32Proxy.Serialize(memoryStream, instance.ReceiverCmid);
@@ -37,27 +25,21 @@ namespace Paradise.Core.Serialization.Legacy
 					Int32Proxy.Serialize(stream, ~num);
 					memoryStream.WriteTo(stream);
 				}
-			}
-			else
-			{
+			} else {
 				Int32Proxy.Serialize(stream, 0);
 			}
 		}
 
-		public static ContactRequestView Deserialize(Stream bytes)
-		{
+		public static ContactRequestView Deserialize(Stream bytes) {
 			int num = Int32Proxy.Deserialize(bytes);
 			ContactRequestView contactRequestView = null;
-			if (num != 0)
-			{
+			if (num != 0) {
 				contactRequestView = new ContactRequestView();
 				contactRequestView.InitiatorCmid = Int32Proxy.Deserialize(bytes);
-				if ((num & 1) != 0)
-				{
+				if ((num & 1) != 0) {
 					contactRequestView.InitiatorMessage = StringProxy.Deserialize(bytes);
 				}
-				if ((num & 2) != 0)
-				{
+				if ((num & 2) != 0) {
 					contactRequestView.InitiatorName = StringProxy.Deserialize(bytes);
 				}
 				contactRequestView.ReceiverCmid = Int32Proxy.Deserialize(bytes);

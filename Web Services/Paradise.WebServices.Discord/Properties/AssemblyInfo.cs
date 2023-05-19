@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // Allgemeine Informationen über eine Assembly werden über die folgenden
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
-[assembly: AssemblyTitle("Paradise.WebServices.Discord")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Paradise Web Services Discord Runtime")]
+[assembly: AssemblyDescription("Provides the runtime for the Paradise Web Services Discord Bot")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Paradise.WebServices.Discord")]
-[assembly: AssemblyCopyright("Copyright ©  2023")]
+[assembly: AssemblyCopyright("Copyright © 2017, 2022-2023 Team FESTIVAL")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
