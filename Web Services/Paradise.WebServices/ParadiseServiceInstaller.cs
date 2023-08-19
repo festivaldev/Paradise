@@ -16,7 +16,7 @@ namespace Paradise.WebServices {
 			};
 
 			ServiceInstaller = new ServiceInstaller {
-				ServiceName = "NewParadise.WebServices",
+				ServiceName = Program.CLIOptions.ServiceName ?? "NewParadise.WebServices",
 				DisplayName = "Paradise Web Services",
 				Description = "Service for running the Web Services API and File Server used by Paradise, a UberStrike Server implementation.",
 				StartType = ServiceStartMode.Automatic

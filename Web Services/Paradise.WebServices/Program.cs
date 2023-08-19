@@ -1,4 +1,4 @@
-using CommandLine;
+﻿using CommandLine;
 using log4net;
 using log4net.Config;
 using System;
@@ -37,23 +37,27 @@ namespace Paradise.WebServices {
 
 		internal static EventHandler consoleEventHandler = new EventHandler(ConsoleEventCallback);
 
+		public static CLIOptions CLIOptions { get; private set; }
+
 		[STAThread]
 		static void Main(string[] args) {
 			Parser.Default.ParseArguments<CLIOptions>(args)
 				.WithParsed<CLIOptions>(o => {
+					CLIOptions = o;
+
 					if (o.InstallService) {
 						try {
 							ManagedInstallerClass.InstallHelper(new string[] { "/InstallStateDir=", "/LogFile=", "/LogToConsole=true", Assembly.GetExecutingAssembly().Location });
 						} catch (Exception e) {
 							if (!o.Silent) {
-							MessageBox.Show($"Failed to install Paradise Web Services: {e.Message}\n{e.StackTrace}", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Error);
+								MessageBox.Show($"Failed to install Paradise Web Services: {e.Message}\n{e.StackTrace}", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Error);
 							}
 
 							Environment.Exit(1);
 						}
 
 						if (!o.Silent) {
-						MessageBox.Show("Paradise Web Services have been successfully installed!", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Information);
+							MessageBox.Show("Paradise Web Services have been successfully installed!", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Information);
 						}
 
 						Console.ReadLine();
@@ -63,14 +67,14 @@ namespace Paradise.WebServices {
 							ManagedInstallerClass.InstallHelper(new string[] { "/u", "/LogFile=", "/LogToConsole=true", Assembly.GetExecutingAssembly().Location });
 						} catch (Exception e) {
 							if (!o.Silent) {
-							MessageBox.Show($"Failed to remove Paradise Web Services: {e.Message}\n{e.StackTrace}", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Error);
+								MessageBox.Show($"Failed to remove Paradise Web Services: {e.Message}\n{e.StackTrace}", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Error);
 							}
 
 							Environment.Exit(1);
 						}
 
 						if (!o.Silent) {
-						MessageBox.Show("Paradise Web Services have been successfully removed!", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Information);
+							MessageBox.Show("Paradise Web Services have been successfully removed!", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Information);
 						}
 
 						Environment.Exit(0);
@@ -85,7 +89,7 @@ namespace Paradise.WebServices {
 					} else if (o.GUIMode) {
 						MessageBox.Show("The \"--gui\" launch parameter is deprecated, please use \"--tray\" instead.", "Paradise Web Services", MessageBoxButtons.OK, MessageBoxIcon.Information);
 						Environment.Exit(0);
-				}
+					}
 				});
 
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(ResolvePluginDependency);
@@ -105,7 +109,7 @@ namespace Paradise.WebServices {
 
 					using (var host = new ServiceHost(ServiceInstance)) {
 						// Add service endpoint to control Paradise via the tray app
-						host.AddServiceEndpoint(typeof(IParadiseServiceHost), new NetNamedPipeBinding(), "net.pipe://localhost/NewParadise.WebServices");
+						host.AddServiceEndpoint(typeof(IParadiseServiceHost), new NetNamedPipeBinding(), $"net.pipe://localhost/{Program.CLIOptions.PipeName ?? "NewParadise.WebServices"}");
 						host.Open();
 
 						while (RunApp) {
@@ -155,7 +159,7 @@ namespace Paradise.WebServices {
 					ConfigureLogging();
 
 					using (var host = new ServiceHost(typeof(ParadiseService))) {
-						host.AddServiceEndpoint(typeof(IParadiseServiceHost), new NetNamedPipeBinding(), "net.pipe://localhost/NewParadise.WebServices");
+						host.AddServiceEndpoint(typeof(IParadiseServiceHost), new NetNamedPipeBinding(), $"net.pipe://localhost/{Program.CLIOptions.PipeName ?? "NewParadise.WebServices"}");
 						host.Open();
 
 						ServiceBase.Run(new ParadiseService());

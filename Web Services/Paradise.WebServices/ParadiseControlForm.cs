@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using System;
 using System.Data;
 using System.Diagnostics;
@@ -151,7 +151,7 @@ namespace Paradise.WebServices {
 			connectionMenuItem.Text = "Connecting...";
 
 			try {
-				ChannelFactory = new DuplexChannelFactory<IParadiseServiceHost>(new InstanceContext(this), new NetNamedPipeBinding(), new EndpointAddress("net.pipe://localhost/NewParadise.WebServices"));
+				ChannelFactory = new DuplexChannelFactory<IParadiseServiceHost>(new InstanceContext(this), new NetNamedPipeBinding(), new EndpointAddress($"net.pipe://localhost/{Program.CLIOptions.PipeName ?? "NewParadise.WebServices"}"));
 				ServiceChannel = ChannelFactory.CreateChannel();
 				((IClientChannel)ServiceChannel).Closed += OnPipeClosed;
 				ServiceStatus = ServiceChannel.UpdateClientInfo();

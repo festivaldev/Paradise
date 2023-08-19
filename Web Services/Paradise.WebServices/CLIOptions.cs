@@ -28,5 +28,11 @@ namespace Paradise.WebServices {
 
 		[Option("gui", Hidden = true)]
 		public bool GUIMode { get; private set; }
+
+		[Option("pipe-name", Hidden = true, Default = "NewParadise.WebServices")]
+		public string PipeName { get; private set; }
+
+		[Option("service-name", Hidden = true, Default = "NewParadise.WebServices")]
+		public string ServiceName { get; private set; }
 	}
 }
