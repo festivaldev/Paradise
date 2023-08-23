@@ -111,7 +111,9 @@ Section "Paradise Runtime" ParadiseRuntime
 
 	SetOutPath "$INSTDIR\UberStrike_Data"
 	File "..\Client\Paradise.Client\Paradise.Settings.Client.xml"
-	File /nonfatal /a /r "..\build\client\"
+	File /nonfatal /a /r "..\build\client\Managed"
+	File /nonfatal /a /r "..\build\client\Maps"
+	File /nonfatal /a /r "..\build\client\Plugins"
 
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTNAME}" "DisplayName" "Paradise Client Runtime"
 	WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${INSTNAME}" "DisplayIcon" '"$INSTDIR\ParadiseUninstall.exe"'
