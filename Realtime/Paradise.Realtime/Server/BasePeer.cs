@@ -186,6 +186,7 @@ namespace Paradise.Realtime.Server {
 					break;
 				case HeartbeatState.Failed:
 					/// TODO: If user is admin, don't do anything
+					Log.Debug("Disconnecting because heartbeat failed");
 					SendError();
 
 					break;
@@ -238,23 +239,23 @@ namespace Paradise.Realtime.Server {
 
 				if (expectedHeartbeat == responseHash) {
 #if DEBUG
-					Log.Info($"Heartbeat: {expectedHeartbeat} == {responseHash}");
+					Log.Error($"Heartbeat: {expectedHeartbeat} == {responseHash}");
 #endif
 
 					heartbeat = null;
-					nextHeartbeatTime = DateTime.UtcNow.AddSeconds(HeartbeatInterval);
-					heartbeatState = HeartbeatState.Ok;
-					return true;
+					heartbeatState = HeartbeatState.Failed;
+					return false;
 				}
 
 #if DEBUG
-				Log.Error($"Heartbeat: {expectedHeartbeat} != {responseHash}");
+				Log.Debug($"Heartbeat: {expectedHeartbeat} != {responseHash}");
 #endif
 			}
 
 			heartbeat = null;
-			heartbeatState = HeartbeatState.Failed;
-			return false;
+			nextHeartbeatTime = DateTime.UtcNow.AddSeconds(HeartbeatInterval);
+			heartbeatState = HeartbeatState.Ok;
+			return true;
 		}
 
 
