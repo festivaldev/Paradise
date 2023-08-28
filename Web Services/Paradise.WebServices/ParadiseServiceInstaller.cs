@@ -38,6 +38,9 @@ namespace Paradise.WebServices {
 			if (!Context.Parameters["assemblypath"].EndsWith("--svc")) {
 				Context.Parameters["assemblypath"] = $"\"{Context.Parameters["assemblypath"]}\" --svc";
 			}
+
+			Context.Parameters["assemblypath"] += $" --service-name {Program.CLIOptions.ServiceName}";
+			Context.Parameters["assemblypath"] += $" --pipe-name {Program.CLIOptions.PipeName}";
 		}
 
 		private void AfterInstallHandler(object sender, InstallEventArgs e) {
