@@ -18,6 +18,7 @@ namespace Paradise.WebServices {
 		[DllImport("kernel32.dll", SetLastError = true)]
 		private static extern bool SetStdHandle(int nStdHandle, IntPtr hHandle);
 
+		private const int STD_INPUT_HANDLE = -10;
 		private const int STD_OUTPUT_HANDLE = -11;
 
 		[DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
@@ -48,6 +49,12 @@ namespace Paradise.WebServices {
 		#region ANSI color code support
 		private const uint ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
 		private const uint DISABLE_NEWLINE_AUTO_RETURN = 0x0008;
+		#endregion
+
+		#region Disable QuickEdit
+		private const uint ENABLE_MOUSE_INPUT = 0x0010;
+		private const uint ENABLE_QUICK_EDIT = 0x0040;
+		#endregion
 
 		[DllImport("kernel32.dll")]
 		private static extern bool GetConsoleMode(IntPtr hConsoleHandle, out uint lpMode);
@@ -56,7 +63,6 @@ namespace Paradise.WebServices {
 		private static extern bool SetConsoleMode(IntPtr hConsoleHandle, uint dwMode);
 
 
-		#endregion
 
 		private static bool HasConsole = false;
 
@@ -65,6 +71,13 @@ namespace Paradise.WebServices {
 			if (!HasConsole) {
 				HasConsole = true;
 				AllocConsole();
+
+				var stdinHandle = GetStdHandle(STD_INPUT_HANDLE);
+
+				GetConsoleMode(stdinHandle, out uint inConsoleMode);
+				inConsoleMode &= ~ENABLE_QUICK_EDIT;
+				inConsoleMode &= ~ENABLE_MOUSE_INPUT;
+				SetConsoleMode(stdinHandle, inConsoleMode);
 
 				var stdoutHandle = GetStdHandle(STD_OUTPUT_HANDLE);
 
