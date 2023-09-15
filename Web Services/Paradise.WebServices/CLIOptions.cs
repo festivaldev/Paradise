@@ -17,11 +17,13 @@ namespace Paradise.WebServices {
 		[Option("service", HelpText = "Runs Paradise.WebServices in Windows Service mode. (Alias: --svc)")]
 		public bool ServiceMode { get; set; }
 
+#pragma warning disable IDE1006
 		[Option("svc", Hidden = true)]
 		public bool _ServiceMode {
 			get { return ServiceMode; }
 			private set { ServiceMode = value; }
 		}
+#pragma warning restore IDE1006
 
 		[Option("tray", HelpText = "Runs Paradise.WebServices in Tray mode.")]
 		public bool TrayMode { get; private set; }

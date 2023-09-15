@@ -39,9 +39,7 @@ namespace Paradise.Client.Hooks {
 					}
 				};
 
-				if (sendOperation != null) {
-					sendOperation(3, customOpParameters, true, 0, false);
-				}
+				sendOperation?.Invoke(3, customOpParameters, true, 0, false);
 			}
 
 			return false;

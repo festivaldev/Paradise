@@ -6,11 +6,11 @@ namespace Paradise.Realtime.Server.Comm {
 	public partial class LobbyRoom : IRoom<CommPeer>, IDisposable {
 		private static readonly ILog Log = LogManager.GetLogger(typeof(LobbyRoom));
 
-		private LobbyRoom.OperationHandler OpHandler = new OperationHandler();
+		private readonly LobbyRoom.OperationHandler OpHandler = new OperationHandler();
 
 		private bool IsDisposed = false;
 
-		private List<CommPeer> _peers = new List<CommPeer>();
+		private readonly List<CommPeer> _peers = new List<CommPeer>();
 		public IReadOnlyList<CommPeer> Peers => _peers.AsReadOnly();
 
 		public Loop Loop { get; private set; }

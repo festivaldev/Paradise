@@ -30,7 +30,7 @@ namespace Paradise.WebServices {
 		public abstract Task Run(string[] arguments);
 
 		public EventHandler<CommandOutputArgs> CommandOutput;
-		private List<string> OutputBuffer = new List<string>();
+		private readonly List<string> OutputBuffer = new List<string>();
 		public string Output {
 			get {
 				return string.Join(Environment.NewLine, OutputBuffer);

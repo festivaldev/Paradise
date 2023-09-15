@@ -4,7 +4,7 @@ using log4net;
 
 namespace Paradise.Client {
 	/// <summary>
-	/// Disables clientside clan requirements for debugging purposes.
+	/// Disables client-side clan requirements for Admins.
 	/// </summary>
 	[HarmonyPatch(typeof(ClanDataManager))]
 	public class ClanDataManagerHook {

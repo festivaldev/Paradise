@@ -25,7 +25,7 @@ namespace Paradise.WebServices.Services {
 		private List<BundleView> bundleData;
 
 		private FileSystemWatcher watcher;
-		private static List<string> watchedFiles = new List<string> {
+		private static readonly List<string> watchedFiles = new List<string> {
 			"Shop.json",
 			"Bundles.json",
 		};
@@ -179,8 +179,8 @@ namespace Paradise.WebServices.Services {
 
 						BooleanProxy.Serialize(outputStream, false);
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -332,8 +332,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -392,8 +392,8 @@ namespace Paradise.WebServices.Services {
 					using (var outputStream = new MemoryStream()) {
 						BooleanProxy.Serialize(outputStream, true);
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -523,8 +523,8 @@ namespace Paradise.WebServices.Services {
 					using (var outputStream = new MemoryStream()) {
 						ListProxy<BundleView>.Serialize(outputStream, bundleData, BundleViewProxy.Serialize);
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -602,8 +602,8 @@ namespace Paradise.WebServices.Services {
 					using (var outputStream = new MemoryStream()) {
 						UberStrikeItemShopClientViewProxy.Serialize(outputStream, shopData);
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}

@@ -7,8 +7,8 @@ using System.ServiceProcess;
 namespace Paradise.WebServices {
 	[RunInstaller(true)]
 	public partial class ParadiseServiceInstaller : Installer {
-		private ServiceProcessInstaller ServiceProcessInstaller;
-		private ServiceInstaller ServiceInstaller;
+		private readonly ServiceProcessInstaller ServiceProcessInstaller;
+		private readonly ServiceInstaller ServiceInstaller;
 
 		public ParadiseServiceInstaller() {
 			ServiceProcessInstaller = new ServiceProcessInstaller {

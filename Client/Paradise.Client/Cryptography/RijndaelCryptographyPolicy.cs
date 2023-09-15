@@ -4,17 +4,20 @@ using System.Text;
 using UberStrike.WebService.Unity;
 
 namespace Paradise.Client {
-	public class CryptographyPolicy : ICryptographyPolicy {
+	internal class RijndaelCryptographyPolicy : ICryptographyPolicy {
 		public string SHA256Encrypt(string inputString) {
-			UTF8Encoding utf8Encoding = new UTF8Encoding();
-			byte[] bytes = utf8Encoding.GetBytes(inputString);
-			SHA256Managed sha256Managed = new SHA256Managed();
-			byte[] array = sha256Managed.ComputeHash(bytes);
-			string text = string.Empty;
-			for (int i = 0; i < array.Length; i++) {
-				text += Convert.ToString(array[i], 16).PadLeft(2, '0');
+			var bytes = Encoding.UTF8.GetBytes(inputString);
+
+			using (var sha256 = SHA256.Create()) {
+				var array = sha256.ComputeHash(bytes);
+
+				var text = string.Empty;
+				for (int i = 0; i < array.Length; i++) {
+					text += Convert.ToString(array[i], 16).PadLeft(2, '0');
+				}
+
+				return text.PadLeft(32, '0');
 			}
-			return text.PadLeft(32, '0');
 		}
 
 		public byte[] RijndaelEncrypt(byte[] inputClearText, string passPhrase, string initVector) {

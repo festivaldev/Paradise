@@ -10,8 +10,8 @@ namespace Paradise.WebServices.Services {
 
 		public static ApplicationConfigurationView Config { get; set; }
 
-		private static FileSystemWatcher watcher;
-		private static List<string> watchedFiles = new List<string> {
+		private static readonly FileSystemWatcher watcher;
+		private static readonly List<string> watchedFiles = new List<string> {
 			"ApplicationConfiguration.json"
 		};
 

@@ -52,11 +52,7 @@ namespace ProfanityFilter {
 		/// </summary>
 		/// <param name="profanityList">List of words considered profanities.</param>
 		protected ProfanityBase(List<string> profanityList) {
-			if (profanityList == null) {
-				throw new ArgumentNullException(nameof(profanityList));
-			}
-
-			_profanities = profanityList;
+			_profanities = profanityList ?? throw new ArgumentNullException(nameof(profanityList));
 		}
 
 		/// <summary>

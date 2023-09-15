@@ -8,7 +8,7 @@ namespace Paradise.Realtime.Server.Comm {
 		public CommPeer.EventSender PeerEventSender { get; private set; }
 		public LobbyRoom.EventSender LobbyEventSender => PeerEventSender.LobbyEventSender;
 
-		private static OperationHandler OpHandler = new OperationHandler();
+		private static readonly OperationHandler OpHandler = new OperationHandler();
 
 		public CommPeer(InitRequest initRequest) : base(initRequest) {
 			PeerEventSender = new EventSender(this);

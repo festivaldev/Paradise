@@ -12,7 +12,7 @@ namespace Paradise.Realtime.Server.Game {
 	public partial class BaseGameRoom {
 		public class OperationHandler : BaseOperationHandler<GamePeer, IGameRoomOperationsType> {
 			private static readonly new ILog Log = LogManager.GetLogger(nameof(BaseGameRoom.OperationHandler));
-			private BaseGameRoom GameRoom;
+			private readonly BaseGameRoom GameRoom;
 
 			public override int Id => (int)OperationHandlerId.GameRoom;
 			public override Dictionary<IGameRoomOperationsType, int> RateLimiterIntervals => new Dictionary<IGameRoomOperationsType, int> {

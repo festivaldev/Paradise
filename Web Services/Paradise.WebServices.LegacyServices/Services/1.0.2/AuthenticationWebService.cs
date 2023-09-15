@@ -86,7 +86,7 @@ namespace Paradise.WebServices.LegacyServices._102 {
 					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), email, password, channelType, machineId);
 
 					using (var outputStream = new MemoryStream()) {
-						MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView { 
+						MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
 							IsAccountComplete = true,
 							IsTutorialComplete = true,
 							MemberAuthenticationResult = MemberAuthenticationResult.Ok,
@@ -108,7 +108,7 @@ namespace Paradise.WebServices.LegacyServices._102 {
 									1094
 								}
 							},
-							PlayerStatisticsView = new PlayerStatisticsView { 
+							PlayerStatisticsView = new PlayerStatisticsView {
 								Cmid = 1,
 								Xp = 1000
 							},

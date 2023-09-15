@@ -8,7 +8,7 @@ namespace Paradise.Realtime.Server.Game {
 	public class GameRoomManager : IDisposable {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(GameRoomManager));
 
-		private static ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
+		private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
 		private bool IsDisposed;
 
@@ -18,7 +18,7 @@ namespace Paradise.Realtime.Server.Game {
 		private readonly List<GameRoomData> UpdatedRooms = new List<GameRoomData>();
 		private readonly List<int> RemovedRooms = new List<int>();
 
-		private object Lock = new object();
+		private readonly object Lock = new object();
 
 		public BaseGameRoom CreateRoom(GameRoomData data, string password) {
 			if (data == null) {

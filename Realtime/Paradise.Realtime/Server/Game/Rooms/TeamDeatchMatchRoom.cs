@@ -10,7 +10,7 @@ namespace Paradise.Realtime.Server.Game {
 	internal class TeamDeathMatchRoom : BaseGameRoom {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(TeamDeathMatchRoom));
 
-		private Dictionary<TeamID, int> TeamScores;
+		private readonly Dictionary<TeamID, int> TeamScores;
 
 		public TeamDeathMatchRoom(GameRoomData metaData, ILoopScheduler scheduler) : base(metaData, scheduler) {
 			TeamScores = new Dictionary<TeamID, int> {

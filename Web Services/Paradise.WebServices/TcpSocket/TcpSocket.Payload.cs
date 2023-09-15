@@ -72,7 +72,7 @@ namespace Paradise {
 			}
 
 			public static byte[] Encode(PacketType type, object data, RijndaelManaged crypto, out Payload payloadObj, bool oneWay = false, Guid conversationId = default, ServerType serverType = ServerType.None) {
-				if (conversationId == default(Guid)) {
+				if (conversationId == default) {
 					conversationId = Guid.NewGuid();
 				}
 
@@ -155,8 +155,8 @@ namespace Paradise {
 
 			public static T Decode<T>(string base64, RijndaelManaged crypto, out Payload payloadObj) {
 				if (string.IsNullOrWhiteSpace(base64)) {
-					payloadObj = default(Payload);
-					return default(T);
+					payloadObj = default;
+					return default;
 				}
 
 				try {
@@ -165,8 +165,8 @@ namespace Paradise {
 					Log.Info(base64);
 					Log.Error(e);
 
-					payloadObj = default(Payload);
-					return default(T);
+					payloadObj = default;
+					return default;
 				}
 
 				var data = Convert.FromBase64String(payloadObj.Data);

@@ -70,11 +70,11 @@ namespace Paradise {
 			}
 
 			private IPEndPoint RemoteEndPoint;
-			private ManualResetEvent ConnectionWaitHandle = new ManualResetEvent(false);
+			private readonly ManualResetEvent ConnectionWaitHandle = new ManualResetEvent(false);
 
 			private Task<int> sendTask;
 			private Task<object> receiveTask;
-			private Dictionary<Guid, TaskCompletionSource<object>> receiveTasks = new Dictionary<Guid, TaskCompletionSource<object>>();
+			private readonly Dictionary<Guid, TaskCompletionSource<object>> receiveTasks = new Dictionary<Guid, TaskCompletionSource<object>>();
 
 			public event EventHandler<SocketStateChangedEventArgs> StateChanged;
 			public event EventHandler<SocketConnectedEventArgs> Connected;

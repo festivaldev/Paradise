@@ -1,11 +1,7 @@
 ﻿using log4net;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paradise.WebServices.LegacyServices._102 {
 	public class ClanWebService : BaseWebService, IClanWebServiceContract {

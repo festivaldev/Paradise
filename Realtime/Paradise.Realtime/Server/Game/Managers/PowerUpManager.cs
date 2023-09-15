@@ -11,8 +11,8 @@ namespace Paradise.Realtime.Server.Game {
 
 		private readonly BaseGameRoom Room;
 
-		private List<Vector3> Positions = new List<Vector3>();
-		private List<TimeSpan> RespawnTimes = new List<TimeSpan>();
+		private readonly List<Vector3> Positions = new List<Vector3>();
+		private readonly List<TimeSpan> RespawnTimes = new List<TimeSpan>();
 
 		public List<int> PendingRespawns { get; private set; } = new List<int>();
 		public Dictionary<int, TimeSpan> PendingRespawnTimes { get; private set; } = new Dictionary<int, TimeSpan>();

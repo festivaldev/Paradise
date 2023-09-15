@@ -14,6 +14,7 @@ namespace Paradise.Client {
 		public List<ScreenResolution> ScreenResolutionList { get; set; }
 	}
 
+#pragma warning disable IDE1006
 	public class ScreenResolution {
 		[XmlAttribute]
 		public int width { get; set; }
@@ -24,6 +25,7 @@ namespace Paradise.Client {
 		[XmlAttribute]
 		public float refreshRate { get; set; }
 	}
+#pragma warning restore IDE1006
 
 	/// <summary>
 	/// Adds all available screen resolutions to the Video settings pane if they're missing.

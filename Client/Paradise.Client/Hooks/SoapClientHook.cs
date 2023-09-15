@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using log4net;
 using System;
 using System.Collections;
@@ -18,7 +18,7 @@ namespace Paradise.Client {
 	public class SoapClientHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(SoapClientHook));
 
-		protected static ICryptographyPolicy CryptoPolicy = new CryptographyPolicy();
+		protected static ICryptographyPolicy CryptoPolicy = new RijndaelCryptographyPolicy();
 		private static int RequestId = 0;
 
 		static SoapClientHook() {

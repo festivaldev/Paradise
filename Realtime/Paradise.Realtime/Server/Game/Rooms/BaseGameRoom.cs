@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Paradise.Core.Models;
 using Paradise.Core.Models.Views;
 using Paradise.Core.Types;
@@ -15,10 +15,10 @@ namespace Paradise.Realtime.Server.Game {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(BaseGameRoom));
 		private static readonly ILog ChatLog = LogManager.GetLogger("ChatLog");
 
-		private BaseGameRoom.OperationHandler OpHandler;
+		private readonly BaseGameRoom.OperationHandler OpHandler;
 
-		protected object _lock { get; } = new object();
-		private static ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
+		protected object Lock { get; } = new object();
+		private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
 		private bool IsDisposed = false;
 
@@ -34,10 +34,10 @@ namespace Paradise.Realtime.Server.Game {
 			}
 		}
 
-		private List<GamePeer> _peers = new List<GamePeer>();
+		private readonly List<GamePeer> _peers = new List<GamePeer>();
 		public IReadOnlyList<GamePeer> Peers => _peers.AsReadOnly();
 
-		private List<GamePeer> _players = new List<GamePeer>();
+		private readonly List<GamePeer> _players = new List<GamePeer>();
 		public IReadOnlyList<GamePeer> Players => _players.AsReadOnly();
 
 		public int RoundNumber;
@@ -51,7 +51,7 @@ namespace Paradise.Realtime.Server.Game {
 		public Loop Loop { get; private set; }
 		public ILoopScheduler Scheduler { get; private set; }
 
-		private Timer frameTimer;
+		private readonly Timer frameTimer;
 		private ushort _frame;
 
 		public StateMachine<GameStateId> State { get; private set; }
@@ -170,8 +170,9 @@ namespace Paradise.Realtime.Server.Game {
 				PlayerName = peer.Member.CmuneMemberView.PublicProfile.Name,
 			};
 
-			peer.Actor = new GameActor(actorInfo);
-			peer.Actor.Peer = peer;
+			peer.Actor = new GameActor(actorInfo) {
+				Peer = peer
+			};
 			peer.Room = this;
 
 			lock (_peers) {
@@ -425,7 +426,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		protected GamePeer FindPeerWithCmid(int cmid) {
-			lock (_lock) {
+			lock (Lock) {
 				foreach (var peer in Peers) {
 					if (peer.Actor.Cmid == cmid) {
 						return peer;

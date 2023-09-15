@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Paradise.WebServices {
 	internal static class ConsolePrompter {
-		private static List<List<char>> InputHistory = new List<List<char>>();
+		private static readonly List<List<char>> InputHistory = new List<List<char>>();
 
 		private static void ClearLine(string promptText) {
 			Console.CursorVisible = false;

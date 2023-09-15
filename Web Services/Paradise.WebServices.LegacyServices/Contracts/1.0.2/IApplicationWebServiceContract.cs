@@ -1,5 +1,4 @@
-﻿using System;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 
 namespace Paradise.WebServices.LegacyServices._102 {
 	[ServiceContract]

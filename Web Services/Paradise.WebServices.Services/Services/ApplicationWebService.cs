@@ -30,7 +30,7 @@ namespace Paradise.WebServices.Services {
 		private List<UberstrikeCustomMapView> customMapData;
 
 		private FileSystemWatcher watcher;
-		private static List<string> watchedFiles = new List<string> {
+		private static readonly List<string> watchedFiles = new List<string> {
 			"ApplicationConfiguration.json",
 			"PhotonServers.json",
 			"Maps.json",

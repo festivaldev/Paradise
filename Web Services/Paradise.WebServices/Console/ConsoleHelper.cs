@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Paradise.WebServices {
@@ -30,8 +29,10 @@ namespace Paradise.WebServices {
 											   [MarshalAs(UnmanagedType.U4)] FileAttributes flagsAndAttributes,
 																				 IntPtr templateFile);
 
+#if DEBUG
 		private const uint GENERIC_WRITE = 0x40000000;
 		private const uint GENERIC_READ = 0x80000000;
+#endif
 
 		[DllImport("kernel32.dll")]
 		public static extern IntPtr GetConsoleWindow();

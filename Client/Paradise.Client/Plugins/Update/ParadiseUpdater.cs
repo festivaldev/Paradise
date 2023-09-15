@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using log4net;
 using System;
 using System.Collections;
@@ -12,7 +12,6 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace Paradise.Client {
-#pragma warning disable IDE1006
 	internal class UpdateCatalog {
 		[YamlMember(Alias = "version")]
 		public string Version { get; set; }
@@ -69,7 +68,6 @@ namespace Paradise.Client {
 		[YamlMember(Alias = "sha512")]
 		public string SHA512 { get; set; }
 	}
-#pragma warning restore IDE1006
 
 	internal class ParadiseUpdater : MonoBehaviour {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(ParadiseUpdater));

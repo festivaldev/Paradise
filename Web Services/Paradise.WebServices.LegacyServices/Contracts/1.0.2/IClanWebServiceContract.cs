@@ -54,7 +54,9 @@ namespace Paradise.WebServices.LegacyServices._102 {
 		[OperationContract]
 		byte[] CanOwnAClan(byte[] data);
 
+#pragma warning disable IDE1006
 		[OperationContract]
 		byte[] test(byte[] data);
+#pragma warning restore IDE1006
 	}
 }

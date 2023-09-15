@@ -7,8 +7,8 @@ namespace Paradise.WebServices {
 	internal class ParadiseRouter : HttpRouter {
 		protected static readonly ILog Log = LogManager.GetLogger(nameof(ParadiseService));
 
-		private string WebRoot;
-		private ParadiseServerSettings Settings;
+		private readonly string WebRoot;
+		private readonly ParadiseServerSettings Settings;
 
 		private static readonly IDictionary<string, string> mimeTypes = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase) {
 			#region extension to MIME type list

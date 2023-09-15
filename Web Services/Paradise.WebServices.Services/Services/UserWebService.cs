@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Paradise.Core.Serialization;
 using Paradise.Core.ViewModel;
 using Paradise.DataCenter.Common.Entities;
@@ -17,7 +17,7 @@ namespace Paradise.WebServices.Services {
 		public override string ServiceVersion => ApiVersion.Current;
 		protected override Type ServiceInterface => typeof(IUserWebServiceContract);
 
-		private static ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
+		private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
 		public UserWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
@@ -46,16 +46,16 @@ namespace Paradise.WebServices.Services {
 								DatabaseClient.ItemTransactions.Insert(itemTransaction);
 
 								BooleanProxy.Serialize(outputStream, true);
-								return isEncrypted 
-									? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+								return isEncrypted
+									? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 									: outputStream.ToArray();
 							}
 						}
 
 						BooleanProxy.Serialize(outputStream, false);
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
-							: outputStream.ToArray();;
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
+							: outputStream.ToArray(); ;
 					}
 				}
 			} catch (Exception e) {
@@ -108,8 +108,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -157,8 +157,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -206,8 +206,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -248,8 +248,8 @@ namespace Paradise.WebServices.Services {
 					using (var outputStream = new MemoryStream()) {
 						ListProxy<string>.Serialize(outputStream, generatedUsernames, StringProxy.Serialize);
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -289,8 +289,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -324,8 +324,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -364,8 +364,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -409,8 +409,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -454,8 +454,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -544,8 +544,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -584,8 +584,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -611,8 +611,8 @@ namespace Paradise.WebServices.Services {
 					using (var outputStream = new MemoryStream()) {
 						BooleanProxy.Serialize(outputStream, DatabaseClient.PublicProfiles.FindOne(_ => _.Name == username) != null);
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -646,17 +646,8 @@ namespace Paradise.WebServices.Services {
 								if (playerLoadout != null) {
 									playerLoadout.UpperBody = loadoutView.UpperBody;
 									playerLoadout.Weapon1 = loadoutView.Weapon1;
-									playerLoadout.Weapon1Mod1 = loadoutView.Weapon1Mod1;
-									playerLoadout.Weapon1Mod2 = loadoutView.Weapon1Mod2;
-									playerLoadout.Weapon1Mod3 = loadoutView.Weapon1Mod3;
 									playerLoadout.Weapon2 = loadoutView.Weapon2;
-									playerLoadout.Weapon2Mod1 = loadoutView.Weapon2Mod1;
-									playerLoadout.Weapon2Mod2 = loadoutView.Weapon2Mod2;
-									playerLoadout.Weapon2Mod3 = loadoutView.Weapon2Mod3;
 									playerLoadout.Weapon3 = loadoutView.Weapon3;
-									playerLoadout.Weapon3Mod1 = loadoutView.Weapon3Mod1;
-									playerLoadout.Weapon3Mod2 = loadoutView.Weapon3Mod2;
-									playerLoadout.Weapon3Mod3 = loadoutView.Weapon3Mod3;
 									playerLoadout.Type = loadoutView.Type;
 									playerLoadout.QuickItem3 = loadoutView.QuickItem3;
 									playerLoadout.QuickItem2 = loadoutView.QuickItem2;
@@ -691,8 +682,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -806,8 +797,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}

@@ -11,8 +11,8 @@ namespace Paradise.Realtime.Server.Game {
 		public event Action<T> OnChanged;
 		public readonly EventHandler Events = new EventHandler();
 
-		private Dictionary<T, IState> registeredStates = new Dictionary<T, IState>();
-		private Stack<T> stateStack = new Stack<T>();
+		private readonly Dictionary<T, IState> registeredStates = new Dictionary<T, IState>();
+		private readonly Stack<T> stateStack = new Stack<T>();
 
 		private IState CurrentState {
 			get {

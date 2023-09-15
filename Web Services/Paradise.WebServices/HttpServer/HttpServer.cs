@@ -40,7 +40,7 @@ namespace Paradise.WebServices {
 			m_routers.Add(router);
 		}
 
-		private IDictionary<string, IDictionary<string, HttpRouter.RouteInfo>> collectRoutes() {
+		private IDictionary<string, IDictionary<string, HttpRouter.RouteInfo>> CollectRoutes() {
 			var routes = new Dictionary<string, IDictionary<string, HttpRouter.RouteInfo>>();
 
 			foreach (var router in m_routers) {
@@ -68,7 +68,7 @@ namespace Paradise.WebServices {
 			return routes;
 		}
 
-		protected virtual HttpRouter.RouteInfo findRouteHandler(string routeName, ref HttpListenerRequest request) {
+		protected virtual HttpRouter.RouteInfo FindRouteHandler(string routeName, ref HttpListenerRequest request) {
 			if (m_routerPaths.ContainsKey(request.HttpMethod)) {
 				var route = RemoveTrailingSlash(routeName);
 
@@ -82,12 +82,12 @@ namespace Paradise.WebServices {
 			return default;
 		}
 
-		protected virtual void handleOptionsRequest(ref HttpListenerResponse response) {
+		protected virtual void HandleOptionsRequest(ref HttpListenerResponse response) {
 			response.Headers.Add("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE, OPTIONS");
 			response.Headers.Add("Access-Control-Request-Headers", "X-PINGOTHER, Content-Type");
 		}
 
-		protected virtual void parseRequest(HttpListenerRequest request, out string route, out NameValueCollection query, out string body) {
+		protected virtual void ParseRequest(HttpListenerRequest request, out string route, out NameValueCollection query, out string body) {
 			route = request.Url.LocalPath;
 			query = HttpUtility.ParseQueryString(request.Url.Query);
 
@@ -99,7 +99,7 @@ namespace Paradise.WebServices {
 			}
 		}
 
-		private void respondWithError(HttpListenerResponse response, int statusCode, string message) {
+		private void RespondWithError(HttpListenerResponse response, int statusCode, string message) {
 			var bytes = Encoding.UTF8.GetBytes(message);
 
 			response.StatusCode = statusCode;
@@ -109,7 +109,7 @@ namespace Paradise.WebServices {
 			response.OutputStream.Write(bytes, 0, bytes.Length);
 		}
 
-		protected virtual void runHandler(HttpRouter.RouteInfo handler, ref HttpListenerContext context, string route, NameValueCollection query, string body) {
+		protected virtual void RunHandler(HttpRouter.RouteInfo handler, ref HttpListenerContext context, string route, NameValueCollection query, string body) {
 			var methodParameterInfo = handler.Handle.GetParameters();
 			var methodParameters = new object[methodParameterInfo.Length];
 
@@ -123,7 +123,7 @@ namespace Paradise.WebServices {
 						try {
 							methodParameters[i] = JsonConvert.DeserializeObject(body, methodParameterInfo[i].ParameterType);
 						} catch (Exception e) {
-							respondWithError(context.Response, (int)HttpStatusCode.InternalServerError, $"Internal Server Error\n{e}");
+							RespondWithError(context.Response, (int)HttpStatusCode.InternalServerError, $"Internal Server Error\n{e}");
 							return;
 						}
 					} else {
@@ -140,12 +140,12 @@ namespace Paradise.WebServices {
 
 					handler.Handle.Invoke(handler.Router, methodParameters);
 				} catch (Exception e) {
-					respondWithError(context.Response, (int)HttpStatusCode.InternalServerError, $"Internal Server Error\n{e}");
+					RespondWithError(context.Response, (int)HttpStatusCode.InternalServerError, $"Internal Server Error\n{e}");
 				}
 			}
 		}
 
-		protected virtual bool shouldAllowCORS() {
+		protected virtual bool ShouldAllowCORS() {
 			return true;
 		}
 
@@ -165,7 +165,7 @@ namespace Paradise.WebServices {
 				m_listener.Prefixes.Add(prefix);
 			}
 
-			m_routerPaths = collectRoutes();
+			m_routerPaths = CollectRoutes();
 
 			try {
 				m_listener.Start();
@@ -194,24 +194,24 @@ namespace Paradise.WebServices {
 					var response = context.Response;
 
 					try {
-						if (shouldAllowCORS()) {
+						if (ShouldAllowCORS()) {
 							response.Headers.Add("Access-Control-Allow-Origin", "*");
 						}
 
 						if (request.HttpMethod.Equals("OPTIONS")) {
-							handleOptionsRequest(ref response);
+							HandleOptionsRequest(ref response);
 							return;
 						}
 
-						parseRequest(request, out var route, out var query, out var body);
+						ParseRequest(request, out var route, out var query, out var body);
 
-						var routeHandler = findRouteHandler(route, ref request);
+						var routeHandler = FindRouteHandler(route, ref request);
 						if (routeHandler.Handle == null) {
-							respondWithError(response, (int)HttpStatusCode.NotFound, $"Cannot {request.HttpMethod} {route}");
+							RespondWithError(response, (int)HttpStatusCode.NotFound, $"Cannot {request.HttpMethod} {route}");
 							return;
 						}
 
-						runHandler(routeHandler, ref context, route, query, body);
+						RunHandler(routeHandler, ref context, route, query, body);
 					} catch (Exception) {
 
 					} finally {

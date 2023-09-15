@@ -35,6 +35,6 @@ namespace Paradise.Client {
 
 			yield break;
 		}
-	}
 #pragma warning restore CS0162
+	}
 }

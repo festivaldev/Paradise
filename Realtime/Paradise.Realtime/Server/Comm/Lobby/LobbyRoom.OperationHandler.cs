@@ -18,8 +18,8 @@ namespace Paradise.Realtime.Server.Comm {
 
 			public override int Id => (int)OperationHandlerId.LobbyRoom;
 
-			protected object _lock { get; } = new object();
-			private static ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
+			protected object Lock { get; } = new object();
+			private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
 			public override void OnOperationRequest(CommPeer peer, byte opCode, MemoryStream bytes) {
 				Log.Debug($"LobbyRoom.OperationHandler::OnOperationRequest -> peer: {peer}, opCode: {(ILobbyRoomOperationsType)opCode}({opCode})");
@@ -146,7 +146,7 @@ namespace Paradise.Realtime.Server.Comm {
 			private void FullPlayerListUpdate(CommPeer peer, MemoryStream bytes) {
 				DebugOperation(peer);
 
-				lock (_lock) {
+				lock (Lock) {
 					foreach (var otherPeer in LobbyManager.Instance.Peers) {
 						if (otherPeer.Actor.Cmid != peer.Actor.Cmid) {
 							peer.LobbyEventSender.SendFullPlayerListUpdate(LobbyManager.Instance.Peers.Select(_ => _.Actor.ActorInfo).ToList());
@@ -175,7 +175,7 @@ namespace Paradise.Realtime.Server.Comm {
 				try {
 					peer.Actor.ActorInfo.CurrentRoom = null;
 
-					lock (_lock) {
+					lock (Lock) {
 						foreach (var otherPeer in LobbyManager.Instance.Peers) {
 							if (peer.Actor.Cmid != otherPeer.Actor.Cmid) {
 								otherPeer.LobbyEventSender.SendFullPlayerListUpdate(LobbyManager.Instance.Peers.Select(_ => _.Actor.ActorInfo).ToList());
@@ -249,7 +249,7 @@ namespace Paradise.Realtime.Server.Comm {
 					return;
 				}
 
-				lock (_lock) {
+				lock (Lock) {
 					if (message.StartsWith("?") && message.Length > 1) {
 						var cmd = message.Substring(1);
 						var cmdArgs = cmd.Split(' ').ToList();
@@ -502,7 +502,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 
 			protected CommPeer FindPeerWithCmid(int cmid) {
-				lock (_lock) {
+				lock (Lock) {
 					foreach (var peer in LobbyManager.Instance.Peers) {
 						if (peer.Actor.Cmid == cmid) {
 							return peer;

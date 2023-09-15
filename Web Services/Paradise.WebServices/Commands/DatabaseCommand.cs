@@ -25,7 +25,7 @@ namespace Paradise.WebServices {
 				return;
 			}
 
-			var result = default(DatabaseManager.DatabaseOperationResult);
+			DatabaseManager.DatabaseOperationResult result;
 
 			switch (arguments[0].ToLower()) {
 				case "close":

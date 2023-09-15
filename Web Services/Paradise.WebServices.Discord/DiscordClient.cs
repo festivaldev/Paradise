@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.Webhook;
 using Discord.WebSocket;
 using log4net;
@@ -28,12 +28,12 @@ namespace Paradise.WebServices.Discord {
 
 		private static string CurrentDirectory => Path.GetDirectoryName(System.Reflection.Assembly.GetEntryAssembly().Location);
 
-		private DiscordSettings discordSettings = new DiscordSettings();
+		private readonly DiscordSettings discordSettings = new DiscordSettings();
 		private DiscordSocketClient discordClient;
 		private DiscordWebhookClient discordWebhookClient;
 
-		private Dictionary<Guid, SocketMessage> messageMap = new Dictionary<Guid, SocketMessage>();
-		private Dictionary<Guid, List<string>> messageBuffer = new Dictionary<Guid, List<string>>();
+		private readonly Dictionary<Guid, SocketMessage> messageMap = new Dictionary<Guid, SocketMessage>();
+		private readonly Dictionary<Guid, List<string>> messageBuffer = new Dictionary<Guid, List<string>>();
 
 		public DiscordClient() {
 			XmlSerializer serializer = new XmlSerializer(typeof(DiscordSettings));

@@ -1,5 +1,4 @@
 ﻿using log4net;
-using Newtonsoft.Json;
 using Paradise.Core.Models.Views;
 using Paradise.Core.Serialization.Legacy;
 using Paradise.DataCenter.Common.Entities;
@@ -16,11 +15,11 @@ namespace Paradise.WebServices.LegacyServices._102 {
 		public override string ServiceVersion => ApiVersion.Legacy102;
 		protected override Type ServiceInterface => typeof(IShopWebServiceContract);
 
-		private UberStrikeItemShopClientView shopData;
-		private List<BundleView> bundleData;
+		private readonly UberStrikeItemShopClientView shopData;
+		private readonly List<BundleView> bundleData;
 
-		private FileSystemWatcher watcher;
-		private static List<string> watchedFiles = new List<string> {
+		private readonly FileSystemWatcher watcher;
+		private static readonly List<string> watchedFiles = new List<string> {
 			"Shop.json",
 			"Bundles.json",
 		};

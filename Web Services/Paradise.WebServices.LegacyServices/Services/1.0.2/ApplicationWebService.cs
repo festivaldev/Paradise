@@ -5,13 +5,10 @@ using Paradise.Core.Serialization.Legacy;
 using Paradise.DataCenter.Common.Entities;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.ServiceModel;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Paradise.WebServices.LegacyServices._102 {
 	public class ApplicationWebService : BaseWebService, IApplicationWebServiceContract {

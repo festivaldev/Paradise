@@ -25,7 +25,7 @@ using System.Globalization;
 
 namespace ProfanityFilter {
 	public class AllowList : IAllowList {
-		List<string> _allowList;
+		readonly List<string> _allowList;
 
 		public AllowList() {
 			_allowList = new List<string>();

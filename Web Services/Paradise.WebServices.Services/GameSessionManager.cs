@@ -9,7 +9,7 @@ namespace Paradise.WebServices.Services {
 		private long Seed = ((DateTimeOffset)DateTime.UtcNow).ToUnixTimeSeconds();
 
 		public static GameSessionManager Instance { get; private set; }
-		private static System.Timers.Timer GarbageCollector;
+		private static readonly System.Timers.Timer GarbageCollector;
 
 		static GameSessionManager() {
 			Instance = new GameSessionManager();

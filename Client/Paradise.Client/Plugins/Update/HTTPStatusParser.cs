@@ -8,6 +8,7 @@ namespace Paradise.Client {
 		public string StatusDescription;
 		public string StatusText;
 	}
+
 	internal class HTTPStatusParser {
 		public static HttpResponse ParseHeader(string statusHeader) {
 			var headerItems = statusHeader.Split(' ');

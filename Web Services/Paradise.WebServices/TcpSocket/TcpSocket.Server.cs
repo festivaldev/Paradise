@@ -16,16 +16,16 @@ namespace Paradise {
 
 			protected static readonly ILog Log = LogManager.GetLogger(nameof(SocketServer));
 
-			private IPEndPoint LocalEndPoint;
+			private readonly IPEndPoint LocalEndPoint;
 			private Socket SocketListener;
 
 			private SocketConnection CommServer;
-			private List<SocketConnection> GameServers = new List<SocketConnection>();
+			private readonly List<SocketConnection> GameServers = new List<SocketConnection>();
 
-			private Dictionary<Guid, SocketConnection> ConnectedSockets = new Dictionary<Guid, SocketConnection>();
-			private Dictionary<Guid, RijndaelManaged> CryptoProviders = new Dictionary<Guid, RijndaelManaged>();
+			private readonly Dictionary<Guid, SocketConnection> ConnectedSockets = new Dictionary<Guid, SocketConnection>();
+			private readonly Dictionary<Guid, RijndaelManaged> CryptoProviders = new Dictionary<Guid, RijndaelManaged>();
 
-			private object _lock = new object();
+			private readonly object _lock = new object();
 
 			public event EventHandler<SocketConnectedEventArgs> ClientConnected;
 			public event EventHandler<SocketDisconnectedEventArgs> ClientDisconnected;

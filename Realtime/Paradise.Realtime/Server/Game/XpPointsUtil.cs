@@ -5,7 +5,7 @@ namespace Paradise.Realtime.Server.Game {
 	public static class XpPointsUtil {
 		public static ApplicationConfigurationView Config { get; set; }
 
-		private static System.Timers.Timer UpdateTimer;
+		private static readonly System.Timers.Timer UpdateTimer;
 
 		static XpPointsUtil() {
 			Config = ApplicationWebServiceClient.Instance.GetConfigurationData("4.7.1");

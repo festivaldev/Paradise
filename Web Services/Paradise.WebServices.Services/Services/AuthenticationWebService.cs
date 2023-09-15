@@ -18,7 +18,7 @@ namespace Paradise.WebServices.Services {
 		public override string ServiceVersion => ApiVersion.Current;
 		protected override Type ServiceInterface => typeof(IAuthenticationWebServiceContract);
 
-		private static ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
+		private static readonly ProfanityFilter.ProfanityFilter ProfanityFilter = new ProfanityFilter.ProfanityFilter();
 
 		public AuthenticationWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
@@ -110,8 +110,8 @@ namespace Paradise.WebServices.Services {
 							Log.Info($"{publicProfile.Name}({publicProfile.Cmid}) logged in.");
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -417,8 +417,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}
@@ -448,8 +448,8 @@ namespace Paradise.WebServices.Services {
 
 							if (steamMember == null) {
 								MemberAuthenticationResultViewProxy.Serialize(outputStream, new MemberAuthenticationResultView {
-								MemberAuthenticationResult = MemberAuthenticationResult.UnknownError
-							});
+									MemberAuthenticationResult = MemberAuthenticationResult.UnknownError
+								});
 							} else {
 								var bannedMember = DatabaseClient.ModerationActions.FindOne(_ => _.ModerationFlag == ModerationFlag.Banned && _.TargetCmid == steamMember.Cmid);
 
@@ -493,8 +493,8 @@ namespace Paradise.WebServices.Services {
 							}
 						}
 
-						return isEncrypted 
-							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 							: outputStream.ToArray();
 					}
 				}

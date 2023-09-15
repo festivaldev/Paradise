@@ -12,10 +12,10 @@ namespace Paradise {
 
 			protected static readonly ILog Log = LogManager.GetLogger(nameof(SocketClient));
 
-			private SocketConnection SocketConnection;
+			private readonly SocketConnection SocketConnection;
 
 			private SocketInfo ClientInfo;
-			private RijndaelManaged CryptoProvider;
+			private readonly RijndaelManaged CryptoProvider;
 
 			public event EventHandler<SocketConnectedEventArgs> Connected;
 			public event EventHandler<SocketDisconnectedEventArgs> Disconnected;

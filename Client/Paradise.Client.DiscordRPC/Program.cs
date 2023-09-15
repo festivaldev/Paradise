@@ -13,11 +13,11 @@ namespace Paradise.Client.DiscordRPC {
 		static readonly Mutex mutex = new Mutex(true, "{7b37f0ce-4a3e-4735-a713-2bf27277ad74}");
 		static readonly string PresenceFile = Path.Combine(Path.GetTempPath(), "7b37f0ce-4a3e-4735-a713-2bf27277ad74");
 
-		private static object Lock = new object();
+		private static readonly object Lock = new object();
 
 
 		[STAThread]
-		static void Main(string[] args) {
+		static void Main() {
 			if (!mutex.WaitOne(TimeSpan.Zero, true)) {
 				return;
 			}
@@ -36,8 +36,9 @@ namespace Paradise.Client.DiscordRPC {
 			try {
 				RichPresenceManager.Initialize();
 
-				var watcher = new FileSystemWatcher(Path.GetDirectoryName(PresenceFile), Path.GetFileName(PresenceFile));
-				watcher.NotifyFilter = NotifyFilters.LastWrite;
+				var watcher = new FileSystemWatcher(Path.GetDirectoryName(PresenceFile), Path.GetFileName(PresenceFile)) {
+					NotifyFilter = NotifyFilters.LastWrite
+				};
 				watcher.Changed += (object sender, FileSystemEventArgs eArgs) => {
 					try {
 						watcher.EnableRaisingEvents = false;
