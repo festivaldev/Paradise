@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using log4net.Config;
 using System;
 using System.IO;
@@ -13,56 +13,7 @@ namespace Paradise.Client {
 	public static class ParadiseClient {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(ParadiseClient));
 
-		public static ParadiseClientSettings Settings { get; private set; } = new ParadiseClientSettings();
-
-		public static bool EnableDiscordRichPresence {
-			get {
-				return Settings == null || Settings.EnableDiscordRichPresence;
-			}
-		}
-		public static string WebServiceBaseUrl {
-			get {
-				return ForceTrailingSlash(Settings.WebServiceBaseUrl) ?? "https://ws.uberstrike.com/2.0/";
-			}
-		}
-		public static string WebServicePrefix {
-			get {
-				return Settings.WebServicePrefix ?? "UberStrike.DataCenter.WebService.CWS.";
-			}
-		}
-		public static string WebServiceSuffix {
-			get {
-				return Settings.WebServiceSuffix ?? "Contract.svc";
-			}
-		}
-
-		public static string ImagePath {
-			get {
-				return ForceTrailingSlash(Settings.ImagePath) ?? "https://static.uberstrike.com/images/";
-			}
-		}
-
-		public static string UpdateUrl {
-			get {
-				return ForceTrailingSlash(Settings.UpdateUrl) ?? "https://ws.uberstrike.com/2.0/";
-			}
-		}
-		public static UpdateChannel UpdateChannel {
-			get {
-				return Settings.UpdateChannel;
-			}
-		}
-		public static bool AutoUpdates {
-			get {
-				return Settings == null || Settings.AutoUpdates;
-			}
-		}
-
-		public static AuthenticateApplicationView ServerOverrides {
-			get {
-				return Settings.ServerOverrides;
-			}
-		}
+		public static ParadisePrefs Settings { get; private set; } = new ParadisePrefs();
 
 		static ParadiseClient() {
 			AppDomain.CurrentDomain.AssemblyResolve += (sender, e) => {
@@ -88,23 +39,6 @@ namespace Paradise.Client {
 			}
 
 			Log.Info($"Initializing Paradise (Version {Assembly.GetExecutingAssembly().GetName().Version}) ({Application.platform})");
-
-			XmlSerializer ser = new XmlSerializer(typeof(ParadiseClientSettings));
-
-			if (!File.Exists(ParadiseClientSettings.SettingsFilename)) {
-				using (TextWriter writer = new StreamWriter(ParadiseClientSettings.SettingsFilename)) {
-					ser.Serialize(writer, Settings);
-				}
-			} else {
-				using (XmlReader reader = XmlReader.Create(Path.Combine(Application.dataPath, "Paradise.Settings.Client.xml"), new XmlReaderSettings { IgnoreComments = true })) {
-					try {
-						Settings = (ParadiseClientSettings)ser.Deserialize(reader);
-					} catch (Exception e) {
-						Log.Error($"Error while loading Paradise settings: {e.Message}");
-						Log.Debug(e);
-					}
-				}
-			}
 
 			RichPresenceClient.Initialize();
 		}
