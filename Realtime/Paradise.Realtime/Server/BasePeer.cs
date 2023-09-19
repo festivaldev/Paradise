@@ -1,6 +1,7 @@
-using log4net;
+﻿using log4net;
 using Newtonsoft.Json;
 using Paradise.Core.ViewModel;
+using Paradise.DataCenter.Common.Entities;
 using Photon.SocketServer;
 using PhotonHostRuntimeInterfaces;
 using System;
@@ -89,13 +90,13 @@ namespace Paradise.Realtime.Server {
 				return false;
 			}
 
-			if (!Configuration.HashVerificationEnabled) return true;
-
 			if (magicHash == null) {
 				throw new ArgumentNullException(nameof(magicHash));
 			}
 
 			Log.Debug($"Received AuthenticationRequest! {authToken}:{magicHash} (at {RemoteIP}:{RemotePort})");
+
+			if (!Configuration.HashVerificationEnabled) return true;
 
 			if (Configuration.CompositeHashes.Count > 0) {
 				var bytes = Encoding.ASCII.GetBytes(authToken);
@@ -217,7 +218,7 @@ namespace Paradise.Realtime.Server {
 			}
 
 //#if DEBUG
-//			Log.Debug($"HeartbeatCheck({responseHash})");
+//			Log.Debug($"CheckHeartbeat({responseHash})");
 //#endif
 
 			if (heartbeat == null) {

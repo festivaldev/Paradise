@@ -552,6 +552,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void DirectHitDamage(GamePeer peer, int target, byte bodyPart, byte bullets) {
+			if (State.CurrentStateId != GameStateId.MatchRunning) return;
 			if ((peer.Actor.ActorInfo.PlayerState & PlayerStates.Dead) != 0) return;
 			if (bullets <= 0) return;
 
@@ -662,6 +663,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void ExplosionDamage(GamePeer peer, int target, byte slot, byte distance, Vector3 force) {
+			if (State.CurrentStateId != GameStateId.MatchRunning) return;
 			if ((peer.Actor.ActorInfo.PlayerState & PlayerStates.Dead) != 0) return;
 
 			foreach (var player in Players) {
