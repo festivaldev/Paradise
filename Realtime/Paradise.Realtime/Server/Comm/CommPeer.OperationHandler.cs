@@ -43,12 +43,12 @@ namespace Paradise.Realtime.Server.Comm {
 				DebugOperation(peer, authToken, magicHash);
 
 				if (!peer.Authenticate(authToken, magicHash)) {
-					peer.SendError("Failed to authenticate. Please try again later.");
+					peer.SendError("Failed to authenticate. Please try again later.\n(Magic Hash verification failure)");
 					return;
 				}
 
 				if (!(UserWebServiceClient.Instance.GetMember(authToken) is var member) || member.CmuneMemberView == null) {
-					peer.SendError();
+					peer.SendError("Failed to authenticate. Please try again later.\n(Member was null while authenticating)");
 					return;
 				}
 
@@ -75,7 +75,7 @@ namespace Paradise.Realtime.Server.Comm {
 
 				try {
 					if (!peer.CheckHeartbeat(responseHash)) {
-						peer.SendError();
+						peer.SendError("An error occured that forced UberStrike to halt.\n(Heartbeat verification failure)");
 					}
 				} catch (Exception e) {
 					Log.Error("Exception while checking heartbeat", e);
