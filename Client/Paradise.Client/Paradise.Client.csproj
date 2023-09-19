@@ -51,10 +51,15 @@
     </Reference>
     <Reference Include="log4net, Version=2.0.15.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
       <HintPath>..\..\packages\log4net.2.0.15\lib\net35\log4net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Photon3Unity3D">
+      <HintPath>..\..\AssemblyReferences\Photon3Unity3D.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -72,20 +77,44 @@
     <Compile Include="..\Paradise.Client.DiscordRPC\IRichPresenceServiceContract.cs">
       <Link>Plugins\DiscordRichPresence\IRichPresenceServiceContract.cs</Link>
     </Compile>
-    <Compile Include="Cryptography\CryptographyPolicy.cs" />
+    <Compile Include="Cryptography\RijndaelCryptographyPolicy.cs" />
     <Compile Include="Cryptography\RijndaelCipher.cs" />
+    <Compile Include="GUI\Console\ConsolePanelGUI.cs" />
+    <Compile Include="GUI\Console\DebugAnimationPanel.cs" />
+    <Compile Include="GUI\Console\DebugApplicationPanel.cs" />
+    <Compile Include="GUI\Console\DebugAudioPanel.cs" />
+    <Compile Include="GUI\Console\DebugGameObjectsPanel.cs" />
+    <Compile Include="GUI\Console\DebugGameServerManagerPanel.cs" />
+    <Compile Include="GUI\Console\DebugGamesPanel.cs" />
+    <Compile Include="GUI\Console\DebugGameStatePanel.cs" />
+    <Compile Include="GUI\Console\DebugLogMessagesPanel.cs" />
+    <Compile Include="GUI\Console\DebugMapsPanel.cs" />
+    <Compile Include="GUI\Console\DebugPlayerManagerPanel.cs" />
+    <Compile Include="GUI\Console\DebugProjectilesPanel.cs" />
+    <Compile Include="GUI\Console\DebugServerStatePanel.cs" />
+    <Compile Include="GUI\Console\DebugShopPanel.cs" />
+    <Compile Include="GUI\Console\DebugSpawnPointsPanel.cs" />
+    <Compile Include="GUI\Console\DebugSystemPanel.cs" />
+    <Compile Include="GUI\Console\DebugTrafficPanel.cs" />
+    <Compile Include="GUI\Console\DebugWebServicesPanel.cs" />
+    <Compile Include="GUI\ParadiseGUITools.cs" />
+    <Compile Include="GUI\ParadisePrefsPanelGUI.cs" />
+    <Compile Include="GUI\PreloadOptionsPanelButton.cs" />
+    <Compile Include="Hooks\BasePopupDialogHook.cs" />
+    <Compile Include="Hooks\CreateGamePanelGUIHook.cs" />
     <Compile Include="Hooks\ApplicationDataManagerHook.cs" />
     <Compile Include="Hooks\AuthenticationManagerHook.cs" />
     <Compile Include="Hooks\BundleManagerHook.cs" />
     <Compile Include="Hooks\ClanDataManagerHook.cs" />
     <Compile Include="Hooks\CommConnectionManagerHook.cs" />
-    <Compile Include="Hooks\CreateGamePanelGUIHook.cs" />
     <Compile Include="Hooks\GameRoomOperationsHook.cs" />
     <Compile Include="Hooks\GameStateHook.cs" />
-    <Compile Include="Hooks\GlobalSceneLoaderHook.cs" />
     <Compile Include="Hooks\GlobalUIRibbonHook.cs" />
+    <Compile Include="Hooks\GlobalSceneLoaderHook.cs" />
     <Compile Include="Hooks\HUDDesktopEventStreamHook.cs" />
     <Compile Include="Hooks\HUDStatusPanelHook.cs" />
+    <Compile Include="Hooks\InventoryItemGUIHook.cs" />
+    <Compile Include="Hooks\ItemToolTipHook.cs" />
     <Compile Include="Hooks\MapManagerHook.cs" />
     <Compile Include="Hooks\MenuPageManagerHook.cs" />
     <Compile Include="Hooks\OptionsPanelGUIHook.cs" />
@@ -96,20 +125,33 @@
     <Compile Include="Hooks\SoapClientHook.cs" />
     <Compile Include="Hooks\TeamEliminationRoomHook.cs" />
     <Compile Include="Hooks\TrainingRoomHook.cs" />
+    <Compile Include="Hooks\UberDaemonHook.cs" />
+    <Compile Include="Hooks\UserInputHook.cs" />
     <Compile Include="Hooks\WeaponControllerHook.cs" />
     <Compile Include="ParadiseClient.cs" />
-    <Compile Include="ParadiseClientSettings.cs" />
-    <Compile Include="Plugins\Console\DebugAudio.cs" />
-    <Compile Include="Plugins\Console\DebugConsoleGUI.cs" />
-    <Compile Include="Plugins\Console\DebugGameObjects.cs" />
-    <Compile Include="Plugins\CustomMapManager.cs" />
-    <Compile Include="Plugins\ParadiseApplicationManager.cs" />
+    <Compile Include="ParadisePrefs.cs" />
+    <Compile Include="ParadiseTraverse.cs" />
+    <Compile Include="Plugins\CustomMaps\CustomMapManager.cs" />
+    <Compile Include="Plugins\CustomMaps\UberStrikeCustomMapView.cs" />
     <Compile Include="Plugins\DiscordRichPresence\RichPresenceClient.cs" />
+    <Compile Include="Plugins\ParadiseApplicationManager.cs" />
     <Compile Include="Plugins\Update\HTTPStatusParser.cs" />
     <Compile Include="Plugins\Update\ParadiseUpdater.cs" />
-    <Compile Include="Plugins\Update\UberStrikeCustomMapView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ServiceClients\ParadiseApplicationWebServiceClient.cs" />
+    <Compile Include="ServiceClients\ParadiseUserWebServiceClient.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="log4net.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\icon_discord.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\icon_github.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ScreenResolutions.xml" />

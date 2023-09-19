@@ -1,12 +1,12 @@
-using log4net;
+﻿using log4net;
+using log4net.Appender;
 using log4net.Config;
+using log4net.Core;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml;
-using System.Xml.Serialization;
-using UberStrike.DataCenter.Common.Entities;
 using UnityEngine;
 
 namespace Paradise.Client {
@@ -29,12 +29,17 @@ namespace Paradise.Client {
 		}
 
 		public static void Initialize() {
-			using (Stream stream = Assembly.GetAssembly(typeof(ParadiseClient)).GetManifestResourceStream("Paradise.Client.log4net.config")) {
-				using (StreamReader reader = new StreamReader(stream)) {
+			using (var stream = Assembly.GetAssembly(typeof(ParadiseClient)).GetManifestResourceStream("Paradise.Client.log4net.config")) {
+				using (var reader = new StreamReader(stream)) {
 					var logConfig = new XmlDocument();
 					logConfig.LoadXml(reader.ReadToEnd());
 
 					XmlConfigurator.Configure(logConfig.DocumentElement);
+
+					var appender = LogManager.GetLogger(typeof(ParadiseClient)).Logger.Repository.GetAppenders().First() as EventRaisingRollingFileAppender;
+					appender.LogEventRaised += delegate (LoggingEvent loggingEvent) {
+						DebugLogMessagesPanel.Console.Log(loggingEvent.Level, loggingEvent.RenderedMessage, loggingEvent.TimeStamp);
+					};
 				}
 			}
 
@@ -42,9 +47,15 @@ namespace Paradise.Client {
 
 			RichPresenceClient.Initialize();
 		}
+	}
 
-		private static string ForceTrailingSlash(string uri) {
-			return uri.EndsWith("/") ? uri : uri + "/";
+	public class EventRaisingRollingFileAppender : RollingFileAppender {
+		public event Action<LoggingEvent> LogEventRaised;
+
+		protected override void Append(LoggingEvent loggingEvent) {
+			base.Append(loggingEvent);
+
+			LogEventRaised?.Invoke(loggingEvent);
 		}
 	}
 }
