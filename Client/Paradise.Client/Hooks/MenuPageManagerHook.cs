@@ -1,11 +1,10 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using UberStrike.Core.Models;
-using UnityEngine;
 
 namespace Paradise.Client {
 	/// <summary>
@@ -123,7 +122,7 @@ namespace Paradise.Client {
 					UnityRuntime.StartRoutine(CustomMapManager.GetCustomMaps());
 				}
 
-				UnityRuntime.StartRoutine(GameObject.Find("Plugin Holder").GetComponent<ParadiseUpdater>().CheckForUpdatesIfNecessary(
+				UnityRuntime.StartRoutine(AutoMonoBehaviour<ParadiseUpdater>.Instance.CheckForUpdatesIfNecessary(
 					ParadiseUpdater.HandleUpdateAvailable,
 					ParadiseUpdater.HandleUpdateError
 				));
