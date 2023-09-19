@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -25,6 +25,8 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("LoadPage"), HarmonyPrefix]
 		public static bool MenuPageManager_LoadPage_Prefix(MenuPageManager __instance, PageType pageType, bool forceReload = false) {
+			AutoMonoBehaviour<PreloadOptionsPanelButton>.Instance.enabled = false;
+
 			if (pageType == PageType.Home) {
 				AutoMonoBehaviour<BackgroundMusicPlayer>.Instance.Stop();
 				AutoMonoBehaviour<BackgroundMusicPlayer>.Instance.Play(GameAudio.HomeSceneBackground);

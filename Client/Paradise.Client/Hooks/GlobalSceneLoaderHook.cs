@@ -1,4 +1,4 @@
-using Cmune.Core.Models.Views;
+﻿using Cmune.Core.Models.Views;
 using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
@@ -46,6 +46,8 @@ namespace Paradise.Client {
 
 		#region
 		private static IEnumerator StartWithCheckingUpdates() {
+			AutoMonoBehaviour<PreloadOptionsPanelButton>.Instance.enabled = true;
+
 			UnityRuntime.StartRoutine(ParadiseUpdater.CleanupUpdates());
 
 			UnityRuntime.StartRoutine(AutoMonoBehaviour<ParadiseUpdater>.Instance.CheckForUpdatesIfNecessary((updateCatalog) => {
