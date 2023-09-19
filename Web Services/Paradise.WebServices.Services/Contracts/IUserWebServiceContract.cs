@@ -53,5 +53,8 @@ namespace Paradise.WebServices.Contracts {
 
 		[OperationContract]
 		byte[] UpdatePlayerStatistics(byte[] data);
+
+		[OperationContract]
+		byte[] RemoveItemFromInventory(byte[] data);
 	}
 }

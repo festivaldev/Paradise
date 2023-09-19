@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using Paradise.Core.Serialization;
 using Paradise.Core.ViewModel;
 using Paradise.DataCenter.Common.Entities;
@@ -801,6 +801,72 @@ namespace Paradise.WebServices.Services {
 								EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.MemberNotFound);
 								return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
 							}
+						}
+
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
+							: outputStream.ToArray();
+					}
+				}
+			} catch (Exception e) {
+				HandleEndpointError(e);
+			}
+
+			return null;
+		}
+
+		public byte[] RemoveItemFromInventory(byte[] data) {
+			try {
+				var isEncrypted = IsEncrypted(data);
+
+				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
+					var itemId = Int32Proxy.Deserialize(bytes);
+					var authToken = StringProxy.Deserialize(bytes);
+
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), itemId, authToken);
+
+					using (var outputStream = new MemoryStream()) {
+						if (GameSessionManager.Instance.TryGetValue(authToken, out var session)) {
+							var steamMember = session.SteamMember;
+
+							if (steamMember != null) {
+								var publicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
+								var playerStatistics = DatabaseClient.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
+
+								if (steamMember == null || publicProfile == null) {
+									Int32Proxy.Serialize(outputStream, (int)BuyItemResult.InvalidMember);
+									return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
+								}
+
+								var transaction = DatabaseClient.ItemTransactions.FindOne(_ => _.Cmid == publicProfile.Cmid && _.ItemId == itemId);
+
+								var item = DatabaseClient.PlayerInventoryItems.FindOne(_ => _.Cmid == publicProfile.Cmid && _.ItemId == itemId);
+
+								if (transaction == null && item == null) {
+									Int32Proxy.Serialize(outputStream, (int)BuyItemResult.InvalidData);
+									return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
+								} else if (item != null) {
+									// Allow removing items added by the "inventory" command
+									DatabaseClient.PlayerInventoryItems.DeleteMany(_ => _.Cmid == publicProfile.Cmid && _.ItemId == itemId);
+
+									Int32Proxy.Serialize(outputStream, (int)BuyItemResult.OK);
+									return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
+								}
+
+								var memberWallet = DatabaseClient.MemberWallets.FindOne(_ => _.Cmid == publicProfile.Cmid);
+
+								memberWallet.Credits += (int)Math.Round(transaction.Credits * 0.75);
+								memberWallet.Points += (int)Math.Round(transaction.Points * 0.75);
+
+								DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+								DatabaseClient.MemberWallets.Insert(memberWallet);
+
+								DatabaseClient.ItemTransactions.DeleteMany(_ => _.WithdrawalId == transaction.WithdrawalId);
+								DatabaseClient.PlayerInventoryItems.DeleteMany(_ => _.Cmid == publicProfile.Cmid && _.ItemId == itemId);
+
+								Int32Proxy.Serialize(outputStream, (int)BuyItemResult.OK);
+							}
+
 						}
 
 						return isEncrypted

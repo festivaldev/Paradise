@@ -1,26 +1,23 @@
 ﻿using HarmonyLib;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using UberStrike.Core.Serialization;
-using UberStrike.Core.Types;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class ParadiseApplicationWebServiceClient {
-		public static string WebServiceName => "ApplicationWebService";
-		public static string ContractName => "IApplicationWebServiceContract";
+	public class ParadiseUserWebServiceClient {
+		public static string WebServiceName => "UserWebService";
+		public static string ContractName => "IUserWebServiceContract";
 
-		public static Coroutine GetCustomMaps(string clientVersion, DefinitionType clientType, Action<List<UberStrikeCustomMapView>> callback, Action<Exception> handler) {
+		public static Coroutine RemoveItemFromInventory(int itemId, string authToken, Action<int> callback, Action<Exception> handler) {
 			using (MemoryStream memoryStream = new MemoryStream()) {
-				StringProxy.Serialize(memoryStream, clientVersion);
-				EnumProxy<DefinitionType>.Serialize(memoryStream, clientType);
+				Int32Proxy.Serialize(memoryStream, itemId);
+				StringProxy.Serialize(memoryStream, authToken);
 
 				var mono = Traverse.Create(AccessTools.TypeByName("UberStrike.WebService.Unity.MonoInstance")).Property<MonoBehaviour>("Mono").Value;
 				var MakeRequest = AccessTools.TypeByName("UberStrike.WebService.Unity.SoapClient").GetMethod("MakeRequest", BindingFlags.Public | BindingFlags.Static);
-
 
 				return mono.StartCoroutine((IEnumerator)MakeRequest.Invoke(null, new object[] {
 					ContractName,
@@ -28,7 +25,7 @@ namespace Paradise.Client {
 					MethodBase.GetCurrentMethod().Name,
 					memoryStream.ToArray(),
 					(Action<byte[]>)(data => {
-						callback?.Invoke(ListProxy<UberStrikeCustomMapView>.Deserialize(new MemoryStream(data), new ListProxy<UberStrikeCustomMapView>.Deserializer<UberStrikeCustomMapView>(UberStrikeCustomMapViewProxy.Deserialize)));
+						callback?.Invoke(Int32Proxy.Deserialize(new MemoryStream(data)));
 					}),
 					handler
 				}));
