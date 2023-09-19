@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Newtonsoft.Json;
 using Paradise.Core.ViewModel;
 using Photon.SocketServer;
@@ -185,9 +185,10 @@ namespace Paradise.Realtime.Server {
 
 					break;
 				case HeartbeatState.Failed:
-					/// TODO: If user is admin, don't do anything
-					Log.Debug("Disconnecting because heartbeat failed");
-					SendError();
+					if (Member.CmuneMemberView.PublicProfile.AccessLevel != MemberAccessLevel.Admin) {
+						Log.Debug($"Disconnecting {this} because heartbeat failed");
+						SendError();
+					}
 
 					break;
 				default: break;
