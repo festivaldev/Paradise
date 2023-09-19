@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using log4net;
 using System;
 using System.Collections;
@@ -27,18 +27,20 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("UberStrike.WebService.Unity.SoapClient", "MakeRequest"), HarmonyPrefix]
 		public static bool SoapClient_MakeRequest_Prefix(string interfaceName, ref string serviceName, string methodName, ref byte[] data, Action<byte[]> requestCallback, Action<Exception> exceptionHandler) {
-			serviceName = Regex.Replace(serviceName, @"^UberStrike\.DataCenter\.WebService\.CWS\.", ParadiseClient.WebServicePrefix);
-			serviceName = Regex.Replace(serviceName, @"Contract\.svc$", ParadiseClient.WebServiceSuffix);
+			serviceName = Regex.Replace(serviceName, @"^UberStrike\.DataCenter\.WebService\.CWS\.", ParadiseClient.Settings.WebServicePrefix);
+			serviceName = Regex.Replace(serviceName, @"Contract\.svc$", ParadiseClient.Settings.WebServiceSuffix);
 
-			return false;
+			if (ParadiseClient.Settings.EncryptWebServiceTraffic) {
+				if (!string.IsNullOrEmpty(Configuration.EncryptionPassPhrase) && !string.IsNullOrEmpty(Configuration.EncryptionInitVector)) {
+					data = CryptoPolicy.RijndaelEncrypt(data, Configuration.EncryptionPassPhrase, Configuration.EncryptionInitVector);
+				}
+			}
+
+			return true;
 		}
 
 		[HarmonyPatch("UberStrike.WebService.Unity.SoapClient", "MakeRequest"), HarmonyPostfix]
 		public static IEnumerator SoapClient_MakeRequest_Postfix(IEnumerator value, string interfaceName, string serviceName, string methodName, byte[] data, Action<byte[]> requestCallback, Action<Exception> exceptionHandler) {
-			if (!string.IsNullOrEmpty(Configuration.EncryptionPassPhrase) && !string.IsNullOrEmpty(Configuration.EncryptionInitVector)) {
-				data = CryptoPolicy.RijndaelEncrypt(data, Configuration.EncryptionPassPhrase, Configuration.EncryptionInitVector);
-			}
-
 			var requestId = RequestId++;
 
 			var byteArray = Encoding.UTF8.GetBytes($"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"><s:Body><{methodName} xmlns=\"http://tempuri.org/\"><data>{Convert.ToBase64String(data)}</data></{methodName}></s:Body></s:Envelope>");
@@ -61,7 +63,7 @@ namespace Paradise.Client {
 
 			byte[] returnData = null;
 
-			using (WWW request = new WWW(Configuration.WebserviceBaseUrl + serviceName, byteArray, headers)) {
+			using (var request = new WWW(Configuration.WebserviceBaseUrl + serviceName, byteArray, headers)) {
 				yield return request;
 
 				if (WebServiceStatistics.IsEnabled) {
@@ -91,7 +93,7 @@ namespace Paradise.Client {
 						try {
 							doc.LoadXml(request.text);
 
-							XmlNodeList result = doc.GetElementsByTagName(methodName + "Result");
+							var result = doc.GetElementsByTagName(methodName + "Result");
 
 							if (result.Count <= 0) {
 								LogResponse(requestId, Time.realtimeSinceStartup, request.text, Time.time - startTime, 0);
@@ -116,7 +118,7 @@ namespace Paradise.Client {
 					}
 
 					if (requestCallback != null) {
-						if (!string.IsNullOrEmpty(Configuration.EncryptionPassPhrase) && !string.IsNullOrEmpty(Configuration.EncryptionInitVector)) {
+						if (ParadiseClient.Settings.EncryptWebServiceTraffic && !string.IsNullOrEmpty(Configuration.EncryptionPassPhrase) && !string.IsNullOrEmpty(Configuration.EncryptionInitVector)) {
 							requestCallback(CryptoPolicy.RijndaelDecrypt(returnData, Configuration.EncryptionPassPhrase, Configuration.EncryptionInitVector));
 						} else {
 							requestCallback(returnData);

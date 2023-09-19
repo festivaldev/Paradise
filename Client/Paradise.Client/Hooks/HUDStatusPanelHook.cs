@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using log4net;
 using UberStrike.Core.Types;
 
@@ -35,11 +35,6 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("WaitingForPlayersState", "OnUpdate"), HarmonyPrefix]
 		public static bool WaitingForPlayersState_OnUpdate_Prefix() {
-			return false;
-		}
-
-		[HarmonyPatch("WaitingForPlayersState", "OnUpdate"), HarmonyPostfix]
-		public static void WaitingForPlayersState_OnUpdate_Postfix() {
 			var v = GetGamemodeHint(GameState.Current.GameMode);
 
 			GameData.Instance.OnNotificationFull.Fire(LocalizedStrings.WaitingForOtherPlayers, v, 0f);

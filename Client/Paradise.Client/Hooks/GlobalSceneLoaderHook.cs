@@ -1,4 +1,4 @@
-﻿using Cmune.Core.Models.Views;
+using Cmune.Core.Models.Views;
 using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
@@ -16,16 +16,15 @@ namespace Paradise.Client {
 	public class GlobalSceneLoaderHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(GlobalSceneLoaderHook));
 
-		private static GlobalSceneLoader Instance;
-		private static Traverse traverse;
+		private static ParadiseTraverse traverse;
 
 		private static string ErrorMessage {
 			get {
-				return GetProperty<string>("ErrorMessage");
+				return traverse.GetProperty<string>("ErrorMessage");
 			}
 
 			set {
-				SetProperty("ErrorMessage", value);
+				traverse.SetProperty("ErrorMessage", value);
 			}
 		}
 
@@ -35,10 +34,7 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("Start"), HarmonyPrefix]
 		public static bool GlobalSceneLoader_Start_Prefix(GlobalSceneLoader __instance) {
-			if (Instance == null) {
-				Instance = __instance;
-				traverse = Traverse.Create(__instance);
-			}
+			traverse = ParadiseTraverse.Create(__instance);
 
 			return false;
 		}
@@ -48,10 +44,11 @@ namespace Paradise.Client {
 			UnityRuntime.StartRoutine(StartWithCheckingUpdates());
 		}
 
+		#region
 		private static IEnumerator StartWithCheckingUpdates() {
 			UnityRuntime.StartRoutine(ParadiseUpdater.CleanupUpdates());
 
-			UnityRuntime.StartRoutine(GameObject.Find("Plugin Holder").GetComponent<ParadiseUpdater>().CheckForUpdatesIfNecessary((updateCatalog) => {
+			UnityRuntime.StartRoutine(AutoMonoBehaviour<ParadiseUpdater>.Instance.CheckForUpdatesIfNecessary((updateCatalog) => {
 				if (updateCatalog != null) {
 					ParadiseUpdater.HandleUpdateAvailable(updateCatalog, () => {
 						UnityRuntime.StartRoutine(Start());
@@ -75,21 +72,20 @@ namespace Paradise.Client {
 
 			Configuration.WebserviceBaseUrl = ApplicationDataManager.WebServiceBaseUrl;
 
-			SetProperty("GlobalSceneProgress", 1f);
-			SetProperty("IsGlobalSceneLoaded", true);
-			SetProperty("ItemAssetBundleProgress", 1f);
-			SetProperty("IsItemAssetBundleLoaded", true);
+			traverse.SetProperty("GlobalSceneProgress", 1f);
+			traverse.SetProperty("IsGlobalSceneLoaded", true);
+			traverse.SetProperty("ItemAssetBundleProgress", 1f);
+			traverse.SetProperty("IsItemAssetBundleLoaded", true);
 
-			InvokeMethod("InitializeGlobalScene");
+			traverse.InvokeMethod("InitializeGlobalScene");
 
-			//yield return new WaitForSeconds(1f);
 			for (float f = 0f; f < 1f; f += Time.deltaTime) {
 				yield return new WaitForEndOfFrame();
 
-				var color = GetField<Color>("_color");
+				var color = traverse.GetField<Color>("_color");
 				color.a = 1f - f / 1f;
 
-				SetField("_color", color);
+				traverse.SetField("_color", color);
 			}
 
 			bool continueAuthentication = true;
@@ -104,13 +100,9 @@ namespace Paradise.Client {
 
 						Debug.Log("OnAuthenticateApplication");
 
-						if (!GetField<bool>("UseTestPhotonServers")) {
-							Singleton<GameServerManager>.Instance.CommServer = new PhotonServer(ev.CommServer);
-							Singleton<GameServerManager>.Instance.AddPhotonGameServers(ev.GameServers.FindAll((PhotonView i) => i.UsageType == PhotonUsageType.All));
-						} else {
-							Singleton<GameServerManager>.Instance.CommServer = new PhotonServer(GetField<string>("TestCommServer"), PhotonUsageType.CommServer);
-							Singleton<GameServerManager>.Instance.AddTestPhotonGameServer(1000, new PhotonServer(GetField<string>("TestGameServer"), PhotonUsageType.All));
-						}
+						Singleton<GameServerManager>.Instance.CommServer = new PhotonServer(ev.CommServer);
+						Singleton<GameServerManager>.Instance.AddPhotonGameServers(ev.GameServers.FindAll((PhotonView i) => i.UsageType == PhotonUsageType.All));
+
 
 						if (ev.WarnPlayer) {
 							continueAuthentication = false;
@@ -134,10 +126,10 @@ namespace Paradise.Client {
 					Debug.LogError($"OnAuthenticateApplication crashed with 4.7.1/{ApplicationDataManager.Channel}: {GlobalSceneLoader.ErrorMessage}");
 					HandleApplicationAuthenticationError("There was a problem loading UberStrike. Please check your internet connection and try again.");
 				}
-			}, delegate (Exception exception) {
+			}, delegate (Exception e) {
 				continueAuthentication = false;
 
-				OnAuthenticateApplicationException(exception);
+				OnAuthenticateApplicationException(e);
 			}));
 
 			if (!continueAuthentication) yield break;
@@ -151,8 +143,6 @@ namespace Paradise.Client {
 			} else {
 				Singleton<AuthenticationManager>.Instance.LoginByChannel();
 			}
-
-			// yield return new WaitForSeconds(1f);
 
 			yield break;
 		}
@@ -265,27 +255,6 @@ namespace Paradise.Client {
 		private static void OpenAndroidAppStoreUpdatesPage() {
 			ApplicationDataManager.OpenUrl(string.Empty, "market://details?id=com.cmune.uberstrike.android");
 			Application.Quit();
-		}
-
-		#region 
-		private static T GetField<T>(string fieldName) {
-			return traverse.Field<T>(fieldName).Value;
-		}
-
-		private static void SetField(string fieldName, object value) {
-			traverse.Field(fieldName).SetValue(value);
-		}
-
-		private static T GetProperty<T>(string propertyName) {
-			return traverse.Property<T>(propertyName).Value;
-		}
-
-		private static void SetProperty(string propertyName, object value) {
-			traverse.Property(propertyName).SetValue(value);
-		}
-
-		private static object InvokeMethod(string methodName, params object[] parameters) {
-			return AccessTools.Method(Instance.GetType(), methodName).Invoke(Instance, parameters);
 		}
 		#endregion
 	}
