@@ -1,4 +1,4 @@
-using Discord;
+﻿using Discord;
 using Discord.Webhook;
 using Discord.WebSocket;
 using log4net;
@@ -30,7 +30,11 @@ namespace Paradise.WebServices.Discord {
 
 		private readonly DiscordSettings discordSettings = new DiscordSettings();
 		private DiscordSocketClient discordClient;
-		private DiscordWebhookClient discordWebhookClient;
+
+		private DiscordWebhookClient chatClient;
+		private DiscordWebhookClient playerAnnouncementClient;
+		private DiscordWebhookClient gameAnnouncementClient;
+		private DiscordWebhookClient errorLogClient;
 
 		private readonly Dictionary<Guid, SocketMessage> messageMap = new Dictionary<Guid, SocketMessage>();
 		private readonly Dictionary<Guid, List<string>> messageBuffer = new Dictionary<Guid, List<string>>();
@@ -66,8 +70,20 @@ namespace Paradise.WebServices.Discord {
 				await discordClient.StartAsync();
 			}
 
-			if (!string.IsNullOrWhiteSpace(discordSettings.WebHookUrl)) {
-				discordWebhookClient = new DiscordWebhookClient(discordSettings.WebHookUrl);
+			if (discordSettings.ChatIntegration && !string.IsNullOrWhiteSpace(discordSettings.ChatWebHookUrl)) {
+				chatClient = new DiscordWebhookClient(discordSettings.ChatWebHookUrl);
+			}
+
+			if ((discordSettings.PlayerJoinAnnouncements || discordSettings.PlayerLeaveAnnouncements) && !string.IsNullOrWhiteSpace(discordSettings.PlayerAnnouncementWebHookUrl)) {
+				playerAnnouncementClient = new DiscordWebhookClient(discordSettings.PlayerAnnouncementWebHookUrl);
+			}
+
+			if ((discordSettings.RoomOpenAnnouncements || discordSettings.RoomCloseAnnouncements) && !string.IsNullOrWhiteSpace(discordSettings.GameAnnouncementWebHookUrl)) {
+				gameAnnouncementClient = new DiscordWebhookClient(discordSettings.GameAnnouncementWebHookUrl);
+			}
+
+			if (discordSettings.ErrorLog && !string.IsNullOrWhiteSpace(discordSettings.ErrorLogWebHookUrl)) {
+				errorLogClient = new DiscordWebhookClient(discordSettings.ErrorLogWebHookUrl);
 			}
 		}
 
@@ -101,7 +117,7 @@ namespace Paradise.WebServices.Discord {
 				}
 			};
 
-			await discordWebhookClient.SendMessageAsync(
+			await chatClient.SendMessageAsync(
 				username: username ?? message.Name,
 				avatarUrl: avatarUrl ?? null,
 				embeds: new List<Embed> {
@@ -111,114 +127,109 @@ namespace Paradise.WebServices.Discord {
 		}
 
 		public async Task SendPlayerJoinMessage(CommActorInfo player) {
-			if (!discordSettings.PlayerAnnouncements) return;
-			if (discordSettings.PlayerAnnouncementChannelId <= 0) return;
+			if (!discordSettings.PlayerJoinAnnouncements) return;
 
-			var guild = discordClient.GetGuild(discordSettings.GuildId);
+			var discordUser = GetDiscordUserFromCmid(player.Cmid);
+			var steamMember = DatabaseClient.SteamMembers.FindOne(_ => _.Cmid == player.Cmid);
 
-			if (guild?.GetChannel(discordSettings.PlayerAnnouncementChannelId) is SocketTextChannel channel) {
-				var discordUser = GetDiscordUserFromCmid(player.Cmid);
-				var steamMember = DatabaseClient.SteamMembers.FindOne(_ => _.Cmid == player.Cmid);
+			var embed = new EmbedBuilder {
+				Title = "Player connected",
+				Description = $"{player.PlayerName} has joined the server.",
+				Color = Color.Green
+			};
 
-				var embed = new EmbedBuilder {
-					Title = "Player connected",
-					Description = $"{player.PlayerName} has joined the server.",
-					Color = Color.Green
-				};
+			embed.AddField("CMID", player.Cmid);
+			embed.AddField("SteamID64", steamMember.SteamId, true);
+			embed.AddField("Machine ID", steamMember.MachineId);
+			embed.AddField("Rank", player.AccessLevel.ToString(), true);
 
-				embed.AddField("CMID", player.Cmid);
-				embed.AddField("SteamID64", steamMember.SteamId, true);
-				embed.AddField("Machine ID", steamMember.MachineId);
-				embed.AddField("Rank", player.AccessLevel.ToString(), true);
-
-				await channel.SendMessageAsync("", false, embed.Build());
-			}
+			await playerAnnouncementClient.SendMessageAsync(
+				embeds: new List<Embed> {
+					embed.Build()
+				}
+			);
 		}
 
 		public async Task SendPlayerLeftMessage(CommActorInfo player) {
-			if (!discordSettings.PlayerAnnouncements) return;
-			if (discordSettings.PlayerAnnouncementChannelId <= 0) return;
+			if (!discordSettings.PlayerLeaveAnnouncements) return;
 
-			var guild = discordClient.GetGuild(discordSettings.GuildId);
+			var discordUser = GetDiscordUserFromCmid(player.Cmid);
+			var steamMember = DatabaseClient.SteamMembers.FindOne(_ => _.Cmid == player.Cmid);
 
-			if (guild?.GetChannel(discordSettings.PlayerAnnouncementChannelId) is SocketTextChannel channel) {
-				var discordUser = GetDiscordUserFromCmid(player.Cmid);
-				var steamMember = DatabaseClient.SteamMembers.FindOne(_ => _.Cmid == player.Cmid);
+			var embed = new EmbedBuilder {
+				Title = "Player disconnected",
+				Description = $"{player.PlayerName} has left the server.",
+				Color = Color.Red
+			};
 
-				var embed = new EmbedBuilder {
-					Title = "Player disconnected",
-					Description = $"{player.PlayerName} has left the server.",
-					Color = Color.Red
-				};
-
-				await channel.SendMessageAsync("", false, embed.Build());
-			}
+			await playerAnnouncementClient.SendMessageAsync(
+				embeds: new List<Embed> {
+					embed.Build()
+				}
+			);
 		}
 
 		public async Task SendGameRoomCreatedMessage(GameRoomData metadata) {
-			if (!discordSettings.GameAnnouncements) return;
-			if (discordSettings.GameAnnouncementChannelId <= 0) return;
+			if (!discordSettings.RoomOpenAnnouncements) return;
 
-			var guild = discordClient.GetGuild(discordSettings.GuildId);
+			var embed = new EmbedBuilder {
+				Title = "Game Room created",
+				Color = Color.Default
+			};
 
-			if (guild?.GetChannel(discordSettings.GameAnnouncementChannelId) is SocketTextChannel channel) {
-				var embed = new EmbedBuilder {
-					Title = "Game Room created",
-					Color = Color.Default
-				};
+			embed.AddField("Room Name", metadata.Name);
+			embed.AddField("Map", GetNameForMapID(metadata.MapID), true);
+			embed.AddField("Gamemode", GetGamemodeName(metadata.GameMode), true);
+			embed.AddField("Player Limit", metadata.PlayerLimit, true);
+			embed.AddField("Time Limit", $"{metadata.TimeLimit / 60} min", true);
+			embed.AddField("Kill/Round Limit", metadata.KillLimit, true);
+			embed.AddField("Game Modifiers", GetGameFlags(metadata.GameFlags));
+			embed.AddField("Requires Password", metadata.IsPasswordProtected ? "Yes" : "No", true);
+			embed.AddField("Minimum Level", metadata.LevelMin > 0 ? metadata.LevelMin.ToString() : "None", true);
+			embed.AddField("Maximum Level", metadata.LevelMax > 0 ? metadata.LevelMax.ToString() : "None", true);
+			embed.AddField("Join this game", $"`uberstrike://connect/{metadata.Server.ConnectionString}/{metadata.Number}`");
 
-				embed.AddField("Room Name", metadata.Name);
-				embed.AddField("Map", GetNameForMapID(metadata.MapID), true);
-				embed.AddField("Gamemode", GetGamemodeName(metadata.GameMode), true);
-				embed.AddField("Player Limit", metadata.PlayerLimit, true);
-				embed.AddField("Time Limit", $"{metadata.TimeLimit / 60} min", true);
-				embed.AddField("Kill/Round Limit", metadata.KillLimit, true);
-				embed.AddField("Game Modifiers", GetGameFlags(metadata.GameFlags));
-				embed.AddField("Requires Password", metadata.IsPasswordProtected ? "Yes" : "No", true);
-				embed.AddField("Minimum Level", metadata.LevelMin > 0 ? metadata.LevelMin.ToString() : "None", true);
-				embed.AddField("Maximum Level", metadata.LevelMax > 0 ? metadata.LevelMax.ToString() : "None", true);
+			embed.WithImageUrl($"https://static.paradise.festival.tf/images/maps/{GetImageNameForMapID(metadata.MapID)}.jpg");
+			embed.WithFooter($"{metadata.Number}");
 
-				embed.WithImageUrl($"https://paradise.festival.tf:5054/images/maps/{GetImageNameForMapID(metadata.MapID)}.jpg");
-				embed.WithFooter($"{metadata.Number}");
-
-				var components = new ComponentBuilder();
-				components.WithButton("Join Game", "paradise-join-game", ButtonStyle.Link, url: $"uberstrike://connect/{metadata.Server.ConnectionString}/{metadata.Number}");
-
-				await channel.SendMessageAsync("", false, embed: embed.Build(), components: components.Build());
-			}
+			await gameAnnouncementClient.SendMessageAsync(
+				embeds: new List<Embed> {
+					embed.Build()
+				}
+			);
 		}
 
 		public async Task SendGameRoomDestroyedMessage(GameRoomData metadata) {
-			if (!discordSettings.GameAnnouncements) return;
-			if (discordSettings.GameAnnouncementChannelId <= 0) return;
+			if (!discordSettings.RoomCloseAnnouncements) return;
 
-			var guild = discordClient.GetGuild(discordSettings.GuildId);
+			var embed = new EmbedBuilder {
+				Title = "Game Room closed",
+				Color = Color.Default
+			};
 
-			if (guild?.GetChannel(discordSettings.GameAnnouncementChannelId) is SocketTextChannel channel) {
-				return;
+			embed.AddField("Room Name", metadata.Name);
+			embed.AddField("Map", GetNameForMapID(metadata.MapID), true);
+			embed.AddField("Gamemode", GetGamemodeName(metadata.GameMode), true);
 
-				var embed = new EmbedBuilder {
-					Title = "Game Room closed",
-					Color = Color.Default
-				};
+			embed.WithFooter($"{metadata.Number}");
 
-				embed.AddField("Room Name", metadata.Name);
-				embed.AddField("Map", GetNameForMapID(metadata.MapID), true);
-				embed.AddField("Gamemode", GetGamemodeName(metadata.GameMode), true);
-
-				await channel.SendMessageAsync("", false, embed: embed.Build());
-			}
+			await gameAnnouncementClient.SendMessageAsync(
+				embeds: new List<Embed> {
+					embed.Build()
+				}
+			);
 		}
 
-		public async Task SendErrorLog(RealtimeError error) {
+		public async Task LogError(Exception error) {
 			if (!discordSettings.ErrorLog) return;
-			if (discordSettings.ErrorLogChannelId <= 0) return;
 
-			var guild = discordClient.GetGuild(discordSettings.GuildId);
+			await errorLogClient.SendMessageAsync($"```{error.GetType()}: {error.Message}\r\n{error.StackTrace}```");
+		}
 
-			if (guild?.GetChannel(discordSettings.ErrorLogChannelId) is SocketTextChannel channel) {
-				await channel.SendMessageAsync($"```{error.ExceptionType}: {error.Message}\r\n{error.StackTrace}```");
-			}
+		public async Task LogError(RealtimeError error) {
+			if (!discordSettings.ErrorLog) return;
+
+			await errorLogClient.SendMessageAsync($"```{error.ExceptionType}: {error.Message}\r\n{error.StackTrace}```");
 		}
 
 		public bool IsMemberLinked(int cmid) {

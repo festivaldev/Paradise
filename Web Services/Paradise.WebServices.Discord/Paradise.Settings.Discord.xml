@@ -1,19 +1,22 @@
-<?xml version="1.0" encoding="utf-8" ?>
+﻿<?xml version="1.0" encoding="utf-8" ?>
 <ParadiseDiscordSettings>
-	<EnableDiscordIntegration>false</EnableDiscordIntegration>
+	<EnableDiscordIntegration>true</EnableDiscordIntegration>
 	<Token><!-- Insert Discord Application Token here --></Token>
-	<WebHookUrl><!-- Insert Discord Webhook URL here --></WebHookUrl>
 
 	<ChatIntegration>true</ChatIntegration>
 	<CommandIntegration>true</CommandIntegration>
-	<PlayerAnnouncements>false</PlayerAnnouncements>
-	<GameAnnouncements>false</GameAnnouncements>
-	<ErrorLog>false</ErrorLog>
+	<PlayerJoinAnnouncements>true</PlayerJoinAnnouncements>
+	<PlayerLeaveAnnouncements>true</PlayerLeaveAnnouncements>
+	<RoomOpenAnnouncements>true</RoomOpenAnnouncements>
+	<RoomCloseAnnouncements>true</RoomCloseAnnouncements>
+	<ErrorLog>true</ErrorLog>
 
-	<GuildId></GuildId>
-	<ChatChannelId></ChatChannelId>
-	<CommandChannelId></CommandChannelId>
-	<PlayerAnnouncementChannelId></PlayerAnnouncementChannelId>
-	<GameAnnouncementChannelId></GameAnnouncementChannelId>
-	<ErrorLogChannelId></ErrorLogChannelId>
+	<GuildId><!-- Insert Server (Guild) ID here --></GuildId>
+	<ChatChannelId><!-- Insert Chat channel ID here --></ChatChannelId>
+	<CommandChannelId><!-- Insert Command channel ID here --></CommandChannelId>
+
+	<ChatWebHookUrl></ChatWebHookUrl>
+	<PlayerAnnouncementWebHookUrl></PlayerAnnouncementWebHookUrl>
+	<GameAnnouncementWebHookUrl></GameAnnouncementWebHookUrl>
+	<ErrorLogWebHookUrl></ErrorLogWebHookUrl>
 </ParadiseDiscordSettings>

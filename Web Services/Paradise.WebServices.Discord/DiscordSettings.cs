@@ -10,19 +10,22 @@ namespace Paradise.WebServices.Discord {
 		public string Token;
 
 		[XmlElement]
-		public string WebHookUrl;
-
-		[XmlElement]
 		public bool ChatIntegration = true;
 
 		[XmlElement]
 		public bool CommandIntegration = true;
 
 		[XmlElement]
-		public bool PlayerAnnouncements = true;
+		public bool PlayerJoinAnnouncements = true;
 
 		[XmlElement]
-		public bool GameAnnouncements = true;
+		public bool PlayerLeaveAnnouncements = true;
+
+		[XmlElement]
+		public bool RoomOpenAnnouncements = true;
+
+		[XmlElement]
+		public bool RoomCloseAnnouncements = false;
 
 		[XmlElement]
 		public bool ErrorLog = false;
@@ -37,12 +40,15 @@ namespace Paradise.WebServices.Discord {
 		public ulong CommandChannelId;
 
 		[XmlElement]
-		public ulong PlayerAnnouncementChannelId;
+		public string ChatWebHookUrl;
 
 		[XmlElement]
-		public ulong GameAnnouncementChannelId;
+		public string PlayerAnnouncementWebHookUrl;
 
 		[XmlElement]
-		public ulong ErrorLogChannelId;
+		public string GameAnnouncementWebHookUrl;
+
+		[XmlElement]
+		public string ErrorLogWebHookUrl;
 	}
 }
