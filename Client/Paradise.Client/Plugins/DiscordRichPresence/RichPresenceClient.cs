@@ -77,7 +77,7 @@ namespace Paradise.Client {
 		private static Process childProcess;
 
 		public static void Initialize() {
-			if (!ParadiseClient.EnableDiscordRichPresence) return;
+			if (!ParadiseClient.Settings.EnableDiscordRichPresence) return;
 			if (!File.Exists(Path.Combine(Application.dataPath, @"Plugins\Paradise.Client.DiscordRPC.exe"))) return;
 
 			#region Discord-specific patches

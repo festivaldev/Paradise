@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using HarmonyLib;
+using log4net;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using UberStrike.Core.Types;
 using UnityEngine;
 
 namespace Paradise.Client {
-	public class CustomMapManager : MonoBehaviour {
+	internal class CustomMapManager {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(CustomMapManager));
 
 		public static List<UberStrikeCustomMapView> Maps { get; private set; } = new List<UberStrikeCustomMapView>();

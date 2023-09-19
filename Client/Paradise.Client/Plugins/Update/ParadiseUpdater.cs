@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using log4net;
 using System;
 using System.Collections;
@@ -12,6 +12,11 @@ using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace Paradise.Client {
+	public enum UpdateChannel {
+		Stable,
+		Beta
+	}
+
 	internal class UpdateCatalog {
 		[YamlMember(Alias = "version")]
 		public string Version { get; set; }
@@ -69,7 +74,7 @@ namespace Paradise.Client {
 		public string SHA512 { get; set; }
 	}
 
-	internal class ParadiseUpdater : MonoBehaviour {
+	internal class ParadiseUpdater : AutoMonoBehaviour<ParadiseUpdater> {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(ParadiseUpdater));
 
 		private DateTime LastUpdateCheckTimeStamp = DateTime.MinValue;
@@ -78,8 +83,8 @@ namespace Paradise.Client {
 		private readonly List<UpdateFile> FilesToUpdate = new List<UpdateFile>();
 		private readonly List<UpdateFile> FilesToRemove = new List<UpdateFile>();
 
-		private static string UpdateCatalogUrl => $"{ParadiseClient.UpdateUrl}/v2/";
-		private static string UpdateCatalog => $"{ParadiseClient.UpdateChannel.ToString().ToLower()}/updates.yml";
+		private static string UpdateCatalogUrl => $"{ParadiseClient.Settings.FileServerUrl}/{ParadiseClient.Settings.UpdateEndpoint}/v2/";
+		private static string UpdateCatalog => $"{ParadiseClient.Settings.UpdateChannel.ToString().ToLower()}/updates.yml";
 		private static string UpdatePlatform {
 			get {
 				switch (Application.platform) {
@@ -100,7 +105,7 @@ namespace Paradise.Client {
 
 		private static bool CanIgnoreUpdates => !PlayerDataManager.IsPlayerLoggedIn || PlayerDataManager.AccessLevel >= MemberAccessLevel.SeniorQA;
 
-		private ProgressPopupDialog _progressPopup;
+		private ProgressPopupDialog progressPopup;
 
 		public IEnumerator CheckForUpdatesIfNecessary(Action<UpdateCatalog> catalogDownloadedCallback, Action<string> errorCallback) {
 			if (Math.Abs((LastUpdateCheckTimeStamp - DateTime.Now).TotalHours) < 1) {
@@ -109,7 +114,7 @@ namespace Paradise.Client {
 
 			LastUpdateCheckTimeStamp = DateTime.Now;
 
-			if (!ParadiseClient.AutoUpdates) {
+			if (!ParadiseClient.Settings.AutoUpdates) {
 				Log.Info("Automatic updates disabled");
 
 				if (!CanIgnoreUpdates) {
@@ -126,11 +131,9 @@ namespace Paradise.Client {
 			FilesToUpdate.Clear();
 			FilesToRemove.Clear();
 
-			if (string.IsNullOrEmpty(ParadiseClient.UpdateUrl)) yield break;
-
 			var updateUri = string.Join("", new string[] { UpdateCatalogUrl, UpdateCatalog });
 
-			_progressPopup = PopupSystem.ShowProgress(LocalizedStrings.SettingUp, "Checking for updates...");
+			progressPopup = PopupSystem.ShowProgress(LocalizedStrings.SettingUp, "Checking for updates...");
 
 			UnityRuntime.StartRoutine(DownloadUpdateCatalog(updateUri, delegate (UpdateCatalog updateCatalog) {
 				UnityRuntime.StartRoutine(OnUpdateCatalogDownloadComplete(updateCatalog, catalogDownloadedCallback, errorCallback));
@@ -141,16 +144,33 @@ namespace Paradise.Client {
 			yield break;
 		}
 
+		public static IEnumerator CleanupUpdates() {
+			Log.Info("Cleaning cached update files");
+
+			// Delete downloaded update files
+			if (Directory.Exists(string.Join("/", new string[] { Application.dataPath, "Updates" }))) {
+				var files = Directory.GetFiles(string.Join("/", new string[] { Application.dataPath, "Updates" }), "*");
+
+				foreach (var file in files) {
+					File.Delete(file);
+				}
+			}
+
+			// Delete backup files
+			if (Directory.Exists(string.Join("/", new string[] { Application.dataPath, "Updates", "bak" }))) {
+				Directory.Delete(string.Join("/", new string[] { Application.dataPath, "Updates", "bak" }), true);
+			}
+
+			yield break;
+		}
+
 		public static void HandleUpdateAvailable(UpdateCatalog updateCatalog) {
 			HandleUpdateAvailable(updateCatalog, null);
 		}
 
 		public static void HandleUpdateAvailable(UpdateCatalog updateCatalog, Action ignoreCallback) {
 			PopupSystem.ShowMessage("Update available", $"A mandatory update is available. You need to install this update in order to play.\n\nVersion:{updateCatalog.Version ?? "Unknown"} ({updateCatalog.Build ?? "Unknown"})\nChannel: {updateCatalog.Channel.ToString() ?? "Unknown"}\n\nIf you choose to ignore this update, you will be asked again the next time you launch UberStrike.", PopupSystem.AlertType.OKCancel, delegate {
-				UnityRuntime.StartRoutine(GameObject.Find("Plugin Holder").GetComponent<ParadiseUpdater>().InstallUpdates(
-					HandleUpdateComplete,
-					HandleUpdateError
-				));
+				UnityRuntime.StartRoutine(Instance.InstallUpdates(HandleUpdateComplete, HandleUpdateError));
 			}, "Update", delegate {
 				if (!CanIgnoreUpdates) {
 					Application.Quit();
@@ -195,7 +215,7 @@ namespace Paradise.Client {
 					yield break;
 				}
 
-				_progressPopup.Progress = 0.3f;
+				progressPopup.Progress = 0.3f;
 				Log.Info("Successfully downloaded update catalog");
 
 				yield return new WaitForSeconds(0.5f);
@@ -208,7 +228,7 @@ namespace Paradise.Client {
 					var updateCatalog = deserializer.Deserialize<UpdateCatalog>(loader.text);
 
 					Log.Info("Successfully parsed update catalog");
-					_progressPopup.Progress = 0.6f;
+					progressPopup.Progress = 0.6f;
 
 					successCallback?.Invoke(updateCatalog);
 				} catch (Exception e) {
@@ -233,7 +253,7 @@ namespace Paradise.Client {
 			var totalFiles = (universalUpdates?.Files.Count ?? 0) + (platformUpdates?.Files.Count ?? 0);
 
 			new Thread(new ThreadStart(() => {
-				_progressPopup.Text = "Checking files for updates...";
+				progressPopup.Text = "Checking files for updates...";
 
 				if (universalUpdates == null) {
 					Log.Error("Update catalog does not contain universal platform.");
@@ -259,7 +279,7 @@ namespace Paradise.Client {
 					}
 				}
 
-				PopupSystem.HideMessage(_progressPopup);
+				PopupSystem.HideMessage(progressPopup);
 
 				if (FilesToUpdate.Count > 0) {
 					Log.Info($"Update available: {CachedUpdates.Version} (Build {CachedUpdates.Build}), files to update: {FilesToUpdate.Count}; files to remove: {FilesToRemove.Count}");
@@ -285,8 +305,8 @@ namespace Paradise.Client {
 			}
 
 			foreach (var file in updateDef.Files) {
-				_progressPopup.Text = $"Checking files for updates...\n{file.FileName}";
-				_progressPopup.Progress = 0.6f + (((float)startIndex + (float)updateDef.Files.IndexOf(file)) / (float)totalFiles) * 0.4f;
+				progressPopup.Text = $"Checking files for updates...\n{file.FileName}";
+				progressPopup.Progress = 0.6f + (((float)startIndex + (float)updateDef.Files.IndexOf(file)) / (float)totalFiles) * 0.4f;
 
 				string path = $"{Path.GetDirectoryName(Application.dataPath)}\\{file.LocalPath}\\{file.FileName}";
 
@@ -397,7 +417,7 @@ namespace Paradise.Client {
 			}
 		}
 
-		public IEnumerator InstallUpdates(Action updateCompleteCallback, Action<string> errorCallback) {
+		private IEnumerator InstallUpdates(Action updateCompleteCallback, Action<string> errorCallback) {
 			if (FilesToUpdate.Count == 0) yield break;
 
 			var backupPath = $"{Application.dataPath}\\Updates\\bak";
@@ -407,17 +427,17 @@ namespace Paradise.Client {
 			}
 
 			foreach (var file in FilesToUpdate) {
-				_progressPopup = PopupSystem.ShowProgress($"Downloading updates... ({FilesToUpdate.IndexOf(file) + 1}/{FilesToUpdate.Count})", $"{file.FileName} ({FormatBytes(file.FileSize)})");
+				progressPopup = PopupSystem.ShowProgress($"Downloading updates... ({FilesToUpdate.IndexOf(file) + 1}/{FilesToUpdate.Count})", $"{file.FileName} ({ParadiseGUITools.FormatSize(file.FileSize)})");
 
 				using (WWW loader = new WWW(string.Join("/", new string[] { file.RemoteURL ?? UpdateCatalogUrl, file.RemotePath, file.FileName }))) {
 					Log.Info($"Downloading remote file: {loader.url}");
 
 					while (!loader.isDone) {
-						_progressPopup.Progress = loader.progress;
+						progressPopup.Progress = loader.progress;
 						yield return null;
 					}
 
-					PopupSystem.HideMessage(_progressPopup);
+					PopupSystem.HideMessage(progressPopup);
 
 					var responseHeader = HTTPStatusParser.ParseHeader(loader.responseHeaders["STATUS"]);
 
@@ -467,7 +487,7 @@ namespace Paradise.Client {
 							}
 						}
 					} catch (Exception e) {
-						PopupSystem.HideMessage(_progressPopup);
+						PopupSystem.HideMessage(progressPopup);
 
 						errorCallback?.Invoke($"An error occured while downloading updates: {e.Message}");
 						Log.Error(e);
@@ -498,7 +518,7 @@ namespace Paradise.Client {
 
 						File.Move(tempFilename, filename);
 					} catch (Exception e) {
-						PopupSystem.HideMessage(_progressPopup);
+						PopupSystem.HideMessage(progressPopup);
 
 						errorCallback?.Invoke($"An error occured while installing updates: {e.Message}");
 						Log.Error(e);
@@ -511,53 +531,6 @@ namespace Paradise.Client {
 			DeleteRemovedFiles();
 
 			updateCompleteCallback?.Invoke();
-		}
-
-		public static IEnumerator CleanupUpdates() {
-			Log.Info("Cleaning cached update files");
-
-			// Delete downloaded update files
-			if (Directory.Exists(string.Join("/", new string[] { Application.dataPath, "Updates" }))) {
-				var files = Directory.GetFiles(string.Join("/", new string[] { Application.dataPath, "Updates" }), "*");
-
-				foreach (var file in files) {
-					File.Delete(file);
-				}
-			}
-
-			// Delete backup files
-			if (Directory.Exists(string.Join("/", new string[] { Application.dataPath, "Updates", "bak" }))) {
-				Directory.Delete(string.Join("/", new string[] { Application.dataPath, "Updates", "bak" }), true);
-			}
-
-			yield break;
-		}
-
-		static string FormatBytes(Int64 value, int decimalPlaces = 1) {
-			string[] SizeSuffixes =
-				   { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
-
-			if (decimalPlaces < 0) { throw new ArgumentOutOfRangeException("decimalPlaces"); }
-			if (value < 0) { return "-" + FormatBytes(-value, decimalPlaces); }
-			if (value == 0) { return string.Format("{0:n" + decimalPlaces + "} bytes", 0); }
-
-			// mag is 0 for bytes, 1 for KB, 2, for MB, etc.
-			int mag = (int)Math.Log(value, 1024);
-
-			// 1L << (mag * 10) == 2 ^ (10 * mag)
-			// [i.e. the number of bytes in the unit corresponding to mag]
-			decimal adjustedSize = (decimal)value / (1L << (mag * 10));
-
-			// make adjustment when the value is large enough that
-			// it would round up to 1000 or more
-			if (Math.Round(adjustedSize, decimalPlaces) >= 1000) {
-				mag += 1;
-				adjustedSize /= 1024;
-			}
-
-			return string.Format("{0:n" + decimalPlaces + "} {1}",
-				adjustedSize,
-				SizeSuffixes[mag]);
 		}
 	}
 }

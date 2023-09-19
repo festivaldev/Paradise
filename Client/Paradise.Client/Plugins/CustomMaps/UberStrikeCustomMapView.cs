@@ -30,12 +30,12 @@ namespace Paradise.Client {
 		}
 
 		public static UberStrikeCustomMapView Deserialize(Stream bytes) {
-			UberStrikeCustomMapView mapView = new UberStrikeCustomMapView();
-
-			mapView.Name = StringProxy.Deserialize(bytes);
-			mapView.FileName = StringProxy.Deserialize(bytes);
-			mapView.MapId = Int32Proxy.Deserialize(bytes);
-			mapView.SupportedGameModes = ListProxy<int>.Deserialize(bytes, Int32Proxy.Deserialize);
+			UberStrikeCustomMapView mapView = new UberStrikeCustomMapView {
+				Name = StringProxy.Deserialize(bytes),
+				FileName = StringProxy.Deserialize(bytes),
+				MapId = Int32Proxy.Deserialize(bytes),
+				SupportedGameModes = ListProxy<int>.Deserialize(bytes, Int32Proxy.Deserialize)
+			};
 
 			return mapView;
 		}
