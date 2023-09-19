@@ -1,6 +1,8 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
+using System.IO;
+using System.Reflection;
 using UnityEngine;
 
 namespace Paradise.Client {
@@ -23,14 +25,29 @@ namespace Paradise.Client {
 			var optionsDropdown = traverse.GetField<GuiDropDown>("_optionsDropdown");
 
 			// Link to Discord Server
-			optionsDropdown.Add(new GUIContent(" Discord", AutoMonoBehaviour<TextureLoader>.Instance.Load(ApplicationDataManager.ImagePath + "discord.png", null).Texture), delegate () {
-				Application.OpenURL("discord:///channels/1071142989579178116/");
-			});
+			using (var stream = Assembly.GetAssembly(typeof(ParadiseClient)).GetManifestResourceStream("Paradise.Client.Resources.icon_discord.png")) {
+				using (var reader = new BinaryReader(stream)) {
+					var texture = new Texture2D(16, 16, TextureFormat.RGBA32, false);
+					texture.LoadImage(reader.ReadBytes((int)stream.Length));
+
+
+					optionsDropdown.Add(new GUIContent(" Discord", texture), delegate {
+						Application.OpenURL("discord:///channels/1071142989579178116/");
+					});
+				}
+			}
 
 			// Link to GitHub Issues
-			optionsDropdown.Add(new GUIContent(" Report Issue", AutoMonoBehaviour<TextureLoader>.Instance.Load(ApplicationDataManager.ImagePath + "github.png", null).Texture), delegate () {
-				Application.OpenURL("https://github.com/festivaldev/Paradise/issues");
-			});
+			using (var stream = Assembly.GetAssembly(typeof(ParadiseClient)).GetManifestResourceStream("Paradise.Client.Resources.icon_github.png")) {
+				using (var reader = new BinaryReader(stream)) {
+					var texture = new Texture2D(16, 16, TextureFormat.RGBA32, false);
+					texture.LoadImage(reader.ReadBytes((int)stream.Length));
+
+					optionsDropdown.Add(new GUIContent(" Report Issue", texture), delegate {
+						Application.OpenURL("https://github.com/festivaldev/Paradise/issues");
+					});
+				}
+			}
 
 			// Debug Console
 			EventHandler.Global.AddListener<GlobalEvents.Login>(delegate (GlobalEvents.Login e) {
