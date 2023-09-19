@@ -93,6 +93,10 @@ namespace Paradise.WebServices {
 				});
 
 			AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(ResolvePluginDependency);
+			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(delegate (object sender, UnhandledExceptionEventArgs e) {
+				Log.Error(e.ExceptionObject);
+			});
+			Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
 
 			switch (RunMode) {
 				case RunMode.Console:

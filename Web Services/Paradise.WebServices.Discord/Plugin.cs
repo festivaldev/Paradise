@@ -8,6 +8,10 @@ namespace Paradise.WebServices.Discord {
 
 		public override void OnLoad() {
 			DiscordClient = new DiscordClient();
+
+			AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(async delegate (object sender, UnhandledExceptionEventArgs e) {
+				await DiscordClient.LogError((Exception)e.ExceptionObject);
+			});
 		}
 
 		public override void OnStart() {
@@ -34,7 +38,7 @@ namespace Paradise.WebServices.Discord {
 		private async void OnSocketDataReceived(object sender, SocketDataReceivedEventArgs e) {
 			switch (e.Type) {
 				case PacketType.Error:
-					await DiscordClient.SendErrorLog((RealtimeError)e.Data);
+					await DiscordClient.LogError((RealtimeError)e.Data);
 					break;
 				case PacketType.ChatMessage:
 					await DiscordClient.SendLobbyChatMessage((SocketChatMessage)e.Data);
