@@ -137,7 +137,7 @@
 					"Duration": 5
 				}
 			],
-			"ArmorPoints": 100,
+			"ArmorPoints": 300,
 			"ArmorWeight": 0
 		},
 		{
@@ -666,7 +666,7 @@
 					"Duration": 5
 				}
 			],
-			"ArmorPoints": 100,
+			"ArmorPoints": 50,
 			"ArmorWeight": 0
 		},
 		{
@@ -1034,7 +1034,7 @@
 					"Duration": 5
 				}
 			],
-			"ArmorPoints": 100,
+			"ArmorPoints": 20,
 			"ArmorWeight": 0
 		},
 		{
@@ -1057,7 +1057,7 @@
 					"Duration": 5
 				}
 			],
-			"ArmorPoints": 100,
+			"ArmorPoints": 20,
 			"ArmorWeight": 0
 		},
 		{
@@ -1080,7 +1080,7 @@
 					"Duration": 5
 				}
 			],
-			"ArmorPoints": 100,
+			"ArmorPoints": 20,
 			"ArmorWeight": 0
 		},
 		{
@@ -1103,7 +1103,7 @@
 					"Duration": 5
 				}
 			],
-			"ArmorPoints": 100,
+			"ArmorPoints": 20,
 			"ArmorWeight": 0
 		},
 		{
@@ -2695,7 +2695,7 @@
 					"Duration": 5
 				}
 			],
-			"ArmorPoints": 100,
+			"ArmorPoints": 50,
 			"ArmorWeight": 0
 		},
 		{
@@ -4487,7 +4487,7 @@
 					"Duration": 5
 				}
 			],
-			"ArmorPoints": 100,
+			"ArmorPoints": 50,
 			"ArmorWeight": 0
 		},
 		{
@@ -6986,7 +6986,10 @@
 				"RechargeTime": "30000"
 			},
 			"ItemProperties": {},
-			"MaxOwnableAmount": 1
+			"MaxOwnableAmount": 1,
+			"BehaviourType": 1,
+			"UsesPerLife": 8,
+			"CooldownTime": 300
 		},
 		{
 			"ItemClass": 19,
@@ -7013,7 +7016,10 @@
 				"RechargeTime": "30000"
 			},
 			"ItemProperties": {},
-			"MaxOwnableAmount": 1
+			"MaxOwnableAmount": 1,
+			"BehaviourType": 1,
+			"UsesPerLife": 4,
+			"CooldownTime": 300
 		},
 		{
 			"ItemClass": 19,
@@ -7040,7 +7046,10 @@
 				"RechargeTime": "30000"
 			},
 			"ItemProperties": {},
-			"MaxOwnableAmount": 1
+			"MaxOwnableAmount": 1,
+			"BehaviourType": 1,
+			"UsesPerLife": 2,
+			"CooldownTime": 300
 		},
 		{
 			"ItemClass": 19,
@@ -7067,7 +7076,8 @@
 				"RechargeTime": "1"
 			},
 			"ItemProperties": {},
-			"MaxOwnableAmount": 1
+			"MaxOwnableAmount": 1,
+			"BehaviourType": 1
 		}
 	],
 	"WeaponItems": [
@@ -12252,7 +12262,7 @@
 			"ID": 20105,
 			"Name": "Spiteful Stinger",
 			"PrefabName": "SpitefulSkewer",
-			"Description": "SForce presents the Spiteful Stinger, a pistol class crossbow from the Insidious product line. One hit will slow a player by %30 for 3 seconds.",
+			"Description": "SForce presents the Spiteful Stinger, a pistol class crossbow from the Insidious product line. One hit will slow a player by 30% for 3 seconds.",
 			"Prices": [
 				{
 					"Price": 0,
