@@ -8563,7 +8563,7 @@
 			"WeaponSecondaryAction": 4
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20025,
 			"Name": "Beretta",
 			"PrefabName": "Beretta",
@@ -8609,7 +8609,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20026,
 			"Name": "Beretta [Pimped]",
 			"PrefabName": "Beretta-Silver",
@@ -8655,7 +8655,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20027,
 			"Name": "Bio Lance",
 			"PrefabName": "BioLance",
@@ -9906,7 +9906,7 @@
 			"WeaponSecondaryAction": 1
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20054,
 			"Name": "Godfather's Hand Cannon",
 			"PrefabName": "GoldPistol",
@@ -12724,7 +12724,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20115,
 			"Name": "USP .45 Silenced",
 			"PrefabName": "USP_Base",
@@ -12770,7 +12770,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20116,
 			"Name": "USP .45",
 			"PrefabName": "USP_BaseNoSilencer",
@@ -12816,7 +12816,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20117,
 			"Name": "USP .45 Silenced [Black]",
 			"PrefabName": "USP_Black",
@@ -12862,7 +12862,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20118,
 			"Name": "USP .45 [Black]",
 			"PrefabName": "USP_BlackNoSilencer",
@@ -12908,7 +12908,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20119,
 			"Name": "USP .45 Silenced [Camo]",
 			"PrefabName": "USP_Camo",
@@ -12954,7 +12954,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20120,
 			"Name": "USP .45 [Camo]",
 			"PrefabName": "USP_CamoNoSilencer",
@@ -13000,7 +13000,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20121,
 			"Name": "USP .45 Silenced [Tiger]",
 			"PrefabName": "USP_Pimp",
@@ -13046,7 +13046,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20122,
 			"Name": "USP .45 [Tiger]",
 			"PrefabName": "USP_PimpNoSilencer",
