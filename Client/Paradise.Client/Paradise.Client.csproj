@@ -120,8 +120,10 @@
     <Compile Include="Hooks\OptionsPanelGUIHook.cs" />
     <Compile Include="Hooks\PlayerKilledSpectatorStateHook.cs" />
     <Compile Include="Hooks\PlayerLeadAudioHook.cs" />
+    <Compile Include="Hooks\PlayPageGUIHook.cs" />
     <Compile Include="Hooks\ScreenResolutionManagerHook.cs" />
     <Compile Include="Hooks\SfxManagerHook.cs" />
+    <Compile Include="Hooks\ShopPageGUIHook.cs" />
     <Compile Include="Hooks\SoapClientHook.cs" />
     <Compile Include="Hooks\TeamEliminationRoomHook.cs" />
     <Compile Include="Hooks\TrainingRoomHook.cs" />
