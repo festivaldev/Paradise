@@ -144,6 +144,7 @@ namespace Paradise.WebServices.Discord {
 			embed.AddField("Rank", player.AccessLevel.ToString(), true);
 
 			await playerAnnouncementClient.SendMessageAsync(
+				username: "UberStrike",
 				embeds: new List<Embed> {
 					embed.Build()
 				}
@@ -163,6 +164,7 @@ namespace Paradise.WebServices.Discord {
 			};
 
 			await playerAnnouncementClient.SendMessageAsync(
+				username: "UberStrike",
 				embeds: new List<Embed> {
 					embed.Build()
 				}
@@ -193,6 +195,7 @@ namespace Paradise.WebServices.Discord {
 			embed.WithFooter($"{metadata.Number}");
 
 			await gameAnnouncementClient.SendMessageAsync(
+				username: "UberStrike",
 				embeds: new List<Embed> {
 					embed.Build()
 				}
@@ -214,6 +217,7 @@ namespace Paradise.WebServices.Discord {
 			embed.WithFooter($"{metadata.Number}");
 
 			await gameAnnouncementClient.SendMessageAsync(
+				username: "UberStrike",
 				embeds: new List<Embed> {
 					embed.Build()
 				}
@@ -223,13 +227,19 @@ namespace Paradise.WebServices.Discord {
 		public async Task LogError(Exception error) {
 			if (!discordSettings.ErrorLog) return;
 
-			await errorLogClient.SendMessageAsync($"```{error.GetType()}: {error.Message}\r\n{error.StackTrace}```");
+			await errorLogClient.SendMessageAsync(
+				username: "UberStrike",
+				text: $"```{error.GetType()}: {error.Message}\r\n{error.StackTrace}```"
+			);
 		}
 
 		public async Task LogError(RealtimeError error) {
 			if (!discordSettings.ErrorLog) return;
 
-			await errorLogClient.SendMessageAsync($"```{error.ExceptionType}: {error.Message}\r\n{error.StackTrace}```");
+			await errorLogClient.SendMessageAsync(
+				username: "UberStrike",
+				text: $"```{error.ExceptionType}: {error.Message}\r\n{error.StackTrace}```"
+			);
 		}
 
 		public bool IsMemberLinked(int cmid) {
