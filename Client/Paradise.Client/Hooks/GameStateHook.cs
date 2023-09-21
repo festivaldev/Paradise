@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using log4net;
 using UnityEngine;
 
@@ -24,6 +24,23 @@ namespace Paradise.Client {
 						gameObject.transform.GetChild(i).gameObject.SetActive(false);
 					}
 				}
+			}
+
+			return true;
+		}
+
+		[HarmonyPatch("StartMatch"), HarmonyPostfix]
+		public static void GameState_StartMatch_Postfix(GameState __instance, int roundNumber, int endTime) {
+			if (endTime == 0) {
+				GameState.Current.ResetRoundStartTime();
+			}
+		}
+
+		[HarmonyPatch("GameStateHelper", "UpdateMatchTime"), HarmonyPrefix]
+		public static bool GameStateHelper_UpdateMatchTime_Prefix() {
+			if (GameState.Current.RoomData.TimeLimit == 0) {
+				GameState.Current.PlayerData.RemainingTime.Value = Mathf.CeilToInt(GameState.Current.GameTime);
+				return false;
 			}
 
 			return true;

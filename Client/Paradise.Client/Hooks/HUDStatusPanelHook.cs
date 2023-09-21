@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using log4net;
 using UberStrike.Core.Types;
 
@@ -38,6 +38,15 @@ namespace Paradise.Client {
 			var v = GetGamemodeHint(GameState.Current.GameMode);
 
 			GameData.Instance.OnNotificationFull.Fire(LocalizedStrings.WaitingForOtherPlayers, v, 0f);
+
+			return false;
+		}
+
+		[HarmonyPatch("OnUpdateRemainingSeconds"), HarmonyPrefix]
+		public static bool HUDStatusPanel_OnUpdateRemainingSeconds_Prefix() {
+			if (GameState.Current.RoomData.TimeLimit == 0) return false;
+
+			return true;
 		}
 
 

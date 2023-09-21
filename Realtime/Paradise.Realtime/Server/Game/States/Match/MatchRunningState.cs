@@ -15,7 +15,10 @@ namespace Paradise.Realtime.Server.Game {
 			Room.PlayerRespawned += OnPlayerRespawned;
 
 			Room.RoundStartTime = Environment.TickCount;
-			Room.RoundEndTime = Room.RoundStartTime + (Room.MetaData.TimeLimit * 1000);
+
+			if (Room.MetaData.TimeLimit > 0) {
+				Room.RoundEndTime = Room.RoundStartTime + (Room.MetaData.TimeLimit * 1000);
+			}
 
 			foreach (var player in Room.Players) {
 				player.GameEventSender.SendMatchStart(Room.RoundNumber, Room.RoundEndTime);
@@ -42,7 +45,7 @@ namespace Paradise.Realtime.Server.Game {
 		public override void OnUpdate() {
 			Room.PowerUpManager.Update();
 
-			if (Environment.TickCount > Room.RoundEndTime) {
+			if (Room.RoundEndTime > 0 && Environment.TickCount > Room.RoundEndTime) {
 				Room.HasRoundEnded = true;
 			}
 		}
