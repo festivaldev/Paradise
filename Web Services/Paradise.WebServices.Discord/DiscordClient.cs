@@ -192,7 +192,7 @@ namespace Paradise.WebServices.Discord {
 			embed.AddField("Join this game", $"`uberstrike://connect/{metadata.Server.ConnectionString}/{metadata.Number}`");
 
 			embed.WithImageUrl($"https://static.paradise.festival.tf/images/maps/{GetImageNameForMapID(metadata.MapID)}.jpg");
-			embed.WithFooter($"{metadata.Number}");
+			embed.WithFooter($"Room ID: {metadata.Number}");
 
 			await gameAnnouncementClient.SendMessageAsync(
 				username: "UberStrike",
@@ -214,7 +214,7 @@ namespace Paradise.WebServices.Discord {
 			embed.AddField("Map", GetNameForMapID(metadata.MapID), true);
 			embed.AddField("Gamemode", GetGamemodeName(metadata.GameMode), true);
 
-			embed.WithFooter($"{metadata.Number}");
+			embed.WithFooter($"Room ID: {metadata.Number}");
 
 			await gameAnnouncementClient.SendMessageAsync(
 				username: "UberStrike",
