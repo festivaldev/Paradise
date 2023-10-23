@@ -170,7 +170,11 @@ namespace Paradise.Client {
 
 		public static void HandleUpdateAvailable(UpdateCatalog updateCatalog, Action ignoreCallback) {
 			PopupSystem.ShowMessage("Update available", $"A mandatory update is available. You need to install this update in order to play.\n\nVersion:{updateCatalog.Version ?? "Unknown"} ({updateCatalog.Build ?? "Unknown"})\nChannel: {updateCatalog.Channel.ToString() ?? "Unknown"}\n\nIf you choose to ignore this update, you will be asked again the next time you launch UberStrike.", PopupSystem.AlertType.OKCancel, delegate {
-				UnityRuntime.StartRoutine(Instance.InstallUpdates(HandleUpdateComplete, HandleUpdateError));
+				UnityRuntime.StartRoutine(Instance.InstallUpdates(HandleUpdateComplete, delegate (string message) {
+					HandleUpdateError(message, delegate {
+						ignoreCallback?.Invoke();
+					});
+				}));
 			}, "Update", delegate {
 				if (!CanIgnoreUpdates) {
 					Application.Quit();
