@@ -2906,7 +2906,7 @@
 			"ArmorWeight": 0
 		},
 		{
-			"ItemClass": 15,
+			"ItemClass": 13,
 			"ID": 10124,
 			"Name": "DIY Iron Helm of Viktor",
 			"PrefabName": "HalloWeenPaperBagheadKnight",
@@ -13718,6 +13718,52 @@
 			"SecondaryActionReticle": 0,
 			"SplashRadius": 5000,
 			"StartAmmo": 100,
+			"Tier": 1,
+			"WeaponSecondaryAction": 0
+		},
+		{
+			"ItemClass": 2,
+			"ID": 99999,
+			"Name": "Handgun",
+			"PrefabName": "HandGun",
+			"Description": "Legacy Handgun test",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ItemProperties": {},
+			"AccuracySpread": 12,
+			"CombatRange": 1,
+			"CriticalStrikeBonus": 50,
+			"DamageKnockback": 0,
+			"DamagePerProjectile": 25,
+			"DamagePerSecond": 0,
+			"DefaultZoomMultiplier": 0,
+			"HasAutomaticFire": false,
+			"MaxAmmo": 100,
+			"MaxZoomMultiplier": 0,
+			"MinZoomMultiplier": 0,
+			"MissileBounciness": 0,
+			"MissileForceImpulse": 0,
+			"MissileTimeToDetonate": 0,
+			"ProjectileSpeed": 1,
+			"ProjectilesPerShot": 1,
+			"RateOfFire": 175,
+			"RecoilKickback": 9,
+			"RecoilMovement": 15,
+			"SecondaryActionReticle": 0,
+			"SplashRadius": 0,
+			"StartAmmo": 75,
 			"Tier": 1,
 			"WeaponSecondaryAction": 0
 		}
