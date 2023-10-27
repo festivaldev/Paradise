@@ -8701,7 +8701,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 3,
+			"ItemClass": 2,
 			"ID": 20028,
 			"Name": "Bio Lance [Limited]",
 			"PrefabName": "BioLanceYellow",
@@ -9207,7 +9207,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 4,
+			"ItemClass": 2,
 			"ID": 20039,
 			"Name": "Executioner",
 			"PrefabName": "Executioner",
@@ -10274,7 +10274,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 4,
+			"ItemClass": 2,
 			"ID": 20062,
 			"Name": "Judge",
 			"PrefabName": "Judge",
@@ -10320,7 +10320,7 @@
 			"WeaponSecondaryAction": 0
 		},
 		{
-			"ItemClass": 4,
+			"ItemClass": 2,
 			"ID": 20063,
 			"Name": "Jury",
 			"PrefabName": "Jury",
