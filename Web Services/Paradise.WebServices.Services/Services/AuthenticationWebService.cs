@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Paradise.WebServices.Services {
 	public class AuthenticationWebService : BaseWebService, IAuthenticationWebServiceContract {
@@ -52,6 +53,10 @@ namespace Paradise.WebServices.Services {
 						} else if (DatabaseClient.PublicProfiles.FindOne(_ => _.Name == name) != null) {
 							AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView {
 								Result = AccountCompletionResult.DuplicateName
+							});
+						} else if (name.Length < 3 || !Regex.IsMatch(name, @"^[a-zA-Z0-9_]+$")) {
+							AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView {
+								Result = AccountCompletionResult.InvalidName
 							});
 						} else if (ProfanityFilter.DetectAllProfanities(name).Count > 0) {
 							AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView {

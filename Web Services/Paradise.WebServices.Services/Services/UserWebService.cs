@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
+using System.Text.RegularExpressions;
 
 namespace Paradise.WebServices.Services {
 	public class UserWebService : BaseWebService, IUserWebServiceContract {
@@ -93,6 +94,8 @@ namespace Paradise.WebServices.Services {
 									EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.NameChangeNotInInventory);
 								} else if (existingName != null && existingName.Cmid != publicProfile.Cmid) {
 									EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.DuplicateName);
+								} else if (name.Length < 3 || !Regex.IsMatch(name, @"^[a-zA-Z0-9_]+$")) {
+									EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.InvalidName);
 								} else if (ProfanityFilter.DetectAllProfanities(name).Count > 0) {
 									EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.OffensiveName);
 								} else {

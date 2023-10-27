@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
+using System.Text.RegularExpressions;
 
 namespace Paradise.WebServices.Services {
 	public enum ClanCreationResultCode {
@@ -222,7 +223,7 @@ namespace Paradise.WebServices.Services {
 									var playerStatistics = DatabaseClient.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
 									var hasClanLicense = DatabaseClient.PlayerInventoryItems.FindOne(_ => _.Cmid == steamMember.Cmid && _.ItemId == (int)UberstrikeInventoryItem.ClanLicense) != null;
 
-									if (ProfanityFilter.DetectAllProfanities(createClanData.Name).Count > 0) {
+									if (createClanData.Name.Length < 3 || !Regex.IsMatch(createClanData.Name, @"^[a-zA-Z0-9_]+$") || ProfanityFilter.DetectAllProfanities(createClanData.Name).Count > 0) {
 										// "Invalid Clan Name", "The name '" + name + "' is not valid, please modify it."
 
 										ClanCreationReturnViewProxy.Serialize(outputStream, new ClanCreationReturnView {
