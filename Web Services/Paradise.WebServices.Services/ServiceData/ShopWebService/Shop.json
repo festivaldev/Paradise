@@ -11796,7 +11796,7 @@
 			"RecoilMovement": 20,
 			"SecondaryActionReticle": 0,
 			"SplashRadius": 0,
-			"StartAmmo": 20,
+			"StartAmmo": 30,
 			"Tier": 1,
 			"WeaponSecondaryAction": 0
 		},
