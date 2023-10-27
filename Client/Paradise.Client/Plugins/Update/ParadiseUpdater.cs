@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Threading;
@@ -430,6 +431,8 @@ namespace Paradise.Client {
 				Directory.CreateDirectory(backupPath);
 			}
 
+			var verifyFailures = new List<string>();
+
 			foreach (var file in FilesToUpdate) {
 				progressPopup = PopupSystem.ShowProgress($"Downloading updates... ({FilesToUpdate.IndexOf(file) + 1}/{FilesToUpdate.Count})", $"{file.FileName} ({ParadiseGUITools.FormatSize(file.FileSize)})");
 
@@ -460,8 +463,9 @@ namespace Paradise.Client {
 								var md5sum = BitConverter.ToString(md5.ComputeHash(loader.bytes)).Replace("-", "").ToLowerInvariant();
 
 								if (!md5sum.Equals(file.MD5)) {
-									errorCallback?.Invoke($"{file.FileName}: Hash sum mismatch. Please contact your server administrator.");
 									Log.Error($"Downloaded file {file.FileName}: MD5 doesn't match (expected {file.MD5}, got {md5sum})");
+									verifyFailures.Add(file.FileName);
+
 									continue;
 								}
 							}
@@ -472,8 +476,9 @@ namespace Paradise.Client {
 								var sha256sum = BitConverter.ToString(sha256.ComputeHash(loader.bytes)).Replace("-", "").ToLowerInvariant();
 
 								if (!sha256sum.Equals(file.SHA256)) {
-									errorCallback?.Invoke($"{file.FileName}: Hash sum mismatch. Please contact your server administrator.");
 									Log.Error($"Downloaded file {file.FileName}: SHA256 doesn't match (expected {file.SHA256}, got {sha256sum})");
+									verifyFailures.Add(file.FileName);
+
 									continue;
 								}
 							}
@@ -484,8 +489,9 @@ namespace Paradise.Client {
 								var sha512sum = BitConverter.ToString(sha512.ComputeHash(loader.bytes)).Replace("-", "").ToLowerInvariant();
 
 								if (!sha512sum.Equals(file.SHA512)) {
-									errorCallback?.Invoke($"{file.FileName}: Hash sum mismatch. Please contact your server administrator.");
 									Log.Error($"Downloaded file {file.FileName}: SHA512 doesn't match (expected {file.SHA512}, got {sha512sum})");
+									verifyFailures.Add(file.FileName);
+
 									continue;
 								}
 							}
@@ -533,6 +539,14 @@ namespace Paradise.Client {
 			}
 
 			DeleteRemovedFiles();
+
+			if (verifyFailures.Count > 0) {
+				PopupSystem.HideMessage(progressPopup);
+
+				errorCallback?.Invoke($"One or more downloaded files could not be verified. Please contact your server administrator.\n\n{string.Join("\n", verifyFailures.Select(_ => $"- {_}").ToArray())}");
+
+				yield break;
+			}
 
 			updateCompleteCallback?.Invoke();
 		}
