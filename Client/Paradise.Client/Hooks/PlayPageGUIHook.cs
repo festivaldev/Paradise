@@ -1,9 +1,7 @@
 ﻿using HarmonyLib;
 using log4net;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Reflection;
 using UberStrike.Core.Models;
 using UnityEngine;
 
@@ -13,8 +11,28 @@ namespace Paradise.Client {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(PlayPageGUIHook));
 		private static ParadiseTraverse traverse;
 
+		private static float nextServerCheckTime;
+
 		static PlayPageGUIHook() {
 			Log.Info($"[{nameof(PlayPageGUIHook)}] hooking {nameof(PlayPageGUI)}");
+		}
+
+		[HarmonyPatch("DrawQuickSearch"), HarmonyPrefix]
+		public static bool PlayPageGUI_DrawQuickSearch_Prefix(PlayPageGUI __instance, Rect rect) {
+			bool enabled = GUI.enabled;
+			GUI.enabled = (enabled && Time.time > nextServerCheckTime);
+
+			if (GUITools.Button(new Rect(rect.x - (8 + 64), rect.y, 64, rect.height), new GUIContent((nextServerCheckTime >= Time.time) ? $"{LocalizedStrings.Refresh} ({nextServerCheckTime - Time.time:N0})" : LocalizedStrings.Refresh), BlueStonez.buttondark_medium)) {
+				Singleton<GameStateController>.Instance.Client.RefreshGameLobby();
+				nextServerCheckTime = Time.time + 10f;
+			}
+			GUI.enabled = enabled;
+
+			var searchBar = typeof(PlayPageGUI).GetField("_searchBar", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
+
+			typeof(PlayPageGUI).Assembly.GetType("SearchBarGUI").GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance).Invoke(searchBar, new object[] { rect });
+
+			return false;
 		}
 
 		[HarmonyPatch("DrawAllGames"), HarmonyPrefix]
