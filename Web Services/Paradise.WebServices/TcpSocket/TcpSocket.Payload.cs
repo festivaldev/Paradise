@@ -199,9 +199,11 @@ namespace Paradise {
 							result = JsonConvert.DeserializeObject<SocketCommand>(StringProxy.Deserialize(bytes));
 							break;
 						case PacketType.CommandOutput:
-						case PacketType.Error:
 						case PacketType.ChatMessage:
 							result = StringProxy.Deserialize(bytes);
+							break;
+						case PacketType.Error:
+							result = JsonConvert.DeserializeObject<RealtimeError>(StringProxy.Deserialize(bytes));
 							break;
 						case PacketType.Monitoring:
 						case PacketType.BanPlayer:
