@@ -28,6 +28,8 @@ namespace Paradise.Client {
 			if (shooter == null || shooter == target) {
 				GameData.Instance.OnHUDStreamMessage.Fire(target, LocalizedStrings.NKilledThemself, null);
 			} else {
+				if (!ParadiseClient.Settings.ShowKilledWeaponIndicator) return true;
+
 				var weaponName = Singleton<ItemManager>.Instance.GetItemInShop(shooter.CurrentWeaponID).Name;
 				string killString;
 
