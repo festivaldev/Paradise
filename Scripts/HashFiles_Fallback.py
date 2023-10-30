@@ -89,6 +89,8 @@ for channel in channels:
             "sha512": sha512(file)
           }
           
+          print(f'  {file_def["filename"]}')
+          
           platform_updates["files"].append(file_def)
         
         if (platform in platform_removed_files):   

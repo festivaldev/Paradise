@@ -97,6 +97,8 @@ for channel in channels:
             "sha256": sha256(file),
             "sha512": sha512(file)
           }
+          
+          print(f'  {file_def["filename"]}')
 
           if (platform in platform_optional_files):
             if (next((x for x in platform_optional_files[platform] if x["filename"] == os.path.basename(file)), None) != None):
