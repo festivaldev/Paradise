@@ -87,14 +87,16 @@ namespace Paradise.Realtime.Server.Game {
 
 		public void RemoveRoom(int roomId) {
 			if (Rooms.TryGetValue(roomId, out var room)) {
-				Log.Info($"Destroyed {Rooms[roomId]}({Rooms[roomId].RoomId})");
+				lock (Lock) {
+					if (GameServerApplication.Instance.Configuration.DiscordGameAnnouncements) {
+						GameServerApplication.Instance.Socket?.SendSync(TcpSocket.PacketType.RoomClosed, room.MetaData);
+					}
 
-				if (GameServerApplication.Instance.Configuration.DiscordGameAnnouncements) {
-					GameServerApplication.Instance.Socket?.SendSync(TcpSocket.PacketType.RoomClosed, room.MetaData);
+					Rooms[roomId].Dispose();
+					Rooms.Remove(roomId);
+
+					Log.Info($"Destroyed {Rooms[roomId]}({Rooms[roomId].RoomId})");
 				}
-
-				Rooms[roomId].Dispose();
-				Rooms.Remove(roomId);
 			}
 		}
 
