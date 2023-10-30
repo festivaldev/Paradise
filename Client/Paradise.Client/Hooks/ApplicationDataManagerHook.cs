@@ -23,15 +23,6 @@ namespace Paradise.Client {
 
 			traverse = ParadiseTraverse.Create(typeof(ApplicationDataManager));
 
-			//foreach (var arg in Environment.GetCommandLineArgs()) {
-			//	switch (arg) {
-			//		case "-console":
-			//			AutoMonoBehaviour<ConsolePanelGUI>.Instance.Show();
-			//			break;
-			//		default: break;
-			//	}
-			//}
-
 			if (!PluginHolder) {
 				PluginHolder = new GameObject("Plugin Holder");
 				PluginHolder.AddComponent<ParadiseApplicationManager>();

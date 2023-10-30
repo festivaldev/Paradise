@@ -53,7 +53,6 @@ namespace Paradise.Client {
 			EventHandler.Global.AddListener<GlobalEvents.Login>(delegate (GlobalEvents.Login e) {
 				if (e.AccessLevel == MemberAccessLevel.Admin) {
 					optionsDropdown.Add(new GUIContent(" CONSOLE"), delegate {
-						//GameObject.Find("Plugin Holder").GetComponent<ConsolePanelGUI>().Show();
 						AutoMonoBehaviour<ConsolePanelGUI>.Instance.Show();
 					});
 				}

@@ -15,12 +15,8 @@ namespace Paradise.Client {
 	public class AuthenticationManagerHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(ApplicationDataManagerHook));
 
-		private static readonly ParadiseTraverse traverse;
-
 		static AuthenticationManagerHook() {
 			Log.Info($"[{nameof(AuthenticationManagerHook)}] hooking {nameof(AuthenticationManager)}");
-
-			traverse = ParadiseTraverse.Create(typeof(AuthenticationManager));
 		}
 
 		[HarmonyPatch("LoginByChannel"), HarmonyPrefix]
@@ -34,7 +30,7 @@ namespace Paradise.Client {
 
 			Debug.Log(string.Format("SteamWorks SteamID:{0}, PlayerPrefs SteamID:{1}", PlayerDataManager.SteamId, steamId));
 
-			UnityRuntime.StartRoutine((IEnumerator)traverse.InvokeMethod(__instance, "StartLoginMemberSteam", new object[] { true }));
+			UnityRuntime.StartRoutine((IEnumerator)ParadiseTraverse.InvokeMethod(__instance, "StartLoginMemberSteam", new object[] { true }));
 
 			return false;
 		}

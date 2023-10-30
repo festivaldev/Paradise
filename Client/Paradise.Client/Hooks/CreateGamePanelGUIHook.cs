@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
 using System;
@@ -143,7 +143,7 @@ namespace Paradise.Client {
 						case GameFlags.GAME_FLAGS.LowGravity:
 							hasFlag = GUI.Toggle(new Rect(6f, 241f, traverse.GetField<float>("_sliderWidth"), 16f), hasFlag, "Low Gravity", BlueStonez.toggle);
 							break;
-						case GameFlags.GAME_FLAGS.NoArmor:
+						 case GameFlags.GAME_FLAGS.NoArmor:
 							GUI.enabled = false;
 							hasFlag = GUI.Toggle(new Rect(170f, 241f, traverse.GetField<float>("_sliderWidth"), 16f), hasFlag, "No Armor", BlueStonez.toggle);
 							GUI.enabled = true;
@@ -151,7 +151,7 @@ namespace Paradise.Client {
 						case GameFlags.GAME_FLAGS.QuickSwitch:
 							hasFlag = GUI.Toggle(new Rect(6f, 261f, traverse.GetField<float>("_sliderWidth"), 16f), hasFlag, "Quick Switching", BlueStonez.toggle);
 							break;
-						case GameFlags.GAME_FLAGS.MeleeOnly:
+						 case GameFlags.GAME_FLAGS.MeleeOnly:
 							GUI.enabled = false;
 							hasFlag = GUI.Toggle(new Rect(170f, 261f, traverse.GetField<float>("_sliderWidth"), 16f), hasFlag, "Nelee Only", BlueStonez.toggle);
 							GUI.enabled = true;
