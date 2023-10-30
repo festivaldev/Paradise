@@ -40,6 +40,7 @@
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Lib.Harmony.2.2.2\lib\net35\0Harmony.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\AssemblyReferences\Assembly-CSharp.dll</HintPath>
@@ -55,6 +56,7 @@
     </Reference>
     <Reference Include="Photon3Unity3D">
       <HintPath>..\..\AssemblyReferences\Photon3Unity3D.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
@@ -71,6 +73,7 @@
     </Reference>
     <Reference Include="YamlDotNet, Version=13.0.0.0, Culture=neutral, PublicKeyToken=ec19458f3c15af5e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\YamlDotNet.13.1.1\lib\net35\YamlDotNet.dll</HintPath>
+      <Private>True</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -111,6 +114,7 @@
     <Compile Include="Hooks\GameStateHook.cs" />
     <Compile Include="Hooks\GlobalUIRibbonHook.cs" />
     <Compile Include="Hooks\GlobalSceneLoaderHook.cs" />
+    <Compile Include="Hooks\HandgunHooks.cs" />
     <Compile Include="Hooks\HUDDesktopEventStreamHook.cs" />
     <Compile Include="Hooks\HUDStatusPanelHook.cs" />
     <Compile Include="Hooks\InventoryItemGUIHook.cs" />
@@ -123,7 +127,6 @@
     <Compile Include="Hooks\PlayPageGUIHook.cs" />
     <Compile Include="Hooks\ScreenResolutionManagerHook.cs" />
     <Compile Include="Hooks\SfxManagerHook.cs" />
-    <Compile Include="Hooks\ShopPageGUIHook.cs" />
     <Compile Include="Hooks\SoapClientHook.cs" />
     <Compile Include="Hooks\TeamEliminationRoomHook.cs" />
     <Compile Include="Hooks\TrainingRoomHook.cs" />

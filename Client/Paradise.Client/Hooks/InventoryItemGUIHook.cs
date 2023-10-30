@@ -7,6 +7,9 @@ using UberStrike.Core.Types;
 using UnityEngine;
 
 namespace Paradise.Client {
+	/// <summary>
+	/// Allows players to remove items from their inventory
+	/// </summary>
 	[HarmonyPatch(typeof(InventoryItemGUI))]
 	public class InventoryItemGUIHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(InventoryItemGUIHook));

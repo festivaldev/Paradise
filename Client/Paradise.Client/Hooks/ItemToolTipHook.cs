@@ -42,8 +42,6 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("SetItem"), HarmonyPostfix]
 		public static void ItemToolTip_SetItem_Postfix(ItemToolTip __instance, IUnityItem item) {
-			if (!ParadiseClient.Settings.ShowDetailedItemStatistics) return;
-
 			if (traverse == null) {
 				traverse = ParadiseTraverse.Create(__instance);
 			}
@@ -128,8 +126,6 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("DrawGear"), HarmonyPrefix]
 		public static bool ItemToolTip_DrawGear_Prefix() {
-			if (!ParadiseClient.Settings.ShowDetailedItemStatistics) return true;
-
 			ProgressBar(new Rect(20f, 120f, 200f, 12f), _armorCarried.Title, _armorCarried.Percent, ColorScheme.ProgressBar, $"{_armorCarried.Value:F0} AP");
 
 			return false;
@@ -137,8 +133,6 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("DrawProjectileWeapon"), HarmonyPrefix]
 		public static bool ItemToolTip_DrawProjectileWeapon_Prefix() {
-			if (!ParadiseClient.Settings.ShowDetailedItemStatistics) return true;
-
 			var isDragging = Singleton<DragAndDrop>.Instance.IsDragging && ShopUtils.IsProjectileWeapon(Singleton<DragAndDrop>.Instance.DraggedItem.Item) && Singleton<DragAndDrop>.Instance.DraggedItem.Item.View.ItemClass == traverse.GetField<IUnityItem>("_item").View.ItemClass;
 
 			ProgressBar(new Rect(20f, 120f, 200f, 12f), _damage.Title, _damage.Percent, ColorScheme.ProgressBar, $"{_damage.Value:F0}");
@@ -160,8 +154,6 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("DrawInstantHitWeapon"), HarmonyPrefix]
 		public static bool ItemToolTip_DrawInstantHitWeapon_Prefix() {
-			if (!ParadiseClient.Settings.ShowDetailedItemStatistics) return true;
-
 			bool isDragging = Singleton<DragAndDrop>.Instance.IsDragging && ShopUtils.IsInstantHitWeapon(Singleton<DragAndDrop>.Instance.DraggedItem.Item) && Singleton<DragAndDrop>.Instance.DraggedItem.Item.View.ItemClass == traverse.GetField<IUnityItem>("_item").View.ItemClass;
 
 			ProgressBar(new Rect(20f, 120f, 200f, 12f), _damage.Title, _damage.Percent, ColorScheme.ProgressBar, $"{_damage.Value:F0}");
@@ -181,8 +173,6 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("DrawMeleeWeapon"), HarmonyPrefix]
 		public static bool ItemToolTip_DrawMeleeWeapon_Prefix() {
-			if (!ParadiseClient.Settings.ShowDetailedItemStatistics) return true;
-
 			ProgressBar(new Rect(20f, 120f, 200f, 12f), _damage.Title, _damage.Percent, ColorScheme.ProgressBar, $"{_damage.Value:F0}");
 			ProgressBar(new Rect(20f, 135f, 200f, 12f), _fireRate.Title, 1f - _fireRate.Percent, ColorScheme.ProgressBar, $"{_fireRate.Value:F1}");
 
@@ -197,8 +187,6 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("DrawQuickItem"), HarmonyPrefix]
 		public static bool ItemToolTip_DrawQuickItem_Prefix() {
-			if (!ParadiseClient.Settings.ShowDetailedItemStatistics) return true;
-
 			var item = traverse.GetField<IUnityItem>("_item");
 
 			if (item != null) {
@@ -259,7 +247,7 @@ namespace Paradise.Client {
 		}
 
 		private static void ProgressBar(Rect position, string text, float percentage, Color barColor, string value) {
-			traverse.InvokeMethod("ProgressBar", position, text, percentage, barColor, value);
+			traverse.InvokeMethod("ProgressBar", position, text, percentage, barColor, ParadiseClient.Settings.ShowDetailedItemStatistics ? value : string.Empty);
 		}
 	}
 
