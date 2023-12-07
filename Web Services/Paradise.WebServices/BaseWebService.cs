@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Paradise.Util.Ciphers;
 using System;
 using System.IO;
@@ -33,7 +33,7 @@ namespace Paradise.WebServices {
 		public CommunicationState WebServiceState => ServiceHost?.State ?? CommunicationState.Closed;
 		public bool IsRunning => ServiceHost?.State == CommunicationState.Opened;
 
-		protected readonly ICryptographyPolicy CryptoPolicy = new CryptographyPolicy();
+		protected readonly ICryptographyPolicy CryptoPolicy = new RijndaelCryptographyPolicy();
 		protected string EncryptionPassPhrase => ParadiseService.WebServiceSettings.EncryptionPassPhrase;
 		protected string EncryptionInitVector => ParadiseService.WebServiceSettings.EncryptionInitVector;
 

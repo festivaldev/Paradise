@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 namespace Paradise.Util.Ciphers {
-	public class CryptographyPolicy : ICryptographyPolicy {
+	public class RijndaelCryptographyPolicy : ICryptographyPolicy {
 		public string SHA256Encrypt(string inputString) {
 			UTF8Encoding utf8Encoding = new UTF8Encoding();
 			byte[] bytes = utf8Encoding.GetBytes(inputString);

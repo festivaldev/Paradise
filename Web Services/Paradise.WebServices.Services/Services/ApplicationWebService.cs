@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Newtonsoft.Json;
 using Paradise.Core.Models.Views;
 using Paradise.Core.Serialization;
@@ -27,7 +27,7 @@ namespace Paradise.WebServices.Services {
 		private ApplicationConfigurationView applicationConfiguration;
 		private AuthenticateApplicationView photonServers;
 		private List<MapView> mapData;
-		private List<UberstrikeCustomMapView> customMapData;
+		private List<ParadiseMapView> customMapData;
 
 		private FileSystemWatcher watcher;
 		private static readonly List<string> watchedFiles = new List<string> {
@@ -44,7 +44,7 @@ namespace Paradise.WebServices.Services {
 				applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "ApplicationConfiguration.json")));
 				photonServers = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "PhotonServers.json")));
 				mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "Maps.json")));
-				customMapData = JsonConvert.DeserializeObject<List<UberstrikeCustomMapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "CustomMaps.json")));
+				customMapData = JsonConvert.DeserializeObject<List<ParadiseMapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "CustomMaps.json")));
 
 				watcher = new FileSystemWatcher(ServiceDataPath) {
 					NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite
@@ -60,7 +60,7 @@ namespace Paradise.WebServices.Services {
 						applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "ApplicationConfiguration.json")));
 						photonServers = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "PhotonServers.json")));
 						mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "Maps.json")));
-						customMapData = JsonConvert.DeserializeObject<List<UberstrikeCustomMapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "CustomMaps.json")));
+						customMapData = JsonConvert.DeserializeObject<List<ParadiseMapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "CustomMaps.json")));
 					});
 				};
 
@@ -227,7 +227,7 @@ namespace Paradise.WebServices.Services {
 
 					using (var outputStream = new MemoryStream()) {
 						if (supportedClientVersions.Contains(clientVersion)) {
-							ListProxy<UberstrikeCustomMapView>.Serialize(outputStream, customMapData, UberstrikeCustomMapViewProxy.Serialize);
+							ListProxy<ParadiseMapView>.Serialize(outputStream, customMapData, ParadiseMapViewProxy.Serialize);
 						}
 
 						return isEncrypted

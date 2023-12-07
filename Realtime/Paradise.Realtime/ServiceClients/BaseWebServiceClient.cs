@@ -1,4 +1,4 @@
-﻿using log4net;
+using log4net;
 using Paradise.Realtime.Server;
 using Paradise.Util.Ciphers;
 using System;
@@ -12,7 +12,7 @@ namespace Paradise.Realtime {
 
 		private readonly T _service;
 		protected readonly ICryptographyPolicy NullCryptoPolicy = new NullCryptographyPolicy();
-		protected readonly ICryptographyPolicy CryptoPolicy = new CryptographyPolicy();
+		protected readonly ICryptographyPolicy CryptoPolicy = new RijndaelCryptographyPolicy();
 
 		protected BaseWebServiceClient(string masterUrl, int port, string serviceEndpoint, string service) {
 			if (string.IsNullOrWhiteSpace(masterUrl))
