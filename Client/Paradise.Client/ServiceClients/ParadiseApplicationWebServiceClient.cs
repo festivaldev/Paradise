@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using UberStrike.Core.Models.Views;
 using UberStrike.Core.Serialization;
 using UberStrike.Core.Types;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace Paradise.Client {
 		public static string WebServiceName => "ApplicationWebService";
 		public static string ContractName => "IApplicationWebServiceContract";
 
-		public static Coroutine GetCustomMaps(string clientVersion, DefinitionType clientType, Action<List<UberStrikeCustomMapView>> callback, Action<Exception> handler) {
+		public static Coroutine GetCustomMaps(string clientVersion, DefinitionType clientType, Action<List<ParadiseMapView>> callback, Action<Exception> handler) {
 			using (MemoryStream memoryStream = new MemoryStream()) {
 				StringProxy.Serialize(memoryStream, clientVersion);
 				EnumProxy<DefinitionType>.Serialize(memoryStream, clientType);
@@ -28,7 +29,9 @@ namespace Paradise.Client {
 					MethodBase.GetCurrentMethod().Name,
 					memoryStream.ToArray(),
 					(Action<byte[]>)(data => {
-						callback?.Invoke(ListProxy<UberStrikeCustomMapView>.Deserialize(new MemoryStream(data), new ListProxy<UberStrikeCustomMapView>.Deserializer<UberStrikeCustomMapView>(UberStrikeCustomMapViewProxy.Deserialize)));
+						using (var stream = new MemoryStream(data)) {
+							callback?.Invoke(ListProxy<ParadiseMapView>.Deserialize(stream, ParadiseMapViewProxy.Deserialize));
+						}
 					}),
 					handler
 				}));

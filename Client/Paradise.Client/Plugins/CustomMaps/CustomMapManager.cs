@@ -1,8 +1,8 @@
-﻿using HarmonyLib;
-using log4net;
+﻿using log4net;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UberStrike.Core.Models.Views;
 using UberStrike.Core.Types;
 using UnityEngine;
 
@@ -10,14 +10,14 @@ namespace Paradise.Client {
 	internal class CustomMapManager {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(CustomMapManager));
 
-		public static List<UberStrikeCustomMapView> Maps { get; private set; } = new List<UberStrikeCustomMapView>();
+		public static List<ParadiseMapView> Maps { get; private set; } = new List<ParadiseMapView>();
 
 		private static AssetBundle Bundle;
 		private static bool IsLoading = false;
 
 		public static IEnumerator GetCustomMaps() {
 			Log.Info("Getting custom maps from server");
-			yield return ParadiseApplicationWebServiceClient.GetCustomMaps(ApplicationDataManager.Version, DefinitionType.StandardDefinition, delegate (List<UberStrikeCustomMapView> callback) {
+			yield return ParadiseApplicationWebServiceClient.GetCustomMaps(ApplicationDataManager.Version, DefinitionType.StandardDefinition, delegate (List<ParadiseMapView> callback) {
 				Maps = callback;
 			}, delegate (Exception e) {
 				PopupSystem.ShowMessage("Error", $"There was an error loading the maps.", PopupSystem.AlertType.OK);
@@ -26,8 +26,8 @@ namespace Paradise.Client {
 			});
 		}
 
-		private static UberStrikeCustomMapView GetMap(int mapId) {
-			foreach (UberStrikeCustomMapView map in Maps) {
+		private static ParadiseMapView GetMap(int mapId) {
+			foreach (ParadiseMapView map in Maps) {
 				if (map.MapId.Equals(mapId)) {
 					return map;
 				}
@@ -59,12 +59,14 @@ namespace Paradise.Client {
 			IsLoading = true;
 
 			var map = GetMap(mapId);
+
 			if (map == null) {
 				PopupSystem.ShowMessage("Bundle Error", "The map you are trying to load cannot be found.");
+
 				yield break;
 			}
 
-			var progressPopup = new ProgressPopupDialog("Loading", $"Loading Map: {map.Name}", null);
+			var progressPopup = new ProgressPopupDialog("Loading", $"Loading map from {map.FileName}", null);
 			PopupSystem.Show(progressPopup);
 
 			var path = $"file:///{Application.dataPath}/Maps/{map.FileName}";
@@ -72,6 +74,7 @@ namespace Paradise.Client {
 			using (WWW loader = WWW.LoadFromCacheOrDownload(path, 1)) {
 				while (!loader.isDone) {
 					progressPopup.Progress = loader.progress;
+
 					yield return null;
 				}
 
@@ -87,6 +90,7 @@ namespace Paradise.Client {
 				} else {
 					PopupSystem.HideMessage(progressPopup);
 					PopupSystem.ShowMessage("Error", $"An error occured while loading the map: {loader.error}", PopupSystem.AlertType.OK);
+
 					yield return null;
 				}
 			}

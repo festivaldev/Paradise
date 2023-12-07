@@ -40,7 +40,7 @@
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Lib.Harmony.2.2.2\lib\net35\0Harmony.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -70,8 +70,6 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>XCOPY /Y /R "$(TargetPath)" "K:\UberStrike Dev\Dev 1\UberStrike_Data\Managed\"
-XCOPY /Y /R "$(TargetPath)" "K:\UberStrike Dev\Dev 2\UberStrike_Data\Managed\"
-XCOPY /Y /R "$(TargetPath)" "K:\UberStrike Dev\Dev 3\UberStrike_Data\Managed\"
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>

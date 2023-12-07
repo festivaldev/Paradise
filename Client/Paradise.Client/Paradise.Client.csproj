@@ -40,7 +40,7 @@
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.2.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Lib.Harmony.2.2.2\lib\net35\0Harmony.dll</HintPath>
-      <Private>False</Private>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\AssemblyReferences\Assembly-CSharp.dll</HintPath>
@@ -103,17 +103,17 @@
     <Compile Include="GUI\ParadiseGUITools.cs" />
     <Compile Include="GUI\ParadisePrefsPanelGUI.cs" />
     <Compile Include="GUI\PreloadOptionsPanelButton.cs" />
-    <Compile Include="Hooks\BasePopupDialogHook.cs" />
-    <Compile Include="Hooks\CreateGamePanelGUIHook.cs" />
     <Compile Include="Hooks\ApplicationDataManagerHook.cs" />
     <Compile Include="Hooks\AuthenticationManagerHook.cs" />
+    <Compile Include="Hooks\BasePopupDialogHook.cs" />
     <Compile Include="Hooks\BundleManagerHook.cs" />
     <Compile Include="Hooks\ClanDataManagerHook.cs" />
     <Compile Include="Hooks\CommConnectionManagerHook.cs" />
+    <Compile Include="Hooks\CreateGamePanelGUIHook.cs" />
     <Compile Include="Hooks\GameRoomOperationsHook.cs" />
     <Compile Include="Hooks\GameStateHook.cs" />
-    <Compile Include="Hooks\GlobalUIRibbonHook.cs" />
     <Compile Include="Hooks\GlobalSceneLoaderHook.cs" />
+    <Compile Include="Hooks\GlobalUIRibbonHook.cs" />
     <Compile Include="Hooks\HandgunHooks.cs" />
     <Compile Include="Hooks\HUDDesktopEventStreamHook.cs" />
     <Compile Include="Hooks\HUDStatusPanelHook.cs" />
@@ -137,7 +137,8 @@
     <Compile Include="ParadisePrefs.cs" />
     <Compile Include="ParadiseTraverse.cs" />
     <Compile Include="Plugins\CustomMaps\CustomMapManager.cs" />
-    <Compile Include="Plugins\CustomMaps\UberStrikeCustomMapView.cs" />
+    <Compile Include="Plugins\CustomMaps\ParadiseMapView.cs" />
+    <Compile Include="Plugins\CustomMaps\ParadiseMapViewProxy.cs" />
     <Compile Include="Plugins\DiscordRichPresence\RichPresenceClient.cs" />
     <Compile Include="Plugins\ParadiseApplicationManager.cs" />
     <Compile Include="Plugins\Update\HTTPStatusParser.cs" />
