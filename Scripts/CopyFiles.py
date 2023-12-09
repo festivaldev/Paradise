@@ -6,8 +6,8 @@ import shutil
 import sys
 
 root = os.getcwd()
-scriptroot = path.dirname(sys.argv[0])
-wwwroot = path.normpath(path.join(root, "build/server/Paradise.WebServices/wwwroot/"))
+scriptroot = path.abspath(path.dirname(sys.argv[0]))
+wwwroot = path.abspath(path.join(root, "build/server/Paradise.WebServices/wwwroot/"))
 update_dir = "updates/v2"
 channel = "beta"
 
