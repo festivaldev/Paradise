@@ -45,7 +45,7 @@ namespace Paradise.Realtime.Server.Comm {
 			Socket.Disconnected += (sender, e) => {
 				Log.Info("Comm: DISCONNECTED FROM SOCKET");
 
-				Socket.Reconnect(0);
+				Socket.Reconnect(25);
 			};
 
 			Socket.DataReceived += (sender, e) => {

@@ -66,7 +66,7 @@ namespace Paradise.Realtime.Server.Game {
 			Socket.Disconnected += (sender, e) => {
 				Log.Info("Game: DISCONNECTED FROM SOCKET");
 
-				Socket.Reconnect(0);
+				Socket.Reconnect(25);
 			};
 
 			Socket.DataReceived += (sender, e) => {
