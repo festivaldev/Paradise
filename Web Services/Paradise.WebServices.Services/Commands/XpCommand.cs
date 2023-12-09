@@ -1,4 +1,4 @@
-﻿using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using System;
 using System.Threading.Tasks;
 

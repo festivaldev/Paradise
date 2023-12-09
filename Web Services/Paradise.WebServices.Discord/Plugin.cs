@@ -1,5 +1,5 @@
-using Paradise.Core.Models;
 using System;
+using UberStrike.Core.Models;
 using static Paradise.TcpSocket;
 
 namespace Paradise.WebServices.Discord {

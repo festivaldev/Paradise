@@ -1,8 +1,9 @@
 ﻿using log4net;
-using Paradise.Core.Models;
-using Paradise.Core.Types;
+using Paradise.Realtime.Core;
 using System;
 using System.Linq;
+using UberStrike.Core.Models;
+using UberStrike.Core.Types;
 using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {

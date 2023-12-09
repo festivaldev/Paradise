@@ -1,6 +1,7 @@
 ﻿using log4net;
-using Paradise.Core.Models;
+using Paradise.Realtime.Core;
 using System.Linq;
+using UberStrike.Core.Models;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class DeathMatchRoom : BaseGameRoom {

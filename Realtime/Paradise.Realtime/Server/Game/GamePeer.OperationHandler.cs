@@ -1,10 +1,16 @@
-﻿using log4net;
-using Paradise.Core.Models;
-using Paradise.Core.Serialization;
+using Cmune.Core.Models;
+using Cmune.DataCenter.Common.Entities;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UberStrike.Core.Models;
+using UberStrike.Core.Serialization;
+
+#if DEBUG
+using UberStrike.Core.Types;
+#endif
 
 namespace Paradise.Realtime.Server.Game {
 	public partial class GamePeer {
@@ -300,7 +306,7 @@ namespace Paradise.Realtime.Server.Game {
 					return;
 				}
 
-				if (member.CmuneMemberView.PublicProfile.AccessLevel < DataCenter.Common.Entities.MemberAccessLevel.Admin) {
+				if (member.CmuneMemberView.PublicProfile.AccessLevel < MemberAccessLevel.Admin) {
 					return;
 				}
 
@@ -354,7 +360,7 @@ namespace Paradise.Realtime.Server.Game {
 					return;
 				}
 
-				if (member.CmuneMemberView.PublicProfile.AccessLevel < DataCenter.Common.Entities.MemberAccessLevel.Moderator) {
+				if (member.CmuneMemberView.PublicProfile.AccessLevel < MemberAccessLevel.Moderator) {
 					return;
 				}
 

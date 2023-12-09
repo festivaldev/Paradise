@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -104,9 +104,29 @@
     <Compile Include="XpPointsUtil.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Core\Paradise.Core\Paradise.Core.csproj">
-      <Project>{2c90e774-49b8-4d1e-ba6d-fa9f47b647fb}</Project>
-      <Name>Paradise.Core</Name>
+    <ProjectReference Include="..\..\Core\UberStrike-Reverse-Engineered\Cmune\Cmune.csproj">
+      <Project>{2d4f62df-005c-4b1c-85f1-3b002b1d7a39}</Project>
+      <Name>Cmune</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\UberStrike-Reverse-Engineered\UberStrike.Core.Types\UberStrike.Core.Types.csproj">
+      <Project>{49f93537-1c8b-40cd-8d19-6d1a5be3873c}</Project>
+      <Name>UberStrike.Core.Types</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\UberStrike-Reverse-Engineered\UberStrike.Core\UberStrike.Core.csproj">
+      <Project>{85137628-f019-48cd-bd0f-31fc81ddd7a4}</Project>
+      <Name>UberStrike.Core</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\UberStrike-Reverse-Engineered\UberStrike.DataCenter.Common\UberStrike.DataCenter.Common.csproj">
+      <Project>{5c447444-7f30-40e7-b90a-4cab343695ae}</Project>
+      <Name>UberStrike.DataCenter.Common</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\UberStrike-Reverse-Engineered\UberStrike.WebService.Unity\UberStrike.WebService.Unity.csproj">
+      <Project>{c5dd048e-d1f8-4150-92cb-d5eb0c029c23}</Project>
+      <Name>UberStrike.WebService.Unity</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Paradise.WebServices\Paradise.WebServices.csproj">

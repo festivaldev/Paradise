@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
@@ -148,12 +148,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\StoppedIcon.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Core\Paradise.Core\Paradise.Core.csproj">
-      <Project>{2c90e774-49b8-4d1e-ba6d-fa9f47b647fb}</Project>
-      <Name>Paradise.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Paradise.Settings.WebServices.xml">
@@ -975,6 +969,20 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\updates\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core\UberStrike-Reverse-Engineered\Cmune\Cmune.csproj">
+      <Project>{2D4F62DF-005C-4B1C-85F1-3B002B1D7A39}</Project>
+      <Name>Cmune</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\UberStrike-Reverse-Engineered\UberStrike.Core\UberStrike.Core.csproj">
+      <Project>{85137628-F019-48CD-BD0F-31FC81DDD7A4}</Project>
+      <Name>UberStrike.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Core\UberStrike-Reverse-Engineered\UberStrike.WebService.Unity\UberStrike.WebService.Unity.csproj">
+      <Project>{c5dd048e-d1f8-4150-92cb-d5eb0c029c23}</Project>
+      <Name>UberStrike.WebService.Unity</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

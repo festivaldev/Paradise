@@ -1,7 +1,5 @@
-﻿using log4net;
-using Paradise.Core.Serialization;
-using Paradise.Core.ViewModel;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
+using log4net;
 using Paradise.WebServices.Contracts;
 using System;
 using System.Collections.Generic;
@@ -10,8 +8,12 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Text.RegularExpressions;
+using UberStrike.Core.Serialization;
+using UberStrike.Core.ViewModel;
+using UberStrike.DataCenter.Common.Entities;
 
 namespace Paradise.WebServices.Services {
+	[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, IncludeExceptionDetailInFaults = true)]
 	public class AuthenticationWebService : BaseWebService, IAuthenticationWebServiceContract {
 		protected static readonly new ILog Log = LogManager.GetLogger(nameof(AuthenticationWebService));
 
@@ -149,8 +151,8 @@ namespace Paradise.WebServices.Services {
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return isEncrypted 
-						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//return isEncrypted
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 						//	: outputStream.ToArray();
 					}
 				}
@@ -180,8 +182,8 @@ namespace Paradise.WebServices.Services {
 						/// IDEA: Login using account.festival.tf?
 						throw new NotImplementedException();
 
-						//return isEncrypted 
-						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//return isEncrypted
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 						//	: outputStream.ToArray();
 					}
 				}
@@ -211,8 +213,8 @@ namespace Paradise.WebServices.Services {
 						/// IDEA: Login using account.festival.tf?
 						throw new NotImplementedException();
 
-						//return isEncrypted 
-						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//return isEncrypted
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 						//	: outputStream.ToArray();
 					}
 				}
@@ -243,8 +245,8 @@ namespace Paradise.WebServices.Services {
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return isEncrypted 
-						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//return isEncrypted
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 						//	: outputStream.ToArray();
 					}
 				}
@@ -275,8 +277,8 @@ namespace Paradise.WebServices.Services {
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return isEncrypted 
-						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//return isEncrypted
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 						//	: outputStream.ToArray();
 					}
 				}

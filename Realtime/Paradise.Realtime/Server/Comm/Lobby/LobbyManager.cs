@@ -1,6 +1,6 @@
 ﻿using log4net;
-using Paradise.Core.Models;
 using System.Collections.Generic;
+using UberStrike.Core.Models;
 
 namespace Paradise.Realtime.Server.Comm {
 	public class LobbyManager {

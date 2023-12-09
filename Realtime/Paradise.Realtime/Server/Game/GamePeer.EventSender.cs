@@ -1,10 +1,11 @@
-﻿using log4net;
-using Paradise.Core.Models;
-using Paradise.Core.Serialization;
+﻿using Cmune.Core.Models;
+using log4net;
 using Photon.SocketServer;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UberStrike.Core.Models;
+using UberStrike.Core.Serialization;
 
 namespace Paradise.Realtime.Server.Game {
 	public partial class GamePeer {

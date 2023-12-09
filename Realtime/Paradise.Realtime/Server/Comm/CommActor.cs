@@ -1,6 +1,6 @@
-﻿using Paradise.Core.Models;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using System;
+using UberStrike.Core.Models;
 
 namespace Paradise.Realtime.Server.Comm {
 	public class CommActor {

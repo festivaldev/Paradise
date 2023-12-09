@@ -1,14 +1,15 @@
-﻿using log4net;
+﻿using Cmune.DataCenter.Common.Entities;
+using log4net;
 using Newtonsoft.Json;
-using Paradise.Core.Models.Views;
-using Paradise.Core.Serialization.Legacy;
-using Paradise.DataCenter.Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.ServiceModel;
+using UberStrike.Core.Models.Views;
+using UberStrike.Core.Serialization;
+using UberStrike.DataCenter.Common.Entities;
 
 namespace Paradise.WebServices.LegacyServices._102 {
 	public class ApplicationWebService : BaseWebService, IApplicationWebServiceContract {

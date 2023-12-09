@@ -1,5 +1,5 @@
-﻿using Paradise.DataCenter.Common.Entities;
-using Photon.SocketServer;
+﻿using Photon.SocketServer;
+using UberStrike.DataCenter.Common.Entities;
 
 namespace Paradise.Realtime.Server.Game {
 	public partial class GamePeer : BasePeer {

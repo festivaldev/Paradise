@@ -1,6 +1,6 @@
-﻿using Paradise.Core.Models;
-using Paradise.Core.Types;
-using System;
+﻿using System;
+using UberStrike.Core.Models;
+using UberStrike.Core.Types;
 using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {

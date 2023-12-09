@@ -1,11 +1,12 @@
-﻿using log4net;
-using Paradise.Core.Serialization.Legacy;
-using Paradise.Core.ViewModel;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel;
+using UberStrike.Core.Serialization;
+using UberStrike.Core.ViewModel;
+using UberStrike.DataCenter.Common.Entities;
 
 namespace Paradise.WebServices.LegacyServices._102 {
 	public class AuthenticationWebService : BaseWebService, IAuthenticationWebServiceContract {

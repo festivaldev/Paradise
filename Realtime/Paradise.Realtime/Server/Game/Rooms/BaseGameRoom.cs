@@ -1,11 +1,13 @@
+using Cmune.DataCenter.Common.Entities;
 using log4net;
-using Paradise.Core.Models;
-using Paradise.Core.Models.Views;
-using Paradise.Core.Types;
-using Paradise.DataCenter.Common.Entities;
+using Paradise.Realtime.Core;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UberStrike.Core.Models;
+using UberStrike.Core.Models.Views;
+using UberStrike.Core.Types;
+using UberStrike.Realtime.UnitySdk;
 using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {
@@ -816,7 +818,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void KickPlayer(GamePeer peer, int cmid) {
-			if (peer.Actor.ActorInfo.AccessLevel < DataCenter.Common.Entities.MemberAccessLevel.Moderator) return;
+			if (peer.Actor.ActorInfo.AccessLevel < MemberAccessLevel.Moderator) return;
 
 			FindPeerWithCmid(cmid)?.GameEventSender.SendKickPlayer("You have been removed from the game.");
 		}

@@ -1,5 +1,4 @@
-using log4net;
-using Paradise.Util.Ciphers;
+﻿using log4net;
 using System;
 using System.IO;
 using System.Linq;
@@ -8,6 +7,7 @@ using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Security;
+using UberStrike.WebService.Unity;
 
 namespace Paradise.WebServices {
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.Single, AddressFilterMode = AddressFilterMode.Any)]

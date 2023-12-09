@@ -1,9 +1,6 @@
+﻿using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Newtonsoft.Json;
-using Paradise.Core.Models.Views;
-using Paradise.Core.Serialization;
-using Paradise.Core.Types;
-using Paradise.DataCenter.Common.Entities;
 using Paradise.WebServices.Contracts;
 using System;
 using System.Collections.Generic;
@@ -12,6 +9,10 @@ using System.Linq;
 using System.Net;
 using System.ServiceModel;
 using System.Threading.Tasks;
+using UberStrike.Core.Models.Views;
+using UberStrike.Core.Serialization;
+using UberStrike.Core.Types;
+using UberStrike.DataCenter.Common.Entities;
 
 namespace Paradise.WebServices.Services {
 	public class ApplicationWebService : BaseWebService, IApplicationWebServiceContract {
@@ -259,8 +260,8 @@ namespace Paradise.WebServices.Services {
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return isEncrypted 
-						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//return isEncrypted
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 						//	: outputStream.ToArray();
 					}
 				}

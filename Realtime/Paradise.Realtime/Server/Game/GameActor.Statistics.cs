@@ -1,8 +1,8 @@
-﻿using Paradise.Core.Models;
-using Paradise.Core.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using UberStrike.Core.Models;
+using UberStrike.Core.Types;
 
 namespace Paradise.Realtime.Server.Game {
 	public partial class GameActor {

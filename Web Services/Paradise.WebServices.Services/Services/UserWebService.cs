@@ -1,7 +1,5 @@
-﻿using log4net;
-using Paradise.Core.Serialization;
-using Paradise.Core.ViewModel;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
+using log4net;
 using Paradise.WebServices.Contracts;
 using System;
 using System.Collections.Generic;
@@ -9,6 +7,9 @@ using System.IO;
 using System.Linq;
 using System.ServiceModel;
 using System.Text.RegularExpressions;
+using UberStrike.Core.Serialization;
+using UberStrike.Core.ViewModel;
+using UberStrike.DataCenter.Common.Entities;
 
 namespace Paradise.WebServices.Services {
 	public class UserWebService : BaseWebService, IUserWebServiceContract {

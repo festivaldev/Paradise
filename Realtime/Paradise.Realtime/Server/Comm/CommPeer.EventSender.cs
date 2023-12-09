@@ -1,9 +1,9 @@
 ﻿using log4net;
-using Paradise.Core.Serialization;
-using Paradise.Core.ViewModel;
 using Photon.SocketServer;
 using System;
 using System.IO;
+using UberStrike.Core.Serialization;
+using UberStrike.Core.ViewModel;
 
 namespace Paradise.Realtime.Server.Comm {
 	public partial class CommPeer {

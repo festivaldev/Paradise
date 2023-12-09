@@ -1,10 +1,10 @@
-using log4net;
+﻿using log4net;
 using Paradise.Realtime.Server;
-using Paradise.Util.Ciphers;
 using System;
 using System.IO;
 using System.Net;
 using System.ServiceModel;
+using UberStrike.Realtime.UnitySdk;
 
 namespace Paradise.Realtime {
 	public abstract class BaseWebServiceClient<T> {

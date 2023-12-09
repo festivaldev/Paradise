@@ -1,7 +1,6 @@
-﻿using log4net;
+﻿using Cmune.DataCenter.Common.Entities;
+using log4net;
 using Newtonsoft.Json;
-using Paradise.Core.ViewModel;
-using Paradise.DataCenter.Common.Entities;
 using Photon.SocketServer;
 using PhotonHostRuntimeInterfaces;
 using System;
@@ -11,6 +10,8 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using UberStrike.Core.ViewModel;
+using UberStrike.Realtime.UnitySdk;
 
 namespace Paradise.Realtime.Server {
 	public enum HeartbeatState {
@@ -86,7 +87,7 @@ namespace Paradise.Realtime.Server {
 
 			var memberAuth = AuthenticationWebServiceClient.Instance.VerifyAuthToken(authToken);
 
-			if (memberAuth.MemberAuthenticationResult != DataCenter.Common.Entities.MemberAuthenticationResult.Ok) {
+			if (memberAuth.MemberAuthenticationResult != MemberAuthenticationResult.Ok) {
 				return false;
 			}
 

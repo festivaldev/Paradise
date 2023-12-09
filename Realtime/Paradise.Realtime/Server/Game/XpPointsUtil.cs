@@ -1,5 +1,5 @@
-﻿using Paradise.Core.Models.Views;
-using System;
+﻿using System;
+using UberStrike.Core.Models.Views;
 
 namespace Paradise.Realtime.Server.Game {
 	public static class XpPointsUtil {

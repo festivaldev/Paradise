@@ -1,12 +1,12 @@
-﻿using log4net;
-using Paradise.Core.Models;
-using Paradise.Core.Serialization;
-using Paradise.Core.Types;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
+using log4net;
 using Photon.SocketServer;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UberStrike.Core.Models;
+using UberStrike.Core.Serialization;
+using UberStrike.Core.Types;
 using UnityEngine;
 
 namespace Paradise.Realtime.Server.Game {

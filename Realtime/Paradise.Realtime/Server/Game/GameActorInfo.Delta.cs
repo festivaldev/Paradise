@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
-using Paradise.Core.Models;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
+using Newtonsoft.Json;
 using System.Collections.Generic;
+using UberStrike.Core.Models;
 
 namespace Paradise.Realtime.Server.Game {
-	public class GameActorInfo : Paradise.Core.Models.GameActorInfo {
+	public class GameActorInfo : UberStrike.Core.Models.GameActorInfo {
 		[JsonIgnore]
 		public GameActorInfoDelta Delta { get; private set; } = new GameActorInfoDelta();
 

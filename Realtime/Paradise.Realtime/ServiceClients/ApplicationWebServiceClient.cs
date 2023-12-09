@@ -1,12 +1,13 @@
-﻿using Paradise.Core.Models.Views;
-using Paradise.Core.Serialization;
-using Paradise.Core.Types;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using Paradise.Realtime.Server;
 using Paradise.WebServices.Contracts;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UberStrike.Core.Models.Views;
+using UberStrike.Core.Serialization;
+using UberStrike.Core.Types;
+using UberStrike.DataCenter.Common.Entities;
 
 namespace Paradise.Realtime {
 	public class ApplicationWebServiceClient : BaseWebServiceClient<IApplicationWebServiceContract> {

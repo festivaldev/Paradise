@@ -1,9 +1,10 @@
-﻿using Paradise.Core.Serialization;
-using Paradise.Core.ViewModel;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using Paradise.Realtime.Server;
 using Paradise.WebServices.Contracts;
 using System.IO;
+using UberStrike.Core.Serialization;
+using UberStrike.Core.ViewModel;
+using UberStrike.DataCenter.Common.Entities;
 
 namespace Paradise.Realtime {
 	public class AuthenticationWebServiceClient : BaseWebServiceClient<IAuthenticationWebServiceContract> {

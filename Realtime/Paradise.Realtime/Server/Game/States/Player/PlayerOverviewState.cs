@@ -1,5 +1,5 @@
-﻿using Paradise.Core.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UberStrike.Core.Models;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class PlayerOverviewState : BasePlayerState {

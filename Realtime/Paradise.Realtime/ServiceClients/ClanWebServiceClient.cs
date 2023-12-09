@@ -1,9 +1,9 @@
-﻿using Paradise.Core.Serialization;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using Paradise.Realtime.Server;
 using Paradise.WebServices.Contracts;
 using System.Collections.Generic;
 using System.IO;
+using UberStrike.Core.Serialization;
 
 namespace Paradise.Realtime {
 	class ClanWebServiceClient : BaseWebServiceClient<IClanWebServiceContract> {

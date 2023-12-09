@@ -1,13 +1,13 @@
-﻿using log4net;
-using Paradise.Core.Models;
-using Paradise.Core.Serialization;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
+using log4net;
 using PhotonHostRuntimeInterfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using UberStrike.Core.Models;
+using UberStrike.Core.Serialization;
 using static Paradise.TcpSocket;
 
 namespace Paradise.Realtime.Server.Comm {

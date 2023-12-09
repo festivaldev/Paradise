@@ -1,9 +1,9 @@
-﻿using Paradise.Core.Models;
-using Paradise.Core.Models.Views;
-using Paradise.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UberStrike.Core.Models;
+using UberStrike.Core.Models.Views;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class AfterRoundState : BaseMatchState {

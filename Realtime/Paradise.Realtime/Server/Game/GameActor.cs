@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using Paradise.Core.Models;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using UberStrike.Core.Models;
 
 namespace Paradise.Realtime.Server.Game {
 	[JsonObject(MemberSerialization.OptIn)]

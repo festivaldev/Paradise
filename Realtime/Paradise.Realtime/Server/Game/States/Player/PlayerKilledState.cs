@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Paradise.Realtime.Core;
+using System;
+using UberStrike.Core.Types;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class PlayerKilledState : BasePlayerState {
@@ -8,7 +10,7 @@ namespace Paradise.Realtime.Server.Game {
 
 		public override void OnEnter() {
 			// Only allow respawn when not in Team Elimination
-			if (Peer.Room.MetaData.GameMode != Core.Types.GameModeType.EliminationMode) {
+			if (Peer.Room.MetaData.GameMode != GameModeType.EliminationMode) {
 				Peer.Actor.NextRespawnTime = DateTime.UtcNow.AddSeconds(5);
 
 				RespawnCountdown = new Countdown(Room.Loop, 5, 0);

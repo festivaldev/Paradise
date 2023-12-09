@@ -1,10 +1,8 @@
-﻿using Discord;
+using Cmune.DataCenter.Common.Entities;
+using Discord;
 using Discord.Webhook;
 using Discord.WebSocket;
 using log4net;
-using Paradise.Core.Models;
-using Paradise.Core.Types;
-using Paradise.DataCenter.Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +10,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Serialization;
+using UberStrike.Core.Models;
+using UberStrike.Core.Types;
 using static Paradise.TcpSocket;
 
 namespace Paradise.WebServices.Discord {

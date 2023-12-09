@@ -1,7 +1,8 @@
-﻿using log4net;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using log4net;
+using Newtonsoft.Json;
+using EventHandler = Paradise.Realtime.Core.EventHandler;
 
 namespace Paradise.Realtime.Server.Game {
 	[JsonObject(MemberSerialization.OptIn)]

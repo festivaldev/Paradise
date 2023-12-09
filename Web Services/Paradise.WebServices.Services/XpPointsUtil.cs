@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
-using Paradise.Core.Models.Views;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UberStrike.Core.Models.Views;
 
 namespace Paradise.WebServices.Services {
 	public static class XpPointsUtil {

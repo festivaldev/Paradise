@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json.Linq;
-using Paradise.Core.Models;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using UberStrike.Core.Models;
 
 namespace Paradise.WebServices.Services {
 	internal class PlayersCommand : ParadiseCommand {

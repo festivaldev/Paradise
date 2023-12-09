@@ -1,12 +1,12 @@
-﻿using log4net;
+using log4net;
 using Newtonsoft.Json;
-using Paradise.Core.Models;
-using Paradise.Core.Serialization;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using UberStrike.Core.Models;
+using UberStrike.Core.Serialization;
 
 namespace Paradise {
 	public partial class TcpSocket {

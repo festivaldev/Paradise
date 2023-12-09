@@ -1,4 +1,4 @@
-﻿using Paradise.Core.Types;
+﻿using UberStrike.Core.Types;
 using static Paradise.Realtime.Server.Game.BaseGameRoom;
 
 namespace Paradise.Realtime.Server.Game {

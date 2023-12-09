@@ -1,11 +1,11 @@
-﻿using log4net;
-using Paradise.Core.Models.Views;
-using Paradise.Core.Serialization.Legacy;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.ServiceModel;
+using UberStrike.Core.Models.Views;
+using UberStrike.Core.Serialization;
 
 namespace Paradise.WebServices.LegacyServices._102 {
 	public class ShopWebService : BaseWebService, IShopWebServiceContract {

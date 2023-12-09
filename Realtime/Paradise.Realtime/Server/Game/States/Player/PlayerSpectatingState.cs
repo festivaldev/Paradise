@@ -1,5 +1,5 @@
-﻿using Paradise.Core.Models;
-using Paradise.Core.Types;
+﻿using UberStrike.Core.Models;
+using UberStrike.Core.Types;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class PlayerSpectatingState : BasePlayerState {

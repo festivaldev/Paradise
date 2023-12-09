@@ -1,12 +1,12 @@
-﻿using Paradise.Core.Models;
-using Paradise.Core.Serialization;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using Paradise.Realtime.Server;
 using Paradise.WebServices;
 using Paradise.WebServices.Contracts;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UberStrike.Core.Models;
+using UberStrike.Core.Serialization;
 
 namespace Paradise.Realtime {
 	public class ModerationWebServiceClient : BaseWebServiceClient<IModerationWebServiceContract> {

@@ -1,9 +1,10 @@
-﻿using Paradise.Core.Types;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading.Tasks;
+using UberStrike.Core.Types;
+using UberStrike.DataCenter.Common.Entities;
 
 namespace Paradise.WebServices.Services {
 	internal class InventoryCommand : ParadiseCommand {

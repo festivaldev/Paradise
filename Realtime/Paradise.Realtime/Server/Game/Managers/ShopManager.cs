@@ -1,6 +1,6 @@
 ﻿using log4net;
-using Paradise.Core.Models.Views;
 using System.Collections.Generic;
+using UberStrike.Core.Models.Views;
 
 namespace Paradise.Realtime.Server.Game {
 	public class ShopManager {

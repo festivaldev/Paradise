@@ -1,12 +1,12 @@
-﻿using log4net;
-using Paradise.Core.Serialization;
-using Paradise.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
+using log4net;
 using Paradise.WebServices.Contracts;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.ServiceModel;
+using UberStrike.Core.Serialization;
 
 namespace Paradise.WebServices.Services {
 	public class PrivateMessageWebService : BaseWebService, IPrivateMessageWebServiceContract {

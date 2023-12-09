@@ -1,4 +1,4 @@
-﻿using Paradise.Core.Models;
+﻿using UberStrike.Core.Models;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class PlayerPrepareState : BasePlayerState {

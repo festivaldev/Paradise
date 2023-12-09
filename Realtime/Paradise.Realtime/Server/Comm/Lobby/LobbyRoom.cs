@@ -1,6 +1,7 @@
 ﻿using log4net;
 using System;
 using System.Collections.Generic;
+using Paradise.Realtime.Core;
 
 namespace Paradise.Realtime.Server.Comm {
 	public partial class LobbyRoom : IRoom<CommPeer>, IDisposable {

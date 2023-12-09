@@ -1,9 +1,6 @@
-﻿using log4net;
+﻿using Cmune.DataCenter.Common.Entities;
+using log4net;
 using Newtonsoft.Json;
-using Paradise.Core.Models.Views;
-using Paradise.Core.Serialization;
-using Paradise.Core.Types;
-using Paradise.DataCenter.Common.Entities;
 using Paradise.WebServices.Contracts;
 using System;
 using System.Collections.Generic;
@@ -12,6 +9,9 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using UberStrike.Core.Models.Views;
+using UberStrike.Core.Serialization;
+using UberStrike.Core.Types;
 
 namespace Paradise.WebServices.Services {
 	public class ShopWebService : BaseWebService, IShopWebServiceContract {

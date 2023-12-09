@@ -1,8 +1,9 @@
-﻿using log4net;
-using Paradise.Core.Models;
-using Paradise.Core.Types;
+using log4net;
+using Paradise.Realtime.Core;
 using System;
 using System.Collections.Generic;
+using UberStrike.Core.Models;
+using UberStrike.Core.Types;
 
 namespace Paradise.Realtime.Server.Game {
 	public class GameRoomManager : IDisposable {
