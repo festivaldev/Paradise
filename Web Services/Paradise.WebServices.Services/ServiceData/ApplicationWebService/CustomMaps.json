@@ -1,20 +1,111 @@
 ﻿[
 	{
-		"Name": "Space City",
+		"DisplayName": "Space City",
+		"Description": "Space City, very much inspired by the movie SinCity, is a symmetrical close and medium range combat map where Machine Guns ans Shotguns are always a great choice. Hide behind the obstacles or use the risky passage connecting the two sides to push the enemy.",
+		"SceneName": "SpaceCity",
 		"FileName": "SpaceCity.unity3d",
 		"MapId": 64,
-		"SupportedGameModes": [1, 2, 3]
+		"IsBlueBox": false,
+		"MaxPlayer": 20,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
 	},
 	{
-		"Name": "SpacePort Alpha",
+		"DisplayName": "Spaceport Alpha",
+		"Description": "1 vs 1 freaks, this map is made for you! Mind the gap between the main platform and the floating corner islands, or quickly travel around using one of the Accelerator Pads to confront sneaky snipers with your awareness and quick moves.",
+		"SceneName": "SpacePortAlpha",
 		"FileName": "SpacePortAlpha.unity3d",
 		"MapId": 65,
-		"SupportedGameModes": [1, 2, 3]
+		"IsBlueBox": false,
+		"MaxPlayer": 20,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 20,
+				"PlayersCurrent": 20,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
 	},
 	{
-		"Name": "UberZone",
+		"DisplayName": "UberZone",
+		"Description": "Inspired by Quake's \"The Dark Zone\" map, UberZone consists of 4 different corridors leading from a bigger area in the center to smaller rooms on the outside. Use the portals scattered on the map to quickly travel between rooms and smack the enemy from behind.",
+		"SceneName": "UberZone",
 		"FileName": "UberZone.unity3d",
 		"MapId": 66,
-		"SupportedGameModes": [1, 2, 3]
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
 	}
 ]
