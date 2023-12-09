@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using Paradise.Realtime.Core;
 using System;
 using System.Collections.Generic;
@@ -83,20 +83,27 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		public bool TryGetRoom(int roomId, out BaseGameRoom room) {
+			if (!Rooms.ContainsKey(roomId)) {
+				room = null;
+				return false;
+			}
+
 			return Rooms.TryGetValue(roomId, out room);
 		}
 
 		public void RemoveRoom(int roomId) {
-			if (Rooms.TryGetValue(roomId, out var room)) {
-				lock (Lock) {
-					if (GameServerApplication.Instance.Configuration.DiscordGameAnnouncements) {
-						GameServerApplication.Instance.Socket?.SendSync(TcpSocket.PacketType.RoomClosed, room.MetaData);
+			if (Rooms.ContainsKey(roomId)) {
+				if (TryGetRoom(roomId, out var room) && room != null) {
+					lock (Lock) {
+						if (GameServerApplication.Instance.Configuration.DiscordGameAnnouncements) {
+							GameServerApplication.Instance.Socket?.SendSync(TcpSocket.PacketType.RoomClosed, room.MetaData);
+						}
+
+						room.Dispose();
+						Rooms.Remove(room.RoomId);
+
+						Log.Info($"Destroyed {room}({room.RoomId})");
 					}
-
-					Rooms[roomId].Dispose();
-					Rooms.Remove(roomId);
-
-					Log.Info($"Destroyed {Rooms[roomId]}({Rooms[roomId].RoomId})");
 				}
 			}
 		}
