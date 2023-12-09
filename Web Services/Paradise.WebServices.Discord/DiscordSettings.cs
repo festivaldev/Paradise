@@ -1,4 +1,5 @@
-﻿using System.Xml.Serialization;
+﻿using System.Collections.Generic;
+using System.Xml.Serialization;
 
 namespace Paradise.WebServices.Discord {
 	[XmlRoot("ParadiseDiscordSettings")]
@@ -50,5 +51,8 @@ namespace Paradise.WebServices.Discord {
 
 		[XmlElement]
 		public string ErrorLogWebHookUrl;
+
+		[XmlArray]
+		public List<string> AnnouncementBlacklist;
 	}
 }

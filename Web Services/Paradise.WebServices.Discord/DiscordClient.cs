@@ -128,6 +128,7 @@ namespace Paradise.WebServices.Discord {
 
 		public async Task SendPlayerJoinMessage(CommActorInfo player) {
 			if (!discordSettings.PlayerJoinAnnouncements) return;
+			if (discordSettings.AnnouncementBlacklist.Contains(player.Cmid.ToString())) return;
 
 			var discordUser = GetDiscordUserFromCmid(player.Cmid);
 			var steamMember = DatabaseClient.SteamMembers.FindOne(_ => _.Cmid == player.Cmid);
@@ -153,6 +154,7 @@ namespace Paradise.WebServices.Discord {
 
 		public async Task SendPlayerLeftMessage(CommActorInfo player) {
 			if (!discordSettings.PlayerLeaveAnnouncements) return;
+			if (discordSettings.AnnouncementBlacklist.Contains(player.Cmid.ToString())) return;
 
 			var discordUser = GetDiscordUserFromCmid(player.Cmid);
 			var steamMember = DatabaseClient.SteamMembers.FindOne(_ => _.Cmid == player.Cmid);
