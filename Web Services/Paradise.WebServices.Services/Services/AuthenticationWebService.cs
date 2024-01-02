@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Paradise.WebServices.Contracts;
 using System;
@@ -78,6 +78,16 @@ namespace Paradise.WebServices.Services {
 									Cmid = cmid,
 									ItemId = (int)UberstrikeInventoryItem.MachineGun,
 									AmountRemaining = -1
+								},
+								new ItemInventoryView {
+									Cmid = cmid,
+									ItemId = (int)UberstrikeInventoryItem.ShotGun,
+									AmountRemaining = -1
+								},
+								new ItemInventoryView {
+									Cmid = cmid,
+									ItemId = (int)UberstrikeInventoryItem.SniperRifle,
+									AmountRemaining = -1
 								}
 							});
 
@@ -97,6 +107,22 @@ namespace Paradise.WebServices.Services {
 									ItemId = (int)UberstrikeInventoryItem.MachineGun,
 									Points = 0,
 									WithdrawalDate = DateTime.UtcNow
+								},
+								new ItemTransactionView {
+									Cmid = publicProfile.Cmid,
+									Credits = 0,
+									Duration = BuyingDurationType.Permanent,
+									ItemId = (int)UberstrikeInventoryItem.ShotGun,
+									Points = 0,
+									WithdrawalDate = DateTime.UtcNow
+								},
+								new ItemTransactionView {
+									Cmid = publicProfile.Cmid,
+									Credits = 0,
+									Duration = BuyingDurationType.Permanent,
+									ItemId = (int)UberstrikeInventoryItem.SniperRifle,
+									Points = 0,
+									WithdrawalDate = DateTime.UtcNow
 								}
 							});
 
@@ -110,7 +136,9 @@ namespace Paradise.WebServices.Services {
 								Result = AccountCompletionResult.Ok,
 								ItemsAttributed = new Dictionary<int, int> {
 									[(int)UberstrikeInventoryItem.TheSplatbat] = 1,
-									[(int)UberstrikeInventoryItem.MachineGun] = 1
+									[(int)UberstrikeInventoryItem.MachineGun] = 1,
+									[(int)UberstrikeInventoryItem.ShotGun] = 1,
+									[(int)UberstrikeInventoryItem.SniperRifle] = 1,
 								}
 							});
 
