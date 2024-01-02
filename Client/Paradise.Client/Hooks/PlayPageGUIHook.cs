@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using log4net;
 using System.Collections.Generic;
 using System.Reflection;
@@ -9,7 +9,7 @@ namespace Paradise.Client {
 	[HarmonyPatch(typeof(PlayPageGUI))]
 	public class PlayPageGUIHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(PlayPageGUIHook));
-		private static ParadiseTraverse traverse;
+		private static ParadiseTraverse<PlayPageGUI> traverse;
 
 		private static float nextServerCheckTime;
 
@@ -30,7 +30,7 @@ namespace Paradise.Client {
 
 			var searchBar = typeof(PlayPageGUI).GetField("_searchBar", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(__instance);
 
-			typeof(PlayPageGUI).Assembly.GetType("SearchBarGUI").GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance).Invoke(searchBar, new object[] { rect });
+			AccessTools.TypeByName("SearchBarGUI").GetMethod("Draw", BindingFlags.Public | BindingFlags.Instance).Invoke(searchBar, new object[] { rect });
 
 			return false;
 		}
@@ -38,7 +38,7 @@ namespace Paradise.Client {
 		[HarmonyPatch("DrawAllGames"), HarmonyPrefix]
 		public static bool PlayPageGUI_DrawAllGames_Prefix(PlayPageGUI __instance, ref int __result, Rect rect, bool hasVScroll) {
 			if (traverse == null) {
-				traverse = ParadiseTraverse.Create(__instance);
+				traverse = ParadiseTraverse<PlayPageGUI>.Create(__instance);
 			}
 
 			var _cachedGameList = traverse.GetField<List<GameRoomData>>("_cachedGameList");

@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
 using System;
@@ -15,7 +15,7 @@ namespace Paradise.Client {
 	public class ItemToolTipHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(ItemToolTipHook));
 
-		private static ParadiseTraverse traverse;
+		private static ParadiseTraverse<ItemToolTip> traverse;
 
 		private static readonly FloatPropertyBar _ammo = new FloatPropertyBar(LocalizedStrings.Ammo);
 		private static readonly FloatPropertyBar _damage = new FloatPropertyBar(LocalizedStrings.Damage);
@@ -43,7 +43,7 @@ namespace Paradise.Client {
 		[HarmonyPatch("SetItem"), HarmonyPostfix]
 		public static void ItemToolTip_SetItem_Postfix(ItemToolTip __instance, IUnityItem item) {
 			if (traverse == null) {
-				traverse = ParadiseTraverse.Create(__instance);
+				traverse = ParadiseTraverse<ItemToolTip>.Create(__instance);
 			}
 
 			switch (item.View.ItemClass) {

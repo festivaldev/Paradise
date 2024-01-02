@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
 using System.IO;
@@ -13,7 +13,7 @@ namespace Paradise.Client {
 	public class GlobalUIRibbonHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(GlobalUIRibbonHook));
 
-		private static ParadiseTraverse traverse;
+		private static ParadiseTraverse<GlobalUIRibbon> traverse;
 
 		static GlobalUIRibbonHook() {
 			Log.Info($"[{nameof(GlobalUIRibbonHook)}] hooking {nameof(GlobalUIRibbon)}");
@@ -21,7 +21,7 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("InitOptionsDropdown"), HarmonyPostfix]
 		public static void GlobalUIRibbon_InitOptionsDropdown_Postfix(GlobalUIRibbon __instance) {
-			traverse = ParadiseTraverse.Create(__instance);
+			traverse = ParadiseTraverse<GlobalUIRibbon>.Create(__instance);
 			var optionsDropdown = traverse.GetField<GuiDropDown>("_optionsDropdown");
 
 			// Link to Discord Server

@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using log4net;
 using UberStrike.Realtime.UnitySdk;
 
@@ -10,7 +10,7 @@ namespace Paradise.Client {
 	public class WeaponControllerHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(WeaponControllerHook));
 
-		private static ParadiseTraverse traverse;
+		private static ParadiseTraverse<WeaponController> traverse;
 
 		static WeaponControllerHook() {
 			Log.Info($"[{nameof(WeaponControllerHook)}] hooking {nameof(WeaponController)}");
@@ -19,7 +19,7 @@ namespace Paradise.Client {
 		[HarmonyPatch("Shoot"), HarmonyPostfix]
 		public static void WeaponController_Shoot_Postfix(WeaponController __instance, ref bool __result) {
 			if (traverse == null) {
-				traverse = ParadiseTraverse.Create(__instance);
+				traverse = ParadiseTraverse<WeaponController>.Create(__instance);
 			}
 
 			if (GameFlags.IsFlagSet(GameFlags.GAME_FLAGS.QuickSwitch, GameState.Current.RoomData.GameFlags) ||

@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using log4net;
 
 namespace Paradise.Client {
@@ -9,12 +9,12 @@ namespace Paradise.Client {
 	public class BundleManagerHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(BundleManagerHook));
 
-		private static readonly ParadiseTraverse traverse;
+		private static readonly ParadiseTraverse<BundleManager> traverse;
 
 		static BundleManagerHook() {
 			Log.Info($"[{nameof(BundleManagerHook)}] hooking {nameof(BundleManager)}");
 
-			traverse = ParadiseTraverse.Create(typeof(BundleManager));
+			traverse = ParadiseTraverse<BundleManager>.Create();
 		}
 
 		[HarmonyPatch("BuyBundle"), HarmonyPrefix]

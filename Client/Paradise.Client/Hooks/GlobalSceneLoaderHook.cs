@@ -1,4 +1,4 @@
-﻿using Cmune.Core.Models.Views;
+using Cmune.Core.Models.Views;
 using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
@@ -16,7 +16,7 @@ namespace Paradise.Client {
 	public class GlobalSceneLoaderHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(GlobalSceneLoaderHook));
 
-		private static ParadiseTraverse traverse;
+		private static ParadiseTraverse<GlobalSceneLoader> traverse;
 
 		private static string ErrorMessage {
 			get {
@@ -34,14 +34,14 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("Start"), HarmonyPrefix]
 		public static bool GlobalSceneLoader_Start_Prefix(GlobalSceneLoader __instance) {
-			traverse = ParadiseTraverse.Create(__instance);
+			traverse = ParadiseTraverse<GlobalSceneLoader>.Create(__instance);
 
 			return false;
 		}
 
 		[HarmonyPatch("Start"), HarmonyPostfix]
 		public static void GlobalSceneLoader_Start_Postfix(GlobalSceneLoader __instance) {
-			UnityRuntime.StartRoutine(StartWithCheckingUpdates());
+			traverse.Instance.StartCoroutine(StartWithCheckingUpdates());
 		}
 
 		#region
@@ -53,10 +53,10 @@ namespace Paradise.Client {
 			UnityRuntime.StartRoutine(AutoMonoBehaviour<ParadiseUpdater>.Instance.CheckForUpdatesIfNecessary((updateCatalog) => {
 				if (updateCatalog != null) {
 					ParadiseUpdater.HandleUpdateAvailable(updateCatalog, () => {
-						UnityRuntime.StartRoutine(Start());
+						traverse.Instance.StartCoroutine(Start());
 					});
 				} else {
-					UnityRuntime.StartRoutine(Start());
+					traverse.Instance.StartCoroutine(Start());
 				}
 			}, (error) => {
 				Log.Error(error);
@@ -92,7 +92,7 @@ namespace Paradise.Client {
 
 			bool continueAuthentication = true;
 
-			yield return UnityRuntime.StartRoutine(BeginAuthenticateApplication(delegate (AuthenticateApplicationView ev) {
+			yield return traverse.Instance.StartCoroutine(BeginAuthenticateApplication(delegate (AuthenticateApplicationView ev) {
 				try {
 					GlobalSceneLoader.IsInitialised = true;
 					if (ev != null && ev.IsEnabled) {

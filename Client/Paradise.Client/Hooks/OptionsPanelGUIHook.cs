@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ namespace Paradise.Client {
 		private const float MIN_MOUSE_SENSITIVITY = 0.1f;
 		private const float MAX_MOUSE_SENSITIVITY = 10f;
 
-		private static ParadiseTraverse traverse;
+		private static ParadiseTraverse<OptionsPanelGUI> traverse;
 
 		private static Vector2 scrollPos;
 		private static float keyAssignmentDescriptionMaxWidth = -1;
@@ -25,7 +25,7 @@ namespace Paradise.Client {
 		[HarmonyPatch("Awake"), HarmonyPostfix]
 		public static void OptionsPanelGUI_Awake_Postfix(OptionsPanelGUI __instance) {
 			if (traverse == null) {
-				traverse = ParadiseTraverse.Create(__instance);
+				traverse = ParadiseTraverse<OptionsPanelGUI>.Create(__instance);
 			}
 
 			List<string> list = new List<string>();

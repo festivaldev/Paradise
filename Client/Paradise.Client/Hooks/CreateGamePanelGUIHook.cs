@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
 using System;
@@ -18,7 +18,7 @@ namespace Paradise.Client {
 		const int MAX_PASSWORD_LENGTH = 16;
 
 		private static readonly ILog Log = LogManager.GetLogger(nameof(CreateGamePanelGUIHook));
-		private static ParadiseTraverse traverse;
+		private static ParadiseTraverse<CreateGamePanelGUI> traverse;
 
 		static CreateGamePanelGUIHook() {
 			Log.Info($"[{nameof(CreateGamePanelGUIHook)}] hooking {nameof(CreateGamePanelGUI)}");
@@ -26,7 +26,7 @@ namespace Paradise.Client {
 
 		[HarmonyPatch("Start"), HarmonyPostfix]
 		public static void CreateGamePanelGUI_Start_Postfix(CreateGamePanelGUI __instance) {
-			traverse = ParadiseTraverse.Create(__instance);
+			traverse = ParadiseTraverse<CreateGamePanelGUI>.Create(__instance);
 
 			traverse.SetField("_maxLevelCurrent", 100);
 			traverse.SetField("_gameFlags", GameFlags.GAME_FLAGS.QuickSwitch);

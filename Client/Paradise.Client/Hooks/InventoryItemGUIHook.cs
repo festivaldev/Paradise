@@ -1,4 +1,4 @@
-﻿using HarmonyLib;
+using HarmonyLib;
 using log4net;
 using System;
 using System.Collections;
@@ -14,7 +14,7 @@ namespace Paradise.Client {
 	public class InventoryItemGUIHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(InventoryItemGUIHook));
 
-		private static readonly Dictionary<InventoryItemGUI, ParadiseTraverse> traverseByInstance = new Dictionary<InventoryItemGUI, ParadiseTraverse>();
+		private static readonly Dictionary<InventoryItemGUI, ParadiseTraverse<InventoryItemGUI>> traverseByInstance = new Dictionary<InventoryItemGUI, ParadiseTraverse<InventoryItemGUI>>();
 
 		static InventoryItemGUIHook() {
 			Log.Info($"[{nameof(InventoryItemGUIHook)}] hooking {nameof(InventoryItemGUI)}");
@@ -23,7 +23,7 @@ namespace Paradise.Client {
 		[HarmonyPatch("Draw"), HarmonyPrefix]
 		public static bool InventoryItemGUI_Draw_Prefix(InventoryItemGUI __instance, Rect rect, bool selected) {
 			if (!traverseByInstance.TryGetValue(__instance, out var traverse)) {
-				traverse = traverseByInstance[__instance] = ParadiseTraverse.Create(__instance);
+				traverse = traverseByInstance[__instance] = ParadiseTraverse<InventoryItemGUI>.Create(__instance);
 			}
 
 			traverse.InvokeMethod("DrawHighlightedBackground", rect);

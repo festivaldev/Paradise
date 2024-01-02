@@ -14,17 +14,22 @@ namespace Paradise.Client.Hooks {
 	[HarmonyPatch(typeof(GameRoomOperations))]
 	public class GameRoomOperationsHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(ApplicationDataManagerHook));
+		private static ParadiseTraverse<GameRoomOperations> traverse;
 
 		static GameRoomOperationsHook() {
 			Log.Info($"[{nameof(GameRoomOperationsHook)}] hooking {nameof(GameRoomOperations)}");
 		}
 
 		[HarmonyPatch("SendPowerUpRespawnTimes"), HarmonyPrefix]
-		public static bool GameRoomOperations_SendPowerUpRespawnTimes_Prefix(GameRoomOperations __instance, List<ushort> respawnTimes) {
-			var __id = Traverse.Create(__instance).Field("__id").GetValue<byte>();
-			var sendOperation = Traverse.Create(__instance).Field("sendOperation").GetValue<RemoteProcedureCall>();
+		public static bool SendPowerUpRespawnTimes_Prefix(GameRoomOperations __instance, List<ushort> respawnTimes) {
+			if (traverse == null) {
+				traverse = ParadiseTraverse<GameRoomOperations>.Create(__instance);
+			}
 
-			var pickupItems = Traverse.Create(typeof(PickupItem)).Field("_instances").GetValue<Dictionary<int, PickupItem>>();
+			var __id = traverse.GetField<byte>("__id");
+			var sendOperation = traverse.GetField<RemoteProcedureCall>("sendOperation");
+			
+			var pickupItems = (Dictionary<int, PickupItem>)AccessTools.Field(typeof(PickupItem), "_instances").GetValue(null);
 			var positions = pickupItems.Select(_ => _.Value.transform.position).ToList();
 
 
