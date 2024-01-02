@@ -1,4 +1,4 @@
-using Paradise.Realtime.Core;
+﻿using Paradise.Realtime.Core;
 using System.Threading.Tasks;
 using UberStrike.Core.Types;
 using static Paradise.Realtime.Server.Game.BaseGameRoom;
@@ -51,6 +51,10 @@ namespace Paradise.Realtime.Server.Game {
 
 				MatchStartCountdown.Restart();
 			});
+
+			if (GameServerApplication.Instance.Configuration.DiscordGameAnnouncements) {
+				GameServerApplication.Instance.Socket?.SendSync(TcpSocket.PacketType.RoundStarted, new object[] { Room.MetaData });
+			}
 		}
 
 		public override void OnExit() {

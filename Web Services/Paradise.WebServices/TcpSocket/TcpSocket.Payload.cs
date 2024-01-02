@@ -1,4 +1,4 @@
-using log4net;
+﻿using log4net;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -125,6 +125,21 @@ namespace Paradise {
 
 							GameRoomDataProxy.Serialize(bytes, (GameRoomData)data);
 							break;
+						case PacketType.RoundStarted: {
+							payloadObj.IsEncrypted = true;
+
+							var list = data as object[];
+							GameRoomDataProxy.Serialize(bytes, (GameRoomData)list[0]);
+							break;
+						}
+						case PacketType.RoundEnded: {
+							payloadObj.IsEncrypted = true;
+
+							var list = data as object[];
+							GameRoomDataProxy.Serialize(bytes, (GameRoomData)list[0]);
+							EndOfMatchDataProxy.Serialize(bytes, (EndOfMatchData)list[1]);
+							break;
+						}
 						case PacketType.OpenRoom:
 							break;
 						case PacketType.CloseRoom:
@@ -218,6 +233,17 @@ namespace Paradise {
 						case PacketType.RoomOpened:
 						case PacketType.RoomClosed:
 							result = GameRoomDataProxy.Deserialize(bytes);
+							break;
+						case PacketType.RoundStarted:
+							result = new[] {
+								GameRoomDataProxy.Deserialize(bytes)
+							};
+							break;
+						case PacketType.RoundEnded:
+							result = new object[] {
+								GameRoomDataProxy.Deserialize(bytes),
+								EndOfMatchDataProxy.Deserialize(bytes)
+							};
 							break;
 						case PacketType.OpenRoom:
 							break;

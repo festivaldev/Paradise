@@ -19,6 +19,8 @@
 			PlayerLeft,
 			RoomOpened,
 			RoomClosed,
+			RoundStarted,
+			RoundEnded,
 
 			OpenRoom,
 			CloseRoom,

@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,6 +70,16 @@ namespace Paradise.Realtime.Server.Game {
 				});
 			}
 
+			var allMatchData = new EndOfMatchData() {
+				MostValuablePlayers = MostValuablePlayers.OrderByDescending(_ => _.Kills).ToList(),
+				MatchGuid = Room.MetaData.Guid,
+				TimeInGameMinutes = (int)Room.RoundDurations.Aggregate((sum, duration) => sum.Add(duration)).TotalSeconds
+			};
+
+			if (GameServerApplication.Instance.Configuration.DiscordGameAnnouncements) {
+				GameServerApplication.Instance.Socket?.SendSync(TcpSocket.PacketType.RoundEnded, new object[] { Room.MetaData, allMatchData });
+			}
+
 			foreach (var player in Room.Players) {
 				player.Actor.PerLifeStatistics.Add(player.Actor.CurrentLifeStatistics);
 
@@ -78,10 +88,10 @@ namespace Paradise.Realtime.Server.Game {
 					PlayerStatsBestPerLife = player.Actor.GetBestPerLifeStatistics(),
 					MostEffecientWeaponId = 0,
 					PlayerXpEarned = null,
-					MostValuablePlayers = MostValuablePlayers.OrderByDescending(_ => _.Kills).ToList(),
-					MatchGuid = Room.MetaData.Guid,
+					MostValuablePlayers = allMatchData.MostValuablePlayers,
+					MatchGuid = allMatchData.MatchGuid,
 					HasWonMatch = Room.IsTeamGame ? player.Actor.Team == Room.WinningTeam : player.Actor.Cmid == Room.WinningCmid,
-					TimeInGameMinutes = (int)Room.RoundDurations.Aggregate((sum, duration) => sum.Add(duration)).TotalSeconds
+					TimeInGameMinutes = allMatchData.TimeInGameMinutes
 				};
 
 				CalculateXp(matchData);

@@ -226,6 +226,14 @@ namespace Paradise.WebServices.Discord {
 			);
 		}
 
+		public async Task SendRoundStartedMessage(GameRoomData metadata) {
+		
+		}
+
+		public async Task SendRoundEndedMessage(GameRoomData metadata, EndOfMatchData matchData) {
+		
+		}
+
 		public async Task LogError(Exception error) {
 			if (!discordSettings.ErrorLog) return;
 
