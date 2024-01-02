@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
 using System;
@@ -9,11 +9,12 @@ using UnityEngine;
 
 namespace Paradise.Client {
 	/// <summary>
-	/// Stores a player's Steam ID in a text file inside the game's data directory for improved handling of multiple instances.
+	/// <br>• Stores a player's Steam ID in a text file inside the game's data directory for improved handling of multiple instances.
+	/// <br>• Prevents new player accounts from connecting to the Comm server before they've set their name.
 	/// </summary>
 	[HarmonyPatch(typeof(AuthenticationManager))]
 	public class AuthenticationManagerHook {
-		private static readonly ILog Log = LogManager.GetLogger(nameof(ApplicationDataManagerHook));
+		private static readonly ILog Log = LogManager.GetLogger(nameof(AuthenticationManagerHook));
 
 		static AuthenticationManagerHook() {
 			Log.Info($"[{nameof(AuthenticationManagerHook)}] hooking {nameof(AuthenticationManager)}");
@@ -39,6 +40,10 @@ namespace Paradise.Client {
 		public static void AuthenticationManager_CompleteAuthentication_Postfix(MemberAuthenticationResultView authView, bool isRegistrationLogin) {
 			if (authView.MemberAuthenticationResult == MemberAuthenticationResult.Ok) {
 				File.WriteAllText(string.Join("/", new string[] { Application.dataPath, "PlayerSteamID" }), PlayerDataManager.SteamId.ToString());
+			}
+
+			if (authView.IsAccountComplete) {
+				CommConnectionManagerHook.Connect(AutoMonoBehaviour<CommConnectionManager>.Instance);
 			}
 		}
 	}

@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Paradise.WebServices.Contracts;
 using System;
@@ -406,20 +406,22 @@ namespace Paradise.WebServices.Services {
 										},
 										PlayerStatisticsView = playerStatistics,
 										ServerTime = DateTime.UtcNow,
-										IsAccountComplete = publicProfile.Name != null,
+										IsAccountComplete = !string.IsNullOrWhiteSpace(publicProfile.Name),
 										AuthToken = session.SessionId
 									});
 
-									if (DatabaseClient.Clans.FindAll().ToList().FirstOrDefault(_ => _.Members.Find(__ => __.Cmid == steamMember.Cmid) != null) is ClanView clan) {
-										var clanMember = clan.Members.Find(_ => _.Cmid == steamMember.Cmid);
+									if (!string.IsNullOrWhiteSpace(publicProfile.Name)) {
+										if (DatabaseClient.Clans.FindAll().ToList().FirstOrDefault(_ => _.Members.Find(__ => __.Cmid == steamMember.Cmid) != null) is ClanView clan) {
+											var clanMember = clan.Members.Find(_ => _.Cmid == steamMember.Cmid);
 
-										clanMember.Lastlogin = DateTime.UtcNow;
+											clanMember.Lastlogin = DateTime.UtcNow;
 
-										DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
-										DatabaseClient.Clans.Insert(clan);
+											DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
+											DatabaseClient.Clans.Insert(clan);
+										}
+
+										Log.Info($"{publicProfile.Name}({publicProfile.Cmid}) logged in.");
 									}
-
-									Log.Info($"{publicProfile.Name}({publicProfile.Cmid}) logged in.");
 								}
 							}
 						}

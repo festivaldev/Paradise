@@ -1,6 +1,9 @@
 ﻿using HarmonyLib;
 using log4net;
+using System;
 using System.Collections;
+using Cmune.DataCenter.Common.Entities;
+using UberStrike.DataCenter.Common.Entities;
 using UnityEngine;
 
 namespace Paradise.Client {
@@ -11,8 +14,29 @@ namespace Paradise.Client {
 	public class CommConnectionManagerHook {
 		private static readonly ILog Log = LogManager.GetLogger(nameof(CommConnectionManagerHook));
 
+		private static ParadiseTraverse<CommConnectionManager> traverse;
+
 		static CommConnectionManagerHook() {
 			Log.Info($"[{nameof(CommConnectionManagerHook)}] hooking {typeof(CommConnectionManager)}");
+		}
+
+		[HarmonyPatch("Awake"), HarmonyPrefix]
+		public static bool Awake_Prefix(CommConnectionManager __instance) {
+			if (traverse == null) {
+				traverse = ParadiseTraverse<CommConnectionManager>.Create(__instance);
+			}
+
+			traverse.SetProperty("Client", new CommPeer());
+			EventHandler.Global.AddListener(delegate(GlobalEvents.Login ev) { traverse.InvokeMethod("OnLoginEvent", ev); });
+
+			return false;
+		}
+
+		public static void Connect(CommConnectionManager __instance) {
+			traverse.Instance.Client?.Disconnect();
+
+			traverse.SetProperty("Client", new CommPeer());
+			traverse.Instance.StartCoroutine(traverse.InvokeMethod<IEnumerator>("StartCheckingCommServerConnection"));
 		}
 
 		[HarmonyPatch("StartCheckingCommServerConnection"), HarmonyPrefix]
@@ -36,5 +60,14 @@ namespace Paradise.Client {
 			yield break;
 		}
 #pragma warning restore CS0162
+
+		[HarmonyPatch(typeof(CompleteAccountPanelGUI), "CompleteAccountCallback"), HarmonyPrefix]
+		public static bool CompleteAccountPanelGUI_CompleteAccountCallback_Prefix(CompleteAccountPanelGUI __instance, AccountCompletionResultView result, string name) {
+			if (result.Result == AccountCompletionResult.Ok) {
+				Connect(AutoMonoBehaviour<CommConnectionManager>.Instance);
+			}
+
+			return true;
+		}
 	}
 }
