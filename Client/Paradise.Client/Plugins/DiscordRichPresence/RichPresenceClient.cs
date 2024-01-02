@@ -154,7 +154,7 @@ namespace Paradise.Client {
 		public static void Dispose() {
 			ClearPresence();
 
-			childProcess.Kill();
+			childProcess?.Kill();
 
 			if (File.Exists(PresenceFile)) {
 				File.Delete(PresenceFile);
@@ -215,6 +215,8 @@ namespace Paradise.Client {
 		}
 
 		public static void ClearPresence() {
+			if (!ParadiseClient.Settings.EnableDiscordRichPresence) return;
+
 			File.WriteAllText(PresenceFile, SerializePresence(new RichPresenceSerializable {
 				ClearPresence = true
 			}));
@@ -222,6 +224,8 @@ namespace Paradise.Client {
 
 
 		public static void SetPresence(RichPresenceSerializable presence) {
+			if (!ParadiseClient.Settings.EnableDiscordRichPresence) return;
+
 			if (presence.Assets == null) {
 				presence.Assets = new AssetsSerializable {
 					LargeImageKey = "uberstrike"
