@@ -7,7 +7,7 @@ namespace Paradise.Client {
 	[HarmonyPatch(typeof(BasePopupDialog))]
 	public class BasePopupDialogHook {
 		[HarmonyPatch("get_Depth"), HarmonyPostfix]
-		public static void BasePopupDialog_get_Depth_Postfix(ref GuiDepth __result) {
+		public static void get_Depth_Postfix(ref GuiDepth __result) {
 			__result = (GuiDepth)(-100);
 		}
 	}

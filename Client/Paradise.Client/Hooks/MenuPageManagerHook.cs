@@ -23,7 +23,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("LoadPage"), HarmonyPrefix]
-		public static bool MenuPageManager_LoadPage_Prefix(MenuPageManager __instance, PageType pageType, bool forceReload = false) {
+		public static bool LoadPage_Prefix(MenuPageManager __instance, PageType pageType, bool forceReload = false) {
 			AutoMonoBehaviour<PreloadOptionsPanelButton>.Instance.enabled = false;
 
 			if (pageType == PageType.Home) {

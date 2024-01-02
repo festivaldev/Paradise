@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using log4net;
 using System;
 using System.Collections;
@@ -21,7 +21,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("Draw"), HarmonyPrefix]
-		public static bool InventoryItemGUI_Draw_Prefix(InventoryItemGUI __instance, Rect rect, bool selected) {
+		public static bool Draw_Prefix(InventoryItemGUI __instance, Rect rect, bool selected) {
 			if (!traverseByInstance.TryGetValue(__instance, out var traverse)) {
 				traverse = traverseByInstance[__instance] = ParadiseTraverse<InventoryItemGUI>.Create(__instance);
 			}

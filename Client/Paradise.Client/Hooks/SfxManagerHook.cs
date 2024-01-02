@@ -17,7 +17,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("Play2dAudioClip", new Type[] { typeof(AudioClip), typeof(ulong), typeof(float), typeof(float) }), HarmonyPostfix]
-		public static void SfxManager_Play2dAudioClip_Postfix(AudioClip audioClip, ulong delay, float volume, float pitch) {
+		public static void Play2dAudioClip_Postfix(AudioClip audioClip, ulong delay, float volume, float pitch) {
 			if (audioClip == null) {
 				return;
 			}

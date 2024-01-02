@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
 using System;
@@ -21,7 +21,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("LoginByChannel"), HarmonyPrefix]
-		public static bool AuthenticationManager_LoginByChannel_Prefix(AuthenticationManager __instance) {
+		public static bool LoginByChannel_Prefix(AuthenticationManager __instance) {
 			string steamId = string.Empty;
 			try {
 				steamId = File.ReadAllText(string.Join("/", new string[] { Application.dataPath, "PlayerSteamID" }));
@@ -37,7 +37,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("CompleteAuthentication"), HarmonyPostfix]
-		public static void AuthenticationManager_CompleteAuthentication_Postfix(MemberAuthenticationResultView authView, bool isRegistrationLogin) {
+		public static void CompleteAuthentication_Postfix(MemberAuthenticationResultView authView, bool isRegistrationLogin) {
 			if (authView.MemberAuthenticationResult == MemberAuthenticationResult.Ok) {
 				File.WriteAllText(string.Join("/", new string[] { Application.dataPath, "PlayerSteamID" }), PlayerDataManager.SteamId.ToString());
 			}

@@ -18,7 +18,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch(MethodType.Constructor), HarmonyPrefix]
-		public static bool TrainingRoom_ctor_Prefix(TrainingRoom __instance) {
+		public static bool ctor_Prefix(TrainingRoom __instance) {
 			var spectatingState = typeof(TrainingRoom).Assembly.GetType("PlayerSpectatingState");
 
 			GameState.Current.PlayerState.RegisterState(PlayerStateId.Spectating, (IState)Activator.CreateInstance(spectatingState, new[] { GameState.Current.PlayerState }));
@@ -27,7 +27,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("OnUpdate"), HarmonyPostfix]
-		public static void TrainingRoom_OnUpdate_Postfix() {
+		public static void OnUpdate_Postfix() {
 			if (KeyInput.AltPressed && KeyInput.CtrlPressed && KeyInput.GetKeyDown(KeyCode.C)) {
 				if (!IsFreeCamera) {
 					IsFreeCamera = true;
@@ -41,8 +41,8 @@ namespace Paradise.Client {
 			}
 		}
 
-		[HarmonyPatch(typeof(AvatarDecorator), "PlayFootSound", new Type[] { typeof(float), typeof(FootStepSoundType) }), HarmonyPrefix]
-		public static bool CharacterMoveController_UpdatePlayerMovement_Prefix() {
+		[HarmonyPatch(typeof(AvatarDecorator), "PlayFootSound", new[] { typeof(float), typeof(FootStepSoundType) }), HarmonyPrefix]
+		public static bool AvatarDecorator_PlayFootSound_Prefix(float walkingSpeed, FootStepSoundType sound) {
 			if (GameState.Current.GameMode != UberStrike.Core.Types.GameModeType.None) return true;
 
 			return !IsFreeCamera;

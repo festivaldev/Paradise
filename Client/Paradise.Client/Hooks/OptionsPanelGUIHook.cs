@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("Awake"), HarmonyPostfix]
-		public static void OptionsPanelGUI_Awake_Postfix(OptionsPanelGUI __instance) {
+		public static void Awake_Postfix(OptionsPanelGUI __instance) {
 			if (traverse == null) {
 				traverse = ParadiseTraverse<OptionsPanelGUI>.Create(__instance);
 			}
@@ -40,7 +40,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("Start"), HarmonyPrefix]
-		public static bool OptionsPanelGUI_Start_Prefix(OptionsPanelGUI __instance) {
+		public static bool Start_Prefix(OptionsPanelGUI __instance) {
 			var optionsTabs = new GUIContent[] {
 				new GUIContent(LocalizedStrings.ControlsCaps),
 				new GUIContent(LocalizedStrings.AudioCaps),
@@ -66,7 +66,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("OnGUI"), HarmonyPrefix]
-		public static bool OnGUI() {
+		public static bool OnGUI_Prefix() {
 			GUI.skin = BlueStonez.Skin;
 			GUI.depth = -97;
 
@@ -100,7 +100,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DrawOptionsPanel"), HarmonyPrefix]
-		public static bool OptionsPanelGUI_DrawOptionsPanel_Prefix() {
+		public static bool DrawOptionsPanel_Prefix() {
 			var _rect = traverse.GetField<Rect>("_rect");
 
 			GUILayout.BeginVertical(GUILayout.Width(_rect.width), GUILayout.Height(_rect.height));
@@ -203,7 +203,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DoControlsGroup"), HarmonyPrefix]
-		public static bool OptionsPanelGUI_DoControlsGroup_Prefix() {
+		public static bool DoControlsGroup_Prefix() {
 			GUITools.PushGUIState();
 			GUI.enabled = (traverse.GetField<UserInputMap>("_targetMap") == null);
 
@@ -313,7 +313,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DoAudioGroup"), HarmonyPrefix]
-		public static bool OptionsPanelGUI_DoAudioGroup_Prefix() {
+		public static bool DoAudioGroup_Prefix() {
 			GUITools.PushGUIState();
 
 			ParadiseGUITools.DrawGroup(LocalizedStrings.Volume, delegate {
@@ -359,7 +359,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DoVideoGroup"), HarmonyPrefix]
-		public static bool OptionsPanelGUI_DoVideoGroup_Prefix() {
+		public static bool DoVideoGroup_Prefix() {
 			GUITools.PushGUIState();
 
 			ParadiseGUITools.DrawGroup(LocalizedStrings.QualitySettings, delegate {

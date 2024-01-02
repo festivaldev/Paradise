@@ -15,7 +15,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("UpdateLeadStatus"), HarmonyPrefix]
-		public static bool PlayerLeadAudio_UpdateLeadStatus_Prefix() {
+		public static bool UpdateLeadStatus_Prefix() {
 			if (GameState.Current.GameMode == GameModeType.EliminationMode ||
 				GameState.Current.MatchState.CurrentStateId == GameStateId.PrepareNextRound) return false;
 
@@ -23,7 +23,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("PlayKillsLeftAudio"), HarmonyPrefix]
-		public static bool PlayerLeadAudio_PlayKillsLeftAudio_Prefix() {
+		public static bool PlayKillsLeftAudio_Prefix() {
 			if (GameState.Current.GameMode == GameModeType.EliminationMode ||
 				GameState.Current.MatchState.CurrentStateId == GameStateId.PrepareNextRound) return false;
 

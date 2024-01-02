@@ -15,7 +15,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("EmitRemoteQuickItem"), HarmonyPrefix]
-		public static bool GameState_EmitRemoteQuickItem_Postfix(GameState __instance, Vector3 origin, Vector3 direction, int itemId, byte playerNumber, int projectileID) {
+		public static bool EmitRemoteQuickItem_Postfix(GameState __instance, Vector3 origin, Vector3 direction, int itemId, byte playerNumber, int projectileID) {
 			IUnityItem itemInShop = Singleton<ItemManager>.Instance.GetItemInShop(itemId);
 			if (itemInShop != null) {
 				if (!itemInShop.Prefab) {
@@ -30,7 +30,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("StartMatch"), HarmonyPostfix]
-		public static void GameState_StartMatch_Postfix(GameState __instance, int roundNumber, int endTime) {
+		public static void StartMatch_Postfix(GameState __instance, int roundNumber, int endTime) {
 			if (endTime == 0) {
 				GameState.Current.ResetRoundStartTime();
 			}

@@ -15,21 +15,21 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("get_HaveFriends"), HarmonyPostfix]
-		public static void ClanDataManager_get_HaveFriends_Postfix(ref bool __result) {
+		public static void get_HaveFriends_Postfix(ref bool __result) {
 			if (PlayerDataManager.AccessLevel == MemberAccessLevel.Admin) {
 				__result = true;
 			}
 		}
 
 		[HarmonyPatch("get_HaveLevel"), HarmonyPostfix]
-		public static void ClanDataManager_get_HaveLevel_Postfix(ref bool __result) {
+		public static void get_HaveLevel_Postfix(ref bool __result) {
 			if (PlayerDataManager.AccessLevel == MemberAccessLevel.Admin) {
 				__result = true;
 			}
 		}
 
 		[HarmonyPatch("get_HaveLicense"), HarmonyPostfix]
-		public static void ClanDataManager_get_HaveLicense_Postfix(ref bool __result) {
+		public static void get_HaveLicense_Postfix(ref bool __result) {
 			if (PlayerDataManager.AccessLevel == MemberAccessLevel.Admin) {
 				__result = true;
 			}

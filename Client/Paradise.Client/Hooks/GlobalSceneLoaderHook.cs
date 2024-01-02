@@ -1,4 +1,4 @@
-using Cmune.Core.Models.Views;
+﻿using Cmune.Core.Models.Views;
 using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
@@ -33,14 +33,14 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("Start"), HarmonyPrefix]
-		public static bool GlobalSceneLoader_Start_Prefix(GlobalSceneLoader __instance) {
+		public static bool Start_Prefix(GlobalSceneLoader __instance) {
 			traverse = ParadiseTraverse<GlobalSceneLoader>.Create(__instance);
 
 			return false;
 		}
 
 		[HarmonyPatch("Start"), HarmonyPostfix]
-		public static void GlobalSceneLoader_Start_Postfix(GlobalSceneLoader __instance) {
+		public static void Start_Postfix(GlobalSceneLoader __instance) {
 			traverse.Instance.StartCoroutine(StartWithCheckingUpdates());
 		}
 

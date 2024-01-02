@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
 using System.IO;
@@ -20,7 +20,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("InitOptionsDropdown"), HarmonyPostfix]
-		public static void GlobalUIRibbon_InitOptionsDropdown_Postfix(GlobalUIRibbon __instance) {
+		public static void InitOptionsDropdown_Postfix(GlobalUIRibbon __instance) {
 			traverse = ParadiseTraverse<GlobalUIRibbon>.Create(__instance);
 			var optionsDropdown = traverse.GetField<GuiDropDown>("_optionsDropdown");
 
@@ -60,7 +60,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DoMenuBar"), HarmonyPostfix]
-		public static void GlobalUIRibbon_DoMenuBar_Postfix(Rect rect) {
+		public static void DoMenuBar_Postfix(Rect rect) {
 			if (!ApplicationDataManager.IsMobile) {
 				if (GamePageManager.HasPage || GameState.Current.HasJoinedGame) {
 					if (GameState.Current.GameMode != UberStrike.Core.Types.GameModeType.None) {

@@ -16,7 +16,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("PlayerKilledSpectatorState", "OnEnter"), HarmonyPostfix]
-		public static void PlayerKilledSpectatorState_OnEnter_Postfix() {
+		public static void OnEnter_Postfix() {
 			using (var timer = new Timer(s => {
 				if (GameState.Current.MatchState.CurrentStateId == GameStateId.MatchRunning) {
 					GameState.Current.PlayerState.SetState(PlayerStateId.Spectating);

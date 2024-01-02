@@ -13,12 +13,12 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("GetMagicHash"), HarmonyPrefix]
-		public static bool UberDaemon_GetMagicHash_Prefix() {
+		public static bool GetMagicHash_Prefix() {
 			return false;
 		}
 
 		[HarmonyPatch("GetMagicHash"), HarmonyPostfix]
-		public static void UberDaemon_GetMagicHash_Postfix(string authToken, ref string __result) {
+		public static void GetMagicHash_Postfix(string authToken, ref string __result) {
 			var processStartInfo = new ProcessStartInfo {
 				RedirectStandardError = true,
 				RedirectStandardOutput = true,

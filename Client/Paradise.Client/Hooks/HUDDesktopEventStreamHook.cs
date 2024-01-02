@@ -16,7 +16,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("HandleKilledMessage"), HarmonyPrefix]
-		public static bool HUDDesktopEventStream_HandleKilledMessage_Prefix(GameActorInfo shooter, GameActorInfo target, UberstrikeItemClass weapon, BodyPart bodyPart) {
+		public static bool HandleKilledMessage_Prefix(GameActorInfo shooter, GameActorInfo target, UberstrikeItemClass weapon, BodyPart bodyPart) {
 			if (GameState.Current.GameMode == GameModeType.None) {
 				return false;
 			}

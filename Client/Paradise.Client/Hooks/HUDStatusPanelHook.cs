@@ -17,14 +17,14 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("GetRemainingKillString"), HarmonyPostfix]
-		public static void HUDStatusPanel_GetRemainingKillString_Postfix(HUDStatusPanel __instance, int remainingKills, ref string __result) {
+		public static void GetRemainingKillString_Postfix(HUDStatusPanel __instance, int remainingKills, ref string __result) {
 			if (GameState.Current.GameMode == GameModeType.EliminationMode) {
 				__result = (string)AccessTools.Method(typeof(HUDStatusPanel), "GetRemainingRoundsString").Invoke(__instance, new object[] { remainingKills });
 			}
 		}
 
 		[HarmonyPatch("set_KillsRemaining"), HarmonyPostfix]
-		public static void HUDStatusPanel_set_KillsRemaining_Postfix(HUDStatusPanel __instance, int value) {
+		public static void set_KillsRemaining_Postfix(HUDStatusPanel __instance, int value) {
 			Traverse.Create(__instance).Field<UILabel>("statusLabel").Value.text = (string)AccessTools.Method(typeof(HUDStatusPanel), "GetRemainingKillString").Invoke(__instance, new object[] { value });
 		}
 

@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
 using System;
@@ -25,7 +25,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("Start"), HarmonyPostfix]
-		public static void CreateGamePanelGUI_Start_Postfix(CreateGamePanelGUI __instance) {
+		public static void Start_Postfix(CreateGamePanelGUI __instance) {
 			traverse = ParadiseTraverse<CreateGamePanelGUI>.Create(__instance);
 
 			traverse.SetField("_maxLevelCurrent", 100);
@@ -33,7 +33,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DrawGameConfiguration"), HarmonyPrefix]
-		public static bool CreateGamePanelGUI_DrawGameConfiguration_Prefix(CreateGamePanelGUI __instance, Rect rect) {
+		public static bool DrawGameConfiguration_Prefix(CreateGamePanelGUI __instance, Rect rect) {
 			if (traverse.GetProperty<bool>("IsModeSupported")) {
 				MapSettings mapSettings = traverse.GetField<UberstrikeMap>("_mapSelected").View.Settings[traverse.GetField<SelectionGroup<GameModeType>>("_modeSelection").Current];
 
@@ -171,7 +171,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("ValidateGamePassword"), HarmonyPrefix]
-		public static bool CreateGamePanelGUI_ValidateGamePassword_Prefix(string psv, ref bool __result) {
+		public static bool ValidateGamePassword_Prefix(string psv, ref bool __result) {
 			bool result = false;
 
 			if (!string.IsNullOrEmpty(psv) && psv.Length <= MAX_PASSWORD_LENGTH) {

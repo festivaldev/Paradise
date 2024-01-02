@@ -15,7 +15,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("LoadMap"), HarmonyPrefix]
-		public static bool MapManager_LoadMap_Prefix(MapManager __instance, UberstrikeMap map, Action onSuccess) {
+		public static bool LoadMap_Prefix(MapManager __instance, UberstrikeMap map, Action onSuccess) {
 			PickupItem.Reset();
 
 			Log.Debug($"Loading map from scene {map.SceneName}");

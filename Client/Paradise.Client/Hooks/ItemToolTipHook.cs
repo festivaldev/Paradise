@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
 using System;
@@ -32,7 +32,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("OnGUI"), HarmonyPrefix]
-		public static bool ItemToolTip_OnGUI_Prefix() {
+		public static bool OnGUI_Prefix() {
 			if (ConsolePanelGUI.IsOpen) {
 				GUI.depth = -150;
 			}
@@ -41,7 +41,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("SetItem"), HarmonyPostfix]
-		public static void ItemToolTip_SetItem_Postfix(ItemToolTip __instance, IUnityItem item) {
+		public static void SetItem_Postfix(ItemToolTip __instance, IUnityItem item) {
 			if (traverse == null) {
 				traverse = ParadiseTraverse<ItemToolTip>.Create(__instance);
 			}
@@ -125,14 +125,14 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DrawGear"), HarmonyPrefix]
-		public static bool ItemToolTip_DrawGear_Prefix() {
+		public static bool DrawGear_Prefix() {
 			ProgressBar(new Rect(20f, 120f, 200f, 12f), _armorCarried.Title, _armorCarried.Percent, ColorScheme.ProgressBar, $"{_armorCarried.Value:F0} AP");
 
 			return false;
 		}
 
 		[HarmonyPatch("DrawProjectileWeapon"), HarmonyPrefix]
-		public static bool ItemToolTip_DrawProjectileWeapon_Prefix() {
+		public static bool DrawProjectileWeapon_Prefix() {
 			var isDragging = Singleton<DragAndDrop>.Instance.IsDragging && ShopUtils.IsProjectileWeapon(Singleton<DragAndDrop>.Instance.DraggedItem.Item) && Singleton<DragAndDrop>.Instance.DraggedItem.Item.View.ItemClass == traverse.GetField<IUnityItem>("_item").View.ItemClass;
 
 			ProgressBar(new Rect(20f, 120f, 200f, 12f), _damage.Title, _damage.Percent, ColorScheme.ProgressBar, $"{_damage.Value:F0}");
@@ -153,7 +153,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DrawInstantHitWeapon"), HarmonyPrefix]
-		public static bool ItemToolTip_DrawInstantHitWeapon_Prefix() {
+		public static bool DrawInstantHitWeapon_Prefix() {
 			bool isDragging = Singleton<DragAndDrop>.Instance.IsDragging && ShopUtils.IsInstantHitWeapon(Singleton<DragAndDrop>.Instance.DraggedItem.Item) && Singleton<DragAndDrop>.Instance.DraggedItem.Item.View.ItemClass == traverse.GetField<IUnityItem>("_item").View.ItemClass;
 
 			ProgressBar(new Rect(20f, 120f, 200f, 12f), _damage.Title, _damage.Percent, ColorScheme.ProgressBar, $"{_damage.Value:F0}");
@@ -172,7 +172,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DrawMeleeWeapon"), HarmonyPrefix]
-		public static bool ItemToolTip_DrawMeleeWeapon_Prefix() {
+		public static bool DrawMeleeWeapon_Prefix() {
 			ProgressBar(new Rect(20f, 120f, 200f, 12f), _damage.Title, _damage.Percent, ColorScheme.ProgressBar, $"{_damage.Value:F0}");
 			ProgressBar(new Rect(20f, 135f, 200f, 12f), _fireRate.Title, 1f - _fireRate.Percent, ColorScheme.ProgressBar, $"{_fireRate.Value:F1}");
 
@@ -186,7 +186,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DrawQuickItem"), HarmonyPrefix]
-		public static bool ItemToolTip_DrawQuickItem_Prefix() {
+		public static bool DrawQuickItem_Prefix() {
 			var item = traverse.GetField<IUnityItem>("_item");
 
 			if (item != null) {

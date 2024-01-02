@@ -12,7 +12,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("UpdateMouse"), HarmonyPrefix]
-		public static bool UserInputHook_UpdateMouse_Prefix() {
+		public static bool UpdateMouse_Prefix() {
 			if (Camera.main != null) {
 				float fovMult = Mathf.Pow(Camera.main.fieldOfView / ApplicationDataManager.ApplicationOptions.CameraFovMax, 1.1f);
 

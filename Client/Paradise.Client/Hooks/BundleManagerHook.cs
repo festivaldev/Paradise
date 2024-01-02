@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using log4net;
 
 namespace Paradise.Client {
@@ -18,7 +18,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("BuyBundle"), HarmonyPrefix]
-		public static bool BundleManager_BuyBundle_Prefix(BundleManager __instance, BundleUnityView bundle) {
+		public static bool BuyBundle_Prefix(BundleManager __instance, BundleUnityView bundle) {
 			if (traverse.Instance == null) {
 				traverse.Instance = __instance;
 			}
@@ -27,7 +27,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("<BuyBundle>m__A7"), HarmonyPrefix]
-		public static bool BundleManager_BuyBundle_m__A7_Prefix(BundleManager __instance, bool success) {
+		public static bool BuyBundle_m__A7_Prefix(BundleManager __instance, bool success) {
 			traverse.InvokeMethod("OnMicroTxnCallback", new object[] {
 				new Steamworks.MicroTxnAuthorizationResponse_t {
 					m_bAuthorized = (byte)(success ? 1 : 0)

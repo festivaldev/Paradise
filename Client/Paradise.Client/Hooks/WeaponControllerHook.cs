@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using log4net;
 using UberStrike.Realtime.UnitySdk;
 
@@ -17,7 +17,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("Shoot"), HarmonyPostfix]
-		public static void WeaponController_Shoot_Postfix(WeaponController __instance, ref bool __result) {
+		public static void Shoot_Postfix(WeaponController __instance, ref bool __result) {
 			if (traverse == null) {
 				traverse = ParadiseTraverse<WeaponController>.Create(__instance);
 			}

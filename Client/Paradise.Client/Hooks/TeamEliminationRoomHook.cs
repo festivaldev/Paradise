@@ -15,7 +15,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("OnPlayerJoinedGame"), HarmonyPrefix]
-		public static bool TeamEliminationRoom_OnPlayerJoinedGame_Prefix(TeamEliminationRoom __instance, GameActorInfo player, PlayerMovement position) {
+		public static bool OnPlayerJoinedGame_Prefix(TeamEliminationRoom __instance, GameActorInfo player, PlayerMovement position) {
 			if (player.Cmid == PlayerDataManager.Cmid) {
 				GameState.Current.PlayerData.Team.Value = player.TeamID;
 			}

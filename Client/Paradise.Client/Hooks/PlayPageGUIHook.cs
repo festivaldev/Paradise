@@ -1,4 +1,4 @@
-using HarmonyLib;
+﻿using HarmonyLib;
 using log4net;
 using System.Collections.Generic;
 using System.Reflection;
@@ -18,7 +18,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DrawQuickSearch"), HarmonyPrefix]
-		public static bool PlayPageGUI_DrawQuickSearch_Prefix(PlayPageGUI __instance, Rect rect) {
+		public static bool DrawQuickSearch_Prefix(PlayPageGUI __instance, Rect rect) {
 			bool enabled = GUI.enabled;
 			GUI.enabled = (enabled && Time.time > nextServerCheckTime);
 
@@ -36,7 +36,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("DrawAllGames"), HarmonyPrefix]
-		public static bool PlayPageGUI_DrawAllGames_Prefix(PlayPageGUI __instance, ref int __result, Rect rect, bool hasVScroll) {
+		public static bool DrawAllGames_Prefix(PlayPageGUI __instance, ref int __result, Rect rect, bool hasVScroll) {
 			if (traverse == null) {
 				traverse = ParadiseTraverse<PlayPageGUI>.Create(__instance);
 			}

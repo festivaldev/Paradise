@@ -26,7 +26,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("UberStrike.WebService.Unity.SoapClient", "MakeRequest"), HarmonyPrefix]
-		public static bool SoapClient_MakeRequest_Prefix(string interfaceName, ref string serviceName, string methodName, ref byte[] data, Action<byte[]> requestCallback, Action<Exception> exceptionHandler) {
+		public static bool MakeRequest_Prefix(string interfaceName, ref string serviceName, string methodName, ref byte[] data, Action<byte[]> requestCallback, Action<Exception> exceptionHandler) {
 			serviceName = Regex.Replace(serviceName, @"^UberStrike\.DataCenter\.WebService\.CWS\.", ParadiseClient.Settings.WebServicePrefix);
 			serviceName = Regex.Replace(serviceName, @"Contract\.svc$", ParadiseClient.Settings.WebServiceSuffix);
 
@@ -40,7 +40,7 @@ namespace Paradise.Client {
 		}
 
 		[HarmonyPatch("UberStrike.WebService.Unity.SoapClient", "MakeRequest"), HarmonyPostfix]
-		public static IEnumerator SoapClient_MakeRequest_Postfix(IEnumerator value, string interfaceName, string serviceName, string methodName, byte[] data, Action<byte[]> requestCallback, Action<Exception> exceptionHandler) {
+		public static IEnumerator MakeRequest_Postfix(IEnumerator value, string interfaceName, string serviceName, string methodName, byte[] data, Action<byte[]> requestCallback, Action<Exception> exceptionHandler) {
 			var requestId = RequestId++;
 
 			var byteArray = Encoding.UTF8.GetBytes($"<s:Envelope xmlns:s=\"http://schemas.xmlsoap.org/soap/envelope/\"><s:Body><{methodName} xmlns=\"http://tempuri.org/\"><data>{Convert.ToBase64String(data)}</data></{methodName}></s:Body></s:Envelope>");
