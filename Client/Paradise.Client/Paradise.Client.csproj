@@ -118,6 +118,7 @@
     <Compile Include="Hooks\HUDDesktopEventStreamHook.cs" />
     <Compile Include="Hooks\HUDStatusPanelHook.cs" />
     <Compile Include="Hooks\InventoryItemGUIHook.cs" />
+    <Compile Include="Hooks\ItemFilterHook.cs" />
     <Compile Include="Hooks\ItemToolTipHook.cs" />
     <Compile Include="Hooks\MapManagerHook.cs" />
     <Compile Include="Hooks\MenuPageManagerHook.cs" />

@@ -7073,7 +7073,8 @@
 			],
 			"CustomProperties": {
 				"Amount": "1000",
-				"RechargeTime": "1"
+				"RechargeTime": "1",
+				"MinimumRank": "Admin"
 			},
 			"ItemProperties": {},
 			"MaxOwnableAmount": 1,
@@ -13227,7 +13228,10 @@
 			"SplashRadius": 0,
 			"StartAmmo": 120,
 			"Tier": 1,
-			"WeaponSecondaryAction": 0
+			"WeaponSecondaryAction": 0,
+			"CustomProperties": {
+				"MinimumRank": "Admin"
+			}
 		},
 		{
 			"ItemClass": 3,
