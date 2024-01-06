@@ -4,9 +4,6 @@ namespace Paradise.WebServices.LegacyServices._102 {
 	[ServiceContract]
 	public interface IPrivateMessageWebServiceContract {
 		[OperationContract]
-		byte[] GetAllMessageThreadsForUser(byte[] data);
-
-		[OperationContract]
 		byte[] GetAllMessageThreadsForUser_1(byte[] data);
 
 		[OperationContract]

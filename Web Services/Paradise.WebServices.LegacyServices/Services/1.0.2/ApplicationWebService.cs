@@ -7,8 +7,10 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.ServiceModel;
+using System.Threading.Tasks;
 using UberStrike.Core.Models.Views;
-using UberStrike.Core.Serialization;
+using UberStrike.Core.Serialization.Legacy;
+using UberStrike.Core.Types;
 using UberStrike.DataCenter.Common.Entities;
 
 namespace Paradise.WebServices.LegacyServices._102 {
@@ -22,32 +24,47 @@ namespace Paradise.WebServices.LegacyServices._102 {
 		private static readonly string[] supportedClientVersions = { "4.3.10" };
 		private static readonly ChannelType[] supportedClientChannels = { ChannelType.WindowsStandalone };
 
-		private ApplicationConfigurationView applicationConfiguration;
+		//private ApplicationConfigurationView applicationConfiguration;
 		private AuthenticateApplicationView photonServers;
+		private List<MapView> mapData;
+		//private List<ParadiseMapView> customMapData;
+
+		private FileSystemWatcher watcher;
+		private static readonly List<string> watchedFiles = new List<string> {
+			"ApplicationConfiguration.json",
+			"PhotonServers.json",
+			"Maps.json",
+			"CustomMaps.json"
+		};
 
 		public ApplicationWebService(BasicHttpBinding binding, ParadiseServerSettings settings, IServiceCallback serviceCallback) : base(binding, settings, serviceCallback) { }
 
 		protected override void Setup() {
 			try {
-				applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "ApplicationConfiguration.json")));
+				//applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "ApplicationConfiguration.json")));
 				photonServers = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "PhotonServers.json")));
-				//	mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "Maps.json")));
+				mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "Maps.json")));
 				//	customMapData = JsonConvert.DeserializeObject<List<UberstrikeCustomMapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "CustomMaps.json")));
 
-				//	watcher = new FileSystemWatcher(ServiceDataPath) {
-				//		NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite
-				//	};
+				watcher = new FileSystemWatcher(ServiceDataPath) {
+					NotifyFilter = NotifyFilters.Size | NotifyFilters.LastWrite
+				};
 
-				//	watcher.Changed += (object sender, FileSystemEventArgs e) => {
-				//		if (!watchedFiles.Contains(e.Name)) return;
+				watcher.Changed += (object sender, FileSystemEventArgs e) => {
+					if (!watchedFiles.Contains(e.Name)) return;
 
-				//		applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "ApplicationConfiguration.json")));
-				//		photonServers = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "PhotonServers.json")));
-				//		mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "Maps.json")));
-				//		customMapData = JsonConvert.DeserializeObject<List<UberstrikeCustomMapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "CustomMaps.json")));
-				//	};
+					Task.Run(async () => {
+						await Task.Delay(500);
+						Log.Info("Reloading Application service data due to file changes.");
 
-				//	watcher.EnableRaisingEvents = true;
+						//applicationConfiguration = JsonConvert.DeserializeObject<ApplicationConfigurationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "ApplicationConfiguration.json")));
+						photonServers = JsonConvert.DeserializeObject<AuthenticateApplicationView>(File.ReadAllText(Path.Combine(ServiceDataPath, "PhotonServers.json")));
+						mapData = JsonConvert.DeserializeObject<List<MapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "Maps.json")));
+						//customMapData = JsonConvert.DeserializeObject<List<ParadiseMapView>>(File.ReadAllText(Path.Combine(ServiceDataPath, "CustomMaps.json")));
+					});
+				};
+
+				watcher.EnableRaisingEvents = true;
 
 				// Resolve them domains
 				try {
@@ -90,7 +107,8 @@ namespace Paradise.WebServices.LegacyServices._102 {
 		}
 
 		protected override void Teardown() {
-
+			watcher.EnableRaisingEvents = false;
+			watcher.Dispose();
 		}
 
 		#region IApplicationWebServiceContract
@@ -99,7 +117,9 @@ namespace Paradise.WebServices.LegacyServices._102 {
 				var isEncrypted = IsEncrypted(data);
 
 				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
-					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
+					var applicationView = ApplicationViewProxy.Deserialize(bytes);
+
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), applicationView);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
@@ -186,7 +206,7 @@ namespace Paradise.WebServices.LegacyServices._102 {
 					var stackTrace = StringProxy.Deserialize(bytes);
 					var exceptionData = StringProxy.Deserialize(bytes);
 
-					//DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), cmid, buildType, channelType, buildNumber, logString, stackTrace, exceptionData);
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), cmid, buildType, channelType, buildNumber, logString, stackTrace, exceptionData);
 
 					using (var outputStream = new MemoryStream()) {
 						//throw new NotImplementedException();
@@ -209,7 +229,13 @@ namespace Paradise.WebServices.LegacyServices._102 {
 				var isEncrypted = IsEncrypted(data);
 
 				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
-					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
+					var buildType = EnumProxy<BuildType>.Deserialize(bytes);
+					var channelType = EnumProxy<ChannelType>.Deserialize(bytes);
+					var buildNumber = StringProxy.Deserialize(bytes);
+					var errorType = StringProxy.Deserialize(bytes);
+					var errorMessage = StringProxy.Deserialize(bytes);
+
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), buildType, channelType, buildNumber, errorType, errorMessage);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
@@ -231,14 +257,24 @@ namespace Paradise.WebServices.LegacyServices._102 {
 				var isEncrypted = IsEncrypted(data);
 
 				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
-					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
+					var cmid = Int32Proxy.Deserialize(bytes);
+					var step = EnumProxy<TutorialStepType>.Deserialize(bytes);
+
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), cmid, step);
 
 					using (var outputStream = new MemoryStream()) {
-						throw new NotImplementedException();
+						var userAccount = DatabaseClient.UserAccounts.FindOne(_ => _.Cmid.Equals(cmid));
 
-						//return isEncrypted 
-						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
-						//	: outputStream.ToArray();
+						if (userAccount != null) {
+							userAccount.TutorialStep = step;
+
+							DatabaseClient.UserAccounts.DeleteMany(_ => _.Cmid.Equals(userAccount.Cmid));
+							DatabaseClient.UserAccounts.Insert(userAccount);
+						}
+
+						return isEncrypted
+							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
+							: outputStream.ToArray();
 					}
 				}
 			} catch (Exception e) {
@@ -253,7 +289,9 @@ namespace Paradise.WebServices.LegacyServices._102 {
 				var isEncrypted = IsEncrypted(data);
 
 				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
-					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
+					var bugView = BugViewProxy.Deserialize(bytes);
+
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), bugView);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
@@ -297,10 +335,16 @@ namespace Paradise.WebServices.LegacyServices._102 {
 				var isEncrypted = IsEncrypted(data);
 
 				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
-					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
+					var appVersion = StringProxy.Deserialize(bytes);
+					var locale = EnumProxy<LocaleType>.Deserialize(bytes);
+					var definition = EnumProxy<DefinitionType>.Deserialize(bytes);
+
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), appVersion, locale, definition);
 
 					using (var outputStream = new MemoryStream()) {
-						ListProxy<MapView>.Serialize(outputStream, new List<MapView>(), MapViewProxy.Serialize);
+						if (supportedClientVersions.Contains(appVersion)) {
+							ListProxy<MapView>.Serialize(outputStream, mapData, MapViewProxy.Serialize);
+						}
 
 						return isEncrypted
 							? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
@@ -319,7 +363,10 @@ namespace Paradise.WebServices.LegacyServices._102 {
 				var isEncrypted = IsEncrypted(data);
 
 				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
-					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
+					var appVersion = StringProxy.Deserialize(bytes);
+					var definition = EnumProxy<DefinitionType>.Deserialize(bytes);
+
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), appVersion, definition);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
@@ -341,7 +388,11 @@ namespace Paradise.WebServices.LegacyServices._102 {
 				var isEncrypted = IsEncrypted(data);
 
 				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
-					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
+					var id = Int32Proxy.Deserialize(bytes);
+					var version = Int32Proxy.Deserialize(bytes);
+					var md5Hash = StringProxy.Deserialize(bytes);
+
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), id, version, md5Hash);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
@@ -363,7 +414,11 @@ namespace Paradise.WebServices.LegacyServices._102 {
 				var isEncrypted = IsEncrypted(data);
 
 				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
-					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
+					var applicationVersion = StringProxy.Deserialize(bytes);
+					var ipAddress = StringProxy.Deserialize(bytes);
+					var port = Int32Proxy.Deserialize(bytes);
+
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), applicationVersion, ipAddress, port);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();

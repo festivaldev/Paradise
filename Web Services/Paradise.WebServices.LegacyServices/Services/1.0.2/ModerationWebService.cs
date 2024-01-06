@@ -2,6 +2,7 @@
 using System;
 using System.IO;
 using System.ServiceModel;
+using UberStrike.Core.Serialization.Legacy;
 
 namespace Paradise.WebServices.LegacyServices._102 {
 	public class ModerationWebService : BaseWebService, IModerationWebServiceContract {
@@ -22,7 +23,12 @@ namespace Paradise.WebServices.LegacyServices._102 {
 				var isEncrypted = IsEncrypted(data);
 
 				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
-					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod());
+					var sourceCmid = Int32Proxy.Deserialize(bytes);
+					var targetCmid = Int32Proxy.Deserialize(bytes);
+					var applicationId = Int32Proxy.Deserialize(bytes);
+					var ip = StringProxy.Deserialize(bytes);
+
+					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), sourceCmid, targetCmid, applicationId, ip);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();

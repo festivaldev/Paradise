@@ -1,0 +1,518 @@
+{
+	"FunctionalItems": [],
+	"GearItems": [
+		{
+			"ItemClass": 13,
+			"ID": 1084,
+			"Name": "Default Head",
+			"PrefabName": "LutzDefaultGearHead",
+			"Description": null,
+			"Prices": [],
+			"ArmorPoints": 0,
+			"ArmorWeight": 0
+		},
+		{
+			"ItemClass": 17,
+			"ID": 1086,
+			"Name": "Default Gloves",
+			"PrefabName": "LutzDefaultGearGloves",
+			"Description": null,
+			"Prices": [],
+			"ArmorPoints": 0,
+			"ArmorWeight": 0
+		},
+		{
+			"ItemClass": 15,
+			"ID": 1087,
+			"Name": "Default UpperBody",
+			"PrefabName": "LutzDefaultGearUpperBody",
+			"Description": null,
+			"Prices": [],
+			"ArmorPoints": 0,
+			"ArmorWeight": 0
+		},
+		{
+			"ItemClass": 16,
+			"ID": 1088,
+			"Name": "Default LowerBody",
+			"PrefabName": "LutzDefaultGearLowerBody",
+			"Description": null,
+			"Prices": [],
+			"ArmorPoints": 0,
+			"ArmorWeight": 0
+		},
+		{
+			"ItemClass": 12,
+			"ID": 1089,
+			"Name": "Default Boots",
+			"PrefabName": "LutzDefaultGearBoots",
+			"Description": null,
+			"Prices": [],
+			"ArmorPoints": 0,
+			"ArmorWeight": 0
+		},
+		{
+			"ItemClass": 12,
+			"ID": 1272,
+			"Name": "Black Corps Boots",
+			"PrefabName": "BlackCorpsBoots",
+			"Description": "Black Corps Armor (5/6)",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ArmorPoints": 0,
+			"ArmorWeight": 0
+		},
+		{
+			"ItemClass": 14,
+			"ID": 1273,
+			"Name": "Black Corps Balaclava",
+			"PrefabName": "BlackCorpsFace",
+			"Description": "Black Corps Armor (6/6)",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ArmorPoints": 0,
+			"ArmorWeight": 0
+		},
+		{
+			"ItemClass": 17,
+			"ID": 1274,
+			"Name": "Black Corps Gloves",
+			"PrefabName": "BlackCorpsGloves",
+			"Description": "Black Corps Armor (4/6)",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ArmorPoints": 0,
+			"ArmorWeight": 0
+		},
+		{
+			"ItemClass": 13,
+			"ID": 1275,
+			"Name": "Black Corps Helmet",
+			"PrefabName": "BlackCorpsHead",
+			"Description": "Black Corps Armor (3/6)",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ArmorPoints": 0,
+			"ArmorWeight": 0
+		},
+		{
+			"ItemClass": 16,
+			"ID": 1276,
+			"Name": "Black Corps Leg Armor",
+			"PrefabName": "BlackCorpsLowerbody",
+			"Description": "Black Corps Armor (2/6)",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ArmorPoints": 40,
+			"ArmorWeight": 0
+		},
+		{
+			"ItemClass": 15,
+			"ID": 1277,
+			"Name": "Black Corps Body Armor",
+			"PrefabName": "BlackCorpsUpperbody",
+			"Description": "Black Corps Armor (1/6)",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ArmorPoints": 40,
+			"ArmorWeight": 0
+		},
+	],
+	"QuickItems": [],
+	"WeaponItems": [
+		{
+			"ItemClass": 1,
+			"ID": 1000,
+			"Name": "Splatbat",
+			"PrefabName": "TheSplatbat",
+			"Description": "Tier 1 Mace",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ItemProperties": {},
+			"AccuracySpread": 0,
+			"CombatRange": 1,
+			"CriticalStrikeBonus": 0,
+			"DamageKnockback": 0,
+			"DamagePerProjectile": 85,
+			"DamagePerSecond": 0,
+			"DefaultZoomMultiplier": 0,
+			"HasAutomaticFire": true,
+			"MaxAmmo": 0,
+			"MaxZoomMultiplier": 0,
+			"MinZoomMultiplier": 0,
+			"MissileBounciness": 0,
+			"MissileForceImpulse": 0,
+			"MissileTimeToDetonate": 0,
+			"ProjectileSpeed": 1,
+			"ProjectilesPerShot": 1,
+			"RateOfFire": 1000,
+			"RecoilKickback": 0,
+			"RecoilMovement": 0,
+			"SecondaryActionReticle": 0,
+			"SplashRadius": 0,
+			"StartAmmo": 0,
+			"Tier": 1,
+			"WeaponSecondaryAction": 0
+		},
+		{
+			"ItemClass": 3,
+			"ID": 1002,
+			"Name": "Machine Gun",
+			"PrefabName": "MachineGun",
+			"Description": "Tier 1 Machine Gun",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ItemProperties": {},
+			"AccuracySpread": 15,
+			"CombatRange": 1,
+			"CriticalStrikeBonus": 0,
+			"DamageKnockback": 0,
+			"DamagePerProjectile": 16,
+			"DamagePerSecond": 0,
+			"DefaultZoomMultiplier": 0,
+			"HasAutomaticFire": true,
+			"MaxAmmo": 300,
+			"MaxZoomMultiplier": 0,
+			"MinZoomMultiplier": 0,
+			"MissileBounciness": 0,
+			"MissileForceImpulse": 0,
+			"MissileTimeToDetonate": 0,
+			"ProjectileSpeed": 1,
+			"ProjectilesPerShot": 1,
+			"RateOfFire": 114,
+			"RecoilKickback": 2,
+			"RecoilMovement": 7,
+			"SecondaryActionReticle": 0,
+			"SplashRadius": 0,
+			"StartAmmo": 200,
+			"Tier": 1,
+			"WeaponSecondaryAction": 2
+		},
+		{
+			"ItemClass": 4,
+			"ID": 1003,
+			"Name": "Shotgun",
+			"PrefabName": "ShotGun",
+			"Description": "Tier 1 Shotgun",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ItemProperties": {},
+			"AccuracySpread": 80,
+			"CombatRange": 1,
+			"CriticalStrikeBonus": 0,
+			"DamageKnockback": 0,
+			"DamagePerProjectile": 10,
+			"DamagePerSecond": 0,
+			"DefaultZoomMultiplier": 0,
+			"HasAutomaticFire": false,
+			"MaxAmmo": 30,
+			"MaxZoomMultiplier": 0,
+			"MinZoomMultiplier": 0,
+			"MissileBounciness": 0,
+			"MissileForceImpulse": 0,
+			"MissileTimeToDetonate": 0,
+			"ProjectileSpeed": 1,
+			"ProjectilesPerShot": 10,
+			"RateOfFire": 1000,
+			"RecoilKickback": 9,
+			"RecoilMovement": 15,
+			"SecondaryActionReticle": 0,
+			"SplashRadius": 0,
+			"StartAmmo": 20,
+			"Tier": 1,
+			"WeaponSecondaryAction": 0
+		},
+		{
+			"ItemClass": 5,
+			"ID": 1004,
+			"Name": "Sniper Rifle",
+			"PrefabName": "SniperRifle",
+			"Description": "Tier 1 Sniper Rifle",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ItemProperties": {},
+			"AccuracySpread": 0,
+			"CombatRange": 1,
+			"CriticalStrikeBonus": 50,
+			"DamageKnockback": 0,
+			"DamagePerProjectile": 80,
+			"DamagePerSecond": 0,
+			"DefaultZoomMultiplier": 0,
+			"HasAutomaticFire": false,
+			"MaxAmmo": 30,
+			"MaxZoomMultiplier": 4,
+			"MinZoomMultiplier": 2,
+			"MissileBounciness": 0,
+			"MissileForceImpulse": 0,
+			"MissileTimeToDetonate": 0,
+			"ProjectileSpeed": 1,
+			"ProjectilesPerShot": 1,
+			"RateOfFire": 1250,
+			"RecoilKickback": 12,
+			"RecoilMovement": 15,
+			"SecondaryActionReticle": 0,
+			"SplashRadius": 0,
+			"StartAmmo": 20,
+			"Tier": 1,
+			"WeaponSecondaryAction": 1
+		},
+		{
+			"ItemClass": 6,
+			"ID": 1005,
+			"Name": "Cannon",
+			"PrefabName": "Cannon",
+			"Description": "Tier 1 Rocket Launcher",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ItemProperties": {},
+			"AccuracySpread": 0,
+			"CombatRange": 250,
+			"CriticalStrikeBonus": 0,
+			"DamageKnockback": 250,
+			"DamagePerProjectile": 65,
+			"DamagePerSecond": 0,
+			"DefaultZoomMultiplier": 0,
+			"HasAutomaticFire": true,
+			"MaxAmmo": 35,
+			"MaxZoomMultiplier": 0,
+			"MinZoomMultiplier": 0,
+			"MissileBounciness": 0,
+			"MissileForceImpulse": 0,
+			"MissileTimeToDetonate": 0,
+			"ProjectileSpeed": 50,
+			"ProjectilesPerShot": 1,
+			"RateOfFire": 1000,
+			"RecoilKickback": 12,
+			"RecoilMovement": 32,
+			"SecondaryActionReticle": 0,
+			"SplashRadius": 250,
+			"StartAmmo": 20,
+			"Tier": 1,
+			"WeaponSecondaryAction": 0
+		},
+		{
+			"ItemClass": 7,
+			"ID": 1006,
+			"Name": "Splatter Gun",
+			"PrefabName": "SplatterGun",
+			"Description": "Tier 1 Plasmagun",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ItemProperties": {},
+			"AccuracySpread": 0,
+			"CombatRange": 100,
+			"CriticalStrikeBonus": 0,
+			"DamageKnockback": 100,
+			"DamagePerProjectile": 15,
+			"DamagePerSecond": 0,
+			"DefaultZoomMultiplier": 0,
+			"HasAutomaticFire": true,
+			"MaxAmmo": 150,
+			"MaxZoomMultiplier": 0,
+			"MinZoomMultiplier": 0,
+			"MissileBounciness": 0,
+			"MissileForceImpulse": 0,
+			"MissileTimeToDetonate": 5000,
+			"ProjectileSpeed": 50,
+			"ProjectilesPerShot": 1,
+			"RateOfFire": 140,
+			"RecoilKickback": 4,
+			"RecoilMovement": 0,
+			"SecondaryActionReticle": 0,
+			"SplashRadius": 100,
+			"StartAmmo": 100,
+			"Tier": 1,
+			"WeaponSecondaryAction": 0
+		},
+		{
+			"ItemClass": 8,
+			"ID": 1007,
+			"Name": "Grenade Launcher",
+			"PrefabName": "Launcher",
+			"Description": "Tier 1 Grenade Launcher",
+			"Prices": [
+				{
+					"Price": 0,
+					"Currency": 1,
+					"Amount": 1,
+					"Duration": 5
+				},
+				{
+					"Price": 0,
+					"Currency": 2,
+					"Amount": 1,
+					"Duration": 5
+				}
+			],
+			"ItemProperties": {},
+			"AccuracySpread": 0,
+			"CombatRange": 400,
+			"CriticalStrikeBonus": 0,
+			"DamageKnockback": 400,
+			"DamagePerProjectile": 70,
+			"DamagePerSecond": 0,
+			"DefaultZoomMultiplier": 0,
+			"HasAutomaticFire": true,
+			"MaxAmmo": 30,
+			"MaxZoomMultiplier": 0,
+			"MinZoomMultiplier": 0,
+			"MissileBounciness": 1,
+			"MissileForceImpulse": 0,
+			"MissileTimeToDetonate": 2000,
+			"ProjectileSpeed": 10,
+			"ProjectilesPerShot": 1,
+			"RateOfFire": 1000,
+			"RecoilKickback": 15,
+			"RecoilMovement": 9,
+			"SecondaryActionReticle": 0,
+			"SplashRadius": 400,
+			"StartAmmo": 20,
+			"Tier": 1,
+			"WeaponSecondaryAction": 0
+		}
+	]
+}

@@ -234,22 +234,22 @@ namespace Paradise.WebServices.Services {
 
 					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), username);
 
-					List<string> generatedUsernames = new List<string>();
-
-					var r = new Random((int)DateTime.UtcNow.Ticks);
-					while (generatedUsernames.Count < 3) {
-						var number = r.Next(0, 99999);
-
-						// Names are limited to 18 characters,
-						// so limit the generated name too
-						string generatedUsername = $"{username.Substring(0, Math.Min(username.Length, 18 - number.ToString().Length))}{number}";
-
-						if (DatabaseClient.PublicProfiles.FindOne(_ => _.Name == generatedUsername) == null) {
-							generatedUsernames.Add(generatedUsername);
-						}
-					}
-
 					using (var outputStream = new MemoryStream()) {
+						List<string> generatedUsernames = new List<string>();
+
+						var r = new Random((int)DateTime.UtcNow.Ticks);
+						while (generatedUsernames.Count < 3) {
+							var number = r.Next(0, 99999);
+
+							// Names are limited to 18 characters,
+							// so limit the generated name too
+							string generatedUsername = $"{username.Substring(0, Math.Min(username.Length, 18 - number.ToString().Length))}{number}";
+
+							if (DatabaseClient.PublicProfiles.FindOne(_ => _.Name == generatedUsername) == null) {
+								generatedUsernames.Add(generatedUsername);
+							}
+						}
+
 						ListProxy<string>.Serialize(outputStream, generatedUsernames, StringProxy.Serialize);
 
 						return isEncrypted
@@ -403,7 +403,9 @@ namespace Paradise.WebServices.Services {
 									playerLoadout = new LoadoutView {
 										Cmid = steamMember.Cmid,
 										MeleeWeapon = (int)UberstrikeInventoryItem.TheSplatbat,
-										Weapon1 = (int)UberstrikeInventoryItem.MachineGun
+										Weapon1 = (int)UberstrikeInventoryItem.MachineGun,
+										Weapon2 = (int)UberstrikeInventoryItem.ShotGun,
+										Weapon3 = (int)UberstrikeInventoryItem.SniperRifle
 									};
 
 									DatabaseClient.PlayerLoadouts.Insert(playerLoadout);
@@ -447,12 +449,14 @@ namespace Paradise.WebServices.Services {
 							if (steamMember != null) {
 								var publicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
 								var memberWallet = DatabaseClient.MemberWallets.FindOne(_ => _.Cmid == steamMember.Cmid);
+								var memberItems = DatabaseClient.PlayerInventoryItems.Find(_ => _.Cmid == steamMember.Cmid).Select(_ => _.ItemId).ToList();
 								var playerStatistics = DatabaseClient.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
 
 								UberstrikeUserViewModelProxy.Serialize(outputStream, new UberstrikeUserViewModel {
 									CmuneMemberView = new MemberView {
 										PublicProfile = publicProfile,
-										MemberWallet = memberWallet
+										MemberWallet = memberWallet,
+										MemberItems = memberItems
 									},
 									UberstrikeMemberView = new UberstrikeMemberView {
 										PlayerStatisticsView = playerStatistics

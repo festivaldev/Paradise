@@ -1,0 +1,769 @@
+﻿[
+	{
+		"DisplayName": "Apex Twin",
+		"Description": "Reaching the lifeguard's place in the middle of these great mountains seems like an impossible mission when you're shot from everywhere. Snipers, raise your weapons! Enemies try to swim to your shrine. At least the weather is nice around this place.",
+		"SceneName": "ApexTwin",
+		"MapId": 3,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Aqualab Research Hub",
+		"Description": "A small research lab located under the waters of Lost Paradise. Conveniently shaped like a square, players just need to make a detour to reach the enemies' base, so don't let the game result in a deadly ring-round-the-rosie face-off.",
+		"SceneName": "AqualabResearchHub",
+		"MapId": 4,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 6,
+				"PlayersCurrent": 6,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Catalyst",
+		"Description": "Roll into this nuclear plant, a close, medium and long range combat type of map with jump pads. However, players should stay on ground to prevent death. This area is haunted by killers jumping and wearing down the pads.",
+		"SceneName": "Catalyst",
+		"MapId": 5,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 8,
+				"PlayersCurrent": 8,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "CuberSpace",
+		"Description": "Ready, Set, Go! Hovering through a low-gravity piece of space should be fun. But this ride will end quickly if players are not giving caution to all those hide-and-seek snipers covering the cubes.",
+		"SceneName": "CuberSpace",
+		"MapId": 6,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "CuberStrike",
+		"Description": "A cube-like square-illusional world where players see nothing but cubes, so plunge into combat. The higher you get, the bigger the chance of being sniped accross the map. The freightened won't survive, that's for sure!",
+		"SceneName": "CuberStrike",
+		"MapId": 7,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Danger Zone",
+		"Description": "Watch out, dodgeball fans: Teams are only seperated by a glass wall. As open as warfare can be. You're advised to take a grenade launcher with you, or else you're probably getting blown away by the opponent.",
+		"SceneName": "Volley",
+		"MapId": 18,
+		"IsBlueBox": false,
+		"Settings": {
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Fort Winter",
+		"Description": "Heavy snowstorms covering the sky, anxious gunslingers lingering around the map. A helicopter is looking for all villains involved. Players don't have hiding spots, leading to a chaotic snow-fight that freezes every soul.",
+		"SceneName": "FortWinter",
+		"MapId": 8,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Ghost Island",
+		"Description": "Halloween isn't just cute pumpkins and candles in the evening. You were brought to this place made of toxic purple oil-swamps, which transforms this island into an extremely scary place to be.",
+		"SceneName": "GhostIsland",
+		"MapId": 9,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 20,
+				"PlayersCurrent": 20,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 20,
+				"PlayersCurrent": 20,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Gideon's Tower",
+		"Description": "Brave the heights of Gideons Tower, situated in the heart of Ubercity One. Beware, for a fall from its narrow ledges means certain death for any privateer.",
+		"SceneName": "GideonsTower",
+		"MapId": 10,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Lost Paradise 2",
+		"Description": "A group of islands just off the coast of Costa Rica, the Paradise Islands are a great hunting ground for privateers with a keen eye for sniping. Two towering volcanic pillars provide the perfect lookout for those able to make it there in one piece.",
+		"SceneName": "LostParadise2",
+		"MapId": 12,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Monkey Island 2",
+		"Description": "The last resting place of the feared pirate Captain Bradford Pegleg. The forgotten island is rumoured to be home to Bradford's treasrue and was once a place of worship for the tribe of the Monkey King. Nowadays, it is home to adventures, splatting others for dear life.",
+		"SceneName": "MonkeyIsland",
+		"MapId": 11,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Sky Garden",
+		"Description": "This symmetrical place is the definition of war, spawning on the end of the team's territory before beating up the enemies. But be aware of the edges on this beautifully coloured sky garden, as falling off will result in certain death.",
+		"SceneName": "SkyGarden",
+		"MapId": 13,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Space City",
+		"Description": "Space City, very much inspired by the movie SinCity, is a symmetrical close and medium range combat map where Machine Guns ans Shotguns are always a great choice. Hide behind the obstacles or use the risky passage connecting the two sides to push the enemy.",
+		"SceneName": "SpaceCity",
+		"MapId": 64,
+		"IsBlueBox": false,
+		"MaxPlayer": 20,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Spaceport Alpha",
+		"Description": "1 vs 1 freaks, this map is made for you! Mind the gap between the main platform and the floating corner islands, or quickly travel around using one of the Accelerator Pads to confront sneaky snipers with your awareness and quick moves.",
+		"SceneName": "SpacePortAlpha",
+		"MapId": 65,
+		"IsBlueBox": false,
+		"MaxPlayer": 20,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 20,
+				"PlayersCurrent": 20,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "SuperPRISM Reactor",
+		"Description": "Powering NSA's top secret spy program PRISM, monitoring and storing global data traffic, your Spec-Ops unit has broken into this place with the goal to secure the infomation stolen from the innocent. Expect heavy resistance trying to stop you, though.",
+		"SceneName": "SuperPRISMReactor",
+		"MapId": 14,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 32,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "Temple of the Raven",
+		"Description": "A tropical adventure for everyone. The three-staged Mayan temple was made hundreds of years ago by an ancient civilization and is now the host of immeasurable warfare. Can you find the secret chamber and make history?",
+		"SceneName": "TempleOfTheRaven",
+		"MapId": 15,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "The Hangar",
+		"Description": "The large containers around the map seem to provide an ideal shelter, don't they? However, experienced fighters will takeover Yours if your team is too slow. A bridge seperates the two main hangar areas, leaving only Uber Armor and Health. And lots of bullets.",
+		"SceneName": "TheHangar",
+		"MapId": 16,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "The Warehouse",
+		"Description": "Used by RAID Corporation for the storage of weapons and other experimental technology, the Warehouse is a fast paced arena for short range fire fights. Only for privateers who can handle the adrenaline hit.",
+		"SceneName": "TheWarehouse",
+		"MapId": 17,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	},
+	{
+		"DisplayName": "UberZone",
+		"Description": "Inspired by Quake's \"The Dark Zone\" map, UberZone consists of 4 different corridors leading from a bigger area in the center to smaller rooms on the outside. Use the portals scattered on the map to quickly travel between rooms and smack the enemy from behind.",
+		"SceneName": "UberZone",
+		"MapId": 66,
+		"IsBlueBox": false,
+		"Settings": {
+			"1": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"2": {
+				"KillsMin": 1,
+				"KillsMax": 50,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			},
+			"3": {
+				"KillsMin": 1,
+				"KillsMax": 20,
+				"KillsCurrent": 10,
+				"PlayersMin": 2,
+				"PlayersMax": 16,
+				"PlayersCurrent": 16,
+				"TimeMin": 60,
+				"TimeMax": 900,
+				"TimeCurrent": 300
+			}
+		}
+	}
+]
