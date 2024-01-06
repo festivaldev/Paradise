@@ -1,3 +1,4 @@
 [submodule "Core/UberStrike-Reverse-Engineered"]
 	path = Core/UberStrike-Reverse-Engineered
 	url = https://github.com/festivaldev/UberStrike-Reverse-Engineered.git
+	branch = master
