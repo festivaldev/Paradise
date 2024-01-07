@@ -1,13 +1,12 @@
 .vs/
 **/bin/
 **/obj/
-packages/
-AssemblyReferences/*.dll
 build/
-node_modules/
+packages/
 .DS_Store
 
-**.old
-**.new
+AssemblyReferences/**/*.dll
 Test/
-Installer/*.exe
+Tools/
+*.old*
+**/old/
