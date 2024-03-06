@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Paradise.WebServices.Contracts;
 using System;
@@ -255,7 +255,7 @@ namespace Paradise.WebServices.Services {
 							if (steamMember != null) {
 								var publicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
 
-								if (publicProfile == null || publicProfile.AccessLevel >= MemberAccessLevel.Moderator) {
+								if (publicProfile != null && publicProfile.AccessLevel >= MemberAccessLevel.Moderator) {
 									var naughtyUsers = new List<CommActorInfo>();
 									var moderationActions = DatabaseClient.ModerationActions.Find(_ => _.ExpireTime == null || _.ExpireTime > DateTime.UtcNow);
 

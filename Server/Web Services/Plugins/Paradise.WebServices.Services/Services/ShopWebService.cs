@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Newtonsoft.Json;
 using Paradise.WebServices.Contracts;
@@ -275,7 +275,7 @@ namespace Paradise.WebServices.Services {
 												Cmid = publicProfile.Cmid,
 												Duration = durationType,
 												ItemId = itemId,
-												Points = price.Price,
+												Credits = price.Price,
 												WithdrawalDate = DateTime.UtcNow,
 												WithdrawalId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue)
 											});

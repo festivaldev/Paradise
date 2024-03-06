@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Paradise.WebServices.Contracts;
 using System;
@@ -139,7 +139,7 @@ namespace Paradise.WebServices.Services {
 							var steamMember = session.SteamMember;
 
 							if (steamMember != null) {
-								var groupInvitation = DatabaseClient.GroupInvitations.FindOne(_ => _.GroupInvitationId == groupInvitationId);
+								var groupInvitation = DatabaseClient.GroupInvitations.FindOne(_ => _.GroupInvitationId == groupInvitationId && _.InviterCmid == steamMember.Cmid);
 
 								if (groupInvitation != null) {
 									DatabaseClient.GroupInvitations.DeleteMany(_ => _.GroupInvitationId == groupInvitationId);
@@ -627,6 +627,8 @@ namespace Paradise.WebServices.Services {
 											InviteeName = inviteeProfile.Name,
 											Message = message
 										});
+
+										Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Success);
 									} else {
 										Log.Error("no clan or existing group invitation");
 									}
@@ -813,15 +815,15 @@ namespace Paradise.WebServices.Services {
 										Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Error);
 									} else {
 										var clanMember = clan.Members.Find(_ => _.Cmid == publicProfile.Cmid);
-										var newLeader = clan.Members.Find(_ => _.Cmid == newLeaderCmid);
+										var newLeader = clan.Members.Find(_ => _.Cmid == newLeaderProfile.Cmid);
 
 										if ((clanMember == null || newLeader == null) ||
 											clanMember.Position != GroupPosition.Leader) {
 											Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Error);
 										} else {
-											var friendsList = DatabaseClient.ContactRequests.Find(_ => (_.InitiatorCmid == newLeaderProfile.Cmid || _.ReceiverCmid == publicProfile.Cmid) && _.Status == ContactRequestStatus.Accepted);
-											var playerStatistics = DatabaseClient.PlayerStatistics.FindOne(_ => _.Cmid == newLeaderCmid);
-											var hasClanLicense = DatabaseClient.PlayerInventoryItems.FindOne(_ => _.Cmid == newLeaderCmid && _.ItemId == (int)UberstrikeInventoryItem.ClanLicense) != null;
+											var friendsList = DatabaseClient.ContactRequests.Find(_ => (_.InitiatorCmid == newLeaderProfile.Cmid || _.ReceiverCmid == newLeaderProfile.Cmid) && _.Status == ContactRequestStatus.Accepted);
+											var playerStatistics = DatabaseClient.PlayerStatistics.FindOne(_ => _.Cmid == newLeaderProfile.Cmid);
+											var hasClanLicense = DatabaseClient.PlayerInventoryItems.FindOne(_ => _.Cmid == newLeaderProfile.Cmid && _.ItemId == (int)UberstrikeInventoryItem.ClanLicense) != null;
 
 											if (XpPointsUtil.GetLevelForXp(playerStatistics.Xp) < 4) {
 												Int32Proxy.Serialize(outputStream, (int)ClanCreationResultCode.RequirementPlayerLevel);
@@ -830,8 +832,8 @@ namespace Paradise.WebServices.Services {
 											} else if (!hasClanLicense) {
 												Int32Proxy.Serialize(outputStream, (int)ClanCreationResultCode.RequirementClanLicense);
 											} else {
-												clan.OwnerCmid = newLeader.Cmid;
-												clan.OwnerName = newLeader.Name;
+												clan.OwnerCmid = newLeaderProfile.Cmid;
+												clan.OwnerName = newLeaderProfile.Name;
 
 												clanMember.Position = newLeader.Position;
 												newLeader.Position = GroupPosition.Leader;
@@ -882,7 +884,7 @@ namespace Paradise.WebServices.Services {
 								var publicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
 								var targetProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == updateMemberPositionData.MemberCmid);
 
-								if (publicProfile == null && targetProfile == null) {
+								if (publicProfile == null || targetProfile == null) {
 									Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Error);
 								} else {
 									var clan = DatabaseClient.Clans.FindOne(_ => _.GroupId == updateMemberPositionData.GroupId);
@@ -892,7 +894,7 @@ namespace Paradise.WebServices.Services {
 										return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
 									} else {
 										var clanMember = clan.Members.Find(_ => _.Cmid == publicProfile.Cmid);
-										var targetClanMember = clan.Members.Find(_ => _.Cmid == updateMemberPositionData.MemberCmid);
+										var targetClanMember = clan.Members.Find(_ => _.Cmid == targetProfile.Cmid);
 
 										if ((clanMember == null || targetClanMember == null) ||
 											(targetClanMember.Position == GroupPosition.Officer && clanMember.Position != GroupPosition.Leader) ||

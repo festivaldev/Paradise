@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Paradise.WebServices.Contracts;
 using System;
@@ -48,7 +48,11 @@ namespace Paradise.WebServices.Services {
 					using (var outputStream = new MemoryStream()) {
 						var publicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == cmid);
 
-						if (publicProfile.Name != null) {
+						if (publicProfile == null) {
+							AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView {
+								Result = AccountCompletionResult.InvalidData
+							});
+						} else if (publicProfile.Name != null) {
 							AccountCompletionResultViewProxy.Serialize(outputStream, new AccountCompletionResultView {
 								Result = AccountCompletionResult.AlreadyCompletedAccount
 							});
@@ -91,6 +95,8 @@ namespace Paradise.WebServices.Services {
 								}
 							});
 
+							var r = new Random((int)DateTime.UtcNow.Ticks);
+
 							DatabaseClient.ItemTransactions.InsertBulk(new List<ItemTransactionView> {
 								new ItemTransactionView {
 									Cmid = publicProfile.Cmid,
@@ -98,7 +104,8 @@ namespace Paradise.WebServices.Services {
 									Duration = BuyingDurationType.Permanent,
 									ItemId = (int)UberstrikeInventoryItem.TheSplatbat,
 									Points = 0,
-									WithdrawalDate = DateTime.UtcNow
+									WithdrawalDate = DateTime.UtcNow,
+									WithdrawalId = r.Next(1, int.MaxValue)
 								},
 								new ItemTransactionView {
 									Cmid = publicProfile.Cmid,
@@ -106,7 +113,8 @@ namespace Paradise.WebServices.Services {
 									Duration = BuyingDurationType.Permanent,
 									ItemId = (int)UberstrikeInventoryItem.MachineGun,
 									Points = 0,
-									WithdrawalDate = DateTime.UtcNow
+									WithdrawalDate = DateTime.UtcNow,
+									WithdrawalId = r.Next(1, int.MaxValue)
 								},
 								new ItemTransactionView {
 									Cmid = publicProfile.Cmid,
@@ -114,7 +122,8 @@ namespace Paradise.WebServices.Services {
 									Duration = BuyingDurationType.Permanent,
 									ItemId = (int)UberstrikeInventoryItem.ShotGun,
 									Points = 0,
-									WithdrawalDate = DateTime.UtcNow
+									WithdrawalDate = DateTime.UtcNow,
+									WithdrawalId = r.Next(1, int.MaxValue)
 								},
 								new ItemTransactionView {
 									Cmid = publicProfile.Cmid,
@@ -122,7 +131,8 @@ namespace Paradise.WebServices.Services {
 									Duration = BuyingDurationType.Permanent,
 									ItemId = (int)UberstrikeInventoryItem.SniperRifle,
 									Points = 0,
-									WithdrawalDate = DateTime.UtcNow
+									WithdrawalDate = DateTime.UtcNow,
+									WithdrawalId = r.Next(1, int.MaxValue)
 								}
 							});
 
@@ -374,6 +384,7 @@ namespace Paradise.WebServices.Services {
 							}
 
 							DatabaseClient.CurrencyDeposits.Insert(new CurrencyDepositView {
+								CreditsDepositId = new Random((int)DateTime.UtcNow.Ticks).Next(1, int.MaxValue),
 								BundleName = "Signup Reward",
 								Cmid = Cmid,
 								Credits = memberWallet.Credits,

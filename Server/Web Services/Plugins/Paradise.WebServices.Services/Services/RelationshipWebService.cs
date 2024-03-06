@@ -44,14 +44,17 @@ namespace Paradise.WebServices.Services {
 							var steamMember = session.SteamMember;
 
 							if (steamMember != null) {
-								var contactRequest = DatabaseClient.ContactRequests.FindOne(_ => _.RequestId == contactRequestId);
-								var initiatorProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == contactRequest.InitiatorCmid);
-								var receiverProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == contactRequest.ReceiverCmid);
+								var contactRequest = DatabaseClient.ContactRequests.FindOne(_ => _.RequestId == contactRequestId && _.ReceiverCmid == steamMember.Cmid);
 
-								contactRequest.Status = ContactRequestStatus.Accepted;
-								DatabaseClient.ContactRequests.Update(contactRequest);
+								if (contactRequest != null) {
+									var initiatorProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == contactRequest.InitiatorCmid);
+									var receiverProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == contactRequest.ReceiverCmid);
 
-								PublicProfileViewProxy.Serialize(outputStream, initiatorProfile);
+									contactRequest.Status = ContactRequestStatus.Accepted;
+									DatabaseClient.ContactRequests.Update(contactRequest);
+
+									PublicProfileViewProxy.Serialize(outputStream, initiatorProfile);
+								}
 							}
 						}
 
@@ -85,12 +88,14 @@ namespace Paradise.WebServices.Services {
 							var steamMember = session.SteamMember;
 
 							if (steamMember != null) {
-								var contactRequest = DatabaseClient.ContactRequests.FindOne(_ => _.RequestId == contactRequestId);
+								var contactRequest = DatabaseClient.ContactRequests.FindOne(_ => _.RequestId == contactRequestId && _.ReceiverCmid == steamMember.Cmid);
 
-								contactRequest.Status = ContactRequestStatus.Refused;
-								DatabaseClient.ContactRequests.Update(contactRequest);
+								if (contactRequest != null) {
+									contactRequest.Status = ContactRequestStatus.Refused;
+									DatabaseClient.ContactRequests.Update(contactRequest);
 
-								BooleanProxy.Serialize(outputStream, true);
+									BooleanProxy.Serialize(outputStream, true);
+								}
 							}
 						}
 

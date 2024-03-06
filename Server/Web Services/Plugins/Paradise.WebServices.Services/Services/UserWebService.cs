@@ -1,4 +1,4 @@
-using Cmune.DataCenter.Common.Entities;
+﻿using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Paradise.WebServices.Contracts;
 using System;
@@ -487,14 +487,14 @@ namespace Paradise.WebServices.Services {
 				var isEncrypted = IsEncrypted(data);
 
 				using (var bytes = new MemoryStream(isEncrypted ? CryptoPolicy.RijndaelDecrypt(data, EncryptionPassPhrase, EncryptionInitVector) : data)) {
-					var authTokens = ListProxy<string>.Deserialize(bytes, new ListProxy<string>.Deserializer<string>(StringProxy.Deserialize));
+					var authTokens = ListProxy<string>.Deserialize(bytes, StringProxy.Deserialize);
 					DebugEndpoint(System.Reflection.MethodBase.GetCurrentMethod(), authTokens);
 
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return isEncrypted 
-						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//return isEncrypted
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 						//	: outputStream.ToArray();
 					}
 				}
@@ -520,8 +520,8 @@ namespace Paradise.WebServices.Services {
 					using (var outputStream = new MemoryStream()) {
 						throw new NotImplementedException();
 
-						//return isEncrypted 
-						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector) 
+						//return isEncrypted
+						//	? CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector)
 						//	: outputStream.ToArray();
 					}
 				}
@@ -842,7 +842,6 @@ namespace Paradise.WebServices.Services {
 
 							if (steamMember != null) {
 								var publicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == steamMember.Cmid);
-								var playerStatistics = DatabaseClient.PlayerStatistics.FindOne(_ => _.Cmid == steamMember.Cmid);
 
 								if (steamMember == null || publicProfile == null) {
 									Int32Proxy.Serialize(outputStream, (int)BuyItemResult.InvalidMember);
