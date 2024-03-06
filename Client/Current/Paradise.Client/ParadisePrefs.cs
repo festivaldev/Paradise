@@ -15,6 +15,7 @@ namespace Paradise.Client {
 			EnableDiscordRichPresence,
 			ShowDetailedItemStatistics,
 			ShowKilledWeaponIndicator,
+			EnableLandingGrunt,
 			EncryptWebServiceTraffic,
 			WebServiceBaseUrls,
 			WebServiceUrlIndex,
@@ -33,6 +34,7 @@ namespace Paradise.Client {
 			[Key.EnableDiscordRichPresence] = true,
 			[Key.ShowDetailedItemStatistics] = false,
 			[Key.ShowKilledWeaponIndicator] = false,
+			[Key.EnableLandingGrunt] = true,
 			[Key.EncryptWebServiceTraffic] = true,
 
 			[Key.WebServiceBaseUrls] = new List<string> { "https://ws.paradise.festival.tf" },
@@ -53,6 +55,7 @@ namespace Paradise.Client {
 		public bool EnableDiscordRichPresence;
 		public bool ShowDetailedItemStatistics;
 		public bool ShowKilledWeaponIndicator;
+		public bool EnableLandingGrunt;
 		public bool EncryptWebServiceTraffic;
 
 		public List<string> WebServiceBaseUrls;
@@ -79,6 +82,7 @@ namespace Paradise.Client {
 			EnableDiscordRichPresence = GetKey(Key.EnableDiscordRichPresence, (bool)Defaults[Key.EnableDiscordRichPresence]);
 			ShowDetailedItemStatistics = GetKey(Key.ShowDetailedItemStatistics, (bool)Defaults[Key.ShowDetailedItemStatistics]);
 			ShowKilledWeaponIndicator = GetKey(Key.ShowKilledWeaponIndicator, (bool)Defaults[Key.ShowKilledWeaponIndicator]);
+			EnableLandingGrunt = GetKey(Key.EnableLandingGrunt, (bool)Defaults[Key.EnableLandingGrunt]);
 			EncryptWebServiceTraffic = GetKey(Key.EncryptWebServiceTraffic, (bool)Defaults[Key.EncryptWebServiceTraffic]);
 
 			WebServiceBaseUrls = GetKey(Key.WebServiceBaseUrls, (List<string>)Defaults[Key.WebServiceBaseUrls]);
@@ -100,6 +104,7 @@ namespace Paradise.Client {
 			SetKey(Key.EnableDiscordRichPresence, EnableDiscordRichPresence);
 			SetKey(Key.ShowDetailedItemStatistics, ShowDetailedItemStatistics);
 			SetKey(Key.ShowKilledWeaponIndicator, ShowKilledWeaponIndicator);
+			SetKey(Key.EnableLandingGrunt, EnableLandingGrunt);
 			SetKey(Key.EncryptWebServiceTraffic, EncryptWebServiceTraffic);
 			SetKey(Key.AutoUpdates, AutoUpdates);
 			SetKey(Key.UpdateChannel, (int)UpdateChannel);
@@ -113,6 +118,7 @@ namespace Paradise.Client {
 			EnableDiscordRichPresence = GetKey<bool>(Key.EnableDiscordRichPresence);
 			ShowDetailedItemStatistics = GetKey<bool>(Key.ShowDetailedItemStatistics);
 			ShowKilledWeaponIndicator = GetKey<bool>(Key.ShowKilledWeaponIndicator);
+			EnableLandingGrunt = GetKey<bool>(Key.EnableLandingGrunt);
 			EncryptWebServiceTraffic = GetKey<bool>(Key.EncryptWebServiceTraffic);
 
 			AutoUpdates = GetKey<bool>(Key.AutoUpdates);

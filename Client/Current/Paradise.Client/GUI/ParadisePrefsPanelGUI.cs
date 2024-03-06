@@ -65,6 +65,15 @@ namespace Paradise.Client {
 
 				GUILayout.Space(ParadiseGUITools.ITEM_SPACING_V);
 
+				// Enable landing grunt
+				var enableLandingGrunt = GUILayout.Toggle(ParadiseClient.Settings.EnableLandingGrunt, "Enable landing grunt sound effect", BlueStonez.toggle);
+
+				if (enableLandingGrunt != ParadiseClient.Settings.EnableLandingGrunt) {
+					ParadiseClient.Settings.EnableLandingGrunt = enableLandingGrunt;
+				}
+
+				GUILayout.Space(ParadiseGUITools.ITEM_SPACING_V);
+
 				// Advanced Settings
 				showAdvancedSettings = GUILayout.Toggle(showAdvancedSettings, "Show advanced settings", BlueStonez.toggle);
 
