@@ -4,6 +4,9 @@ namespace Paradise.WebServices.Contracts {
 	[ServiceContract]
 	public interface IUserWebServiceContract {
 		[OperationContract]
+		byte[] AddItemTransaction(byte[] data);
+
+		[OperationContract]
 		byte[] ChangeMemberName(byte[] data);
 
 		[OperationContract]
@@ -41,9 +44,6 @@ namespace Paradise.WebServices.Contracts {
 
 		[OperationContract]
 		byte[] GetMemberListSessionData(byte[] data);
-
-		[OperationContract]
-		byte[] AddItemTransaction(byte[] data);
 
 		[OperationContract]
 		byte[] DepositCredits(byte[] data);

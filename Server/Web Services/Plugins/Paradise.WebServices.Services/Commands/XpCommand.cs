@@ -29,7 +29,7 @@ namespace Paradise.WebServices.Services {
 
 			switch (arguments[0]) {
 				case "give": {
-					var searchString = arguments[0];
+					var searchString = arguments[1];
 
 					if (searchString.Length < 3) {
 						WriteLine("Search pattern must contain at least 3 characters.");
@@ -65,7 +65,7 @@ namespace Paradise.WebServices.Services {
 					break;
 				}
 				case "take": {
-					var searchString = arguments[0];
+					var searchString = arguments[1];
 
 					if (searchString.Length < 3) {
 						WriteLine("Search pattern must contain at least 3 characters.");
