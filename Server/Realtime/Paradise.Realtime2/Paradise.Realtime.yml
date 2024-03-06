@@ -1,0 +1,34 @@
+﻿MasterHostname: localhost
+
+WebServicePort: 8080
+FileServerPort: 8081
+SocketPort: 8082
+
+WebServiceEndpoint: '/2.0'
+WebServicePrefix: 'UberStrike.DataCenter.WebService.CWS.'
+WebServiceSuffix: 'Contract.svc'
+
+CommApplicationSettings:
+  ApplicationIdentifier: '<Add GUID here>'
+  EncryptionPassPhrase: '<Add passphrase here>'
+
+GameApplicationSettings:
+  ApplicationIdentifier: '<Add GUID here>'
+  EncryptionPassPhrase: '<Add passphrase here>'
+
+EnableChatLog: true
+
+HeartbeatInterval: 5
+HeartbeatTimeout: 5
+EnableHashVerification: false
+
+CompositeHashes:
+  -
+
+JunkHashes:
+  -
+
+DiscordChatIntegration: false
+DiscordPlayerAnnouncements: true
+DiscordGameAnnouncements: true
+DiscordErrorLog: true
