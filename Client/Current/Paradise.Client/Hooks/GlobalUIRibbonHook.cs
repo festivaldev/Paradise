@@ -1,7 +1,9 @@
 ﻿using Cmune.DataCenter.Common.Entities;
 using HarmonyLib;
 using log4net;
+using System;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -51,7 +53,9 @@ namespace Paradise.Client {
 
 			// Debug Console
 			EventHandler.Global.AddListener<GlobalEvents.Login>(delegate (GlobalEvents.Login e) {
-				if (e.AccessLevel == MemberAccessLevel.Admin) {
+				var args = Environment.GetCommandLineArgs();
+
+				if (e.AccessLevel == MemberAccessLevel.Admin || (args.Length > 1 && args.Contains("-console"))) {
 					optionsDropdown.Add(new GUIContent(" CONSOLE"), delegate {
 						AutoMonoBehaviour<ConsolePanelGUI>.Instance.Show();
 					});
