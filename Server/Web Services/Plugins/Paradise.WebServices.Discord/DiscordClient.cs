@@ -181,27 +181,35 @@ namespace Paradise.WebServices.Discord {
 				Color = Color.Default
 			};
 
-			embed.AddField("Room Name", metadata.Name);
-			embed.AddField("Map", GetNameForMapID(metadata.MapID), true);
-			embed.AddField("Gamemode", GetGamemodeName(metadata.GameMode), true);
-			embed.AddField("Player Limit", metadata.PlayerLimit, true);
-			embed.AddField("Time Limit", $"{metadata.TimeLimit / 60} min", true);
-			embed.AddField("Kill/Round Limit", metadata.KillLimit, true);
-			embed.AddField("Game Modifiers", GetGameFlags(metadata.GameFlags));
-			embed.AddField("Requires Password", metadata.IsPasswordProtected ? "Yes" : "No", true);
-			embed.AddField("Minimum Level", metadata.LevelMin > 0 ? metadata.LevelMin.ToString() : "None", true);
-			embed.AddField("Maximum Level", metadata.LevelMax > 0 ? metadata.LevelMax.ToString() : "None", true);
-			embed.AddField("Join this game", $"`uberstrike://connect/{metadata.Server.ConnectionString}/{metadata.Number}`");
+			try {
+				embed.AddField("Room Name", metadata.Name);
+				embed.AddField("Map", GetNameForMapID(metadata.MapID), true);
+				embed.AddField("Gamemode", GetGamemodeName(metadata.GameMode), true);
+				embed.AddField("Player Limit", metadata.PlayerLimit, true);
+				embed.AddField("Time Limit", $"{metadata.TimeLimit / 60} min", true);
+				embed.AddField("Kill/Round Limit", metadata.KillLimit, true);
+				embed.AddField("Game Modifiers", GetGameFlags(metadata.GameFlags));
+				embed.AddField("Requires Password", metadata.IsPasswordProtected ? "Yes" : "No", true);
+				embed.AddField("Minimum Level", metadata.LevelMin > 0 ? metadata.LevelMin.ToString() : "None", true);
+				embed.AddField("Maximum Level", metadata.LevelMax > 0 ? metadata.LevelMax.ToString() : "None", true);
+				embed.AddField("Join this game", $"`uberstrike://connect/{metadata.Server.ConnectionString}/{metadata.Number}`");
 
-			embed.WithImageUrl($"https://static.paradise.festival.tf/images/maps/{GetImageNameForMapID(metadata.MapID)}.jpg");
-			embed.WithFooter($"Room ID: {metadata.Number}");
+				embed.WithImageUrl($"https://static.paradise.festival.tf/images/maps/{GetImageNameForMapID(metadata.MapID)}.jpg");
+				embed.WithFooter($"Room ID: {metadata.Number}");
 
-			await gameAnnouncementClient.SendMessageAsync(
-				username: "UberStrike",
-				embeds: new List<Embed> {
-					embed.Build()
-				}
-			);
+				await gameAnnouncementClient.SendMessageAsync(
+					username: "UberStrike",
+					embeds: new List<Embed> {
+						embed.Build()
+					}
+				);
+			} catch (Exception e) {
+				Log.Error(e);
+				Log.Info(embed.Fields.Select(_ => new Dictionary<string, object> {
+					["Name"] = _.Name,
+					["Value"] = _.Value
+				}));
+			}
 		}
 
 		public async Task SendGameRoomDestroyedMessage(GameRoomData metadata) {
@@ -212,18 +220,26 @@ namespace Paradise.WebServices.Discord {
 				Color = Color.Default
 			};
 
-			embed.AddField("Room Name", metadata.Name);
-			embed.AddField("Map", GetNameForMapID(metadata.MapID), true);
-			embed.AddField("Gamemode", GetGamemodeName(metadata.GameMode), true);
+			try {
+				embed.AddField("Room Name", metadata.Name);
+				embed.AddField("Map", GetNameForMapID(metadata.MapID), true);
+				embed.AddField("Gamemode", GetGamemodeName(metadata.GameMode), true);
 
-			embed.WithFooter($"Room ID: {metadata.Number}");
+				embed.WithFooter($"Room ID: {metadata.Number}");
 
-			await gameAnnouncementClient.SendMessageAsync(
-				username: "UberStrike",
-				embeds: new List<Embed> {
-					embed.Build()
-				}
-			);
+				await gameAnnouncementClient.SendMessageAsync(
+					username: "UberStrike",
+					embeds: new List<Embed> {
+						embed.Build()
+					}
+				);
+			} catch (Exception e) {
+				Log.Error(e);
+				Log.Info(embed.Fields.Select(_ => new Dictionary<string, object> {
+					["Name"] = _.Name,
+					["Value"] = _.Value
+				}));
+			}
 		}
 
 		public async Task SendRoundStartedMessage(GameRoomData metadata) {
