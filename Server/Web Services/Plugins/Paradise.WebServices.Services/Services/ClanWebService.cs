@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Paradise.WebServices.Contracts;
 using System;
@@ -78,15 +78,17 @@ namespace Paradise.WebServices.Services {
 													Lastlogin = publicProfile.LastLoginDate
 												});
 
-												DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
-												DatabaseClient.Clans.Insert(clan);
+												//DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
+												//DatabaseClient.Clans.Insert(clan);
+												DatabaseClient.Clans.Update(clan);
 
 												DatabaseClient.GroupInvitations.DeleteMany(_ => _.GroupInvitationId == groupInvitation.GroupInvitationId);
 
 												publicProfile.GroupTag = clan.Tag;
 
-												DatabaseClient.PublicProfiles.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
-												DatabaseClient.PublicProfiles.Insert(publicProfile);
+												//DatabaseClient.PublicProfiles.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
+												//DatabaseClient.PublicProfiles.Insert(publicProfile);
+												DatabaseClient.PublicProfiles.Update(publicProfile);
 
 												ClanRequestAcceptViewProxy.Serialize(outputStream, new ClanRequestAcceptView {
 													ActionResult = (int)ClanActionResultCode.Success,
@@ -313,8 +315,9 @@ namespace Paradise.WebServices.Services {
 
 										publicProfile.GroupTag = clan.Tag;
 
-										DatabaseClient.PublicProfiles.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
-										DatabaseClient.PublicProfiles.Insert(publicProfile);
+										//DatabaseClient.PublicProfiles.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
+										//DatabaseClient.PublicProfiles.Insert(publicProfile);
+										DatabaseClient.PublicProfiles.Update(publicProfile);
 
 										ClanCreationReturnViewProxy.Serialize(outputStream, new ClanCreationReturnView {
 											ResultCode = (int)ClanCreationResultCode.Success,
@@ -412,8 +415,9 @@ namespace Paradise.WebServices.Services {
 										if (publicProfile != null) {
 											publicProfile.GroupTag = null;
 
-											DatabaseClient.PublicProfiles.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
-											DatabaseClient.PublicProfiles.Insert(publicProfile);
+											//DatabaseClient.PublicProfiles.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
+											//DatabaseClient.PublicProfiles.Insert(publicProfile);
+											DatabaseClient.PublicProfiles.Update(publicProfile);
 										}
 									}
 
@@ -684,17 +688,12 @@ namespace Paradise.WebServices.Services {
 										} else {
 											clan.Members.Remove(memberToKick);
 
-											var clanPublicProfile = DatabaseClient.PublicProfiles.FindOne(_ => _.Cmid == memberToKick.Cmid);
+											toKickProfile.GroupTag = string.Empty;
+											DatabaseClient.PublicProfiles.Update(toKickProfile);
 
-											if (clanPublicProfile != null) {
-												clanPublicProfile.GroupTag = clan.Tag;
-
-												DatabaseClient.PublicProfiles.DeleteMany(_ => _.Cmid == clanPublicProfile.Cmid);
-												DatabaseClient.PublicProfiles.Insert(clanPublicProfile);
-											}
-
-											DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
-											DatabaseClient.Clans.Insert(clan);
+											//DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
+											//DatabaseClient.Clans.Insert(clan);
+											DatabaseClient.Clans.Update(clan);
 
 											Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Success);
 										}
@@ -754,11 +753,13 @@ namespace Paradise.WebServices.Services {
 
 											publicProfile.GroupTag = clan.Tag;
 
-											DatabaseClient.PublicProfiles.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
-											DatabaseClient.PublicProfiles.Insert(publicProfile);
+											//DatabaseClient.PublicProfiles.DeleteMany(_ => _.Cmid == publicProfile.Cmid);
+											//DatabaseClient.PublicProfiles.Insert(publicProfile);
+											DatabaseClient.PublicProfiles.Update(publicProfile);
 
-											DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
-											DatabaseClient.Clans.Insert(clan);
+											//DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
+											//DatabaseClient.Clans.Insert(clan);
+											DatabaseClient.Clans.Update(clan);
 
 											Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Success);
 										}
@@ -835,8 +836,9 @@ namespace Paradise.WebServices.Services {
 												clanMember.Position = newLeader.Position;
 												newLeader.Position = GroupPosition.Leader;
 
-												DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
-												DatabaseClient.Clans.Insert(clan);
+												//DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
+												//DatabaseClient.Clans.Insert(clan);
+												DatabaseClient.Clans.Update(clan);
 
 												Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Success);
 											}
@@ -899,8 +901,9 @@ namespace Paradise.WebServices.Services {
 										} else {
 											targetClanMember.Position = updateMemberPositionData.Position;
 
-											DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
-											DatabaseClient.Clans.Insert(clan);
+											//DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
+											//DatabaseClient.Clans.Insert(clan);
+											DatabaseClient.Clans.Update(clan);
 
 											Int32Proxy.Serialize(outputStream, (int)ClanActionResultCode.Success);
 										}

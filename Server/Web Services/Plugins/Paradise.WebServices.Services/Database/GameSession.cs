@@ -7,6 +7,7 @@ namespace Paradise.WebServices.Services {
 	public class GameSession {
 		const int SESSION_EXPIRE_HOURS = 12;
 
+		[BsonId]
 		public string SessionId { get; set; }
 		public int Cmid { get; set; }
 		public string MachineId { get; set; }
@@ -33,8 +34,9 @@ namespace Paradise.WebServices.Services {
 		public void ExtendExpireTime(int hours = SESSION_EXPIRE_HOURS) {
 			ExpireTime = DateTime.UtcNow.AddHours(hours);
 
-			DatabaseClient.GameSessions.DeleteMany(_ => _.Cmid == Cmid);
-			DatabaseClient.GameSessions.Insert(this);
+			//DatabaseClient.GameSessions.DeleteMany(_ => _.Cmid == Cmid);
+			//DatabaseClient.GameSessions.Insert(this);
+			DatabaseClient.GameSessions.Update(this);
 		}
 
 		public static int GetCmidFromSessionId(string sessionId) {

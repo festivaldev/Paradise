@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Paradise.WebServices.Contracts;
 using System;
@@ -150,8 +150,9 @@ namespace Paradise.WebServices.Services {
 
 										memberWallet.Credits += depositTransaction.Credits;
 
-										DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
-										DatabaseClient.MemberWallets.Insert(memberWallet);
+										//DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+										//DatabaseClient.MemberWallets.Insert(memberWallet);
+										DatabaseClient.MemberWallets.Update(memberWallet);
 
 										BooleanProxy.Serialize(outputStream, true);
 									} else {
@@ -199,8 +200,9 @@ namespace Paradise.WebServices.Services {
 
 										memberWallet.Points += depositTransaction.Points;
 
-										DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
-										DatabaseClient.MemberWallets.Insert(memberWallet);
+										//DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+										//DatabaseClient.MemberWallets.Insert(memberWallet);
+										DatabaseClient.MemberWallets.Update(memberWallet);
 
 										BooleanProxy.Serialize(outputStream, true);
 									} else {
@@ -795,8 +797,9 @@ namespace Paradise.WebServices.Services {
 									statistics.PersonalRecord.MostSplattergunSplats = playerStatistics.PersonalRecord.MostSplattergunSplats;
 									statistics.PersonalRecord.MostXPEarned = playerStatistics.PersonalRecord.MostXPEarned;
 
-									DatabaseClient.PlayerStatistics.DeleteMany(_ => _.Cmid == steamMember.Cmid);
-									DatabaseClient.PlayerStatistics.Insert(statistics);
+									//DatabaseClient.PlayerStatistics.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+									//DatabaseClient.PlayerStatistics.Insert(statistics);
+									DatabaseClient.PlayerStatistics.Update(statistics);
 								} else {
 									EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.InvalidData);
 									return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
@@ -866,8 +869,9 @@ namespace Paradise.WebServices.Services {
 								memberWallet.Credits += (int)Math.Round(transaction.Credits * 0.75);
 								memberWallet.Points += (int)Math.Round(transaction.Points * 0.75);
 
-								DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
-								DatabaseClient.MemberWallets.Insert(memberWallet);
+								//DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+								//DatabaseClient.MemberWallets.Insert(memberWallet);
+								DatabaseClient.MemberWallets.Update(memberWallet);
 
 								DatabaseClient.ItemTransactions.DeleteMany(_ => _.WithdrawalId == transaction.WithdrawalId);
 								DatabaseClient.PlayerInventoryItems.DeleteMany(_ => _.Cmid == publicProfile.Cmid && _.ItemId == itemId);

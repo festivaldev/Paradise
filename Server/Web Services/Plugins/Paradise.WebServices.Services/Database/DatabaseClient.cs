@@ -39,55 +39,43 @@ namespace Paradise.WebServices.Services {
 		#endregion
 
 		static DatabaseClient() {
-			BsonMapper.Global.Entity<PublicProfileView>().Id(_ => _.Cmid);
-			BsonMapper.Global.Entity<LoadoutView>().Id(_ => _.Cmid);
+			BsonMapper.Global.Entity<ClanMemberView>().Id(_ => _.Cmid);
+			BsonMapper.Global.Entity<ClanView>().Id(_ => _.GroupId);
 			BsonMapper.Global.Entity<ContactRequestView>().Id(_ => _.RequestId);
-			BsonMapper.Global.Entity<PrivateMessageView>().Id(_ => _.PrivateMessageId);
-		}
 
+			BsonMapper.Global.Entity<MemberWalletView>().Id(_ => _.Cmid);
+			BsonMapper.Global.Entity<LoadoutView>().Id(_ => _.Cmid);
+			BsonMapper.Global.Entity<PlayerStatisticsView>().Id(_ => _.Cmid);
+			BsonMapper.Global.Entity<PublicProfileView>().Id(_ => _.Cmid);
+
+			BsonMapper.Global.Entity<ItemTransactionView>().Id(_ => _.WithdrawalId);
+			BsonMapper.Global.Entity<CurrencyDepositView>().Id(_ => _.CreditsDepositId);
+			BsonMapper.Global.Entity<PointDepositView>().Id(_ => _.PointDepositId);
+		}
 
 		public static void LoadCollections() {
 			SteamMembers = DatabaseManager.Database.GetCollection<SteamMember>("SteamMembers");
-			SteamMembers.EnsureIndex("SteamId");
-
 			GameSessions = DatabaseManager.Database.GetCollection<GameSession>("GameSessions");
-			GameSessions.EnsureIndex("SessionId");
 
 			ClanMembers = DatabaseManager.Database.GetCollection<ClanMemberView>("ClanMembers");
-
 			Clans = DatabaseManager.Database.GetCollection<ClanView>("Clans");
-			Clans.EnsureIndex("GroupId");
-
 			GroupInvitations = DatabaseManager.Database.GetCollection<GroupInvitationView>("GroupInvitations");
 
 			ModerationActions = DatabaseManager.Database.GetCollection<ModerationAction>("ModerationActions");
-
 			MemberReports = DatabaseManager.Database.GetCollection<MemberReportView>("MemberReports");
 
 			PrivateMessages = DatabaseManager.Database.GetCollection<PrivateMessageView>("PrivateMessages");
-			PrivateMessages.EnsureIndex("PrivateMessageId");
 
 			ContactRequests = DatabaseManager.Database.GetCollection<ContactRequestView>("ContactRequests");
-			ContactRequests.EnsureIndex("RequestId");
 
 			MemberWallets = DatabaseManager.Database.GetCollection<MemberWalletView>("MemberWallets");
-			MemberWallets.EnsureIndex("Cmid");
-
 			PlayerInventoryItems = DatabaseManager.Database.GetCollection<ItemInventoryView>("PlayerInventoryItems");
-
 			PlayerLoadouts = DatabaseManager.Database.GetCollection<LoadoutView>("PlayerLoadouts");
-			PlayerLoadouts.EnsureIndex("Cmid");
-
 			PlayerStatistics = DatabaseManager.Database.GetCollection<PlayerStatisticsView>("PlayerStatistics");
-			PlayerStatistics.EnsureIndex("Cmid");
-
 			PublicProfiles = DatabaseManager.Database.GetCollection<PublicProfileView>("PublicProfiles");
-			PublicProfiles.EnsureIndex("Cmid");
 
 			ItemTransactions = DatabaseManager.Database.GetCollection<ItemTransactionView>("ItemTransactions");
-
 			CurrencyDeposits = DatabaseManager.Database.GetCollection<CurrencyDepositView>("CurrencyDeposits");
-
 			PointDeposits = DatabaseManager.Database.GetCollection<PointDepositView>("PointDeposits");
 		}
 

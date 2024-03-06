@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Newtonsoft.Json;
 using Paradise.WebServices.Contracts;
@@ -166,8 +166,9 @@ namespace Paradise.WebServices.Services {
 											memberWallet.Credits += bundle.Credits;
 											memberWallet.Points += bundle.Points;
 
-											DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
-											DatabaseClient.MemberWallets.Insert(memberWallet);
+											//DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+											//DatabaseClient.MemberWallets.Insert(memberWallet);
+											DatabaseClient.MemberWallets.Update(memberWallet);
 
 											BooleanProxy.Serialize(outputStream, true);
 											return CryptoPolicy.RijndaelEncrypt(outputStream.ToArray(), EncryptionPassPhrase, EncryptionInitVector);
@@ -301,8 +302,9 @@ namespace Paradise.WebServices.Services {
 									}
 								}
 
-								DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
-								DatabaseClient.MemberWallets.Insert(memberWallet);
+								//DatabaseClient.MemberWallets.DeleteMany(_ => _.Cmid == steamMember.Cmid);
+								//DatabaseClient.MemberWallets.Insert(memberWallet);
+								DatabaseClient.MemberWallets.Update(memberWallet);
 
 								DateTime? expirationDate = null;
 

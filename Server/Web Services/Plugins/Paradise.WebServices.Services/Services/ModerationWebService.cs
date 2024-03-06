@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Paradise.WebServices.Contracts;
 using System;
@@ -88,8 +88,9 @@ namespace Paradise.WebServices.Services {
 											moderationAction.SourceCmid = publicProfile.Cmid;
 											moderationAction.SourceName = publicProfile.Name;
 
-											DatabaseClient.ModerationActions.DeleteMany(_ => _.TargetCmid == targetCmid && _.ModerationFlag == moderationFlag);
-											DatabaseClient.ModerationActions.Insert(moderationAction);
+											//DatabaseClient.ModerationActions.DeleteMany(_ => _.TargetCmid == targetCmid && _.ModerationFlag == moderationFlag);
+											//DatabaseClient.ModerationActions.Insert(moderationAction);
+											DatabaseClient.ModerationActions.Update(moderationAction);
 										} else {
 											DatabaseClient.ModerationActions.Insert(new ModerationAction {
 												ActionDate = DateTime.UtcNow,
@@ -153,8 +154,9 @@ namespace Paradise.WebServices.Services {
 											//DatabaseClient.ModerationActions.DeleteMany(_ => _.TargetCmid == targetProfile.Cmid && _.ModerationFlag == moderationFlag);
 											moderationAction.ExpireTime = DateTime.MinValue;
 
-											DatabaseClient.ModerationActions.DeleteMany(_ => _.TargetCmid == targetCmid && _.ModerationFlag == moderationFlag);
-											DatabaseClient.ModerationActions.Insert(moderationAction);
+											//DatabaseClient.ModerationActions.DeleteMany(_ => _.TargetCmid == targetCmid && _.ModerationFlag == moderationFlag);
+											//DatabaseClient.ModerationActions.Insert(moderationAction);
+											DatabaseClient.ModerationActions.Update(moderationAction);
 
 											EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.Ok);
 										} else {
@@ -209,8 +211,9 @@ namespace Paradise.WebServices.Services {
 											foreach (var action in moderationActions) {
 												action.ExpireTime = DateTime.MinValue;
 
-												DatabaseClient.ModerationActions.DeleteMany(_ => _.TargetCmid == targetCmid && _.ModerationFlag == action.ModerationFlag);
-												DatabaseClient.ModerationActions.Insert(action);
+												//DatabaseClient.ModerationActions.DeleteMany(_ => _.TargetCmid == targetCmid && _.ModerationFlag == action.ModerationFlag);
+												//DatabaseClient.ModerationActions.Insert(action);
+												DatabaseClient.ModerationActions.Update(action);
 											}
 
 											EnumProxy<MemberOperationResult>.Serialize(outputStream, MemberOperationResult.Ok);

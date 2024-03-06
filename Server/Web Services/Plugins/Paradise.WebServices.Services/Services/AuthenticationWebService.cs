@@ -1,4 +1,4 @@
-﻿using Cmune.DataCenter.Common.Entities;
+using Cmune.DataCenter.Common.Entities;
 using log4net;
 using Paradise.WebServices.Contracts;
 using System;
@@ -444,8 +444,9 @@ namespace Paradise.WebServices.Services {
 
 											clanMember.Lastlogin = DateTime.UtcNow;
 
-											DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
-											DatabaseClient.Clans.Insert(clan);
+											//DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
+											//DatabaseClient.Clans.Insert(clan);
+											DatabaseClient.Clans.Update(clan);
 										}
 
 										Log.Info($"{publicProfile.Name}({publicProfile.Cmid}) logged in.");
@@ -522,8 +523,9 @@ namespace Paradise.WebServices.Services {
 
 											clanMember.Lastlogin = DateTime.UtcNow;
 
-											DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
-											DatabaseClient.Clans.Insert(clan);
+											//DatabaseClient.Clans.DeleteMany(_ => _.GroupId == clan.GroupId);
+											//DatabaseClient.Clans.Insert(clan);
+											DatabaseClient.Clans.Update(clan);
 										}
 									}
 								}
