@@ -390,6 +390,7 @@ namespace Paradise.Client {
 					traverse.SetField("graphicsChanged", true);
 
 					//traverse.InvokeMethod("SetCurrentQuality", qualitySet.Length - 1);
+					traverse.InvokeMethod("SyncGraphicsSettings");
 				}
 
 				GUILayout.Space(ParadiseGUITools.ITEM_SPACING_V);
