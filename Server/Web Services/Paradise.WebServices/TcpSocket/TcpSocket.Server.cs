@@ -37,7 +37,8 @@ namespace Paradise {
 			}
 
 			public void Listen() {
-				if (SocketListener != null) throw new InvalidOperationException("Socket is already listening");
+				if (SocketListener != null)
+					throw new InvalidOperationException("Socket is already listening");
 
 				SocketListener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 				SocketListener.Bind(LocalEndPoint);
@@ -49,14 +50,16 @@ namespace Paradise {
 			}
 
 			public void Shutdown() {
-				if (SocketListener == null) return;
+				if (SocketListener == null)
+					return;
 
 				SocketListener.Close(0);
 			}
 
 			#region Send
 			public async Task<object> SendToCommServer(PacketType type, object payload, bool isOneWay = true, Guid conversationId = default) {
-				if (CommServer == null) return null;
+				if (CommServer == null)
+					return null;
 
 				var r = await CommServer.Send(type, payload, isOneWay, conversationId, ServerType.MasterServer);
 				return r;
@@ -140,9 +143,11 @@ namespace Paradise {
 								}, true, payloadObj.ConversationId);
 
 								socketClient.Disconnect();
-							} else {
-								CommServer = socketClient;
+
+								return;
 							}
+
+							CommServer = socketClient;
 
 							break;
 
@@ -247,7 +252,8 @@ namespace Paradise {
 									}
 									break;
 
-								default: break;
+								default:
+									break;
 							}
 
 							if (CryptoProviders.ContainsKey(socketClient.ConnectionId)) {

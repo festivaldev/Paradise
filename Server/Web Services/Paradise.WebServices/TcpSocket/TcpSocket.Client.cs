@@ -43,7 +43,7 @@ namespace Paradise {
 					SocketConnection.Disconnected += (object sender, SocketDisconnectedEventArgs args) => {
 						Disconnected?.Invoke(this, args);
 					};
-					SocketConnection.DataReceived += (object sendet, SocketDataReceivedEventArgs args) => {
+					SocketConnection.DataReceived += (object sender, SocketDataReceivedEventArgs args) => {
 						switch (args.Type) {
 							case PacketType.Ping:
 								SocketConnection.LastResponseTime = (DateTime)args.Data;
