@@ -1,7 +1,6 @@
 ﻿using log4net;
 using Photon.SocketServer;
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -9,7 +8,7 @@ using static Paradise.WebSocket;
 
 namespace Paradise.Realtime.Server.Comm {
 	public class CommServerApplication : BaseRealtimeApplication {
-		protected static readonly new ILog Log = LogManager.GetLogger(nameof(CommServerApplication));
+		protected static readonly ILog Log = LogManager.GetLogger(nameof(CommServerApplication));
 
 		public static new CommServerApplication Instance => (CommServerApplication)ApplicationBase.Instance;
 		public static new ServerType ServerType = ServerType.Comm;
@@ -17,8 +16,7 @@ namespace Paradise.Realtime.Server.Comm {
 		protected System.Timers.Timer MonitoringTimer;
 
 		protected override PeerBase OnCreatePeer(InitRequest initRequest) {
-			//return new CommPeer(initRequest);
-			return null;
+			return new CommPeer(initRequest);
 		}
 
 		protected override void OnBeforeSetup() {
@@ -53,7 +51,6 @@ namespace Paradise.Realtime.Server.Comm {
 
 			SocketClient.DataReceived += (sender, e) => { };
 
-			//var host = new Uri(Configuration.MasterHostname).Host;
 			var tcpAddress = Dns.GetHostAddresses(Configuration.MasterHostname).Where(_ => _.AddressFamily == AddressFamily.InterNetwork).First();
 
 			if (tcpAddress != null) {

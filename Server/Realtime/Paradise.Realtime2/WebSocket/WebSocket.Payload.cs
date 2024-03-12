@@ -1,12 +1,9 @@
 ﻿using log4net;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 using UberStrike.Core.Serialization;
 
 namespace Paradise {
@@ -19,7 +16,7 @@ namespace Paradise {
 		}
 
 		public class Payload {
-			private static readonly ILog Log = LogManager.GetLogger(nameof(Payload));
+			protected static readonly ILog Log = LogManager.GetLogger(nameof(Payload));
 
 			public PacketType Type;
 			public string Data;

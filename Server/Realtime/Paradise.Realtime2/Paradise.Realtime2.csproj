@@ -57,6 +57,7 @@
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -75,12 +76,50 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\..\Web Services\Paradise.WebServices\Database\ModerationFlag.cs">
+      <Link>ModerationFlag.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Plugins\Paradise.WebServices.Services\Contracts\IApplicationWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IApplicationWebServiceContract.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Plugins\Paradise.WebServices.Services\Contracts\IModerationWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IModerationWebServiceContract.cs</Link>
+    </Compile>
+    <Compile Include="..\..\Web Services\Plugins\Paradise.WebServices.Services\Contracts\IUserWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IUserWebServiceContract.cs</Link>
+    </Compile>
+    <Compile Include="Core\Interfaces\ILoop.cs" />
+    <Compile Include="Core\Interfaces\ILoopScheduler.cs" />
+    <Compile Include="Core\Interfaces\ITimer.cs" />
+    <Compile Include="Core\Loop.cs" />
+    <Compile Include="Core\LoopScheduler.cs" />
+    <Compile Include="ProfanityFilter\AllowList.cs" />
+    <Compile Include="ProfanityFilter\Interfaces\IAllowList.cs" />
+    <Compile Include="ProfanityFilter\Interfaces\IProfanityFilter.cs" />
+    <Compile Include="ProfanityFilter\ProfanityBase.cs" />
+    <Compile Include="ProfanityFilter\ProfanityFilter.cs" />
+    <Compile Include="ProfanityFilter\ProfanityList.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Server\BaseEventSender.cs" />
+    <Compile Include="Server\BaseOperationHandler.cs" />
     <Compile Include="Server\BasePeer.cs" />
     <Compile Include="Server\BaseRealtimeApplication.cs" />
+    <Compile Include="Server\Comm\CommActor.cs" />
+    <Compile Include="Server\Comm\CommPeer.cs" />
+    <Compile Include="Server\Comm\CommPeer.EventSender.cs" />
+    <Compile Include="Server\Comm\CommPeer.OperationHandler.cs" />
     <Compile Include="Server\Comm\CommServerApplication.cs" />
+    <Compile Include="Server\Comm\Lobby\LobbyManager.cs" />
+    <Compile Include="Server\Comm\Lobby\LobbyRoom.cs" />
+    <Compile Include="Server\Comm\Lobby\LobbyRoom.EventSender.cs" />
+    <Compile Include="Server\Comm\Lobby\LobbyRoom.OperationHandler.cs" />
     <Compile Include="Server\Config\ApplicationConfiguration.cs" />
     <Compile Include="Server\Config\PeerConfiguration.cs" />
+    <Compile Include="Server\IRoom.cs" />
+    <Compile Include="ServiceClients\ApplicationWebServiceClient.cs" />
+    <Compile Include="ServiceClients\BaseWebServiceClient.cs" />
+    <Compile Include="ServiceClients\ModerationWebServiceClient.cs" />
+    <Compile Include="ServiceClients\UserWebServiceClient.cs" />
     <Compile Include="WebSocket\WebSocket.cs" />
     <Compile Include="WebSocket\WebSocket.EventArgs.cs" />
     <Compile Include="WebSocket\WebSocket.PacketType.cs" />
@@ -102,6 +141,10 @@
     <ProjectReference Include="..\..\..\Core\UberStrike-Reverse-Engineered\UberStrike.DataCenter.Common\UberStrike.DataCenter.Common.csproj">
       <Project>{5c447444-7f30-40e7-b90a-4cab343695ae}</Project>
       <Name>UberStrike.DataCenter.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Core\UberStrike-Reverse-Engineered\UberStrike.Realtime.Client\UberStrike.Realtime.Client.csproj">
+      <Project>{8533BD1E-C523-42E6-8AD1-8B4B91118C28}</Project>
+      <Name>UberStrike.Realtime.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Core\UberStrike-Reverse-Engineered\UberStrike.Realtime.UnitySdk\UberStrike.Realtime.UnitySdk.csproj">
       <Project>{694449d7-19cd-4ad0-bb8e-ffe6b19e8623}</Project>

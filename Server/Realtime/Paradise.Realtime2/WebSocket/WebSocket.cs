@@ -20,5 +20,11 @@ namespace Paradise {
 			public bool Rejected;
 			public string DisconnectReason;
 		}
+
+		public struct SocketChatMessage {
+			public int Cmid;
+			public string Name;
+			public string Message;
+		}
 	}
 }

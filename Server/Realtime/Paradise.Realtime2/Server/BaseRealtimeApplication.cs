@@ -1,10 +1,12 @@
-﻿using log4net;
+﻿using Cmune.DataCenter.Common.Entities;
+using log4net;
 using log4net.Config;
 using Photon.SocketServer;
 using System;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.ServiceModel;
 using System.Xml;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
@@ -85,16 +87,16 @@ namespace Paradise.Realtime.Server {
 				HashVerificationEnabled = Configuration.EnableHashVerification
 			};
 
-			//try {
-			//	if (ApplicationWebServiceClient.Instance.AuthenticateApplication("4.7.1", ChannelType.Steam, "paradiserealtime") is var data) {
-			//		EncryptionInitVector = data.EncryptionInitVector;
-			//		EncryptionPassPhrase = data.EncryptionPassPhrase;
-			//	}
-			//} catch (EndpointNotFoundException) {
-			//	Log.Fatal("Could not connect to the Web Services. Ensure the Web Services are running and restart the Realtime application.");
+			try {
+				if (ApplicationWebServiceClient.Instance.AuthenticateApplication("4.7.1", ChannelType.Steam, "paradiserealtime") is var data) {
+					EncryptionInitVector = data.EncryptionInitVector;
+					EncryptionPassPhrase = data.EncryptionPassPhrase;
+				}
+			} catch (EndpointNotFoundException) {
+				Log.Fatal("Could not connect to the Web Services. Ensure the Web Services are running and restart the Realtime application.");
 
-			//	return;
-			//}
+				return;
+			}
 
 			OnSetup();
 		}

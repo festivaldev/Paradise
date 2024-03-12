@@ -1,11 +1,7 @@
 ﻿using log4net;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
@@ -117,8 +113,6 @@ namespace Paradise {
 										Connected?.Invoke(this, new SocketConnectedEventArgs {
 											Socket = SocketConnection
 										});
-
-										SocketConnection.Send(Payload.Encode(PacketType.CommandOutput, "Jonas tinkt very hart", CryptoProvider, out _, serverType: ClientInfo.Type));
 									} else {
 										ConnectionRejected?.Invoke(this, new SocketConnectionRejectedEventArgs {
 											Info = ClientInfo,
@@ -165,10 +159,11 @@ namespace Paradise {
 					}
 
 
-					if (maxAttempts == 0 || connectionAttempts < MAX_RECONNECT) {
+					if (maxAttempts == 0 || connectionAttempts < maxAttempts) {
 						await Task.Delay(TimeSpan.FromSeconds(RECONNECT_INTERVAL));
 					} else {
-						Log.Info($"Failed to establish connection within {MAX_RECONNECT} attempts(s).");
+						Log.Info($"Failed to establish connection within {maxAttempts} attempts(s).");
+						return;
 					}
 				}
 			}
@@ -179,6 +174,33 @@ namespace Paradise {
 
 				Connect(RemoteEndPoint.Address, RemoteEndPoint.Port, maxAttempts);
 			}
+
+			#region Send
+			public async Task SendBytes(byte[] bytes) {
+				await Task.Run(() => {
+					SendBytesSync(bytes);
+				});
+			}
+
+			public void SendBytesSync(byte[] bytes) {
+				SocketConnection.Send(bytes);
+			}
+
+			public async Task<object> Send(PacketType type, object payload, bool oneWay = true, Guid conversationId = default, ServerType serverType = ServerType.None) {
+				//return await SocketConnection.Send(type, payload, oneWay, conversationId, serverType);
+
+				await Task.Run(() => {
+					SocketConnection.Send(Payload.Encode(type, payload, null, out _, oneWay, conversationId, serverType));
+				});
+
+				return null;
+			}
+
+			public object SendSync(PacketType type, object payload, bool oneWay = true, Guid conversationId = default, ServerType serverType = ServerType.None) {
+				SocketConnection.Send(Payload.Encode(type, payload, null, out _, oneWay, conversationId, serverType));
+				return null;
+			}
+			#endregion
 		}
 	}
 }

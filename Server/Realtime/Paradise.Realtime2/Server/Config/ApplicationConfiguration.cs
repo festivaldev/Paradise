@@ -31,6 +31,9 @@ namespace Paradise.Realtime.Server {
 		public string WebServiceSuffix { get; set; } = "Contract.svc";
 
 		[YamlMember]
+		public bool WebServiceUseTLS { get; set; } = false;
+
+		[YamlMember]
 		public RealtimeApplicationSettings CommApplicationSettings = new RealtimeApplicationSettings();
 
 		[YamlMember]
