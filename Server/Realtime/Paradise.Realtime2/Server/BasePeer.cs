@@ -82,19 +82,19 @@ namespace Paradise.Realtime.Server {
 		public bool Authenticate(string authToken, string magicHash) {
 			AuthToken = authToken ?? throw new ArgumentNullException(nameof(authToken));
 
-			//var memberAuth = AuthenticationWebServiceClient.Instance.VerifyAuthToken(authToken);
+			Log.Debug($"Received AuthenticationRequest! {authToken}:{magicHash} (at {RemoteIP}:{RemotePort})");
 
-			//if (memberAuth.MemberAuthenticationResult != MemberAuthenticationResult.Ok) {
-			//	return false;
-			//}
+			var memberAuth = AuthenticationWebServiceClient.Instance.VerifyAuthToken(authToken);
+
+			if (memberAuth.MemberAuthenticationResult != MemberAuthenticationResult.Ok) {
+				return false;
+			}
+
+			if (!Configuration.HashVerificationEnabled) return true;
 
 			//if (magicHash == null) {
 			//	throw new ArgumentNullException(nameof(magicHash));
 			//}
-
-			//Log.Debug($"Received AuthenticationRequest! {authToken}:{magicHash} (at {RemoteIP}:{RemotePort})");
-
-			//if (!Configuration.HashVerificationEnabled) return true;
 
 			//if (Configuration.CompositeHashes.Count > 0) {
 			//	var bytes = Encoding.ASCII.GetBytes(authToken);

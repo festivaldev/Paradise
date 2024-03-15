@@ -69,7 +69,6 @@ namespace Paradise.Realtime.Server.Comm {
 					PlayerName = member.CmuneMemberView.PublicProfile.Name,
 				});
 
-				Log.Debug("set actor not null");
 				peer.Actor = actor;
 
 				LobbyManager.Instance.GlobalLobby.Join(peer);

@@ -1,6 +1,7 @@
-﻿using log4net;
+using log4net;
 using Photon.SocketServer;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -31,7 +32,7 @@ namespace Paradise.Realtime.Server.Comm {
 		protected override void OnSetup() {
 			MonitoringTimer = new System.Timers.Timer(TimeSpan.FromMinutes(1).TotalMilliseconds);
 			MonitoringTimer.Elapsed += delegate {
-				//PublishMonitoringData();
+				PublishMonitoringData();
 			};
 
 			SocketClient = new SocketClient(Identifier, ServerType.Comm, Configuration.CommApplicationSettings.EncryptionPassPhrase);
@@ -39,13 +40,14 @@ namespace Paradise.Realtime.Server.Comm {
 			SocketClient.Connected += (sender, e) => {
 				Log.Info("Comm: CONNECTED TO SOCKET");
 
-				//PublishMonitoringData();
+				PublishMonitoringData();
 				MonitoringTimer.Start();
 			};
 
 			SocketClient.Disconnected += (sender, e) => {
 				Log.Info("Comm: DISCONNECTED FROM SOCKET");
 
+				MonitoringTimer.Stop();
 				SocketClient.Reconnect(25);
 			};
 
@@ -71,7 +73,20 @@ namespace Paradise.Realtime.Server.Comm {
 		}
 
 		private void PublishMonitoringData() {
-			//Socket?.SendSync(PacketType.Monitoring, GetStatus());
+			SocketClient?.Send(PacketType.Monitoring, GetStatus());
+		}
+
+		private Dictionary<string, object> GetStatus() {
+			try {
+				return new Dictionary<string, object> {
+					["peers"] = LobbyManager.Instance.Peers.Select(peer => peer.Actor.ActorInfo),
+					["updated_at"] = DateTime.UtcNow.ToString("o")
+				};
+			} catch (Exception e) {
+				Log.Error(e);
+
+				return new Dictionary<string, object> { ["error"] = e.Message };
+			}
 		}
 	}
 }

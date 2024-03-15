@@ -82,6 +82,9 @@
     <Compile Include="..\..\Web Services\Plugins\Paradise.WebServices.Services\Contracts\IApplicationWebServiceContract.cs">
       <Link>ServiceClients\Contracts\IApplicationWebServiceContract.cs</Link>
     </Compile>
+    <Compile Include="..\..\Web Services\Plugins\Paradise.WebServices.Services\Contracts\IAuthenticationWebServiceContract.cs">
+      <Link>ServiceClients\Contracts\IAuthenticationWebServiceContract.cs</Link>
+    </Compile>
     <Compile Include="..\..\Web Services\Plugins\Paradise.WebServices.Services\Contracts\IModerationWebServiceContract.cs">
       <Link>ServiceClients\Contracts\IModerationWebServiceContract.cs</Link>
     </Compile>
@@ -115,8 +118,9 @@
     <Compile Include="Server\Comm\Lobby\LobbyRoom.OperationHandler.cs" />
     <Compile Include="Server\Config\ApplicationConfiguration.cs" />
     <Compile Include="Server\Config\PeerConfiguration.cs" />
-    <Compile Include="Server\IRoom.cs" />
+    <Compile Include="Server\Interfaces\IRoom.cs" />
     <Compile Include="ServiceClients\ApplicationWebServiceClient.cs" />
+    <Compile Include="ServiceClients\AuthenticationWebServiceClient.cs" />
     <Compile Include="ServiceClients\BaseWebServiceClient.cs" />
     <Compile Include="ServiceClients\ModerationWebServiceClient.cs" />
     <Compile Include="ServiceClients\UserWebServiceClient.cs" />

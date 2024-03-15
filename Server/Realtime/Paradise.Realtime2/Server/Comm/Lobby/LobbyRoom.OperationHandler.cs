@@ -281,11 +281,11 @@ namespace Paradise.Realtime.Server.Comm {
 					}
 
 					if (CommServerApplication.Instance.Configuration.DiscordChatIntegration) {
-						CommServerApplication.Instance.SocketClient?.Send(PacketType.ChatMessage, new SocketChatMessage {
+						CommServerApplication.Instance.SocketClient?.SendSync(PacketType.ChatMessage, new SocketChatMessage {
 							Cmid = peer.Actor.Cmid,
 							Name = peer.Actor.Name,
 							Message = trimmed
-						});
+						}, serverType: ServerType.Comm);
 					}
 
 					foreach (var otherPeer in LobbyManager.Instance.GlobalLobby.Peers) {
@@ -385,11 +385,13 @@ namespace Paradise.Realtime.Server.Comm {
 
 				DebugOperation(peer, cmid);
 
-				if (peer.Actor.AccessLevel < MemberAccessLevel.Moderator) {
+				if (peer.Actor.AccessLevel < MemberAccessLevel.Moderator || peer.Actor.Cmid == cmid) {
 					return;
 				}
 
-				FindPeerWithCmid(cmid)?.SendError("You have been kicked from the game.");
+				if (FindPeerWithCmid(cmid) is var targetPeer && targetPeer.Actor.AccessLevel < peer.Actor.AccessLevel) {
+					targetPeer.SendError("You have been kicked from UberStrike.");
+				}
 			}
 
 			private void ModerationKickGame(CommPeer peer, MemoryStream bytes) {
@@ -397,11 +399,13 @@ namespace Paradise.Realtime.Server.Comm {
 
 				DebugOperation(peer, cmid);
 
-				if (peer.Actor.AccessLevel < MemberAccessLevel.Moderator) {
+				if (peer.Actor.AccessLevel < MemberAccessLevel.Moderator || peer.Actor.Cmid == cmid) {
 					return;
 				}
 
-				FindPeerWithCmid(cmid)?.SendError("You have been kicked from the game.");
+				if (FindPeerWithCmid(cmid) is var targetPeer && targetPeer.Actor.AccessLevel < peer.Actor.AccessLevel) {
+					targetPeer.SendError("You have been kicked from the game.");
+				}
 			}
 
 			private void ModerationUnbanPlayer(CommPeer peer, MemoryStream bytes) {

@@ -1,9 +1,11 @@
 ﻿using log4net;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using UberStrike.Core.Models;
 using UberStrike.Core.Serialization;
 
 namespace Paradise {
@@ -85,17 +87,74 @@ namespace Paradise {
 				using (var outputStream = new MemoryStream())
 				using (var bytes = new MemoryStream()) {
 					switch (type) {
+						case PacketType.MagicBytes:
+						case PacketType.Ping:
+						case PacketType.Pong:
+							break;
 						case PacketType.ClientInfo:
 						case PacketType.ConnectionStatus:
 							StringProxy.Serialize(bytes, JsonConvert.SerializeObject(data));
 							break;
+						case PacketType.Command:
+						case PacketType.Error:
+						case PacketType.ChatMessage:
+							payloadObj.IsEncrypted = true;
 
+							StringProxy.Serialize(bytes, JsonConvert.SerializeObject(data));
+							break;
 						case PacketType.CommandOutput:
 							payloadObj.IsEncrypted = true;
 
 							StringProxy.Serialize(bytes, (string)data);
 							break;
+						case PacketType.Monitoring:
+						case PacketType.BanPlayer:
+							payloadObj.IsEncrypted = true;
+
+							DictionaryProxy<string, object>.Serialize(bytes, (Dictionary<string, object>)data, StringProxy.Serialize, (stream, instance) => {
+								StringProxy.Serialize(stream, JsonConvert.SerializeObject(instance));
+							});
+							break;
+						case PacketType.PlayerList:
+							/// TODO
+							break;
+						case PacketType.PlayerJoined:
+						case PacketType.PlayerLeft:
+							payloadObj.IsEncrypted = true;
+
+							CommActorInfoProxy.Serialize(bytes, (CommActorInfo)data);
+							break;
+						case PacketType.RoomOpened:
+						case PacketType.RoomClosed:
+							payloadObj.IsEncrypted = true;
+
+							GameRoomDataProxy.Serialize(bytes, (GameRoomData)data);
+							break;
+						case PacketType.RoundStarted: {
+							payloadObj.IsEncrypted = true;
+
+							var list = data as object[];
+							GameRoomDataProxy.Serialize(bytes, (GameRoomData)list[0]);
+							break;
+						}
+						case PacketType.RoundEnded: {
+							payloadObj.IsEncrypted = true;
+
+							var list = data as object[];
+							GameRoomDataProxy.Serialize(bytes, (GameRoomData)list[0]);
+							EndOfMatchDataProxy.Serialize(bytes, (EndOfMatchData)list[1]);
+							break;
+						}
+						case PacketType.OpenRoom:
+							/// TODO
+							break;
+						case PacketType.CloseRoom:
+							payloadObj.IsEncrypted = true;
+
+							Int32Proxy.Serialize(bytes, (int)data);
+							break;
 						default:
+							Log.Warn($"Rejecting to encode payload of type {type}: Unknown type.");
 							return null;
 					}
 
@@ -148,13 +207,62 @@ namespace Paradise {
 					var result = default(object);
 
 					switch (payloadObj.Type) {
+						case PacketType.MagicBytes:
+						case PacketType.Ping:
+						case PacketType.Pong:
+							break;
 						case PacketType.ClientInfo:
 							result = JsonConvert.DeserializeObject<SocketInfo>(StringProxy.Deserialize(bytes));
 							break;
 						case PacketType.ConnectionStatus:
 							result = JsonConvert.DeserializeObject<SocketConnectionStatus>(StringProxy.Deserialize(bytes));
 							break;
+						case PacketType.Command:
+							result = JsonConvert.DeserializeObject<SocketCommand>(StringProxy.Deserialize(bytes));
+							break;
+						case PacketType.CommandOutput:
+						case PacketType.ChatMessage:
+							result = StringProxy.Deserialize(bytes);
+							break;
+						case PacketType.Error:
+							result = JsonConvert.DeserializeObject<RealtimeError>(StringProxy.Deserialize(bytes));
+							break;
+						case PacketType.Monitoring:
+						case PacketType.BanPlayer:
+							result = DictionaryProxy<string, object>.Deserialize(bytes, StringProxy.Deserialize, (stream) => {
+								return JsonConvert.DeserializeObject<object>(StringProxy.Deserialize(stream));
+							});
+							break;
+						case PacketType.PlayerList:
+							/// TODO;
+							break;
+						case PacketType.PlayerJoined:
+						case PacketType.PlayerLeft:
+							result = CommActorInfoProxy.Deserialize(bytes);
+							break;
+						case PacketType.RoomOpened:
+						case PacketType.RoomClosed:
+							result = GameRoomDataProxy.Deserialize(bytes);
+							break;
+						case PacketType.RoundStarted:
+							result = new[] {
+								GameRoomDataProxy.Deserialize(bytes)
+							};
+							break;
+						case PacketType.RoundEnded:
+							result = new object[] {
+								GameRoomDataProxy.Deserialize(bytes),
+								EndOfMatchDataProxy.Deserialize(bytes)
+							};
+							break;
+						case PacketType.OpenRoom:
+							/// TODO
+							break;
+						case PacketType.CloseRoom:
+							result = Int32Proxy.Deserialize(bytes);
+							break;
 						default:
+							Log.Warn($"Rejecting to decode payload of type {payloadObj.Type}: Unknown type.");
 							break;
 					}
 

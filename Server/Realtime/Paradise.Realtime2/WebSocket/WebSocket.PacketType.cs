@@ -14,7 +14,7 @@
 			Error,
 
 			ChatMessage = 1 << 10,
-			//PlayerList,
+			PlayerList,
 			PlayerJoined,
 			PlayerLeft,
 			RoomOpened,

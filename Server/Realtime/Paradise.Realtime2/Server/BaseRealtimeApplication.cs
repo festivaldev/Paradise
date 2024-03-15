@@ -59,14 +59,6 @@ namespace Paradise.Realtime.Server {
 
 					Configuration = deserializer.Deserialize<ApplicationConfiguration>(input);
 
-					if (File.Exists(Path.Combine(BinaryPath, "CompositeHashes.txt"))) {
-						Configuration.CompositeHashes = File.ReadAllLines(Path.Combine(BinaryPath, "CompositeHashes.txt")).ToList();
-					}
-
-					if (File.Exists(Path.Combine(BinaryPath, "JunkHashes.txt"))) {
-						Configuration.JunkHashes = File.ReadAllLines(Path.Combine(BinaryPath, "JunkHashes.txt")).ToList();
-					}
-
 					Configuration.Validate();
 				}
 			} catch (Exception e) {
@@ -108,7 +100,7 @@ namespace Paradise.Realtime.Server {
 		}
 
 		protected sealed override PeerBase CreatePeer(InitRequest initRequest) {
-			Log.Info($"Accepted new connection at {initRequest.RemoteIP}:{initRequest.RemotePort}.");
+			Log.Info($"Accepted new connection from {initRequest.RemoteIP}:{initRequest.RemotePort}.");
 
 			initRequest.UserData = PeerConfiguration;
 			return OnCreatePeer(initRequest);

@@ -25,6 +25,7 @@ namespace Paradise {
 			private IPEndPoint RemoteEndPoint;
 			private WebSocketSharp.WebSocket SocketConnection;
 			private readonly ManualResetEvent ConnectionWaitHandle = new ManualResetEvent(false);
+			public DateTime LastResponseTime;
 
 			private SocketInfo ClientInfo;
 			private readonly RijndaelManaged CryptoProvider;
@@ -93,10 +94,14 @@ namespace Paradise {
 									EnumProxy<PacketType>.Serialize(outputStream, PacketType.MagicBytes);
 									ArrayProxy<byte>.Serialize(outputStream, MAGIC_BYTES, ByteProxy.Serialize);
 
-									SocketConnection.Send(outputStream.ToArray());
+									SendBytesSync(outputStream.ToArray());
 									break;
 								case PacketType.ClientInfo:
-									SocketConnection.Send(Payload.Encode(PacketType.ClientInfo, ClientInfo, null, out _, serverType: ClientInfo.Type));
+									SendSync(PacketType.ClientInfo, ClientInfo, serverType: ClientInfo.Type);
+									break;
+								case PacketType.Ping:
+									LastResponseTime = DateTime.UtcNow;
+									SendPacketSync(PacketType.Pong);
 									break;
 								default:
 									break;
@@ -120,10 +125,6 @@ namespace Paradise {
 											Reason = status.DisconnectReason
 										});
 									}
-									break;
-								case PacketType.Ping:
-									//SocketConnection.LastResponseTime = (DateTime)args.Data;
-									//SocketConnection.SendSync(PacketType.Pong, null, true, args.Payload.ConversationId, ClientInfo.Type);
 									break;
 								default:
 									DataReceived?.Invoke(this, new SocketDataReceivedEventArgs {
@@ -186,18 +187,33 @@ namespace Paradise {
 				SocketConnection.Send(bytes);
 			}
 
+			public async Task SendPacket(PacketType type) {
+				await Task.Run(() => {
+					SendPacketSync(type);
+				});
+			}
+
+			public void SendPacketSync(PacketType type) {
+				using (var stream = new MemoryStream()) {
+					Int32Proxy.Serialize(stream, 0x42);
+					EnumProxy<PacketType>.Serialize(stream, type);
+
+					SocketConnection.Send(stream.ToArray());
+				}
+			}
+
 			public async Task<object> Send(PacketType type, object payload, bool oneWay = true, Guid conversationId = default, ServerType serverType = ServerType.None) {
 				//return await SocketConnection.Send(type, payload, oneWay, conversationId, serverType);
 
 				await Task.Run(() => {
-					SocketConnection.Send(Payload.Encode(type, payload, null, out _, oneWay, conversationId, serverType));
+					SocketConnection.Send(Payload.Encode(type, payload, CryptoProvider, out _, oneWay, conversationId, serverType));
 				});
 
 				return null;
 			}
 
 			public object SendSync(PacketType type, object payload, bool oneWay = true, Guid conversationId = default, ServerType serverType = ServerType.None) {
-				SocketConnection.Send(Payload.Encode(type, payload, null, out _, oneWay, conversationId, serverType));
+				SocketConnection.Send(Payload.Encode(type, payload, CryptoProvider, out _, oneWay, conversationId, serverType));
 				return null;
 			}
 			#endregion

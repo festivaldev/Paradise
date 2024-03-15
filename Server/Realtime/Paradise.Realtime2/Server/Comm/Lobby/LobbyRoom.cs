@@ -2,6 +2,7 @@
 using Paradise.Realtime.Core;
 using System;
 using System.Collections.Generic;
+using static Paradise.WebSocket;
 
 namespace Paradise.Realtime.Server.Comm {
 	public partial class LobbyRoom : IRoom<CommPeer>, IDisposable {
@@ -46,7 +47,7 @@ namespace Paradise.Realtime.Server.Comm {
 			Log.Info($"{peer} joined the lobby");
 
 			if (CommServerApplication.Instance.Configuration.DiscordPlayerAnnouncements) {
-				//CommServerApplication.Instance.Socket?.SendSync(TcpSocket.PacketType.PlayerJoined, peer.Actor.ActorInfo);
+				CommServerApplication.Instance.SocketClient?.SendSync(PacketType.PlayerJoined, peer.Actor.ActorInfo, serverType: ServerType.Comm);
 			}
 		}
 
@@ -66,7 +67,7 @@ namespace Paradise.Realtime.Server.Comm {
 			Log.Info($"{peer} left the lobby");
 
 			if (CommServerApplication.Instance.Configuration.DiscordPlayerAnnouncements) {
-				//CommServerApplication.Instance.Socket?.SendSync(TcpSocket.PacketType.PlayerLeft, peer.Actor.ActorInfo);
+				CommServerApplication.Instance.SocketClient?.SendSync(PacketType.PlayerLeft, peer.Actor.ActorInfo, serverType: ServerType.Comm);
 			}
 
 			peer.RemoveOperationHandler(OpHandler.Id);
