@@ -69,15 +69,17 @@ namespace Paradise.Client {
 			return true;
 		}
 
-		[HarmonyPatch("SetupGameMode"), HarmonyPostfix]
-		public static void SetupGameMode_Postfix(HUDStatusPanel __instance, bool isTeamGame) {
-			ParadiseTraverse.GetField<UILabel>(__instance, "statusLabel").text = (string)ParadiseTraverse.InvokeMethod(__instance, "GetRemainingKillString", GameState.Current.RoomData.KillLimit);
-			ParadiseTraverse.GetField<UILabel>(__instance, "timerLabel").text = (string)ParadiseTraverse.InvokeMethod(__instance, "GetClockString", GameState.Current.RoomData.TimeLimit);
+		[HarmonyPatch("Start"), HarmonyPostfix]
+		public static void Start_Postfix(HUDStatusPanel __instance) {
+			if (!GameState.Current.IsMatchRunning) {
+				ParadiseTraverse.GetField<UILabel>(__instance, "statusLabel").text = (string)ParadiseTraverse.InvokeMethod(__instance, "GetRemainingKillString", GameState.Current.RoomData.KillLimit);
+				ParadiseTraverse.GetField<UILabel>(__instance, "timerLabel").text = (string)ParadiseTraverse.InvokeMethod(__instance, "GetClockString", GameState.Current.RoomData.TimeLimit);
+			}
 
-			ParadiseTraverse.InvokeMethod(__instance, "StopPulse");
+			if (GameState.Current.RoomData.TimeLimit == 0) {
+				ParadiseTraverse.InvokeMethod(__instance, "StopPulse");
+			}
 		}
-
-
 
 		private static string GetGamemodeHint(GameModeType gameModeType) {
 			switch (GameState.Current.GameMode) {
