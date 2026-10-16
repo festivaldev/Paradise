@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ScreenResolutionOptions>
 	<ScreenResolutionList>
-		<ScreenResolution width="640" height="360" />
 		<ScreenResolution width="800" height="600" />
 		<ScreenResolution width="1024" height="768" />
 		<ScreenResolution width="1280" height="720" />
