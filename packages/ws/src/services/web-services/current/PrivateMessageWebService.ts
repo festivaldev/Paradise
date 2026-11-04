@@ -103,7 +103,8 @@ export default class PrivateMessageWebService extends BaseWebService {
         if (steamMember) {
           const messages = (
             await PrivateMessage.find({
-              where: [{ FromCmid: steamMember.Cmid }, { ToCmid: steamMember.Cmid }]
+              where: [{ FromCmid: steamMember.Cmid }, { ToCmid: steamMember.Cmid }],
+              order: { DateSent: 'ASC' }
             })
           ).reduce((acc: any, curr: PrivateMessage) => {
             const threadId = [curr.FromCmid, curr.ToCmid].sort().join(',');
@@ -131,20 +132,18 @@ export default class PrivateMessageWebService extends BaseWebService {
               const otherCmid = message.FromCmid !== steamMember.Cmid ? message.FromCmid : message.ToCmid;
               const otherProfile = await PublicProfile.findOne({ where: { Cmid: otherCmid } });
 
-              if (otherProfile) {
-                threads.push(
-                  new MessageThreadView({
-                    ThreadId: otherCmid,
-                    ThreadName: otherProfile.Name,
-                    MessageCount: filteredMessages.length,
-                    LastMessagePreview: message.ContentText,
-                    LastUpdate: message.DateSent,
-                    HasNewMessages: filteredMessages.some(
-                      (_: PrivateMessage) => _.ToCmid === steamMember.Cmid && !_.IsRead
-                    )
-                  })
-                );
-              }
+              threads.push(
+                new MessageThreadView({
+                  ThreadId: otherCmid,
+                  ThreadName: otherProfile?.Name?.trim() || (otherCmid === 0 ? 'System' : 'Unknown player'),
+                  MessageCount: filteredMessages.length,
+                  LastMessagePreview: message.ContentText,
+                  LastUpdate: message.DateSent,
+                  HasNewMessages: filteredMessages.some(
+                    (_: PrivateMessage) => _.ToCmid === steamMember.Cmid && !_.IsRead
+                  )
+                })
+              );
             }
           }
 
@@ -191,7 +190,8 @@ export default class PrivateMessageWebService extends BaseWebService {
                 ToCmid: steamMember.Cmid,
                 IsDeletedByReceiver: false
               }
-            ]
+            ],
+            order: { DateSent: 'ASC' }
           });
 
           if (message) {
@@ -240,7 +240,8 @@ export default class PrivateMessageWebService extends BaseWebService {
                 ToCmid: steamMember.Cmid,
                 IsDeletedByReceiver: false
               }
-            ]
+            ],
+            order: { DateSent: 'ASC' }
           });
 
           ListProxy.Serialize<PrivateMessageView>(
@@ -282,11 +283,14 @@ export default class PrivateMessageWebService extends BaseWebService {
             where: {
               ToCmid: steamMember.Cmid,
               FromCmid: otherCmid,
-              IsRead: false
+              IsRead: false,
+              IsDeletedByReceiver: false
             }
           });
 
-          Promise.all(messages.map((message) => PrivateMessage.update(message.PrivateMessageId, { IsRead: true })));
+          await Promise.all(
+            messages.map((message) => PrivateMessage.update(message.PrivateMessageId, { IsRead: true }))
+          );
 
           BooleanProxy.Serialize(outputStream, true);
         }
@@ -323,7 +327,7 @@ export default class PrivateMessageWebService extends BaseWebService {
           const sender = await PublicProfile.findOne({ where: { Cmid: steamMember.Cmid } });
           const receiver = await PublicProfile.findOne({ where: { Cmid: receiverCmid } });
 
-          if (sender && receiver) {
+          if (sender && receiver && content.trim().length) {
             const privateMessage = await PrivateMessage.save(
               PrivateMessage.create({
                 PrivateMessageId: Math.randomInt(),
