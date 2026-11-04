@@ -16,6 +16,7 @@
  */
 
 using System;
+using System.Linq;
 using UberStrike.Core.Models;
 using UberStrike.Core.Types;
 using UberStrike.Realtime.UnitySdk;
@@ -54,6 +55,7 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		public override void OnExit() {
+			Room.MatchEnded -= OnMatchEnded;
 			Room.PlayerJoined -= OnPlayerJoined;
 			Room.PlayerLeft -= OnPlayerLeft;
 			Room.PlayerKilled -= OnPlayerKilled;
@@ -115,6 +117,10 @@ namespace Paradise.Realtime.Server.Game {
 		}
 
 		private void OnPlayerLeft(object sender, PlayerLeftEventArgs args) {
+			if (TryEndMatch(Room.MetaData.GameMode == GameModeType.EliminationMode)) {
+				return;
+			}
+
 			if (!Room.CanStartMatch || Room.Players.Count == 0) {
 				Room.HasRoundEnded = true;
 			}
@@ -129,18 +135,31 @@ namespace Paradise.Realtime.Server.Game {
 				}
 			}
 
-			if (Room.MetaData.GameMode == GameModeType.DeathMatch) {
-				short killsRemaining = (short)Room.MetaData.KillLimit;
+			switch (Room.MetaData.GameMode) {
+				case GameModeType.DeathMatch: {
+					var killsRemaining = (short)Room.MetaData.KillLimit;
 
-				Room.GetCurrentScore(out killsRemaining, out _, out _);
-				foreach (var peer in Room.Peers) {
-					peer.GameEventSender.SendKillsRemaining(killsRemaining, 0);
+					Room.GetCurrentScore(out killsRemaining, out _, out _);
+					foreach (var peer in Room.Peers) {
+						peer.GameEventSender.SendKillsRemaining(killsRemaining, 0);
+					}
+
+					break;
 				}
-			} else {
-				Room.GetCurrentScore(out _, out short blueTeamScore, out short redTeamScore);
-				foreach (var peer in Room.Peers) {
-					peer.GameEventSender.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
-				}
+
+				case GameModeType.TeamDeathMatch:
+					Room.GetCurrentScore(out _, out short blueTeamScore, out short redTeamScore);
+					foreach (var peer in Room.Peers) {
+						peer.GameEventSender.SendUpdateRoundScore(Room.RoundNumber, blueTeamScore, redTeamScore);
+					}
+					break;
+
+				case GameModeType.EliminationMode:
+					if (TryEndMatch()) return;
+
+					break;
+
+				default: break;
 			}
 		}
 
@@ -151,6 +170,30 @@ namespace Paradise.Realtime.Server.Game {
 
 			args.Player.State.ResetState();
 			args.Player.State.SetState(PlayerStateId.Playing);
+		}
+
+		private bool TryEndMatch(bool excludeKilledPlayers = true) {
+			var remainingPlayers = Room.Players
+				.Where(p => !p.Actor.ActorInfo.IsSpectator && (!excludeKilledPlayers || p.State.CurrentStateId != PlayerStateId.Killed))
+				.ToList();
+
+			if (remainingPlayers.Count == 1) {
+				var winner = remainingPlayers[0];
+
+				Room.WinningCmid = winner.Actor.Cmid;
+				Room.WinningTeam = winner.Actor.Team;
+				Room.HasRoundEnded = true;
+
+				return true;
+			} else if (remainingPlayers.Count == 0) {
+				Room.WinningCmid = 0;
+				Room.WinningTeam = TeamID.NONE;
+				Room.HasRoundEnded = true;
+
+				return true;
+			}
+
+			return false;
 		}
 	}
 }
