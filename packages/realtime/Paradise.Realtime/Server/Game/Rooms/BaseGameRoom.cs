@@ -444,6 +444,8 @@ namespace Paradise.Realtime.Server.Game {
 
 			if (!GameFlags.IsFlagSet(GameFlags.GAME_FLAGS.NoArmor, MetaData.GameFlags)) {
 				player.Actor.ActorInfo.ArmorPoints = player.Actor.ActorInfo.ArmorPointCapacity;
+			} else {
+				player.Actor.ActorInfo.ArmorPoints = 0;
 			}
 
 			player.Actor.ActorInfo.Weapons[0] = player.Loadout.MeleeWeapon;
@@ -509,6 +511,8 @@ namespace Paradise.Realtime.Server.Game {
 
 				if (!GameFlags.IsFlagSet(GameFlags.GAME_FLAGS.NoArmor, MetaData.GameFlags)) {
 					player.Actor.ActorInfo.ArmorPoints = player.Actor.ActorInfo.ArmorPointCapacity;
+				} else {
+					player.Actor.ActorInfo.ArmorPoints = 0;
 				}
 
 				player.Actor.CurrentSpawnPoint = spawn;
@@ -574,7 +578,13 @@ namespace Paradise.Realtime.Server.Game {
 		private void JoinGame(GamePeer peer, TeamID team) {
 			peer.Actor.Team = team;
 			peer.Actor.ActorInfo.Health = 100;
-			peer.Actor.ActorInfo.ArmorPoints = peer.Actor.ActorInfo.ArmorPointCapacity;
+
+			if (!GameFlags.IsFlagSet(GameFlags.GAME_FLAGS.NoArmor, MetaData.GameFlags)) {
+				peer.Actor.ActorInfo.ArmorPoints = peer.Actor.ActorInfo.ArmorPointCapacity;
+			} else {
+				peer.Actor.ActorInfo.ArmorPoints = 0;
+			}
+
 			peer.Actor.ActorInfo.Ping = (ushort)(peer.RoundTripTime / 2);
 			peer.Actor.ActorInfo.PlayerState = PlayerStates.None;
 
