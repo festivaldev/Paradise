@@ -16,13 +16,18 @@
  */
 
 using Paradise.Realtime.Core;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using UberStrike.Core.Models;
 using UberStrike.Core.Types;
 using static Paradise.Realtime.Server.Game.BaseGameRoom;
 
 namespace Paradise.Realtime.Server.Game {
 	internal class PrepareNextRoundState : BaseMatchState {
 		private Countdown MatchStartCountdown;
+		private CancellationTokenSource cancelToken;
+		private bool countdownPending;
 
 		public PrepareNextRoundState(BaseGameRoom room) : base(room) { }
 
@@ -59,15 +64,7 @@ namespace Paradise.Realtime.Server.Game {
 				}
 			}
 
-			Task t = Task.Run(async () => {
-				await Task.Delay(1000);
-
-				MatchStartCountdown = new Countdown(Room.Loop, GameServerApplication.Instance.Configuration.GameplaySettings.MatchCountdownTime, 0);
-				MatchStartCountdown.Counted += OnCountdownCounted;
-				MatchStartCountdown.Completed += OnCountdownCompleted;
-
-				MatchStartCountdown.Restart();
-			});
+			StartCountdown();
 
 			GameServerApplication.Instance.SocketClient?.SendSync(PacketType.RoundStarted, Room.MetaData);
 		}
@@ -75,6 +72,8 @@ namespace Paradise.Realtime.Server.Game {
 		public override void OnExit() {
 			Room.PlayerJoined -= OnPlayerJoined;
 			Room.PlayerLeft -= OnPlayerLeft;
+
+			StopCountdown();
 		}
 
 		public override void OnResume() { }
@@ -109,10 +108,64 @@ namespace Paradise.Realtime.Server.Game {
 
 		private void OnPlayerLeft(object sender, PlayerLeftEventArgs args) {
 			if (!Room.CanStartMatch || Room.Players.Count == 0) {
-				MatchStartCountdown?.Stop();
+				StopCountdown();
 				//Room.State.SetState(GameStateId.EndOfMatch);
 			}
 		}
 		#endregion
+
+		private async void StartCountdown() {
+			if (countdownPending || MatchStartCountdown?.IsEnabled == true) {
+				return;
+			}
+
+			StopCountdown();
+
+			var _cancelToken = new CancellationTokenSource();
+			cancelToken = _cancelToken;
+			countdownPending = true;
+
+			try {
+				await Task.Delay(1000, _cancelToken.Token);
+			} catch (TaskCanceledException) {
+				return;
+			}
+
+			Room.Loop.Enqueue(() => {
+				if (_cancelToken.IsCancellationRequested || !ReferenceEquals(cancelToken, _cancelToken)) {
+					return;
+				}
+
+				countdownPending = false;
+
+				if (!Room.CanStartMatch || Room.Players.Count == 0) {
+					return;
+				}
+
+				MatchStartCountdown = new Countdown(Room.Loop, GameServerApplication.Instance.Configuration.GameplaySettings.MatchCountdownTime, 0);
+				MatchStartCountdown.Counted += OnCountdownCounted;
+				MatchStartCountdown.Completed += OnCountdownCompleted;
+				MatchStartCountdown.Restart();
+			});
+		}
+
+		private void StopCountdown() {
+			countdownPending = false;
+
+			if (cancelToken != null) {
+				cancelToken.Cancel();
+				cancelToken.Dispose();
+
+				cancelToken = null;
+			}
+
+			if (MatchStartCountdown != null) {
+				MatchStartCountdown.Counted -= OnCountdownCounted;
+				MatchStartCountdown.Completed -= OnCountdownCompleted;
+				MatchStartCountdown.Stop();
+
+				MatchStartCountdown = null;
+			}
+		}
 	}
 }
